@@ -1,0 +1,600 @@
+openapi: 3.0.3
+components:
+  schemas:
+    access_components-schemas-id_response:
+      allOf:
+        - $ref: '#/components/schemas/access_api-response-common'
+        - properties:
+            result:
+              type: object
+              properties:
+                id:
+                  $ref: '#/components/schemas/access_uuid'
+    access_certificates_components-schemas-single_response:
+      allOf:
+        - $ref: '#/components/schemas/access_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/access_certificates'
+    access_response_collection_hostnames:
+      allOf:
+        - $ref: '#/components/schemas/access_api-response-collection'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/access_settings'
+    tls-certificates-and-hostnames_certificate_response_single_id:
+      allOf:
+        - $ref: >-
+            #/components/schemas/tls-certificates-and-hostnames_schemas-certificate_response_single
+        - properties:
+            result:
+              properties:
+                id:
+                  $ref: >-
+                    #/components/schemas/tls-certificates-and-hostnames_identifier
+    tls-certificates-and-hostnames_schemas-certificate_response_single:
+      allOf:
+        - $ref: >-
+            #/components/schemas/tls-certificates-and-hostnames_api-response-single
+        - type: object
+          properties:
+            result:
+              type: object
+    tls-certificates-and-hostnames_components-schemas-certificate_response_single:
+      allOf:
+        - $ref: >-
+            #/components/schemas/tls-certificates-and-hostnames_api-response-single
+        - properties:
+            result:
+              $ref: >-
+                #/components/schemas/tls-certificates-and-hostnames_schemas-certificateObject
+info:
+  title: ' certificates/'
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+paths:
+  /accounts/{identifier}/access/certificates/{uuid}:
+    delete:
+      tags:
+        - - - - - - - Access mTLS authentication
+      summary: Delete an mTLS certificate
+      description: Deletes an mTLS certificate.
+      operationId: access-mtls-authentication-delete-an-mtls-certificate
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_uuid'
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      responses:
+        '200':
+          description: Delete an mTLS certificate response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_components-schemas-id_response'
+        4XX:
+          description: Delete an mTLS certificate response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+    get:
+      tags:
+        - - - - - - - Access mTLS authentication
+      summary: Get an mTLS certificate
+      description: Fetches a single mTLS certificate.
+      operationId: access-mtls-authentication-get-an-mtls-certificate
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_uuid'
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      responses:
+        '200':
+          description: Get an mTLS certificate response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/access_certificates_components-schemas-single_response
+        4XX:
+          description: Get an mTLS certificate response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+    put:
+      tags:
+        - - - - - - - Access mTLS authentication
+      summary: Update an mTLS certificate
+      description: Updates a configured mTLS certificate.
+      operationId: access-mtls-authentication-update-an-mtls-certificate
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_uuid'
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - associated_hostnames
+              properties:
+                associated_hostnames:
+                  $ref: '#/components/schemas/access_associated_hostnames'
+                name:
+                  $ref: >-
+                    #/components/schemas/access_certificates_components-schemas-name
+      responses:
+        '200':
+          description: Update an mTLS certificate response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/access_certificates_components-schemas-single_response
+        4XX:
+          description: Update an mTLS certificate response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+  /accounts/{identifier}/access/certificates/settings:
+    get:
+      tags:
+        - - - - - - - Access mTLS authentication
+      summary: List all mTLS hostname settings
+      description: List all mTLS hostname settings for this account.
+      operationId: access-mtls-authentication-list-mtls-certificates-hostname-settings
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      responses:
+        '200':
+          description: List mTLS hostname settings response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_response_collection_hostnames'
+        4XX:
+          description: List mTLS hostname settings response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+    put:
+      tags:
+        - - - - - - - Access mTLS authentication
+      summary: Update an mTLS certificate's hostname settings
+      description: Updates an mTLS certificate's hostname settings.
+      operationId: access-mtls-authentication-update-an-mtls-certificate-settings
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - settings
+              properties:
+                settings:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/access_settings'
+      responses:
+        '202':
+          description: Update an mTLS certificates hostname settings response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_response_collection_hostnames'
+        4XX:
+          description: Update an mTLS certificates hostname settings failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+  /certificates/{certificate_id}:
+    delete:
+      tags:
+        - - - - - - - Origin CA
+      summary: Revoke Certificate
+      description: >-
+        Revoke an existing Origin CA certificate by its serial number. Use your
+        Origin CA Key as your User Service Key when calling this endpoint ([see
+        above](#requests)).
+      operationId: origin-ca-revoke-certificate
+      parameters:
+        - name: certificate_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Revoke Certificate response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/tls-certificates-and-hostnames_certificate_response_single_id
+        4XX:
+          description: Revoke Certificate response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/tls-certificates-and-hostnames_certificate_response_single_id
+                  - $ref: >-
+                      #/components/schemas/tls-certificates-and-hostnames_api-response-common-failure
+      security:
+        - user_service_key: []
+    get:
+      tags:
+        - - - - - - - Origin CA
+      summary: Get Certificate
+      description: >-
+        Get an existing Origin CA certificate by its serial number. Use your
+        Origin CA Key as your User Service Key when calling this endpoint ([see
+        above](#requests)).
+      operationId: origin-ca-get-certificate
+      parameters:
+        - name: certificate_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+      responses:
+        '200':
+          description: Get Certificate response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/tls-certificates-and-hostnames_schemas-certificate_response_single
+        4XX:
+          description: Get Certificate response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/tls-certificates-and-hostnames_schemas-certificate_response_single
+                  - $ref: >-
+                      #/components/schemas/tls-certificates-and-hostnames_api-response-common-failure
+      security:
+        - user_service_key: []
+  /zones/{identifier}/access/certificates/{uuid}:
+    delete:
+      tags:
+        - - - - - - - Zone-Level Access mTLS authentication
+      summary: Delete an mTLS certificate
+      description: Deletes an mTLS certificate.
+      operationId: zone-level-access-mtls-authentication-delete-an-mtls-certificate
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_uuid'
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      responses:
+        '200':
+          description: Delete an mTLS certificate response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_components-schemas-id_response'
+        4XX:
+          description: Delete an mTLS certificate response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+    get:
+      tags:
+        - - - - - - - Zone-Level Access mTLS authentication
+      summary: Get an mTLS certificate
+      description: Fetches a single mTLS certificate.
+      operationId: zone-level-access-mtls-authentication-get-an-mtls-certificate
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_uuid'
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      responses:
+        '200':
+          description: Get an mTLS certificate response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/access_certificates_components-schemas-single_response
+        4XX:
+          description: Get an mTLS certificate response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+    put:
+      tags:
+        - - - - - - - Zone-Level Access mTLS authentication
+      summary: Update an mTLS certificate
+      description: Updates a configured mTLS certificate.
+      operationId: zone-level-access-mtls-authentication-update-an-mtls-certificate
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_uuid'
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - associated_hostnames
+              properties:
+                associated_hostnames:
+                  $ref: '#/components/schemas/access_associated_hostnames'
+                name:
+                  $ref: >-
+                    #/components/schemas/access_certificates_components-schemas-name
+      responses:
+        '200':
+          description: Update an mTLS certificate response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/access_certificates_components-schemas-single_response
+        4XX:
+          description: Update an mTLS certificate response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+  /zones/{identifier}/access/certificates/settings:
+    get:
+      tags:
+        - - - - - - - Zone-Level Access mTLS authentication
+      summary: List all mTLS hostname settings
+      description: List all mTLS hostname settings for this zone.
+      operationId: >-
+        zone-level-access-mtls-authentication-list-mtls-certificates-hostname-settings
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      responses:
+        '200':
+          description: List mTLS hostname settings response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_response_collection_hostnames'
+        4XX:
+          description: List mTLS hostname settings response failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+    put:
+      tags:
+        - - - - - - - Zone-Level Access mTLS authentication
+      summary: Update an mTLS certificate's hostname settings
+      description: Updates an mTLS certificate's hostname settings.
+      operationId: >-
+        zone-level-access-mtls-authentication-update-an-mtls-certificate-settings
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/access_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - settings
+              properties:
+                settings:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/access_settings'
+      responses:
+        '202':
+          description: Update an mTLS certificates hostname settings response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_response_collection_hostnames'
+        4XX:
+          description: Update an mTLS certificates hostname settings failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+  /zones/{zone_id}/origin_tls_client_auth/hostnames/certificates/{certificate_id}:
+    delete:
+      tags:
+        - - - - - - - Per-hostname Authenticated Origin Pull
+      summary: Delete Hostname Client Certificate
+      operationId: >-
+        per-hostname-authenticated-origin-pull-delete-hostname-client-certificate
+      parameters:
+        - name: certificate_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+        - name: zone_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Delete Hostname Client Certificate response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/tls-certificates-and-hostnames_components-schemas-certificate_response_single
+        4XX:
+          description: Delete Hostname Client Certificate response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/tls-certificates-and-hostnames_components-schemas-certificate_response_single
+                  - $ref: >-
+                      #/components/schemas/tls-certificates-and-hostnames_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+    get:
+      tags:
+        - - - - - - - Per-hostname Authenticated Origin Pull
+      summary: Get the Hostname Client Certificate
+      description: >-
+        Get the certificate by ID to be used for client authentication on a
+        hostname.
+      operationId: >-
+        per-hostname-authenticated-origin-pull-get-the-hostname-client-certificate
+      parameters:
+        - name: certificate_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+        - name: zone_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+      responses:
+        '200':
+          description: Get the Hostname Client Certificate response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/tls-certificates-and-hostnames_components-schemas-certificate_response_single
+        4XX:
+          description: Get the Hostname Client Certificate response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/tls-certificates-and-hostnames_components-schemas-certificate_response_single
+                  - $ref: >-
+                      #/components/schemas/tls-certificates-and-hostnames_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+security:
+  - api_email: []
+    api_key: []
+  - api_token: []
+  - user_service_key: []
+servers:
+  - url: https://api.cloudflare.com/client/v4
+    description: Client API
+tags: []

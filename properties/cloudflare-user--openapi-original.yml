@@ -1,0 +1,2309 @@
+openapi: 3.0.3
+components:
+  schemas:
+    aaa_audit_logs_response_collection:
+      oneOf:
+        - properties:
+            errors:
+              type: object
+              nullable: true
+            messages:
+              type: array
+              example: []
+              items: {}
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/aaa_audit-logs'
+            success:
+              type: boolean
+              example: true
+        - $ref: '#/components/schemas/aaa_api-response-common'
+    bill-subs-api_billing_history_collection:
+      allOf:
+        - $ref: '#/components/schemas/bill-subs-api_api-response-collection'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/bill-subs-api_billing-history'
+    bill-subs-api_billing_response_single:
+      allOf:
+        - $ref: '#/components/schemas/bill-subs-api_api-response-single'
+        - type: object
+          properties:
+            result:
+              type: object
+    legacy-jhs_rule_collection_response:
+      allOf:
+        - $ref: '#/components/schemas/legacy-jhs_api-response-collection'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/legacy-jhs_rule'
+    legacy-jhs_rule_single_response:
+      allOf:
+        - $ref: '#/components/schemas/legacy-jhs_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/legacy-jhs_rule'
+    legacy-jhs_rule_single_id_response:
+      allOf:
+        - $ref: '#/components/schemas/legacy-jhs_api-response-single'
+        - properties:
+            result:
+              type: object
+              properties:
+                id:
+                  $ref: >-
+                    #/components/schemas/legacy-jhs_rule_components-schemas-identifier
+    iam_schemas-collection_invite_response:
+      allOf:
+        - $ref: '#/components/schemas/iam_api-response-collection'
+        - type: object
+          properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/iam_schemas-invite'
+    iam_single_invite_response:
+      allOf:
+        - $ref: '#/components/schemas/iam_api-response-single'
+        - type: object
+          properties:
+            result:
+              type: object
+    load-balancing_monitor-response-collection:
+      allOf:
+        - $ref: '#/components/schemas/load-balancing_api-response-collection'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/load-balancing_monitor'
+    load-balancing_monitor-response-single:
+      allOf:
+        - $ref: '#/components/schemas/load-balancing_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/load-balancing_monitor'
+    load-balancing_id_response:
+      allOf:
+        - $ref: '#/components/schemas/load-balancing_api-response-single'
+        - properties:
+            result:
+              type: object
+              properties:
+                id:
+                  $ref: '#/components/schemas/load-balancing_identifier'
+    load-balancing_preview_response:
+      allOf:
+        - $ref: '#/components/schemas/load-balancing_api-response-single'
+        - properties:
+            result:
+              type: object
+              properties:
+                pools:
+                  type: object
+                  description: Monitored pool IDs mapped to their respective names.
+                  example:
+                    abwlnp5jbqn45ecgxd03erbgtxtqai0d: WNAM Datacenter
+                    ve8h9lrcip5n5bbga9yqmdws28ay5d0l: EEU Datacenter
+                preview_id:
+                  $ref: '#/components/schemas/load-balancing_identifier'
+    load-balancing_references_response:
+      allOf:
+        - $ref: '#/components/schemas/load-balancing_api-response-collection'
+        - properties:
+            result:
+              type: array
+              description: List of resources that reference a given monitor.
+              example:
+                - reference_type: referrer
+                  resource_id: 17b5962d775c646f3f9725cbc7a53df4
+                  resource_name: primary-dc-1
+                  resource_type: pool
+              items:
+                type: object
+                properties:
+                  reference_type:
+                    type: string
+                    enum:
+                      - '*'
+                      - referral
+                      - referrer
+                  resource_id:
+                    type: string
+                  resource_name:
+                    type: string
+                  resource_type:
+                    type: string
+    load-balancing_schemas-response_collection:
+      allOf:
+        - $ref: '#/components/schemas/load-balancing_api-response-collection'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/load-balancing_pool'
+    load-balancing_schemas-single_response:
+      allOf:
+        - $ref: '#/components/schemas/load-balancing_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/load-balancing_pool'
+    load-balancing_schemas-id_response:
+      allOf:
+        - $ref: '#/components/schemas/load-balancing_api-response-single'
+        - properties:
+            result:
+              type: object
+              properties:
+                id:
+                  $ref: '#/components/schemas/load-balancing_schemas-identifier'
+    load-balancing_health_details:
+      allOf:
+        - $ref: '#/components/schemas/load-balancing_api-response-single'
+        - properties:
+            result:
+              type: object
+              description: >-
+                A list of regions from which to run health checks. Null means
+                every Cloudflare data center.
+              example:
+                pool_id: 17b5962d775c646f3f9725cbc7a53df4
+                pop_health:
+                  Amsterdam, NL:
+                    healthy: true
+                    origins:
+                      - 2001:DB8::5:
+                          failure_reason: No failures
+                          healthy: true
+                          response_code: 401
+                          rtt: 12.1ms
+    load-balancing_schemas-references_response:
+      allOf:
+        - $ref: '#/components/schemas/load-balancing_api-response-collection'
+        - properties:
+            result:
+              type: array
+              description: List of resources that reference a given pool.
+              example:
+                - reference_type: referrer
+                  resource_id: 699d98642c564d2e855e9661899b7252
+                  resource_name: www.example.com
+                  resource_type: load_balancer
+                - reference_type: referral
+                  resource_id: f1aba936b94213e5b8dca0c0dbf1f9cc
+                  resource_name: Login page monitor
+                  resource_type: monitor
+              items:
+                type: object
+                properties:
+                  reference_type:
+                    type: string
+                    enum:
+                      - '*'
+                      - referral
+                      - referrer
+                  resource_id:
+                    type: string
+                  resource_name:
+                    type: string
+                  resource_type:
+                    type: string
+    load-balancing_preview_result_response:
+      allOf:
+        - $ref: '#/components/schemas/load-balancing_api-response-single'
+        - properties:
+            result:
+              $ref: '#/components/schemas/load-balancing_preview_result'
+    load-balancing_components-schemas-response_collection:
+      allOf:
+        - $ref: '#/components/schemas/load-balancing_api-response-collection'
+        - properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/load-balancing_analytics'
+    iam_collection_organization_response:
+      allOf:
+        - $ref: '#/components/schemas/iam_api-response-collection'
+        - type: object
+          properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/iam_organization'
+    iam_single_organization_response:
+      allOf:
+        - $ref: '#/components/schemas/iam_api-response-single'
+        - type: object
+          properties:
+            result:
+              type: object
+    bill-subs-api_user_subscription_response_collection:
+      allOf:
+        - $ref: '#/components/schemas/bill-subs-api_api-response-collection'
+        - type: object
+          properties:
+            result:
+              type: array
+              items:
+                $ref: '#/components/schemas/bill-subs-api_subscription'
+    bill-subs-api_user_subscription_response_single:
+      allOf:
+        - $ref: '#/components/schemas/bill-subs-api_api-response-single'
+        - type: object
+          properties:
+            result:
+              type: object
+    iam_response_collection:
+      allOf:
+        - $ref: '#/components/schemas/iam_api-response-collection'
+        - type: object
+          properties:
+            result:
+              type: array
+              items:
+                type: object
+    iam_response_create:
+      allOf:
+        - $ref: '#/components/schemas/iam_api-response-single'
+        - type: object
+          properties:
+            result:
+              allOf:
+                - type: object
+                - type: object
+                  properties:
+                    value:
+                      $ref: '#/components/schemas/iam_value'
+    iam_api-response-single-id:
+      allOf:
+        - $ref: '#/components/schemas/iam_api-response-common'
+        - properties:
+            result:
+              type: object
+              nullable: true
+              required:
+                - id
+              properties:
+                id:
+                  $ref: >-
+                    #/components/schemas/iam_common_components-schemas-identifier
+      type: object
+    iam_response_single:
+      allOf:
+        - $ref: '#/components/schemas/iam_api-response-single'
+        - type: object
+          properties:
+            result:
+              type: object
+    iam_response_single_value:
+      allOf:
+        - $ref: '#/components/schemas/iam_api-response-single'
+        - type: object
+          properties:
+            result:
+              $ref: '#/components/schemas/iam_value'
+    iam_schemas-response_collection:
+      allOf:
+        - $ref: '#/components/schemas/iam_api-response-collection'
+        - type: object
+          properties:
+            result:
+              type: array
+              example:
+                - id: 7cf72faf220841aabcfdfab81c43c4f6
+                  name: Billing Read
+                  scopes:
+                    - com.cloudflare.api.account
+                - id: 9d24387c6e8544e2bc4024a03991339f
+                  name: 'Load Balancing: Monitors and Pools Read'
+                  scopes:
+                    - com.cloudflare.api.account
+                - id: d2a1802cc9a34e30852f8b33869b2f3c
+                  name: 'Load Balancing: Monitors and Pools Write'
+                  scopes:
+                    - com.cloudflare.api.account
+                - id: 8b47d2786a534c08a1f94ee8f9f599ef
+                  name: Workers KV Storage Read
+                  scopes:
+                    - com.cloudflare.api.account
+                - id: f7f0eda5697f475c90846e879bab8666
+                  name: Workers KV Storage Write
+                  scopes:
+                    - com.cloudflare.api.account
+                - id: 1a71c399035b4950a1bd1466bbe4f420
+                  name: Workers Scripts Read
+                  scopes:
+                    - com.cloudflare.api.account
+                - id: e086da7e2179491d91ee5f35b3ca210a
+                  name: Workers Scripts Write
+                  scopes:
+                    - com.cloudflare.api.account
+              items:
+                type: object
+    iam_response_single_segment:
+      allOf:
+        - $ref: '#/components/schemas/iam_api-response-single'
+        - type: object
+          properties:
+            result:
+              required:
+                - id
+                - status
+              properties:
+                expires_on:
+                  $ref: '#/components/schemas/iam_expires_on'
+                id:
+                  $ref: '#/components/schemas/iam_components-schemas-identifier'
+                not_before:
+                  $ref: '#/components/schemas/iam_not_before'
+                status:
+                  $ref: '#/components/schemas/iam_status'
+info:
+  title: ' user/'
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+paths:
+  /user/audit_logs:
+    get:
+      tags:
+        - - - - - - - Audit Logs
+      summary: Get user audit logs
+      description: >-
+        Gets a list of audit logs for a user account. Can be filtered by who
+        made the change, on which zone, and the timeframe of the change.
+      operationId: audit-logs-get-user-audit-logs
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+            description: Finds a specific log by its ID.
+            example: f174be97-19b1-40d6-954d-70cd5fbd52db
+        - name: export
+          in: query
+          schema:
+            type: boolean
+            description: Indicates that this request is an export of logs in CSV format.
+            example: true
+        - name: action.type
+          in: query
+          schema:
+            type: string
+            description: Filters by the action type.
+            example: add
+        - name: actor.ip
+          in: query
+          schema:
+            type: string
+            description: >-
+              Filters by the IP address of the request that made the change by
+              specific IP address or valid CIDR Range.
+            example: 17.168.228.63
+        - name: actor.email
+          in: query
+          schema:
+            type: string
+            format: email
+            description: Filters by the email address of the actor that made the change.
+            example: alice@example.com
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date-time
+            description: >-
+              Limits the returned results to logs newer than the specified date.
+              This can be a date string `2019-04-30` or an absolute timestamp
+              that conforms to RFC3339.
+            example: '2019-04-30T01:12:20Z'
+        - name: before
+          in: query
+          schema:
+            type: string
+            format: date-time
+            description: >-
+              Limits the returned results to logs older than the specified date.
+              This can be a date string `2019-04-30` or an absolute timestamp
+              that conforms to RFC3339.
+            example: '2019-04-30T01:12:20Z'
+        - name: zone.name
+          in: query
+          schema:
+            type: string
+            description: Filters by the name of the zone associated to the change.
+            example: example.com
+        - name: direction
+          in: query
+          schema:
+            type: string
+            description: Changes the direction of the chronological sorting.
+            enum:
+              - desc
+              - asc
+            default: desc
+            example: desc
+        - name: per_page
+          in: query
+          schema:
+            type: number
+            description: Sets the number of results to return per page.
+            default: 100
+            example: 25
+            minimum: 1
+            maximum: 1000
+        - name: page
+          in: query
+          schema:
+            type: number
+            description: Defines which page of results to return.
+            default: 1
+            example: 50
+            minimum: 1
+        - name: hide_user_logs
+          in: query
+          schema:
+            type: boolean
+            description: Indicates whether or not to hide user level audit logs.
+            default: false
+      responses:
+        '200':
+          description: Get user audit logs response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/aaa_audit_logs_response_collection'
+        4XX:
+          description: Get user audit logs response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/aaa_audit_logs_response_collection'
+                  - $ref: '#/components/schemas/aaa_api-response-common-failure'
+      security:
+        - api_token: []
+        - api_email: []
+          api_key: []
+  /user/billing/history:
+    get:
+      tags:
+        - - - - - - - User Billing History
+      summary: Billing History Details
+      description: Accesses your billing history object.
+      operationId: user-billing-history-(-deprecated)-billing-history-details
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: number
+            description: Page number of paginated results.
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          schema:
+            type: number
+            description: Number of items per page.
+            default: 20
+            minimum: 5
+            maximum: 50
+        - name: order
+          in: query
+          schema:
+            type: string
+            description: Field to order billing history by.
+            enum:
+              - type
+              - occured_at
+              - action
+            example: occured_at
+        - name: occured_at
+          in: query
+          schema:
+            $ref: '#/components/schemas/bill-subs-api_occurred_at'
+        - name: occurred_at
+          in: query
+          schema:
+            $ref: '#/components/schemas/bill-subs-api_occurred_at'
+        - name: type
+          in: query
+          schema:
+            type: string
+            description: The billing item type.
+            example: charge
+            readOnly: true
+            maxLength: 30
+        - name: action
+          in: query
+          schema:
+            type: string
+            description: The billing item action.
+            example: subscription
+            readOnly: true
+            maxLength: 30
+      responses:
+        '200':
+          description: Billing History Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bill-subs-api_billing_history_collection'
+        4XX:
+          description: Billing History Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/bill-subs-api_billing_history_collection
+                  - $ref: >-
+                      #/components/schemas/bill-subs-api_api-response-common-failure
+      deprecated: true
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/billing/profile:
+    get:
+      tags:
+        - - - - - - - User Billing Profile
+      summary: Billing Profile Details
+      description: Accesses your billing profile object.
+      operationId: user-billing-profile-(-deprecated)-billing-profile-details
+      responses:
+        '200':
+          description: Billing Profile Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bill-subs-api_billing_response_single'
+        4XX:
+          description: Billing Profile Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/bill-subs-api_billing_response_single'
+                  - $ref: >-
+                      #/components/schemas/bill-subs-api_api-response-common-failure
+      deprecated: true
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/firewall/access_rules/rules:
+    get:
+      tags:
+        - - - - - - - IP Access rules for a user
+      summary: List IP Access rules
+      description: >-
+        Fetches IP Access rules of the user. You can filter the results using
+        several optional parameters.
+      operationId: ip-access-rules-for-a-user-list-ip-access-rules
+      parameters:
+        - name: filters
+          in: query
+          schema:
+            $ref: '#/components/schemas/legacy-jhs_schemas-filters'
+        - name: egs-pagination.json
+          in: query
+          schema:
+            $ref: '#/components/schemas/legacy-jhs_egs-pagination'
+        - name: page
+          in: query
+          schema:
+            type: number
+            description: Requested page within paginated list of results.
+            example: 1
+        - name: per_page
+          in: query
+          schema:
+            type: number
+            description: Maximum number of results requested.
+            example: 20
+        - name: order
+          in: query
+          schema:
+            type: string
+            description: The field used to sort returned rules.
+            enum:
+              - configuration.target
+              - configuration.value
+              - mode
+            example: mode
+        - name: direction
+          in: query
+          schema:
+            type: string
+            description: The direction used to sort returned rules.
+            enum:
+              - asc
+              - desc
+            example: desc
+      responses:
+        '200':
+          description: List IP Access rules response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/legacy-jhs_rule_collection_response'
+        4xx:
+          description: List IP Access rules response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/legacy-jhs_rule_collection_response'
+                  - $ref: >-
+                      #/components/schemas/legacy-jhs_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+        - api_token: []
+    post:
+      tags:
+        - - - - - - - IP Access rules for a user
+      summary: Create an IP Access rule
+      description: >-
+        Creates a new IP Access rule for all zones owned by the current user.
+
+
+        Note: To create an IP Access rule that applies to a specific zone, refer
+        to the [IP Access rules for a zone](#ip-access-rules-for-a-zone)
+        endpoints.
+      operationId: ip-access-rules-for-a-user-create-an-ip-access-rule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - mode
+                - configuration
+              properties:
+                configuration:
+                  $ref: '#/components/schemas/legacy-jhs_schemas-configuration'
+                mode:
+                  $ref: '#/components/schemas/legacy-jhs_schemas-mode'
+                notes:
+                  $ref: '#/components/schemas/legacy-jhs_notes'
+      responses:
+        '200':
+          description: Create an IP Access rule response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/legacy-jhs_rule_single_response'
+        4xx:
+          description: Create an IP Access rule response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/legacy-jhs_rule_single_response'
+                  - $ref: >-
+                      #/components/schemas/legacy-jhs_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+        - api_token: []
+  /user/firewall/access_rules/rules/{identifier}:
+    delete:
+      tags:
+        - - - - - - - IP Access rules for a user
+      summary: Delete an IP Access rule
+      description: >-
+        Deletes an IP Access rule at the user level.
+
+
+        Note: Deleting a user-level rule will affect all zones owned by the
+        user.
+      operationId: ip-access-rules-for-a-user-delete-an-ip-access-rule
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/legacy-jhs_rule_components-schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Delete an IP Access rule response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/legacy-jhs_rule_single_id_response'
+        4xx:
+          description: Delete an IP Access rule response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/legacy-jhs_rule_single_id_response'
+                  - $ref: >-
+                      #/components/schemas/legacy-jhs_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+        - api_token: []
+    patch:
+      tags:
+        - - - - - - - IP Access rules for a user
+      summary: Update an IP Access rule
+      description: >-
+        Updates an IP Access rule defined at the user level. You can only update
+        the rule action (`mode` parameter) and notes.
+      operationId: ip-access-rules-for-a-user-update-an-ip-access-rule
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/legacy-jhs_rule_components-schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                mode:
+                  $ref: '#/components/schemas/legacy-jhs_schemas-mode'
+                notes:
+                  $ref: '#/components/schemas/legacy-jhs_notes'
+      responses:
+        '200':
+          description: Update an IP Access rule response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/legacy-jhs_rule_single_response'
+        4xx:
+          description: Update an IP Access rule response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/legacy-jhs_rule_single_response'
+                  - $ref: >-
+                      #/components/schemas/legacy-jhs_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+        - api_token: []
+  /user/invites:
+    get:
+      tags:
+        - - - - - - - User's Invites
+      summary: List Invitations
+      description: Lists all invitations associated with my user.
+      operationId: user'-s-invites-list-invitations
+      responses:
+        '200':
+          description: List Invitations response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_schemas-collection_invite_response'
+        4XX:
+          description: List Invitations response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/iam_schemas-collection_invite_response
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+  /user/invites/{invite_id}:
+    get:
+      tags:
+        - - - - - - - User's Invites
+      summary: Invitation Details
+      description: Gets the details of an invitation.
+      operationId: user'-s-invites-invitation-details
+      parameters:
+        - name: invite_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/iam_invite_components-schemas-identifier'
+      responses:
+        '200':
+          description: Invitation Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_single_invite_response'
+        4XX:
+          description: Invitation Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_single_invite_response'
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+    patch:
+      tags:
+        - - - - - - - User's Invites
+      summary: Respond to Invitation
+      description: Responds to an invitation.
+      operationId: user'-s-invites-respond-to-invitation
+      parameters:
+        - name: invite_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/iam_invite_components-schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  description: >-
+                    Status of your response to the invitation (rejected or
+                    accepted).
+                  enum:
+                    - accepted
+                    - rejected
+                  example: accepted
+      responses:
+        '200':
+          description: Respond to Invitation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_single_invite_response'
+        4XX:
+          description: Respond to Invitation response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_single_invite_response'
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+  /user/load_balancers/monitors:
+    get:
+      tags:
+        - - - - - - - Load Balancer Monitors
+      summary: List Monitors
+      description: List configured monitors for a user.
+      operationId: load-balancer-monitors-list-monitors
+      responses:
+        '200':
+          description: List Monitors response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/load-balancing_monitor-response-collection
+        4XX:
+          description: List Monitors response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/load-balancing_monitor-response-collection
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+    post:
+      tags:
+        - - - - - - - Load Balancer Monitors
+      summary: Create Monitor
+      description: Create a configured monitor.
+      operationId: load-balancer-monitors-create-monitor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/load-balancing_monitor-editable'
+                - required:
+                    - expected_codes
+      responses:
+        '200':
+          description: Create Monitor response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_monitor-response-single'
+        4XX:
+          description: Create Monitor response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/load-balancing_monitor-response-single
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/load_balancers/monitors/{monitor_id}:
+    delete:
+      tags:
+        - - - - - - - Load Balancer Monitors
+      summary: Delete Monitor
+      description: Delete a configured monitor.
+      operationId: load-balancer-monitors-delete-monitor
+      parameters:
+        - name: monitor_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/load-balancing_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Delete Monitor response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_id_response'
+        4XX:
+          description: Delete Monitor response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/load-balancing_id_response'
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+    get:
+      tags:
+        - - - - - - - Load Balancer Monitors
+      summary: Monitor Details
+      description: List a single configured monitor for a user.
+      operationId: load-balancer-monitors-monitor-details
+      parameters:
+        - name: monitor_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/load-balancing_identifier'
+      responses:
+        '200':
+          description: Monitor Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_monitor-response-single'
+        4XX:
+          description: Monitor Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/load-balancing_monitor-response-single
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+    patch:
+      tags:
+        - - - - - - - Load Balancer Monitors
+      summary: Patch Monitor
+      description: >-
+        Apply changes to an existing monitor, overwriting the supplied
+        properties.
+      operationId: load-balancer-monitors-patch-monitor
+      parameters:
+        - name: monitor_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/load-balancing_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/load-balancing_monitor-editable'
+                - required:
+                    - expected_codes
+      responses:
+        '200':
+          description: Patch Monitor response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_monitor-response-single'
+        4XX:
+          description: Patch Monitor response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/load-balancing_monitor-response-single
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+    put:
+      tags:
+        - - - - - - - Load Balancer Monitors
+      summary: Update Monitor
+      description: Modify a configured monitor.
+      operationId: load-balancer-monitors-update-monitor
+      parameters:
+        - name: monitor_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/load-balancing_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/load-balancing_monitor-editable'
+                - required:
+                    - expected_codes
+      responses:
+        '200':
+          description: Update Monitor response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_monitor-response-single'
+        4XX:
+          description: Update Monitor response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/load-balancing_monitor-response-single
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/load_balancers/monitors/{monitor_id}/preview:
+    post:
+      tags:
+        - - - - - - - Load Balancer Monitors
+      summary: Preview Monitor
+      description: >-
+        Preview pools using the specified monitor with provided monitor details.
+        The returned preview_id can be used in the preview endpoint to retrieve
+        the results.
+      operationId: load-balancer-monitors-preview-monitor
+      parameters:
+        - name: monitor_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/load-balancing_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/load-balancing_monitor-editable'
+                - required:
+                    - expected_codes
+      responses:
+        '200':
+          description: Preview Monitor response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_preview_response'
+        4XX:
+          description: Preview Monitor response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/load-balancing_preview_response'
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/load_balancers/monitors/{monitor_id}/references:
+    get:
+      tags:
+        - - - - - - - Load Balancer Monitors
+      summary: List Monitor References
+      description: Get the list of resources that reference the provided monitor.
+      operationId: load-balancer-monitors-list-monitor-references
+      parameters:
+        - name: monitor_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/load-balancing_identifier'
+      responses:
+        '200':
+          description: List Monitor References response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_references_response'
+        4XX:
+          description: List Monitor References response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/load-balancing_references_response'
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/load_balancers/pools:
+    get:
+      tags:
+        - - - - - - - Load Balancer Pools
+      summary: List Pools
+      description: List configured pools.
+      operationId: load-balancer-pools-list-pools
+      parameters:
+        - name: monitor
+          in: query
+          schema:
+            description: >-
+              The ID of the Monitor to use for checking the health of origins
+              within this pool.
+      responses:
+        '200':
+          description: List Pools response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/load-balancing_schemas-response_collection
+        4XX:
+          description: List Pools response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/load-balancing_schemas-response_collection
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+    patch:
+      tags:
+        - - - - - - - Load Balancer Pools
+      summary: Patch Pools
+      description: >-
+        Apply changes to a number of existing pools, overwriting the supplied
+        properties. Pools are ordered by ascending `name`. Returns the list of
+        affected pools. Supports the standard pagination query parameters,
+        either `limit`/`offset` or `per_page`/`page`.
+      operationId: load-balancer-pools-patch-pools
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                notification_email:
+                  $ref: >-
+                    #/components/schemas/load-balancing_patch_pools_notification_email
+      responses:
+        '200':
+          description: Patch Pools response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/load-balancing_schemas-response_collection
+        4XX:
+          description: Patch Pools response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/load-balancing_schemas-response_collection
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+    post:
+      tags:
+        - - - - - - - Load Balancer Pools
+      summary: Create Pool
+      description: Create a new pool.
+      operationId: load-balancer-pools-create-pool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - origins
+                - name
+              properties:
+                check_regions:
+                  $ref: '#/components/schemas/load-balancing_check_regions'
+                description:
+                  $ref: '#/components/schemas/load-balancing_schemas-description'
+                enabled:
+                  $ref: '#/components/schemas/load-balancing_enabled'
+                latitude:
+                  $ref: '#/components/schemas/load-balancing_latitude'
+                load_shedding:
+                  $ref: '#/components/schemas/load-balancing_load_shedding'
+                longitude:
+                  $ref: '#/components/schemas/load-balancing_longitude'
+                minimum_origins:
+                  $ref: '#/components/schemas/load-balancing_minimum_origins'
+                monitor:
+                  $ref: '#/components/schemas/load-balancing_monitor_id'
+                name:
+                  $ref: '#/components/schemas/load-balancing_name'
+                notification_email:
+                  $ref: '#/components/schemas/load-balancing_notification_email'
+                notification_filter:
+                  $ref: '#/components/schemas/load-balancing_notification_filter'
+                origin_steering:
+                  $ref: '#/components/schemas/load-balancing_origin_steering'
+                origins:
+                  $ref: '#/components/schemas/load-balancing_origins'
+      responses:
+        '200':
+          description: Create Pool response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_schemas-single_response'
+        4XX:
+          description: Create Pool response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/load-balancing_schemas-single_response
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/load_balancers/pools/{pool_id}:
+    delete:
+      tags:
+        - - - - - - - Load Balancer Pools
+      summary: Delete Pool
+      description: Delete a configured pool.
+      operationId: load-balancer-pools-delete-pool
+      parameters:
+        - name: pool_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Delete Pool response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_schemas-id_response'
+        4XX:
+          description: Delete Pool response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/load-balancing_schemas-id_response'
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+    get:
+      tags:
+        - - - - - - - Load Balancer Pools
+      summary: Pool Details
+      description: Fetch a single configured pool.
+      operationId: load-balancer-pools-pool-details
+      parameters:
+        - name: pool_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      responses:
+        '200':
+          description: Pool Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_schemas-single_response'
+        4XX:
+          description: Pool Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/load-balancing_schemas-single_response
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+    patch:
+      tags:
+        - - - - - - - Load Balancer Pools
+      summary: Patch Pool
+      description: Apply changes to an existing pool, overwriting the supplied properties.
+      operationId: load-balancer-pools-patch-pool
+      parameters:
+        - name: pool_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                check_regions:
+                  $ref: '#/components/schemas/load-balancing_check_regions'
+                description:
+                  $ref: '#/components/schemas/load-balancing_schemas-description'
+                disabled_at:
+                  $ref: '#/components/schemas/load-balancing_schemas-disabled_at'
+                enabled:
+                  $ref: '#/components/schemas/load-balancing_enabled'
+                latitude:
+                  $ref: '#/components/schemas/load-balancing_latitude'
+                load_shedding:
+                  $ref: '#/components/schemas/load-balancing_load_shedding'
+                longitude:
+                  $ref: '#/components/schemas/load-balancing_longitude'
+                minimum_origins:
+                  $ref: '#/components/schemas/load-balancing_minimum_origins'
+                monitor:
+                  $ref: '#/components/schemas/load-balancing_monitor_id'
+                name:
+                  $ref: '#/components/schemas/load-balancing_name'
+                notification_email:
+                  $ref: '#/components/schemas/load-balancing_notification_email'
+                notification_filter:
+                  $ref: '#/components/schemas/load-balancing_notification_filter'
+                origin_steering:
+                  $ref: '#/components/schemas/load-balancing_origin_steering'
+                origins:
+                  $ref: '#/components/schemas/load-balancing_origins'
+      responses:
+        '200':
+          description: Patch Pool response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_schemas-single_response'
+        4XX:
+          description: Patch Pool response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/load-balancing_schemas-single_response
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+    put:
+      tags:
+        - - - - - - - Load Balancer Pools
+      summary: Update Pool
+      description: Modify a configured pool.
+      operationId: load-balancer-pools-update-pool
+      parameters:
+        - name: pool_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - origins
+                - name
+              properties:
+                check_regions:
+                  $ref: '#/components/schemas/load-balancing_check_regions'
+                description:
+                  $ref: '#/components/schemas/load-balancing_schemas-description'
+                disabled_at:
+                  $ref: '#/components/schemas/load-balancing_schemas-disabled_at'
+                enabled:
+                  $ref: '#/components/schemas/load-balancing_enabled'
+                latitude:
+                  $ref: '#/components/schemas/load-balancing_latitude'
+                load_shedding:
+                  $ref: '#/components/schemas/load-balancing_load_shedding'
+                longitude:
+                  $ref: '#/components/schemas/load-balancing_longitude'
+                minimum_origins:
+                  $ref: '#/components/schemas/load-balancing_minimum_origins'
+                monitor:
+                  $ref: '#/components/schemas/load-balancing_monitor_id'
+                name:
+                  $ref: '#/components/schemas/load-balancing_name'
+                notification_email:
+                  $ref: '#/components/schemas/load-balancing_notification_email'
+                notification_filter:
+                  $ref: '#/components/schemas/load-balancing_notification_filter'
+                origin_steering:
+                  $ref: '#/components/schemas/load-balancing_origin_steering'
+                origins:
+                  $ref: '#/components/schemas/load-balancing_origins'
+      responses:
+        '200':
+          description: Update Pool response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_schemas-single_response'
+        4XX:
+          description: Update Pool response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/load-balancing_schemas-single_response
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/load_balancers/pools/{pool_id}/health:
+    get:
+      tags:
+        - - - - - - - Load Balancer Pools
+      summary: Pool Health Details
+      description: Fetch the latest pool health status for a single pool.
+      operationId: load-balancer-pools-pool-health-details
+      parameters:
+        - name: pool_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      responses:
+        '200':
+          description: Pool Health Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_health_details'
+        4XX:
+          description: Pool Health Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/load-balancing_health_details'
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/load_balancers/pools/{pool_id}/preview:
+    post:
+      tags:
+        - - - - - - - Load Balancer Pools
+      summary: Preview Pool
+      description: >-
+        Preview pool health using provided monitor details. The returned
+        preview_id can be used in the preview endpoint to retrieve the results.
+      operationId: load-balancer-pools-preview-pool
+      parameters:
+        - name: pool_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/load-balancing_monitor-editable'
+                - required:
+                    - expected_codes
+      responses:
+        '200':
+          description: Preview Pool response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_preview_response'
+        4XX:
+          description: Preview Pool response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/load-balancing_preview_response'
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/load_balancers/pools/{pool_id}/references:
+    get:
+      tags:
+        - - - - - - - Load Balancer Pools
+      summary: List Pool References
+      description: Get the list of resources that reference the provided pool.
+      operationId: load-balancer-pools-list-pool-references
+      parameters:
+        - name: pool_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      responses:
+        '200':
+          description: List Pool References response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/load-balancing_schemas-references_response
+        4XX:
+          description: List Pool References response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/load-balancing_schemas-references_response
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/load_balancers/preview/{preview_id}:
+    get:
+      tags:
+        - - - - - - - Load Balancer Monitors
+      summary: Preview Result
+      description: >-
+        Get the result of a previous preview operation using the provided
+        preview_id.
+      operationId: load-balancer-monitors-preview-result
+      parameters:
+        - name: preview_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/load-balancing_preview_id'
+      responses:
+        '200':
+          description: Preview Result response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_preview_result_response'
+        4XX:
+          description: Preview Result response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/load-balancing_preview_result_response
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/load_balancing_analytics/events:
+    get:
+      tags:
+        - - - - - - - Load Balancer Healthcheck Events
+      summary: List Healthcheck Events
+      description: List origin health changes.
+      operationId: load-balancer-healthcheck-events-list-healthcheck-events
+      parameters:
+        - name: until
+          in: query
+          schema:
+            $ref: '#/components/schemas/load-balancing_until'
+        - name: pool_name
+          in: query
+          schema:
+            $ref: '#/components/schemas/load-balancing_pool_name'
+        - name: origin_healthy
+          in: query
+          schema:
+            $ref: '#/components/schemas/load-balancing_origin_healthy'
+        - name: pool_id
+          in: query
+          schema:
+            $ref: '#/components/schemas/load-balancing_schemas-identifier'
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date-time
+            description: >-
+              Start date and time of requesting data period in the ISO8601
+              format.
+            example: '2016-11-11T12:00:00Z'
+        - name: origin_name
+          in: query
+          schema:
+            type: string
+            description: The name for the origin to filter.
+            example: primary-dc-1
+        - name: pool_healthy
+          in: query
+          schema:
+            type: boolean
+            description: >-
+              If true, filter events where the pool status is healthy. If false,
+              filter events where the pool status is unhealthy.
+            default: true
+            example: true
+      responses:
+        '200':
+          description: List Healthcheck Events response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/load-balancing_components-schemas-response_collection
+        4XX:
+          description: List Healthcheck Events response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/load-balancing_components-schemas-response_collection
+                  - $ref: >-
+                      #/components/schemas/load-balancing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/organizations:
+    get:
+      tags:
+        - - - - - - - User's Organizations
+      summary: List Organizations
+      description: Lists organizations the user is associated with.
+      operationId: user'-s-organizations-list-organizations
+      parameters:
+        - name: name
+          in: query
+          schema:
+            $ref: '#/components/schemas/iam_schemas-name'
+        - name: page
+          in: query
+          schema:
+            type: number
+            description: Page number of paginated results.
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          schema:
+            type: number
+            description: Number of organizations per page.
+            default: 20
+            minimum: 5
+            maximum: 50
+        - name: order
+          in: query
+          schema:
+            type: string
+            description: Field to order organizations by.
+            enum:
+              - id
+              - name
+              - status
+            example: status
+        - name: direction
+          in: query
+          schema:
+            type: string
+            description: Direction to order organizations.
+            enum:
+              - asc
+              - desc
+            example: desc
+        - name: match
+          in: query
+          schema:
+            type: string
+            description: Whether to match all search requirements or at least one (any).
+            enum:
+              - any
+              - all
+            default: all
+        - name: status
+          in: query
+          schema:
+            type: string
+            description: >-
+              Whether the user is a member of the organization or has an
+              inivitation pending.
+            enum:
+              - member
+              - invited
+            example: member
+      responses:
+        '200':
+          description: List Organizations response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_collection_organization_response'
+        4XX:
+          description: List Organizations response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_collection_organization_response'
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+  /user/organizations/{organization_id}:
+    delete:
+      tags:
+        - - - - - - - User's Organizations
+      summary: Leave Organization
+      description: Removes association to an organization.
+      operationId: user'-s-organizations-leave-organization
+      parameters:
+        - name: organization_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/iam_common_components-schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Leave Organization response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    $ref: >-
+                      #/components/schemas/iam_common_components-schemas-identifier
+        4XX:
+          description: Leave Organization response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      id:
+                        $ref: >-
+                          #/components/schemas/iam_common_components-schemas-identifier
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+    get:
+      tags:
+        - - - - - - - User's Organizations
+      summary: Organization Details
+      description: Gets a specific organization the user is associated with.
+      operationId: user'-s-organizations-organization-details
+      parameters:
+        - name: organization_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/iam_common_components-schemas-identifier'
+      responses:
+        '200':
+          description: Organization Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_single_organization_response'
+        4XX:
+          description: Organization Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_single_organization_response'
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+  /user/subscriptions:
+    get:
+      tags:
+        - - - - - - - User Subscription
+      summary: Get User Subscriptions
+      description: Lists all of a user's subscriptions.
+      operationId: user-subscription-get-user-subscriptions
+      responses:
+        '200':
+          description: Get User Subscriptions response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/bill-subs-api_user_subscription_response_collection
+        4XX:
+          description: Get User Subscriptions response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/bill-subs-api_user_subscription_response_collection
+                  - $ref: >-
+                      #/components/schemas/bill-subs-api_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/subscriptions/{identifier}:
+    delete:
+      tags:
+        - - - - - - - User Subscription
+      summary: Delete User Subscription
+      description: Deletes a user's subscription.
+      operationId: user-subscription-delete-user-subscription
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/bill-subs-api_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Delete User Subscription response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subscription_id:
+                    $ref: '#/components/schemas/bill-subs-api_schemas-identifier'
+        4XX:
+          description: Delete User Subscription response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      subscription_id:
+                        $ref: '#/components/schemas/bill-subs-api_schemas-identifier'
+                  - $ref: >-
+                      #/components/schemas/bill-subs-api_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+    put:
+      tags:
+        - - - - - - - User Subscription
+      summary: Update User Subscription
+      description: Updates a user's subscriptions.
+      operationId: user-subscription-update-user-subscription
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/bill-subs-api_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/bill-subs-api_subscription-v2'
+      responses:
+        '200':
+          description: Update User Subscription response
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/bill-subs-api_user_subscription_response_single
+        4XX:
+          description: Update User Subscription response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: >-
+                      #/components/schemas/bill-subs-api_user_subscription_response_single
+                  - $ref: >-
+                      #/components/schemas/bill-subs-api_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+          api_token: []
+  /user/tokens:
+    get:
+      tags:
+        - - - - - - - User API Tokens
+      summary: List Tokens
+      description: List all access tokens you created.
+      operationId: user-api-tokens-list-tokens
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: number
+            description: Page number of paginated results.
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          schema:
+            type: number
+            description: Maximum number of results per page.
+            default: 20
+            minimum: 5
+            maximum: 50
+        - name: direction
+          in: query
+          schema:
+            type: string
+            description: Direction to order results.
+            enum:
+              - asc
+              - desc
+            example: desc
+      responses:
+        '200':
+          description: List Tokens response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_response_collection'
+        4XX:
+          description: List Tokens response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_response_collection'
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_token: []
+    post:
+      tags:
+        - - - - - - - User API Tokens
+      summary: Create Token
+      description: Create a new access token.
+      operationId: user-api-tokens-create-token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/iam_create_payload'
+      responses:
+        '200':
+          description: Create Token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_response_create'
+        4XX:
+          description: Create Token response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_response_create'
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_token: []
+  /user/tokens/{token_id}:
+    delete:
+      tags:
+        - - - - - - - User API Tokens
+      summary: Delete Token
+      description: Destroy a token.
+      operationId: user-api-tokens-delete-token
+      parameters:
+        - name: token_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/iam_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Delete Token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_api-response-single-id'
+        4XX:
+          description: Delete Token response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_api-response-single-id'
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_token: []
+    get:
+      tags:
+        - - - - - - - User API Tokens
+      summary: Token Details
+      description: Get information about a specific token.
+      operationId: user-api-tokens-token-details
+      parameters:
+        - name: token_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/iam_schemas-identifier'
+      responses:
+        '200':
+          description: Token Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_response_single'
+        4XX:
+          description: Token Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_response_single'
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_token: []
+    put:
+      tags:
+        - - - - - - - User API Tokens
+      summary: Update Token
+      description: Update an existing token.
+      operationId: user-api-tokens-update-token
+      parameters:
+        - name: token_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/iam_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/iam_schemas-token'
+      responses:
+        '200':
+          description: Update Token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_response_single'
+        4XX:
+          description: Update Token response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_response_single'
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_token: []
+  /user/tokens/{token_id}/value:
+    put:
+      tags:
+        - - - - - - - User API Tokens
+      summary: Roll Token
+      description: Roll the token secret.
+      operationId: user-api-tokens-roll-token
+      parameters:
+        - name: token_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/iam_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Roll Token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_response_single_value'
+        4XX:
+          description: Roll Token response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_response_single_value'
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_token: []
+  /user/tokens/permission_groups:
+    get:
+      tags:
+        - - - - - - - Permission Groups
+      summary: List Permission Groups
+      description: Find all available permission groups.
+      operationId: permission-groups-list-permission-groups
+      responses:
+        '200':
+          description: List Permission Groups response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_schemas-response_collection'
+        4XX:
+          description: List Permission Groups response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_schemas-response_collection'
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_token: []
+  /user/tokens/verify:
+    get:
+      tags:
+        - - - - - - - User API Tokens
+      summary: Verify Token
+      description: Test whether a token works.
+      operationId: user-api-tokens-verify-token
+      responses:
+        '200':
+          description: Verify Token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_response_single_segment'
+        4XX:
+          description: Verify Token response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_response_single_segment'
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_token: []
+security:
+  - api_email: []
+    api_key: []
+  - api_token: []
+  - user_service_key: []
+servers:
+  - url: https://api.cloudflare.com/client/v4
+    description: Client API
+tags: []

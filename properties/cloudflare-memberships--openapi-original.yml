@@ -1,0 +1,152 @@
+openapi: 3.0.3
+components:
+  schemas:
+    iam_single_membership_response:
+      allOf:
+        - $ref: '#/components/schemas/iam_api-response-single'
+        - type: object
+          properties:
+            result:
+              type: object
+info:
+  title: ' memberships/'
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+paths:
+  /memberships/{membership_id}:
+    delete:
+      tags:
+        - - - - - - - User's Account Memberships
+      summary: Delete Membership
+      description: Remove the associated member from an account.
+      operationId: user'-s-account-memberships-delete-membership
+      parameters:
+        - name: membership_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/iam_membership_components-schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Delete Membership response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_api-response-single'
+                  - type: object
+                    properties:
+                      result:
+                        properties:
+                          id:
+                            $ref: >-
+                              #/components/schemas/iam_membership_components-schemas-identifier
+        4XX:
+          description: Delete Membership response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - allOf:
+                      - $ref: '#/components/schemas/iam_api-response-single'
+                      - type: object
+                        properties:
+                          result:
+                            properties:
+                              id:
+                                $ref: >-
+                                  #/components/schemas/iam_membership_components-schemas-identifier
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+    get:
+      tags:
+        - - - - - - - User's Account Memberships
+      summary: Membership Details
+      description: Get a specific membership.
+      operationId: user'-s-account-memberships-membership-details
+      parameters:
+        - name: membership_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/iam_membership_components-schemas-identifier'
+      responses:
+        '200':
+          description: Membership Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_single_membership_response'
+        4XX:
+          description: Membership Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_single_membership_response'
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+    put:
+      tags:
+        - - - - - - - User's Account Memberships
+      summary: Update Membership
+      description: Accept or reject this account invitation.
+      operationId: user'-s-account-memberships-update-membership
+      parameters:
+        - name: membership_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/iam_membership_components-schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - status
+              properties:
+                status:
+                  description: Whether to accept or reject this account invitation.
+                  enum:
+                    - accepted
+                    - rejected
+                  example: accepted
+      responses:
+        '200':
+          description: Update Membership response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_single_membership_response'
+        4XX:
+          description: Update Membership response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/iam_single_membership_response'
+                  - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+        - api_email: []
+          api_key: []
+security:
+  - api_email: []
+    api_key: []
+  - api_token: []
+  - user_service_key: []
+servers:
+  - url: https://api.cloudflare.com/client/v4
+    description: Client API
+tags: []
