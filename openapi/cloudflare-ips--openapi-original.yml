@@ -1,0 +1,124 @@
+openapi: 3.0.3
+components:
+  schemas:
+    addressing_api-response-collection:
+      allOf:
+        - $ref: '#/components/schemas/addressing_api-response-common'
+        - properties:
+            result:
+              type: array
+              nullable: true
+              items: {}
+            result_info:
+              $ref: '#/components/schemas/addressing_result_info'
+      type: object
+info:
+  title: ' ips/'
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+paths:
+  /accounts/{account_id}/addressing/address_maps/{address_map_id}/ips/{ip_address}:
+    delete:
+      tags:
+        - - - - - - - IP Address Management Address Maps
+      summary: Remove an IP from an Address Map
+      description: Remove an IP from a particular address map.
+      operationId: ip-address-management-address-maps-remove-an-ip-from-an-address-map
+      parameters:
+        - name: ip_address
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_ip_address'
+        - name: address_map_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_identifier'
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Remove an IP from an Address Map response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/addressing_api-response-collection'
+        4XX:
+          description: Remove an IP from an Address Map response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/addressing_api-response-collection'
+                  - $ref: >-
+                      #/components/schemas/addressing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+    put:
+      tags:
+        - - - - - - - IP Address Management Address Maps
+      summary: Add an IP to an Address Map
+      description: >-
+        Add an IP from a prefix owned by the account to a particular address
+        map.
+      operationId: ip-address-management-address-maps-add-an-ip-to-an-address-map
+      parameters:
+        - name: ip_address
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_ip_address'
+        - name: address_map_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_identifier'
+        - name: account_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/addressing_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Add an IP to an Address Map response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/addressing_api-response-collection'
+        4XX:
+          description: Add an IP to an Address Map response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/addressing_api-response-collection'
+                  - $ref: >-
+                      #/components/schemas/addressing_api-response-common-failure
+      security:
+        - api_email: []
+          api_key: []
+security:
+  - api_email: []
+    api_key: []
+  - api_token: []
+  - user_service_key: []
+servers:
+  - url: https://api.cloudflare.com/client/v4
+    description: Client API
+tags: []
