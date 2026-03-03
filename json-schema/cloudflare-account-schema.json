@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/refs/heads/main/json-schema/cloudflare-account-schema.json",
+  "title": "Cloudflare Account",
+  "description": "A Cloudflare account object representing an organizational entity that owns zones, Workers, and other resources on the Cloudflare platform.",
+  "type": "object",
+  "required": ["id", "name"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The unique identifier of the account."
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the account."
+    },
+    "type": {
+      "type": "string",
+      "description": "The type of account.",
+      "enum": ["standard", "enterprise"]
+    },
+    "settings": {
+      "type": "object",
+      "description": "Account-level settings.",
+      "properties": {
+        "enforce_twofactor": {
+          "type": "boolean",
+          "description": "Whether two-factor authentication is enforced for all members."
+        },
+        "use_account_custom_ns_by_default": {
+          "type": "boolean",
+          "description": "Whether to use account custom nameservers by default."
+        },
+        "default_nameservers": {
+          "type": "string",
+          "description": "The type of default nameservers.",
+          "enum": ["cloudflare.standard", "custom.account", "custom.tenant"]
+        }
+      }
+    },
+    "created_on": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the account was created."
+    }
+  }
+}

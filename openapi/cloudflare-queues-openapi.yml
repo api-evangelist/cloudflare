@@ -1,0 +1,532 @@
+openapi: 3.1.0
+info:
+  title: Cloudflare Queues API
+  description: >-
+    The Cloudflare Queues API enables developers to create and manage message
+    queues that integrate with Cloudflare Workers. Queues support guaranteed
+    delivery, work offloading from requests, worker-to-worker communication,
+    and data buffering and batching. The API provides endpoints for queue
+    management, consumer configuration, message operations, and purging.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
+externalDocs:
+  description: Cloudflare Queues API Documentation
+  url: https://developers.cloudflare.com/api/resources/queues/
+servers:
+  - url: https://api.cloudflare.com/client/v4
+    description: Cloudflare API v4 Production Server
+tags:
+  - name: Queues
+    description: >-
+      Create, list, update, and delete message queues.
+  - name: Consumers
+    description: >-
+      Manage consumers that process messages from queues.
+  - name: Messages
+    description: >-
+      Send, pull, and acknowledge messages.
+  - name: Purge
+    description: >-
+      Purge all messages from a queue.
+security:
+  - bearerAuth: []
+paths:
+  /accounts/{account_id}/queues:
+    get:
+      operationId: listQueues
+      summary: List queues
+      description: >-
+        Returns all queues owned by the account.
+      tags:
+        - Queues
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: List of queues.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueListResponse'
+        '401':
+          description: Unauthorized.
+    post:
+      operationId: createQueue
+      summary: Create queue
+      description: >-
+        Create a new message queue for the account.
+      tags:
+        - Queues
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - queue_name
+              properties:
+                queue_name:
+                  type: string
+                  description: The name of the queue.
+      responses:
+        '200':
+          description: Queue created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueResponse'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/queues/{queue_id}:
+    get:
+      operationId: getQueue
+      summary: Get queue
+      description: >-
+        Retrieve details of a specific queue.
+      tags:
+        - Queues
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+      responses:
+        '200':
+          description: Queue details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueResponse'
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Queue not found.
+    put:
+      operationId: replaceQueue
+      summary: Replace queue configuration
+      description: >-
+        Overwrite the queue configuration.
+      tags:
+        - Queues
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                queue_name:
+                  type: string
+                  description: The new name of the queue.
+      responses:
+        '200':
+          description: Queue replaced successfully.
+        '401':
+          description: Unauthorized.
+    patch:
+      operationId: updateQueue
+      summary: Update queue settings
+      description: >-
+        Partially update queue settings.
+      tags:
+        - Queues
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                queue_name:
+                  type: string
+                  description: The new name of the queue.
+      responses:
+        '200':
+          description: Queue updated successfully.
+        '401':
+          description: Unauthorized.
+    delete:
+      operationId: deleteQueue
+      summary: Delete queue
+      description: >-
+        Remove a queue and all its messages.
+      tags:
+        - Queues
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+      responses:
+        '200':
+          description: Queue deleted successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Queue not found.
+  /accounts/{account_id}/queues/{queue_id}/consumers:
+    get:
+      operationId: listQueueConsumers
+      summary: List queue consumers
+      description: >-
+        Returns the consumers configured for a queue.
+      tags:
+        - Consumers
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+      responses:
+        '200':
+          description: List of consumers.
+        '401':
+          description: Unauthorized.
+    post:
+      operationId: createQueueConsumer
+      summary: Create queue consumer
+      description: >-
+        Add a new consumer to a queue to process messages.
+      tags:
+        - Consumers
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerInput'
+      responses:
+        '200':
+          description: Consumer created successfully.
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/queues/{queue_id}/consumers/{consumer_id}:
+    get:
+      operationId: getQueueConsumer
+      summary: Get queue consumer
+      description: >-
+        Retrieve details of a specific queue consumer.
+      tags:
+        - Consumers
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+        - $ref: '#/components/parameters/ConsumerId'
+      responses:
+        '200':
+          description: Consumer details.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Consumer not found.
+    put:
+      operationId: replaceQueueConsumer
+      summary: Replace queue consumer
+      description: >-
+        Update or create a consumer for the queue.
+      tags:
+        - Consumers
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+        - $ref: '#/components/parameters/ConsumerId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerInput'
+      responses:
+        '200':
+          description: Consumer replaced successfully.
+        '401':
+          description: Unauthorized.
+    delete:
+      operationId: deleteQueueConsumer
+      summary: Delete queue consumer
+      description: >-
+        Remove a consumer from the queue.
+      tags:
+        - Consumers
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+        - $ref: '#/components/parameters/ConsumerId'
+      responses:
+        '200':
+          description: Consumer deleted successfully.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/queues/{queue_id}/messages:
+    post:
+      operationId: sendMessage
+      summary: Send message
+      description: >-
+        Send a single message to the queue.
+      tags:
+        - Messages
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageInput'
+      responses:
+        '200':
+          description: Message sent successfully.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/queues/{queue_id}/messages/batch:
+    post:
+      operationId: sendMessageBatch
+      summary: Send message batch
+      description: >-
+        Send multiple messages to the queue in a single request.
+      tags:
+        - Messages
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messages:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/MessageInput'
+      responses:
+        '200':
+          description: Messages sent successfully.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/queues/{queue_id}/messages/pull:
+    post:
+      operationId: pullMessages
+      summary: Pull messages
+      description: >-
+        Retrieve a batch of messages from the queue for processing.
+      tags:
+        - Messages
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                visibility_timeout_ms:
+                  type: integer
+                  description: >-
+                    How long the pulled messages should be invisible to other
+                    consumers, in milliseconds.
+                batch_size:
+                  type: integer
+                  description: Maximum number of messages to pull.
+      responses:
+        '200':
+          description: Messages pulled successfully.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/queues/{queue_id}/messages/ack:
+    post:
+      operationId: ackMessages
+      summary: Acknowledge messages
+      description: >-
+        Acknowledge and optionally retry messages from the queue. Acknowledged
+        messages are permanently removed from the queue.
+      tags:
+        - Messages
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                acks:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      lease_id:
+                        type: string
+                        description: The lease ID from the pulled message.
+                retries:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      lease_id:
+                        type: string
+                        description: The lease ID of the message to retry.
+                      delay_seconds:
+                        type: integer
+                        description: Delay before the message becomes visible again.
+      responses:
+        '200':
+          description: Messages acknowledged successfully.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/queues/{queue_id}/purge:
+    get:
+      operationId: getPurgeStatus
+      summary: Get purge status
+      description: >-
+        Check the status of a queue purge operation.
+      tags:
+        - Purge
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+      responses:
+        '200':
+          description: Purge status.
+        '401':
+          description: Unauthorized.
+    post:
+      operationId: purgeQueue
+      summary: Purge queue
+      description: >-
+        Delete all messages from the queue.
+      tags:
+        - Purge
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/QueueId'
+      responses:
+        '200':
+          description: Purge initiated successfully.
+        '401':
+          description: Unauthorized.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >-
+        API token with Queues permissions.
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    QueueId:
+      name: queue_id
+      in: path
+      required: true
+      description: The unique identifier of the queue.
+      schema:
+        type: string
+    ConsumerId:
+      name: consumer_id
+      in: path
+      required: true
+      description: The unique identifier of the consumer.
+      schema:
+        type: string
+  schemas:
+    Queue:
+      type: object
+      properties:
+        queue_id:
+          type: string
+          description: The unique identifier of the queue.
+        queue_name:
+          type: string
+          description: The name of the queue.
+        created_on:
+          type: string
+          format: date-time
+          description: When the queue was created.
+        modified_on:
+          type: string
+          format: date-time
+          description: When the queue was last modified.
+        producers_total_count:
+          type: integer
+          description: Number of producers attached.
+        consumers_total_count:
+          type: integer
+          description: Number of consumers attached.
+    QueueResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Queue'
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+        messages:
+          type: array
+          items:
+            type: object
+    QueueListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Queue'
+        success:
+          type: boolean
+    ConsumerInput:
+      type: object
+      properties:
+        script_name:
+          type: string
+          description: The Worker script name that will consume messages.
+        settings:
+          type: object
+          properties:
+            batch_size:
+              type: integer
+              description: Maximum number of messages per batch.
+            max_retries:
+              type: integer
+              description: Maximum number of retries for failed messages.
+            max_wait_time_ms:
+              type: integer
+              description: Maximum time to wait for a full batch in milliseconds.
+    MessageInput:
+      type: object
+      properties:
+        body:
+          description: The message body content.
+        content_type:
+          type: string
+          description: The content type of the message body.
+          enum:
+            - json
+            - text
+            - bytes

@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/refs/heads/main/json-schema/cloudflare-dns-record-schema.json",
+  "title": "Cloudflare DNS Record",
+  "description": "A DNS record object from the Cloudflare API, representing a single DNS record entry within a zone. Supports all standard record types including A, AAAA, CNAME, MX, TXT, SRV, and more.",
+  "type": "object",
+  "required": ["id", "type", "name", "content"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The unique identifier of the DNS record."
+    },
+    "zone_id": {
+      "type": "string",
+      "description": "The zone identifier this record belongs to."
+    },
+    "zone_name": {
+      "type": "string",
+      "description": "The domain name of the zone."
+    },
+    "type": {
+      "type": "string",
+      "description": "The type of DNS record.",
+      "enum": [
+        "A", "AAAA", "CAA", "CERT", "CNAME", "DNSKEY", "DS", "HTTPS",
+        "LOC", "MX", "NAPTR", "NS", "PTR", "SMIMEA", "SRV", "SSHFP",
+        "SVCB", "TLSA", "TXT", "URI"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "description": "The DNS record name (fully qualified domain name).",
+      "maxLength": 255
+    },
+    "content": {
+      "type": "string",
+      "description": "The value of the DNS record. Content format depends on the record type."
+    },
+    "ttl": {
+      "type": "integer",
+      "description": "Time to live in seconds. A value of 1 indicates automatic TTL managed by Cloudflare.",
+      "minimum": 1,
+      "maximum": 86400
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Record priority, required for MX, SRV, and URI record types.",
+      "minimum": 0,
+      "maximum": 65535
+    },
+    "proxied": {
+      "type": "boolean",
+      "description": "Whether the record is receiving the performance and security benefits of Cloudflare's proxy."
+    },
+    "proxiable": {
+      "type": "boolean",
+      "description": "Whether the record can be proxied through Cloudflare."
+    },
+    "locked": {
+      "type": "boolean",
+      "description": "Whether the record is locked and cannot be modified."
+    },
+    "comment": {
+      "type": "string",
+      "description": "A comment about the DNS record for documentation purposes.",
+      "maxLength": 100
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 36
+      },
+      "description": "Custom tags for categorizing and filtering DNS records."
+    },
+    "data": {
+      "type": "object",
+      "description": "Structured data for record types that require additional fields (SRV, CAA, SSHFP, etc.)."
+    },
+    "meta": {
+      "type": "object",
+      "description": "Extra Cloudflare-specific metadata about the record.",
+      "properties": {
+        "auto_added": {
+          "type": "boolean",
+          "description": "Whether the record was auto-added by Cloudflare."
+        },
+        "managed_by_apps": {
+          "type": "boolean",
+          "description": "Whether the record is managed by a Cloudflare app."
+        },
+        "managed_by_argo_tunnel": {
+          "type": "boolean",
+          "description": "Whether the record is managed by a Cloudflare Tunnel."
+        },
+        "source": {
+          "type": "string",
+          "description": "The source of the DNS record."
+        }
+      }
+    },
+    "created_on": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the record was created."
+    },
+    "modified_on": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the record was last modified."
+    }
+  }
+}

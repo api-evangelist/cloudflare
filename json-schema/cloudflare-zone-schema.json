@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/refs/heads/main/json-schema/cloudflare-zone-schema.json",
+  "title": "Cloudflare Zone",
+  "description": "A zone object from the Cloudflare API, representing a domain and its associated configuration managed through Cloudflare's DNS and proxy services.",
+  "type": "object",
+  "required": ["id", "name", "status"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The unique identifier of the zone."
+    },
+    "name": {
+      "type": "string",
+      "description": "The domain name of the zone.",
+      "format": "hostname"
+    },
+    "status": {
+      "type": "string",
+      "description": "The status of the zone.",
+      "enum": ["active", "pending", "initializing", "moved", "deleted", "deactivated"]
+    },
+    "paused": {
+      "type": "boolean",
+      "description": "Whether the zone is paused, meaning Cloudflare will not proxy traffic."
+    },
+    "type": {
+      "type": "string",
+      "description": "The type of zone configuration.",
+      "enum": ["full", "partial", "secondary"]
+    },
+    "development_mode": {
+      "type": "integer",
+      "description": "Seconds remaining in development mode. Zero means development mode is off.",
+      "minimum": 0
+    },
+    "name_servers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Cloudflare-assigned nameservers for the zone."
+    },
+    "original_name_servers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The original nameservers before moving to Cloudflare."
+    },
+    "original_registrar": {
+      "type": "string",
+      "description": "The original domain registrar."
+    },
+    "original_dnshost": {
+      "type": "string",
+      "description": "The original DNS host."
+    },
+    "account": {
+      "type": "object",
+      "description": "The account that owns the zone.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The account identifier."
+        },
+        "name": {
+          "type": "string",
+          "description": "The account name."
+        }
+      }
+    },
+    "owner": {
+      "type": "object",
+      "description": "The owner of the zone.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The owner identifier."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of owner."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "The owner email address."
+        }
+      }
+    },
+    "plan": {
+      "type": "object",
+      "description": "The plan associated with the zone.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The plan identifier."
+        },
+        "name": {
+          "type": "string",
+          "description": "The plan name."
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the plan."
+        },
+        "currency": {
+          "type": "string",
+          "description": "The currency of the price."
+        },
+        "frequency": {
+          "type": "string",
+          "description": "Billing frequency.",
+          "enum": ["weekly", "monthly", "quarterly", "yearly"]
+        },
+        "is_subscribed": {
+          "type": "boolean",
+          "description": "Whether the zone is subscribed to this plan."
+        }
+      }
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Available permissions on the zone."
+    },
+    "activated_on": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "When the zone was activated on Cloudflare."
+    },
+    "created_on": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the zone was created."
+    },
+    "modified_on": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the zone was last modified."
+    }
+  }
+}

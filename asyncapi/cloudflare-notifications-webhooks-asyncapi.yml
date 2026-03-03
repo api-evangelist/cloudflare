@@ -1,0 +1,308 @@
+asyncapi: 2.6.0
+info:
+  title: Cloudflare Notifications Webhooks
+  description: >-
+    Cloudflare Notifications sends webhook events to configured endpoints when
+    various alerts fire across your account. Webhooks deliver JSON payloads
+    for events including DDoS attacks, SSL certificate expirations, origin
+    health check failures, Workers errors, and many other alertable
+    conditions. Professional and higher plans can configure generic webhooks
+    or use pre-built integrations with Slack, Discord, PagerDuty, OpsGenie,
+    and other services.
+  version: '1.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  license:
+    name: Cloudflare Terms of Service
+    url: https://www.cloudflare.com/terms/
+  externalDocs:
+    description: Cloudflare Webhook Payload Schema
+    url: https://developers.cloudflare.com/notifications/reference/webhook-payload-schema/
+servers:
+  webhookEndpoint:
+    url: '{webhookUrl}'
+    protocol: https
+    description: >-
+      Your configured webhook endpoint URL. Cloudflare sends HTTP POST
+      requests to this URL when notification alerts fire. Validate incoming
+      requests using the cf-webhook-auth header which contains your
+      configured secret value.
+    security:
+      - webhookSecret: []
+    variables:
+      webhookUrl:
+        description: The URL configured in the Cloudflare dashboard for webhook delivery.
+channels:
+  /webhook:
+    description: >-
+      Generic webhook channel that receives all notification events from
+      Cloudflare. Each notification includes the alert type, alert data,
+      and metadata about the notification policy that triggered it.
+    publish:
+      operationId: onNotificationEvent
+      summary: Receive Cloudflare notification webhook
+      message:
+        oneOf:
+          - $ref: '#/components/messages/DdosAttackL4Alert'
+          - $ref: '#/components/messages/DdosAttackL7Alert'
+          - $ref: '#/components/messages/SslCertificateAlert'
+          - $ref: '#/components/messages/HealthCheckAlert'
+          - $ref: '#/components/messages/WorkersAlert'
+          - $ref: '#/components/messages/GenericNotification'
+components:
+  securitySchemes:
+    webhookSecret:
+      type: httpApiKey
+      name: cf-webhook-auth
+      in: header
+      description: >-
+        The secret value configured when creating the webhook destination.
+        Validate this header to ensure the request originates from Cloudflare.
+  messages:
+    DdosAttackL4Alert:
+      name: DdosAttackL4Alert
+      title: DDoS Attack Layer 4 Alert
+      summary: Notification of a Layer 4 DDoS attack detected and mitigated
+      description: >-
+        Fired when Cloudflare detects and mitigates a Layer 4 DDoS attack
+        targeting your infrastructure. Contains details about the attack
+        vector, protocol, target, and mitigation actions taken.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/DdosL4Payload'
+    DdosAttackL7Alert:
+      name: DdosAttackL7Alert
+      title: DDoS Attack Layer 7 Alert
+      summary: Notification of a Layer 7 DDoS attack detected
+      description: >-
+        Fired when Cloudflare detects a Layer 7 DDoS attack targeting
+        your web application. Contains attack type, target hostname,
+        and request rate information.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/DdosL7Payload'
+    SslCertificateAlert:
+      name: SslCertificateAlert
+      title: SSL Certificate Expiration Alert
+      summary: Notification about an SSL certificate status change or upcoming expiration
+      description: >-
+        Fired when an SSL certificate is expiring soon, has expired, or
+        has a status change. Contains certificate details, hostnames, and
+        expiration information.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/SslCertificatePayload'
+    HealthCheckAlert:
+      name: HealthCheckAlert
+      title: Origin Health Check Alert
+      summary: Notification of an origin health status change
+      description: >-
+        Fired when an origin health check detects a status change such as
+        an origin becoming unhealthy or recovering. Contains the health
+        check details and failing regions.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/HealthCheckPayload'
+    WorkersAlert:
+      name: WorkersAlert
+      title: Workers Alert
+      summary: Notification about Workers script performance or error thresholds
+      description: >-
+        Fired when a Workers script exceeds configured thresholds for CPU
+        time, duration, request count, or error rates. Contains script
+        metrics and route information.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/WorkersAlertPayload'
+    GenericNotification:
+      name: GenericNotification
+      title: Generic Notification
+      summary: A generic notification event for any alert type
+      description: >-
+        Generic payload structure for any Cloudflare notification alert.
+        The data field contents vary depending on the specific alert type.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/GenericNotificationPayload'
+  schemas:
+    BaseNotification:
+      type: object
+      required:
+        - name
+        - text
+        - data
+        - ts
+      properties:
+        name:
+          type: string
+          description: The notification policy name.
+        text:
+          type: string
+          description: Human-readable description of the alert.
+        ts:
+          type: integer
+          description: Unix timestamp when the notification was generated.
+        account_id:
+          type: string
+          description: The Cloudflare account identifier.
+        policy_id:
+          type: string
+          format: uuid
+          description: The notification policy UUID.
+        policy_name:
+          type: string
+          description: Name of the notification policy.
+        alert_type:
+          type: string
+          description: Unique identifier for the alert category.
+        alert_correlation_id:
+          type: string
+          format: uuid
+          description: UUID grouping related alerts.
+        alert_event:
+          type: string
+          description: The event state of the alert.
+          enum:
+            - ALERT_STATE_EVENT_START
+            - ALERT_STATE_EVENT_END
+    DdosL4Payload:
+      allOf:
+        - $ref: '#/components/schemas/BaseNotification'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                attack_id:
+                  type: string
+                  description: Unique identifier for the attack.
+                attack_vector:
+                  type: string
+                  description: The attack vector type.
+                protocol:
+                  type: string
+                  description: The protocol targeted.
+                target_ip:
+                  type: string
+                  description: The targeted IP address.
+                target_port:
+                  type: integer
+                  description: The targeted port.
+                packets_per_second:
+                  type: integer
+                  description: Peak packets per second during the attack.
+                megabits_per_second:
+                  type: number
+                  description: Peak bandwidth in megabits per second.
+    DdosL7Payload:
+      allOf:
+        - $ref: '#/components/schemas/BaseNotification'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                attack_id:
+                  type: string
+                  description: Unique identifier for the attack.
+                attack_type:
+                  type: string
+                  description: The type of Layer 7 attack.
+                target_hostname:
+                  type: string
+                  description: The targeted hostname.
+                zone_name:
+                  type: string
+                  description: The zone name.
+                requests_per_second:
+                  type: integer
+                  description: Peak requests per second.
+    SslCertificatePayload:
+      allOf:
+        - $ref: '#/components/schemas/BaseNotification'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                certificate_id:
+                  type: string
+                  description: The certificate identifier.
+                certificate_status:
+                  type: string
+                  description: Current certificate status.
+                hostnames:
+                  type: array
+                  items:
+                    type: string
+                  description: Hostnames covered by the certificate.
+                zone_name:
+                  type: string
+                  description: The zone name.
+    HealthCheckPayload:
+      allOf:
+        - $ref: '#/components/schemas/BaseNotification'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                health_check_id:
+                  type: string
+                  description: The health check identifier.
+                health_check_name:
+                  type: string
+                  description: Name of the health check.
+                origin_ip:
+                  type: string
+                  description: The origin IP address.
+                new_health_status:
+                  type: string
+                  description: The new health status.
+                  enum:
+                    - healthy
+                    - unhealthy
+                failing_regions:
+                  type: array
+                  items:
+                    type: string
+                  description: Regions where the health check is failing.
+    WorkersAlertPayload:
+      allOf:
+        - $ref: '#/components/schemas/BaseNotification'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                cpu_time:
+                  type: number
+                  description: CPU time usage in milliseconds.
+                duration:
+                  type: number
+                  description: Request duration in milliseconds.
+                request_count:
+                  type: integer
+                  description: Total request count.
+                data_egress:
+                  type: integer
+                  description: Data egress in bytes.
+                account_script_count:
+                  type: integer
+                  description: Number of scripts in the account.
+                routes:
+                  type: array
+                  items:
+                    type: string
+                  description: Worker routes affected.
+    GenericNotificationPayload:
+      allOf:
+        - $ref: '#/components/schemas/BaseNotification'
+        - type: object
+          properties:
+            data:
+              type: object
+              description: >-
+                Alert-specific data whose structure varies depending on the
+                alert_type field.

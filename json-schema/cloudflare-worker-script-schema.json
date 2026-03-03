@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/refs/heads/main/json-schema/cloudflare-worker-script-schema.json",
+  "title": "Cloudflare Worker Script",
+  "description": "A Worker script object from the Cloudflare API, representing serverless code deployed to Cloudflare's global edge network with associated configuration, bindings, and deployment metadata.",
+  "type": "object",
+  "required": ["id"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The unique identifier of the Worker script, typically the script name."
+    },
+    "tag": {
+      "type": "string",
+      "description": "A unique tag for the Worker script used for caching and versioning."
+    },
+    "etag": {
+      "type": "string",
+      "description": "The entity tag for cache validation."
+    },
+    "handlers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of event handlers the Worker implements (e.g., fetch, scheduled, queue)."
+    },
+    "named_handlers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The handler name."
+          },
+          "type": {
+            "type": "string",
+            "description": "The handler type."
+          }
+        }
+      },
+      "description": "Named handlers for Durable Objects and other named event handling."
+    },
+    "compatibility_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The compatibility date for the Worker runtime."
+    },
+    "compatibility_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Compatibility flags enabled for the Worker."
+    },
+    "usage_model": {
+      "type": "string",
+      "description": "The usage model for billing.",
+      "enum": ["bundled", "unbound", "standard"]
+    },
+    "bindings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Binding"
+      },
+      "description": "Environment bindings configured for the Worker."
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Route identifier."
+          },
+          "pattern": {
+            "type": "string",
+            "description": "URL pattern for the route."
+          },
+          "zone_name": {
+            "type": "string",
+            "description": "Zone name for the route."
+          }
+        }
+      },
+      "description": "Routes that trigger this Worker."
+    },
+    "logpush": {
+      "type": "boolean",
+      "description": "Whether Logpush is enabled for the Worker."
+    },
+    "placement": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "description": "The placement mode for the Worker.",
+          "enum": ["smart"]
+        }
+      },
+      "description": "Smart placement configuration."
+    },
+    "tail_consumers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string",
+            "description": "The tail consumer Worker service name."
+          }
+        }
+      },
+      "description": "Workers that receive tail events from this Worker."
+    },
+    "created_on": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the Worker script was created."
+    },
+    "modified_on": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the Worker script was last modified."
+    }
+  },
+  "$defs": {
+    "Binding": {
+      "type": "object",
+      "required": ["name", "type"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The binding variable name accessible in the Worker code."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of binding.",
+          "enum": [
+            "kv_namespace",
+            "durable_object_namespace",
+            "r2_bucket",
+            "d1",
+            "service",
+            "queue",
+            "ai",
+            "vectorize",
+            "hyperdrive",
+            "secret_text",
+            "plain_text",
+            "browser",
+            "analytics_engine"
+          ]
+        },
+        "namespace_id": {
+          "type": "string",
+          "description": "Namespace ID for KV or Durable Object bindings."
+        },
+        "bucket_name": {
+          "type": "string",
+          "description": "Bucket name for R2 bindings."
+        },
+        "database_id": {
+          "type": "string",
+          "description": "Database ID for D1 bindings."
+        },
+        "queue_name": {
+          "type": "string",
+          "description": "Queue name for Queue bindings."
+        },
+        "service": {
+          "type": "string",
+          "description": "Service name for service bindings."
+        },
+        "text": {
+          "type": "string",
+          "description": "Value for plain text bindings."
+        }
+      }
+    }
+  }
+}

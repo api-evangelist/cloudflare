@@ -1,0 +1,376 @@
+openapi: 3.1.0
+info:
+  title: Cloudflare Pages API
+  description: >-
+    The Cloudflare Pages API enables developers to build automations and
+    integrate Pages with their development workflow. It provides endpoints
+    to manage projects, deployments, and builds, including creating
+    deployments, rolling back, and configuring build settings.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
+externalDocs:
+  description: Cloudflare Pages API Documentation
+  url: https://developers.cloudflare.com/pages/configuration/api/
+servers:
+  - url: https://api.cloudflare.com/client/v4
+    description: Cloudflare API v4 Production Server
+tags:
+  - name: Projects
+    description: >-
+      Manage Pages projects including creation, configuration, and deletion.
+  - name: Deployments
+    description: >-
+      Create, list, and manage deployments for Pages projects.
+security:
+  - bearerAuth: []
+paths:
+  /accounts/{account_id}/pages/projects:
+    get:
+      operationId: listPagesProjects
+      summary: List Pages projects
+      description: >-
+        Returns a list of all Pages projects for the account.
+      tags:
+        - Projects
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: List of Pages projects.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectListResponse'
+        '401':
+          description: Unauthorized.
+    post:
+      operationId: createPagesProject
+      summary: Create Pages project
+      description: >-
+        Create a new Pages project with the specified build configuration
+        and deployment settings.
+      tags:
+        - Projects
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectInput'
+      responses:
+        '200':
+          description: Project created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/pages/projects/{project_name}:
+    get:
+      operationId: getPagesProject
+      summary: Get Pages project
+      description: >-
+        Retrieve details of a specific Pages project.
+      tags:
+        - Projects
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ProjectName'
+      responses:
+        '200':
+          description: Project details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Project not found.
+    patch:
+      operationId: updatePagesProject
+      summary: Update Pages project
+      description: >-
+        Update the configuration of a Pages project.
+      tags:
+        - Projects
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ProjectName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectInput'
+      responses:
+        '200':
+          description: Project updated successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Project not found.
+    delete:
+      operationId: deletePagesProject
+      summary: Delete Pages project
+      description: >-
+        Delete a Pages project and all its deployments.
+      tags:
+        - Projects
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ProjectName'
+      responses:
+        '200':
+          description: Project deleted successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Project not found.
+  /accounts/{account_id}/pages/projects/{project_name}/deployments:
+    get:
+      operationId: listPagesDeployments
+      summary: List deployments
+      description: >-
+        Returns a list of all deployments for a Pages project.
+      tags:
+        - Deployments
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ProjectName'
+      responses:
+        '200':
+          description: List of deployments.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentListResponse'
+        '401':
+          description: Unauthorized.
+    post:
+      operationId: createPagesDeployment
+      summary: Create deployment
+      description: >-
+        Create a new deployment for a Pages project by uploading assets or
+        triggering a build from a connected repository.
+      tags:
+        - Deployments
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ProjectName'
+      responses:
+        '200':
+          description: Deployment created successfully.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}:
+    get:
+      operationId: getPagesDeployment
+      summary: Get deployment
+      description: >-
+        Retrieve details of a specific deployment including build status and
+        deployment URL.
+      tags:
+        - Deployments
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ProjectName'
+        - $ref: '#/components/parameters/DeploymentId'
+      responses:
+        '200':
+          description: Deployment details.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Deployment not found.
+    delete:
+      operationId: deletePagesDeployment
+      summary: Delete deployment
+      description: >-
+        Delete a specific deployment.
+      tags:
+        - Deployments
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ProjectName'
+        - $ref: '#/components/parameters/DeploymentId'
+      responses:
+        '200':
+          description: Deployment deleted successfully.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}/rollback:
+    post:
+      operationId: rollbackPagesDeployment
+      summary: Rollback deployment
+      description: >-
+        Rollback the production deployment to a previous deployment.
+      tags:
+        - Deployments
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ProjectName'
+        - $ref: '#/components/parameters/DeploymentId'
+      responses:
+        '200':
+          description: Rollback initiated successfully.
+        '401':
+          description: Unauthorized.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >-
+        API token with Pages permissions.
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    ProjectName:
+      name: project_name
+      in: path
+      required: true
+      description: The name of the Pages project.
+      schema:
+        type: string
+    DeploymentId:
+      name: deployment_id
+      in: path
+      required: true
+      description: The unique identifier of the deployment.
+      schema:
+        type: string
+  schemas:
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the project.
+        name:
+          type: string
+          description: The name of the project.
+        subdomain:
+          type: string
+          description: The subdomain for the project.
+        domains:
+          type: array
+          items:
+            type: string
+          description: Custom domains attached to the project.
+        production_branch:
+          type: string
+          description: The production branch name.
+        created_on:
+          type: string
+          format: date-time
+          description: When the project was created.
+        build_config:
+          type: object
+          properties:
+            build_command:
+              type: string
+              description: The build command to run.
+            destination_dir:
+              type: string
+              description: The output directory for build assets.
+            root_dir:
+              type: string
+              description: The root directory of the project.
+    ProjectInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the project.
+        production_branch:
+          type: string
+          description: The production branch name.
+        build_config:
+          type: object
+          properties:
+            build_command:
+              type: string
+            destination_dir:
+              type: string
+            root_dir:
+              type: string
+    ProjectResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Project'
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+        messages:
+          type: array
+          items:
+            type: object
+    ProjectListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+        success:
+          type: boolean
+    Deployment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the deployment.
+        url:
+          type: string
+          format: uri
+          description: The URL of the deployment.
+        environment:
+          type: string
+          enum:
+            - production
+            - preview
+          description: The deployment environment.
+        created_on:
+          type: string
+          format: date-time
+          description: When the deployment was created.
+        latest_stage:
+          type: object
+          properties:
+            name:
+              type: string
+            status:
+              type: string
+              enum:
+                - idle
+                - active
+                - canceled
+                - success
+                - failure
+    DeploymentListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Deployment'
+        success:
+          type: boolean

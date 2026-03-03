@@ -1,0 +1,203 @@
+asyncapi: 2.6.0
+info:
+  title: Cloudflare Stream Webhooks
+  description: >-
+    Cloudflare Stream sends webhook notifications when videos finish
+    processing and are ready to stream, or when a video enters an error
+    state. Webhooks can also be configured for live streaming events.
+    Configure a webhook URL in the Stream dashboard or via the API to
+    receive these notifications.
+  version: '1.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  license:
+    name: Cloudflare Terms of Service
+    url: https://www.cloudflare.com/terms/
+  externalDocs:
+    description: Cloudflare Stream Webhooks Documentation
+    url: https://developers.cloudflare.com/stream/manage-video-library/using-webhooks/
+servers:
+  webhookEndpoint:
+    url: '{webhookUrl}'
+    protocol: https
+    description: >-
+      Your configured webhook endpoint URL. Cloudflare Stream sends HTTP
+      POST requests to this URL when video processing events occur. Validate
+      the webhook-signing-key header to verify request authenticity.
+    security:
+      - signingKey: []
+    variables:
+      webhookUrl:
+        description: The notification URL configured for Stream webhooks.
+channels:
+  /webhook:
+    description: >-
+      Webhook channel that receives video processing and live streaming
+      event notifications from Cloudflare Stream.
+    publish:
+      operationId: onStreamEvent
+      summary: Receive Stream video event
+      message:
+        oneOf:
+          - $ref: '#/components/messages/VideoReady'
+          - $ref: '#/components/messages/VideoError'
+          - $ref: '#/components/messages/LiveStreamStarted'
+          - $ref: '#/components/messages/LiveStreamEnded'
+components:
+  securitySchemes:
+    signingKey:
+      type: httpApiKey
+      name: Webhook-Signature
+      in: header
+      description: >-
+        HMAC signature for verifying webhook authenticity. The signature is
+        computed using the webhook signing secret and the request body.
+  messages:
+    VideoReady:
+      name: VideoReady
+      title: Video Ready
+      summary: Notification that a video has been processed and is ready to stream
+      description: >-
+        Sent when a video upload has been successfully processed, encoded,
+        and is available for playback. The payload includes the video UID,
+        metadata, playback URLs, and duration.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/VideoReadyPayload'
+    VideoError:
+      name: VideoError
+      title: Video Error
+      summary: Notification that video processing has encountered an error
+      description: >-
+        Sent when a video upload fails during processing or encoding. The
+        payload includes error details and the video UID for troubleshooting.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/VideoErrorPayload'
+    LiveStreamStarted:
+      name: LiveStreamStarted
+      title: Live Stream Started
+      summary: Notification that a live stream has started
+      description: >-
+        Sent when a live input begins receiving and broadcasting a live
+        stream via RTMPS or SRT.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/LiveStreamEventPayload'
+    LiveStreamEnded:
+      name: LiveStreamEnded
+      title: Live Stream Ended
+      summary: Notification that a live stream has ended
+      description: >-
+        Sent when a live stream stops broadcasting. If recording is enabled,
+        the recorded video will begin processing.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/LiveStreamEventPayload'
+  schemas:
+    VideoReadyPayload:
+      type: object
+      required:
+        - uid
+        - readyToStream
+      properties:
+        uid:
+          type: string
+          description: The unique identifier of the video.
+        readyToStream:
+          type: boolean
+          description: Whether the video is ready for playback.
+          const: true
+        readyToStreamAt:
+          type: string
+          format: date-time
+          description: When the video became ready for streaming.
+        thumbnail:
+          type: string
+          format: uri
+          description: URL of the video thumbnail.
+        playback:
+          type: object
+          properties:
+            hls:
+              type: string
+              format: uri
+              description: HLS playback URL.
+            dash:
+              type: string
+              format: uri
+              description: DASH playback URL.
+        duration:
+          type: number
+          description: Duration of the video in seconds.
+        size:
+          type: integer
+          description: Size of the video in bytes.
+        meta:
+          type: object
+          description: User-defined metadata associated with the video.
+        created:
+          type: string
+          format: date-time
+          description: When the video was uploaded.
+        modified:
+          type: string
+          format: date-time
+          description: When the video was last modified.
+    VideoErrorPayload:
+      type: object
+      required:
+        - uid
+        - readyToStream
+      properties:
+        uid:
+          type: string
+          description: The unique identifier of the video.
+        readyToStream:
+          type: boolean
+          description: Indicates the video is not ready for playback.
+          const: false
+        status:
+          type: object
+          properties:
+            state:
+              type: string
+              const: error
+              description: The error state.
+            errorReasonCode:
+              type: string
+              description: Error reason code.
+            errorReasonText:
+              type: string
+              description: Human-readable error description.
+        meta:
+          type: object
+          description: User-defined metadata.
+        created:
+          type: string
+          format: date-time
+    LiveStreamEventPayload:
+      type: object
+      required:
+        - uid
+        - live_input
+      properties:
+        uid:
+          type: string
+          description: The unique identifier of the live stream or recording.
+        live_input:
+          type: string
+          description: The live input identifier.
+        status:
+          type: string
+          description: The current status of the live stream.
+          enum:
+            - connected
+            - disconnected
+        meta:
+          type: object
+          description: User-defined metadata for the live input.
+        created:
+          type: string
+          format: date-time

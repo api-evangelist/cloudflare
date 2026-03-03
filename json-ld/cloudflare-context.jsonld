@@ -1,0 +1,240 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "cf": "https://developers.cloudflare.com/schemas/",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+
+    "Zone": {
+      "@id": "cf:Zone",
+      "@context": {
+        "name": "schema:name",
+        "status": "schema:eventStatus",
+        "paused": "cf:paused",
+        "type": "schema:additionalType",
+        "name_servers": {
+          "@id": "cf:nameServers",
+          "@container": "@set"
+        },
+        "account": {
+          "@id": "cf:account",
+          "@type": "@id"
+        },
+        "plan": {
+          "@id": "cf:plan",
+          "@type": "@id"
+        },
+        "activated_on": {
+          "@id": "dcterms:issued",
+          "@type": "xsd:dateTime"
+        },
+        "created_on": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "modified_on": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "DnsRecord": {
+      "@id": "cf:DnsRecord",
+      "@context": {
+        "name": "schema:name",
+        "type": "schema:additionalType",
+        "content": "schema:value",
+        "ttl": "cf:ttl",
+        "priority": "cf:priority",
+        "proxied": "cf:proxied",
+        "comment": "dcterms:description",
+        "tags": {
+          "@id": "schema:keywords",
+          "@container": "@set"
+        },
+        "zone_id": {
+          "@id": "cf:zone",
+          "@type": "@id"
+        },
+        "created_on": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "modified_on": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "Account": {
+      "@id": "cf:Account",
+      "@context": {
+        "name": "schema:name",
+        "type": "schema:additionalType",
+        "created_on": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "WorkerScript": {
+      "@id": "cf:WorkerScript",
+      "@context": {
+        "tag": "schema:version",
+        "handlers": {
+          "@id": "cf:handlers",
+          "@container": "@set"
+        },
+        "compatibility_date": {
+          "@id": "cf:compatibilityDate",
+          "@type": "xsd:date"
+        },
+        "usage_model": "cf:usageModel",
+        "routes": {
+          "@id": "cf:routes",
+          "@container": "@set"
+        },
+        "created_on": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "modified_on": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "D1Database": {
+      "@id": "cf:D1Database",
+      "@context": {
+        "name": "schema:name",
+        "version": "schema:version",
+        "num_tables": "cf:tableCount",
+        "file_size": "schema:contentSize",
+        "created_at": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "KvNamespace": {
+      "@id": "cf:KvNamespace",
+      "@context": {
+        "title": "schema:name"
+      }
+    },
+
+    "R2Bucket": {
+      "@id": "cf:R2Bucket",
+      "@context": {
+        "name": "schema:name",
+        "location": "schema:location",
+        "storage_class": "cf:storageClass",
+        "creation_date": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "Queue": {
+      "@id": "cf:Queue",
+      "@context": {
+        "queue_name": "schema:name",
+        "created_on": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "modified_on": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "VectorizeIndex": {
+      "@id": "cf:VectorizeIndex",
+      "@context": {
+        "name": "schema:name",
+        "description": "dcterms:description",
+        "dimensions": "cf:dimensions",
+        "metric": "cf:distanceMetric"
+      }
+    },
+
+    "PagesProject": {
+      "@id": "cf:PagesProject",
+      "@context": {
+        "name": "schema:name",
+        "subdomain": "cf:subdomain",
+        "production_branch": "cf:productionBranch",
+        "domains": {
+          "@id": "schema:url",
+          "@container": "@set"
+        },
+        "created_on": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "Video": {
+      "@id": "cf:Video",
+      "@context": {
+        "thumbnail": {
+          "@id": "schema:thumbnailUrl",
+          "@type": "@id"
+        },
+        "duration": "schema:duration",
+        "size": "schema:contentSize",
+        "created": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "modified": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    },
+
+    "Image": {
+      "@id": "cf:Image",
+      "@context": {
+        "filename": "schema:name",
+        "uploaded": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "variants": {
+          "@id": "schema:url",
+          "@container": "@set",
+          "@type": "@id"
+        }
+      }
+    },
+
+    "AiGateway": {
+      "@id": "cf:AiGateway",
+      "@context": {
+        "name": "schema:name",
+        "slug": "cf:slug",
+        "created_at": {
+          "@id": "dcterms:created",
+          "@type": "xsd:dateTime"
+        },
+        "modified_at": {
+          "@id": "dcterms:modified",
+          "@type": "xsd:dateTime"
+        }
+      }
+    }
+  }
+}

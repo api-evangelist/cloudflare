@@ -1,0 +1,296 @@
+openapi: 3.1.0
+info:
+  title: Cloudflare R2 API
+  description: >-
+    Cloudflare R2 is S3-compatible object storage with zero egress fees. The
+    R2 API allows developers to create and manage buckets, upload and retrieve
+    objects, and configure access controls. R2 supports the S3 API for
+    compatibility with existing tools and SDKs. This specification covers the
+    Cloudflare management API for R2 bucket administration.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
+externalDocs:
+  description: Cloudflare R2 API Documentation
+  url: https://developers.cloudflare.com/r2/api/s3/api/
+servers:
+  - url: https://api.cloudflare.com/client/v4
+    description: Cloudflare API v4 Production Server
+tags:
+  - name: Buckets
+    description: >-
+      Create, list, and delete R2 storage buckets.
+  - name: Objects
+    description: >-
+      Upload, download, and manage objects within R2 buckets.
+  - name: Configuration
+    description: >-
+      Configure bucket settings including CORS, lifecycle rules, and public access.
+security:
+  - bearerAuth: []
+paths:
+  /accounts/{account_id}/r2/buckets:
+    get:
+      operationId: listR2Buckets
+      summary: List R2 buckets
+      description: >-
+        Returns a list of all R2 buckets for the account.
+      tags:
+        - Buckets
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - name: name_contains
+          in: query
+          description: Filter buckets by name substring.
+          schema:
+            type: string
+        - name: start_after
+          in: query
+          description: Bucket name to start listing after for pagination.
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          description: Number of buckets per page.
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          description: Cursor for pagination.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of R2 buckets.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BucketListResponse'
+        '401':
+          description: Unauthorized.
+    post:
+      operationId: createR2Bucket
+      summary: Create R2 bucket
+      description: >-
+        Create a new R2 storage bucket. Bucket names must be globally unique
+        and between 3 and 63 characters.
+      tags:
+        - Buckets
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  description: The name of the bucket.
+                  minLength: 3
+                  maxLength: 63
+                locationHint:
+                  type: string
+                  description: >-
+                    Hint for where to create the bucket. Must be a valid
+                    Cloudflare location.
+                storageClass:
+                  type: string
+                  description: Default storage class for objects.
+                  enum:
+                    - Standard
+                    - InfrequentAccess
+      responses:
+        '200':
+          description: Bucket created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BucketResponse'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+        '409':
+          description: Bucket name already exists.
+  /accounts/{account_id}/r2/buckets/{bucket_name}:
+    get:
+      operationId: getR2Bucket
+      summary: Get R2 bucket
+      description: >-
+        Retrieve details of a specific R2 bucket.
+      tags:
+        - Buckets
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/BucketName'
+      responses:
+        '200':
+          description: Bucket details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BucketResponse'
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Bucket not found.
+    delete:
+      operationId: deleteR2Bucket
+      summary: Delete R2 bucket
+      description: >-
+        Delete an R2 bucket. The bucket must be empty before it can be deleted.
+      tags:
+        - Buckets
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/BucketName'
+      responses:
+        '200':
+          description: Bucket deleted successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Bucket not found.
+        '409':
+          description: Bucket is not empty.
+  /accounts/{account_id}/r2/buckets/{bucket_name}/objects:
+    get:
+      operationId: listR2Objects
+      summary: List objects in bucket
+      description: >-
+        List objects stored in an R2 bucket with optional prefix filtering and
+        pagination.
+      tags:
+        - Objects
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/BucketName'
+        - name: prefix
+          in: query
+          description: Filter objects by key prefix.
+          schema:
+            type: string
+        - name: delimiter
+          in: query
+          description: Delimiter for grouping object keys.
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          description: Cursor for pagination.
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          description: Number of objects per page.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of objects.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/r2/buckets/{bucket_name}/configuration:
+    get:
+      operationId: getR2BucketConfiguration
+      summary: Get bucket configuration
+      description: >-
+        Retrieve the configuration settings for an R2 bucket including CORS
+        and lifecycle rules.
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/BucketName'
+      responses:
+        '200':
+          description: Bucket configuration.
+        '401':
+          description: Unauthorized.
+    put:
+      operationId: updateR2BucketConfiguration
+      summary: Update bucket configuration
+      description: >-
+        Update configuration settings for an R2 bucket.
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/BucketName'
+      responses:
+        '200':
+          description: Configuration updated.
+        '401':
+          description: Unauthorized.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >-
+        API token with R2 Storage permissions.
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    BucketName:
+      name: bucket_name
+      in: path
+      required: true
+      description: The name of the R2 bucket.
+      schema:
+        type: string
+  schemas:
+    Bucket:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the bucket.
+        creation_date:
+          type: string
+          format: date-time
+          description: When the bucket was created.
+        location:
+          type: string
+          description: The location of the bucket.
+        storage_class:
+          type: string
+          description: Default storage class for the bucket.
+    BucketResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Bucket'
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+        messages:
+          type: array
+          items:
+            type: object
+    BucketListResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            buckets:
+              type: array
+              items:
+                $ref: '#/components/schemas/Bucket'
+        success:
+          type: boolean

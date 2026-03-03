@@ -1,0 +1,710 @@
+openapi: 3.1.0
+info:
+  title: Cloudflare Workers API
+  description: >-
+    Cloudflare Workers allows developers to deploy serverless code to
+    Cloudflare's global network. The Workers API provides endpoints for
+    managing worker scripts, versions, deployments, routes, custom domains,
+    secrets, cron triggers, and configuration including bindings.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
+externalDocs:
+  description: Cloudflare Workers API Documentation
+  url: https://developers.cloudflare.com/api/resources/workers/
+servers:
+  - url: https://api.cloudflare.com/client/v4
+    description: Cloudflare API v4 Production Server
+tags:
+  - name: Workers
+    description: >-
+      Manage Worker resources including creating, updating, and deleting Workers.
+  - name: Scripts
+    description: >-
+      Upload, download, and manage Worker scripts by name.
+  - name: Versions
+    description: >-
+      Manage immutable snapshots of Worker code and configuration.
+  - name: Deployments
+    description: >-
+      Manage deployments that direct traffic to specific Worker versions.
+  - name: Routes
+    description: >-
+      Map URL patterns to Worker scripts within a zone.
+  - name: Domains
+    description: >-
+      Attach and detach custom domains to Worker scripts.
+  - name: Secrets
+    description: >-
+      Manage encrypted environment variables for Worker scripts.
+  - name: Configuration
+    description: >-
+      Manage Worker script settings, cron triggers, and account settings.
+security:
+  - bearerAuth: []
+paths:
+  /accounts/{account_id}/workers/workers:
+    get:
+      operationId: listWorkers
+      summary: List Workers
+      description: >-
+        Returns a paginated list of all Workers for an account.
+      tags:
+        - Workers
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: Successful response with list of Workers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkerListResponse'
+        '401':
+          description: Unauthorized.
+    post:
+      operationId: createWorker
+      summary: Create Worker
+      description: >-
+        Establish a new Worker with the provided configuration.
+      tags:
+        - Workers
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerInput'
+      responses:
+        '200':
+          description: Worker created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkerResponse'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/workers/workers/{worker_id}:
+    get:
+      operationId: getWorker
+      summary: Get Worker
+      description: >-
+        Retrieve details of a specific Worker by its identifier.
+      tags:
+        - Workers
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/WorkerId'
+      responses:
+        '200':
+          description: Worker details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkerResponse'
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Worker not found.
+    put:
+      operationId: replaceWorker
+      summary: Replace Worker
+      description: >-
+        Complete replacement of Worker properties.
+      tags:
+        - Workers
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/WorkerId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerInput'
+      responses:
+        '200':
+          description: Worker replaced successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Worker not found.
+    patch:
+      operationId: editWorker
+      summary: Edit Worker
+      description: >-
+        Partial update preserving unchanged fields.
+      tags:
+        - Workers
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/WorkerId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerInput'
+      responses:
+        '200':
+          description: Worker updated successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Worker not found.
+    delete:
+      operationId: deleteWorker
+      summary: Delete Worker
+      description: >-
+        Remove a Worker and all associated resources.
+      tags:
+        - Workers
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/WorkerId'
+      responses:
+        '200':
+          description: Worker deleted successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Worker not found.
+  /accounts/{account_id}/workers/scripts:
+    get:
+      operationId: listScripts
+      summary: List Worker scripts
+      description: >-
+        Retrieve a list of all Worker scripts for the account.
+      tags:
+        - Scripts
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: List of Worker scripts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScriptListResponse'
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/workers/scripts/{script_name}:
+    get:
+      operationId: downloadScript
+      summary: Download Worker script
+      description: >-
+        Download a Worker script by name. Returns the script content.
+      tags:
+        - Scripts
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Worker script content.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Script not found.
+    put:
+      operationId: uploadScript
+      summary: Upload Worker script
+      description: >-
+        Upload or update a Worker script by name using multipart form data or
+        JSON with base64-encoded content.
+      tags:
+        - Scripts
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Script uploaded successfully.
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+    delete:
+      operationId: deleteScript
+      summary: Delete Worker script
+      description: >-
+        Delete a Worker script by name.
+      tags:
+        - Scripts
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Script deleted successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Script not found.
+  /accounts/{account_id}/workers/workers/{worker_id}/versions:
+    get:
+      operationId: listVersions
+      summary: List Worker versions
+      description: >-
+        Retrieve all immutable versions of a Worker's code and configuration.
+      tags:
+        - Versions
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/WorkerId'
+      responses:
+        '200':
+          description: List of Worker versions.
+        '401':
+          description: Unauthorized.
+    post:
+      operationId: createVersion
+      summary: Create Worker version
+      description: >-
+        Create a new immutable snapshot of Worker code and configuration.
+      tags:
+        - Versions
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/WorkerId'
+      responses:
+        '200':
+          description: Version created successfully.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/workers/scripts/{script_name}/deployments:
+    get:
+      operationId: listDeployments
+      summary: List deployments
+      description: >-
+        List all deployments for a Worker script.
+      tags:
+        - Deployments
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: List of deployments.
+        '401':
+          description: Unauthorized.
+    post:
+      operationId: createDeployment
+      summary: Create deployment
+      description: >-
+        Create a new deployment directing traffic to a specific Worker version.
+      tags:
+        - Deployments
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Deployment created successfully.
+        '401':
+          description: Unauthorized.
+  /zones/{zone_id}/workers/routes:
+    get:
+      operationId: listRoutes
+      summary: List Worker routes
+      description: >-
+        Retrieve all routes mapping URL patterns to Worker scripts for a zone.
+      tags:
+        - Routes
+      parameters:
+        - $ref: '#/components/parameters/ZoneId'
+      responses:
+        '200':
+          description: List of Worker routes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteListResponse'
+        '401':
+          description: Unauthorized.
+    post:
+      operationId: createRoute
+      summary: Create Worker route
+      description: >-
+        Map a URL pattern to a Worker script within the zone.
+      tags:
+        - Routes
+      parameters:
+        - $ref: '#/components/parameters/ZoneId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteInput'
+      responses:
+        '200':
+          description: Route created successfully.
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+  /zones/{zone_id}/workers/routes/{route_id}:
+    get:
+      operationId: getRoute
+      summary: Get Worker route
+      description: >-
+        Retrieve details of a specific Worker route.
+      tags:
+        - Routes
+      parameters:
+        - $ref: '#/components/parameters/ZoneId'
+        - $ref: '#/components/parameters/RouteId'
+      responses:
+        '200':
+          description: Route details.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Route not found.
+    put:
+      operationId: updateRoute
+      summary: Update Worker route
+      description: >-
+        Update the pattern or script assignment for a Worker route.
+      tags:
+        - Routes
+      parameters:
+        - $ref: '#/components/parameters/ZoneId'
+        - $ref: '#/components/parameters/RouteId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteInput'
+      responses:
+        '200':
+          description: Route updated successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Route not found.
+    delete:
+      operationId: deleteRoute
+      summary: Delete Worker route
+      description: >-
+        Remove a Worker route from the zone.
+      tags:
+        - Routes
+      parameters:
+        - $ref: '#/components/parameters/ZoneId'
+        - $ref: '#/components/parameters/RouteId'
+      responses:
+        '200':
+          description: Route deleted successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Route not found.
+  /accounts/{account_id}/workers/domains:
+    get:
+      operationId: listDomains
+      summary: List Worker domains
+      description: >-
+        Retrieve all custom domains attached to Worker scripts.
+      tags:
+        - Domains
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: List of Worker domains.
+        '401':
+          description: Unauthorized.
+    put:
+      operationId: attachDomain
+      summary: Attach custom domain
+      description: >-
+        Attach a custom domain to a Worker script.
+      tags:
+        - Domains
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: Domain attached successfully.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/workers/scripts/{script_name}/secrets:
+    get:
+      operationId: listSecrets
+      summary: List Worker secrets
+      description: >-
+        List all secrets for a Worker script. Secret values are not returned.
+      tags:
+        - Secrets
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: List of secret names.
+        '401':
+          description: Unauthorized.
+    put:
+      operationId: addSecret
+      summary: Add Worker secret
+      description: >-
+        Add or update an encrypted secret for a Worker script.
+      tags:
+        - Secrets
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ScriptName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - text
+                - type
+              properties:
+                name:
+                  type: string
+                  description: The name of the secret.
+                text:
+                  type: string
+                  description: The value of the secret.
+                type:
+                  type: string
+                  enum:
+                    - secret_text
+                  description: The type of the secret binding.
+      responses:
+        '200':
+          description: Secret added successfully.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/workers/scripts/{script_name}/schedules:
+    get:
+      operationId: getCronTriggers
+      summary: Get cron triggers
+      description: >-
+        Retrieve the cron trigger schedules for a Worker script.
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Cron trigger schedules.
+        '401':
+          description: Unauthorized.
+    put:
+      operationId: updateCronTriggers
+      summary: Update cron triggers
+      description: >-
+        Set the cron trigger schedules for a Worker script.
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Cron triggers updated successfully.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/workers/scripts/{script_name}/settings:
+    get:
+      operationId: getScriptSettings
+      summary: Get script settings
+      description: >-
+        Retrieve configuration settings for a Worker script including bindings
+        and compatibility settings.
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Script settings.
+        '401':
+          description: Unauthorized.
+    patch:
+      operationId: updateScriptSettings
+      summary: Update script settings
+      description: >-
+        Update configuration settings for a Worker script.
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Settings updated successfully.
+        '401':
+          description: Unauthorized.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >-
+        API token authentication with Workers permissions.
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    WorkerId:
+      name: worker_id
+      in: path
+      required: true
+      description: The unique identifier of the Worker.
+      schema:
+        type: string
+    ScriptName:
+      name: script_name
+      in: path
+      required: true
+      description: The name of the Worker script.
+      schema:
+        type: string
+    ZoneId:
+      name: zone_id
+      in: path
+      required: true
+      description: The unique identifier of the zone.
+      schema:
+        type: string
+    RouteId:
+      name: route_id
+      in: path
+      required: true
+      description: The unique identifier of the route.
+      schema:
+        type: string
+  schemas:
+    WorkerInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the Worker.
+        main_module:
+          type: string
+          description: The entry point module for the Worker.
+    WorkerResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The unique Worker identifier.
+            name:
+              type: string
+              description: The Worker name.
+            created_on:
+              type: string
+              format: date-time
+              description: When the Worker was created.
+            modified_on:
+              type: string
+              format: date-time
+              description: When the Worker was last modified.
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+        messages:
+          type: array
+          items:
+            type: object
+    WorkerListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              created_on:
+                type: string
+                format: date-time
+              modified_on:
+                type: string
+                format: date-time
+        success:
+          type: boolean
+    ScriptListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: The script identifier.
+              tag:
+                type: string
+                description: The unique tag for the script.
+              etag:
+                type: string
+                description: The ETag of the script.
+              created_on:
+                type: string
+                format: date-time
+              modified_on:
+                type: string
+                format: date-time
+        success:
+          type: boolean
+    RouteInput:
+      type: object
+      required:
+        - pattern
+      properties:
+        pattern:
+          type: string
+          description: The URL pattern for the route, e.g. example.com/*.
+        script:
+          type: string
+          description: The name of the Worker script to invoke.
+    RouteListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              pattern:
+                type: string
+              script:
+                type: string
+        success:
+          type: boolean

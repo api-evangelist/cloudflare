@@ -1,0 +1,520 @@
+openapi: 3.1.0
+info:
+  title: Cloudflare KV API
+  description: >-
+    Cloudflare Workers KV is a global, low-latency key-value data store. The
+    KV API allows developers to create namespaces, write and read key-value
+    pairs, list keys, perform bulk operations with support for up to 10,000
+    key-value pairs per request, and manage key metadata.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
+externalDocs:
+  description: Cloudflare KV API Documentation
+  url: https://developers.cloudflare.com/api/resources/kv/
+servers:
+  - url: https://api.cloudflare.com/client/v4
+    description: Cloudflare API v4 Production Server
+tags:
+  - name: Namespaces
+    description: >-
+      Create, list, rename, and delete KV namespaces.
+  - name: Key-Value Pairs
+    description: >-
+      Read, write, and delete individual key-value pairs.
+  - name: Bulk Operations
+    description: >-
+      Write, read, and delete multiple key-value pairs in a single request.
+  - name: Keys
+    description: >-
+      List and manage keys within a namespace.
+  - name: Metadata
+    description: >-
+      Read metadata associated with keys.
+security:
+  - bearerAuth: []
+paths:
+  /accounts/{account_id}/storage/kv/namespaces:
+    get:
+      operationId: listKvNamespaces
+      summary: List KV namespaces
+      description: >-
+        Returns a paginated list of all KV namespaces for the account.
+      tags:
+        - Namespaces
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - name: page
+          in: query
+          description: Page number of results.
+          schema:
+            type: integer
+            minimum: 1
+        - name: per_page
+          in: query
+          description: Number of results per page.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of KV namespaces.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NamespaceListResponse'
+        '401':
+          description: Unauthorized.
+    post:
+      operationId: createKvNamespace
+      summary: Create KV namespace
+      description: >-
+        Create a new KV namespace for the account.
+      tags:
+        - Namespaces
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+              properties:
+                title:
+                  type: string
+                  description: A human-readable title for the namespace.
+      responses:
+        '200':
+          description: Namespace created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NamespaceResponse'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}:
+    get:
+      operationId: getKvNamespace
+      summary: Get KV namespace
+      description: >-
+        Retrieve details of a specific KV namespace.
+      tags:
+        - Namespaces
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/NamespaceId'
+      responses:
+        '200':
+          description: Namespace details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NamespaceResponse'
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Namespace not found.
+    put:
+      operationId: renameKvNamespace
+      summary: Rename KV namespace
+      description: >-
+        Rename a KV namespace.
+      tags:
+        - Namespaces
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/NamespaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+              properties:
+                title:
+                  type: string
+                  description: The new title for the namespace.
+      responses:
+        '200':
+          description: Namespace renamed successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Namespace not found.
+    delete:
+      operationId: deleteKvNamespace
+      summary: Delete KV namespace
+      description: >-
+        Delete a KV namespace and all its key-value pairs.
+      tags:
+        - Namespaces
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/NamespaceId'
+      responses:
+        '200':
+          description: Namespace deleted successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Namespace not found.
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/keys:
+    get:
+      operationId: listKvKeys
+      summary: List keys
+      description: >-
+        List keys stored in a KV namespace with cursor-based pagination.
+      tags:
+        - Keys
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/NamespaceId'
+        - name: cursor
+          in: query
+          description: Cursor for pagination.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Maximum number of keys to return.
+          schema:
+            type: integer
+            maximum: 1000
+        - name: prefix
+          in: query
+          description: Filter keys by prefix.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of keys.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyListResponse'
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name}:
+    get:
+      operationId: readKvValue
+      summary: Read key-value pair
+      description: >-
+        Read the value of a specific key from the namespace.
+      tags:
+        - Key-Value Pairs
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/NamespaceId'
+        - $ref: '#/components/parameters/KeyName'
+      responses:
+        '200':
+          description: The value associated with the key.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Key not found.
+    put:
+      operationId: writeKvValue
+      summary: Write key-value pair
+      description: >-
+        Write a value for a specific key in the namespace. Optionally set
+        expiration and metadata.
+      tags:
+        - Key-Value Pairs
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/NamespaceId'
+        - $ref: '#/components/parameters/KeyName'
+        - name: expiration
+          in: query
+          description: Unix timestamp for when the key should expire.
+          schema:
+            type: integer
+        - name: expiration_ttl
+          in: query
+          description: Seconds until the key expires.
+          schema:
+            type: integer
+            minimum: 60
+      responses:
+        '200':
+          description: Value written successfully.
+        '401':
+          description: Unauthorized.
+    delete:
+      operationId: deleteKvValue
+      summary: Delete key-value pair
+      description: >-
+        Delete a key-value pair from the namespace.
+      tags:
+        - Key-Value Pairs
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/NamespaceId'
+        - $ref: '#/components/parameters/KeyName'
+      responses:
+        '200':
+          description: Key-value pair deleted.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Key not found.
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/metadata/{key_name}:
+    get:
+      operationId: readKvMetadata
+      summary: Read key metadata
+      description: >-
+        Retrieve metadata associated with a specific key.
+      tags:
+        - Metadata
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/NamespaceId'
+        - $ref: '#/components/parameters/KeyName'
+      responses:
+        '200':
+          description: Key metadata.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Key not found.
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk:
+    put:
+      operationId: bulkWriteKvPairs
+      summary: Write multiple key-value pairs
+      description: >-
+        Write multiple key-value pairs in a single request. Supports up to
+        10,000 pairs per request.
+      tags:
+        - Bulk Operations
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/NamespaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              maxItems: 10000
+              items:
+                type: object
+                required:
+                  - key
+                  - value
+                properties:
+                  key:
+                    type: string
+                    description: The key name.
+                    maxLength: 512
+                  value:
+                    type: string
+                    description: The value to store.
+                  expiration:
+                    type: integer
+                    description: Unix timestamp for expiration.
+                  expiration_ttl:
+                    type: integer
+                    description: Seconds until expiration.
+                    minimum: 60
+                  metadata:
+                    type: object
+                    description: Arbitrary metadata to store with the key.
+                  base64:
+                    type: boolean
+                    description: Whether the value is base64-encoded.
+      responses:
+        '200':
+          description: Bulk write completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkOperationResponse'
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk/delete:
+    post:
+      operationId: bulkDeleteKvPairs
+      summary: Delete multiple key-value pairs
+      description: >-
+        Delete multiple key-value pairs in a single request.
+      tags:
+        - Bulk Operations
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/NamespaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              description: Array of key names to delete.
+      responses:
+        '200':
+          description: Bulk delete completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkOperationResponse'
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk/get:
+    post:
+      operationId: bulkGetKvPairs
+      summary: Get multiple key-value pairs
+      description: >-
+        Retrieve multiple key-value pairs in a single request.
+      tags:
+        - Bulk Operations
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/NamespaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              description: Array of key names to retrieve.
+      responses:
+        '200':
+          description: Bulk get completed.
+        '401':
+          description: Unauthorized.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >-
+        API token with Workers KV Storage permissions.
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    NamespaceId:
+      name: namespace_id
+      in: path
+      required: true
+      description: The unique identifier of the KV namespace.
+      schema:
+        type: string
+    KeyName:
+      name: key_name
+      in: path
+      required: true
+      description: >-
+        The key name. Use URL-encoding for special characters such as colon,
+        exclamation mark, and percent.
+      schema:
+        type: string
+  schemas:
+    Namespace:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the namespace.
+        title:
+          type: string
+          description: The human-readable title of the namespace.
+        supports_url_encoding:
+          type: boolean
+          description: Whether the namespace supports URL-encoded keys.
+    NamespaceResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Namespace'
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+        messages:
+          type: array
+          items:
+            type: object
+    NamespaceListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Namespace'
+        success:
+          type: boolean
+        result_info:
+          type: object
+          properties:
+            page:
+              type: integer
+            per_page:
+              type: integer
+            count:
+              type: integer
+            total_count:
+              type: integer
+    KeyListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The key name.
+              expiration:
+                type: integer
+                description: Unix timestamp of expiration.
+              metadata:
+                type: object
+                description: Metadata associated with the key.
+        success:
+          type: boolean
+        result_info:
+          type: object
+          properties:
+            cursor:
+              type: string
+              description: Cursor for the next page of results.
+            count:
+              type: integer
+    BulkOperationResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            successful_key_count:
+              type: integer
+              description: Number of keys successfully processed.
+            unsuccessful_keys:
+              type: array
+              items:
+                type: string
+              description: Keys that failed to be processed.
+        success:
+          type: boolean

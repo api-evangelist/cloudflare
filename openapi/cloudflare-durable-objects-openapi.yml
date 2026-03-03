@@ -1,0 +1,130 @@
+openapi: 3.1.0
+info:
+  title: Cloudflare Durable Objects API
+  description: >-
+    Cloudflare Durable Objects combine compute with persistent storage in a
+    single Worker. The management API provides endpoints for listing and
+    managing Durable Object namespaces and individual objects within those
+    namespaces, enabling developers to build stateful serverless applications.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
+externalDocs:
+  description: Cloudflare Durable Objects Documentation
+  url: https://developers.cloudflare.com/durable-objects/
+servers:
+  - url: https://api.cloudflare.com/client/v4
+    description: Cloudflare API v4 Production Server
+tags:
+  - name: Namespaces
+    description: >-
+      Manage Durable Object namespaces that group related object instances.
+  - name: Objects
+    description: >-
+      List and manage individual Durable Object instances within a namespace.
+security:
+  - bearerAuth: []
+paths:
+  /accounts/{account_id}/workers/durable_objects/namespaces:
+    get:
+      operationId: listDurableObjectNamespaces
+      summary: List Durable Object namespaces
+      description: >-
+        Returns all Durable Object namespaces for the account.
+      tags:
+        - Namespaces
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: List of Durable Object namespaces.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NamespaceListResponse'
+        '401':
+          description: Unauthorized.
+  /accounts/{account_id}/workers/durable_objects/namespaces/{namespace_id}/objects:
+    get:
+      operationId: listDurableObjects
+      summary: List Durable Objects
+      description: >-
+        Returns a list of Durable Objects within a namespace with cursor-based
+        pagination.
+      tags:
+        - Objects
+      parameters:
+        - $ref: '#/components/parameters/AccountId'
+        - $ref: '#/components/parameters/NamespaceId'
+        - name: cursor
+          in: query
+          description: Cursor for pagination.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Maximum number of objects to return.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of Durable Objects.
+        '401':
+          description: Unauthorized.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >-
+        API token with Workers permissions.
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    NamespaceId:
+      name: namespace_id
+      in: path
+      required: true
+      description: The unique identifier of the Durable Object namespace.
+      schema:
+        type: string
+  schemas:
+    DurableObjectNamespace:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the namespace.
+        name:
+          type: string
+          description: The name of the namespace.
+        script:
+          type: string
+          description: The Worker script associated with the namespace.
+        class:
+          type: string
+          description: The Durable Object class name.
+    NamespaceListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/DurableObjectNamespace'
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+        messages:
+          type: array
+          items:
+            type: object

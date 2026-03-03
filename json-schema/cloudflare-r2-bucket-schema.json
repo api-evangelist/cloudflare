@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/refs/heads/main/json-schema/cloudflare-r2-bucket-schema.json",
+  "title": "Cloudflare R2 Bucket",
+  "description": "An R2 storage bucket object from the Cloudflare API, representing an S3-compatible object storage container with zero egress fees for storing and serving files.",
+  "type": "object",
+  "required": ["name"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The globally unique name of the bucket.",
+      "minLength": 3,
+      "maxLength": 63,
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
+    },
+    "creation_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the bucket was created."
+    },
+    "location": {
+      "type": "string",
+      "description": "The location hint where the bucket's data is stored."
+    },
+    "storage_class": {
+      "type": "string",
+      "description": "The default storage class for objects in the bucket.",
+      "enum": ["Standard", "InfrequentAccess"]
+    }
+  }
+}
