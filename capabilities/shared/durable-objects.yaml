@@ -1,0 +1,115 @@
+naftiko: "1.0.0-alpha1"
+
+info:
+  label: "Cloudflare Durable Objects"
+  description: "Stateful serverless compute combining Workers with persistent storage including SQL, key-value, alarms, and WebSocket hibernation."
+  tags:
+    - Cloudflare
+    - Serverless
+    - Stateful
+  created: "2026-04-18"
+  modified: "2026-04-18"
+
+binds:
+  - namespace: env
+    keys:
+      CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
+
+capability:
+  consumes:
+    - type: http
+      namespace: cloudflare-durable-objects
+      baseUri: https://api.cloudflare.com/client/v4
+      description: "Cloudflare Durable Objects API for managing stateful serverless objects."
+      authentication:
+        type: bearer
+        token: "{{CLOUDFLARE_API_TOKEN}}"
+      resources:
+        - name: namespaces
+          path: /accounts/{account_id}/workers/durable_objects/namespaces
+          description: "Manage Durable Object namespaces."
+          operations:
+            - name: list-durable-object-namespaces
+              method: GET
+              description: "List all Durable Object namespaces."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: objects
+          path: /accounts/{account_id}/workers/durable_objects/namespaces/{namespace_id}/objects
+          description: "Manage objects within a namespace."
+          operations:
+            - name: list-durable-objects
+              method: GET
+              description: "List Durable Objects in a namespace."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: namespace_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Namespace identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+
+  exposes:
+    - type: rest
+      port: 8108
+      namespace: cloudflare-durable-objects-api
+      resources:
+        - path: /v1/durable-object-namespaces
+          name: durable-object-namespaces
+          description: "Durable Object namespace management."
+          operations:
+            - method: GET
+              name: list-durable-object-namespaces
+              description: "List Durable Object namespaces."
+              call: "cloudflare-durable-objects.list-durable-object-namespaces"
+              with:
+                account_id: "rest.account_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+    - type: mcp
+      port: 9108
+      namespace: cloudflare-durable-objects-mcp
+      transport: http
+      tools:
+        - name: list-durable-object-namespaces
+          description: "List all Durable Object namespaces."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-durable-objects.list-durable-object-namespaces"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: list-durable-objects
+          description: "List Durable Objects in a namespace."
+          hints:
+            readOnly: true
+          call: "cloudflare-durable-objects.list-durable-objects"
+          with:
+            account_id: "tools.account_id"
+            namespace_id: "tools.namespace_id"
+          outputParameters:
+            - type: object
+              mapping: "$."

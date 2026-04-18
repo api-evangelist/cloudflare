@@ -1,0 +1,353 @@
+naftiko: "1.0.0-alpha1"
+
+info:
+  label: "Cloudflare KV"
+  description: "Global low-latency key-value data store for creating namespaces, reading/writing key-value pairs, and performing bulk operations."
+  tags:
+    - Cloudflare
+    - Key Value
+    - Storage
+  created: "2026-04-18"
+  modified: "2026-04-18"
+
+binds:
+  - namespace: env
+    keys:
+      CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
+
+capability:
+  consumes:
+    - type: http
+      namespace: cloudflare-kv
+      baseUri: https://api.cloudflare.com/client/v4
+      description: "Cloudflare Workers KV API for managing key-value storage."
+      authentication:
+        type: bearer
+        token: "{{CLOUDFLARE_API_TOKEN}}"
+      resources:
+        - name: namespaces
+          path: /accounts/{account_id}/storage/kv/namespaces
+          description: "Manage KV namespaces."
+          operations:
+            - name: list-kv-namespaces
+              method: GET
+              description: "List all KV namespaces."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: create-kv-namespace
+              method: POST
+              description: "Create a new KV namespace."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              body:
+                type: json
+                data:
+                  title: "{{tools.title}}"
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: namespace
+          path: /accounts/{account_id}/storage/kv/namespaces/{namespace_id}
+          description: "Manage a specific KV namespace."
+          operations:
+            - name: get-kv-namespace
+              method: GET
+              description: "Get KV namespace details."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: namespace_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Namespace identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: delete-kv-namespace
+              method: DELETE
+              description: "Delete a KV namespace."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: namespace_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Namespace identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: keys
+          path: /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/keys
+          description: "Manage KV keys."
+          operations:
+            - name: list-kv-keys
+              method: GET
+              description: "List keys in a namespace."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: namespace_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Namespace identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: values
+          path: /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name}
+          description: "Read and write KV values."
+          operations:
+            - name: read-kv-value
+              method: GET
+              description: "Read a key-value pair."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: namespace_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Namespace identifier."
+                - name: key_name
+                  in: path
+                  type: string
+                  required: true
+                  description: "Key name."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: write-kv-value
+              method: PUT
+              description: "Write a key-value pair."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: namespace_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Namespace identifier."
+                - name: key_name
+                  in: path
+                  type: string
+                  required: true
+                  description: "Key name."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: delete-kv-value
+              method: DELETE
+              description: "Delete a key-value pair."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: namespace_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Namespace identifier."
+                - name: key_name
+                  in: path
+                  type: string
+                  required: true
+                  description: "Key name."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: bulk
+          path: /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk
+          description: "Bulk KV operations."
+          operations:
+            - name: bulk-write-kv-pairs
+              method: PUT
+              description: "Write multiple key-value pairs."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: namespace_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Namespace identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: bulk-delete-kv-pairs
+              method: DELETE
+              description: "Delete multiple key-value pairs."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: namespace_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Namespace identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+
+  exposes:
+    - type: rest
+      port: 8106
+      namespace: cloudflare-kv-api
+      resources:
+        - path: /v1/kv-namespaces
+          name: kv-namespaces
+          description: "KV namespace management."
+          operations:
+            - method: GET
+              name: list-kv-namespaces
+              description: "List KV namespaces."
+              call: "cloudflare-kv.list-kv-namespaces"
+              with:
+                account_id: "rest.account_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+    - type: mcp
+      port: 9106
+      namespace: cloudflare-kv-mcp
+      transport: http
+      tools:
+        - name: list-kv-namespaces
+          description: "List all KV namespaces."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-kv.list-kv-namespaces"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: create-kv-namespace
+          description: "Create a new KV namespace."
+          hints:
+            readOnly: false
+          call: "cloudflare-kv.create-kv-namespace"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: list-kv-keys
+          description: "List keys in a KV namespace."
+          hints:
+            readOnly: true
+          call: "cloudflare-kv.list-kv-keys"
+          with:
+            account_id: "tools.account_id"
+            namespace_id: "tools.namespace_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: read-kv-value
+          description: "Read a key-value pair."
+          hints:
+            readOnly: true
+          call: "cloudflare-kv.read-kv-value"
+          with:
+            account_id: "tools.account_id"
+            namespace_id: "tools.namespace_id"
+            key_name: "tools.key_name"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: write-kv-value
+          description: "Write a key-value pair."
+          hints:
+            readOnly: false
+            idempotent: true
+          call: "cloudflare-kv.write-kv-value"
+          with:
+            account_id: "tools.account_id"
+            namespace_id: "tools.namespace_id"
+            key_name: "tools.key_name"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: delete-kv-value
+          description: "Delete a key-value pair."
+          hints:
+            destructive: true
+            idempotent: true
+          call: "cloudflare-kv.delete-kv-value"
+          with:
+            account_id: "tools.account_id"
+            namespace_id: "tools.namespace_id"
+            key_name: "tools.key_name"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: bulk-write-kv-pairs
+          description: "Write multiple key-value pairs in bulk."
+          hints:
+            readOnly: false
+            idempotent: true
+          call: "cloudflare-kv.bulk-write-kv-pairs"
+          with:
+            account_id: "tools.account_id"
+            namespace_id: "tools.namespace_id"
+          outputParameters:
+            - type: object
+              mapping: "$."

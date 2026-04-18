@@ -17,28 +17,28 @@ externalDocs:
   description: Cloudflare AI Gateway Documentation
   url: https://developers.cloudflare.com/ai-gateway/
 servers:
-  - url: https://api.cloudflare.com/client/v4
-    description: Cloudflare API v4 Production Server
+- url: https://api.cloudflare.com/client/v4
+  description: Cloudflare API v4 Production Server
 tags:
-  - name: Gateways
-    description: >-
-      Create, list, update, and delete AI Gateway instances.
-  - name: Logs
-    description: >-
-      Access request logs and analytics for AI Gateway traffic.
+- name: Gateways
+  description: >-
+    Create, list, update, and delete AI Gateway instances.
+- name: Logs
+  description: >-
+    Access request logs and analytics for AI Gateway traffic.
 security:
-  - bearerAuth: []
+- bearerAuth: []
 paths:
   /accounts/{account_id}/ai-gateway/gateways:
     get:
       operationId: listAiGateways
-      summary: Cloudflare List AI Gateways
+      summary: Cloudflare List Ai Gateways
       description: >-
         Returns all AI Gateway instances for the account.
       tags:
-        - Gateways
+      - Gateways
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: List of AI Gateway instances.
@@ -46,24 +46,57 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GatewayListResponse'
+              examples:
+                Listaigateways200Example:
+                  summary: Default listAiGateways 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      name: Example Title
+                      slug: example_value
+                      cache_enabled: true
+                      cache_ttl: 10
+                      rate_limiting_enabled: true
+                      rate_limiting_limit: 10
+                      rate_limiting_interval: 10
+                      log_enabled: true
+                      created_at: '2026-01-15T10:30:00Z'
+                      modified_at: '2026-01-15T10:30:00Z'
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createAiGateway
-      summary: Cloudflare Create AI Gateway
+      summary: Cloudflare Create Ai Gateway
       description: >-
         Create a new AI Gateway instance with the specified configuration
         for caching, rate limiting, and provider settings.
       tags:
-        - Gateways
+      - Gateways
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/GatewayInput'
+            examples:
+              CreateaigatewayRequestExample:
+                summary: Default createAiGateway request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  cache_enabled: true
+                  cache_ttl: 10
+                  rate_limiting_enabled: true
+                  rate_limiting_limit: 10
+                  rate_limiting_interval: 10
+                  log_enabled: true
       responses:
         '200':
           description: Gateway created successfully.
@@ -71,21 +104,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GatewayResponse'
+              examples:
+                Createaigateway200Example:
+                  summary: Default createAiGateway 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      name: Example Title
+                      slug: example_value
+                      cache_enabled: true
+                      cache_ttl: 10
+                      rate_limiting_enabled: true
+                      rate_limiting_limit: 10
+                      rate_limiting_interval: 10
+                      log_enabled: true
+                      created_at: '2026-01-15T10:30:00Z'
+                      modified_at: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}:
     get:
       operationId: getAiGateway
-      summary: Cloudflare Get AI Gateway
+      summary: Cloudflare Get Ai Gateway
       description: >-
         Retrieve details of a specific AI Gateway instance.
       tags:
-        - Gateways
+      - Gateways
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/GatewayId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/GatewayId'
       responses:
         '200':
           description: Gateway details.
@@ -93,26 +151,63 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GatewayResponse'
+              examples:
+                Getaigateway200Example:
+                  summary: Default getAiGateway 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      name: Example Title
+                      slug: example_value
+                      cache_enabled: true
+                      cache_ttl: 10
+                      rate_limiting_enabled: true
+                      rate_limiting_limit: 10
+                      rate_limiting_interval: 10
+                      log_enabled: true
+                      created_at: '2026-01-15T10:30:00Z'
+                      modified_at: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '401':
           description: Unauthorized.
         '404':
           description: Gateway not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: updateAiGateway
-      summary: Cloudflare Update AI Gateway
+      summary: Cloudflare Update Ai Gateway
       description: >-
         Update the configuration of an AI Gateway instance.
       tags:
-        - Gateways
+      - Gateways
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/GatewayId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/GatewayId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/GatewayInput'
+            examples:
+              UpdateaigatewayRequestExample:
+                summary: Default updateAiGateway request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  cache_enabled: true
+                  cache_ttl: 10
+                  rate_limiting_enabled: true
+                  rate_limiting_limit: 10
+                  rate_limiting_interval: 10
+                  log_enabled: true
       responses:
         '200':
           description: Gateway updated successfully.
@@ -120,16 +215,19 @@ paths:
           description: Unauthorized.
         '404':
           description: Gateway not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteAiGateway
-      summary: Cloudflare Delete AI Gateway
+      summary: Cloudflare Delete Ai Gateway
       description: >-
         Delete an AI Gateway instance.
       tags:
-        - Gateways
+      - Gateways
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/GatewayId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/GatewayId'
       responses:
         '200':
           description: Gateway deleted successfully.
@@ -137,38 +235,47 @@ paths:
           description: Unauthorized.
         '404':
           description: Gateway not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/logs:
     get:
       operationId: listAiGatewayLogs
-      summary: Cloudflare List AI Gateway logs
+      summary: Cloudflare List Ai Gateway Logs
       description: >-
         Retrieve request logs for an AI Gateway instance with filtering
         and pagination support.
       tags:
-        - Logs
+      - Logs
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/GatewayId'
-        - name: page
-          in: query
-          description: Page number for pagination.
-          schema:
-            type: integer
-        - name: per_page
-          in: query
-          description: Number of log entries per page.
-          schema:
-            type: integer
-        - name: search
-          in: query
-          description: Search query to filter logs.
-          schema:
-            type: string
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/GatewayId'
+      - name: page
+        in: query
+        description: Page number for pagination.
+        schema:
+          type: integer
+        example: 10
+      - name: per_page
+        in: query
+        description: Number of log entries per page.
+        schema:
+          type: integer
+        example: 10
+      - name: search
+        in: query
+        description: Search query to filter logs.
+        schema:
+          type: string
+        example: example_value
       responses:
         '200':
           description: List of gateway logs.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     bearerAuth:
@@ -198,64 +305,82 @@ components:
         id:
           type: string
           description: The unique identifier of the gateway.
+          example: abc123
         name:
           type: string
           description: The name of the gateway.
+          example: Example Title
         slug:
           type: string
           description: URL-friendly slug for the gateway.
+          example: example_value
         cache_enabled:
           type: boolean
           description: Whether response caching is enabled.
+          example: true
         cache_ttl:
           type: integer
           description: Cache time-to-live in seconds.
+          example: 10
         rate_limiting_enabled:
           type: boolean
           description: Whether rate limiting is enabled.
+          example: true
         rate_limiting_limit:
           type: integer
           description: Maximum requests per rate limiting interval.
+          example: 10
         rate_limiting_interval:
           type: integer
           description: Rate limiting interval in seconds.
+          example: 10
         log_enabled:
           type: boolean
           description: Whether logging is enabled.
+          example: true
         created_at:
           type: string
           format: date-time
           description: When the gateway was created.
+          example: '2026-01-15T10:30:00Z'
         modified_at:
           type: string
           format: date-time
           description: When the gateway was last modified.
+          example: '2026-01-15T10:30:00Z'
     GatewayInput:
       type: object
       required:
-        - name
+      - name
       properties:
         name:
           type: string
           description: The name of the gateway.
+          example: Example Title
         cache_enabled:
           type: boolean
           description: Enable response caching.
+          example: true
         cache_ttl:
           type: integer
           description: Cache TTL in seconds.
+          example: 10
         rate_limiting_enabled:
           type: boolean
           description: Enable rate limiting.
+          example: true
         rate_limiting_limit:
           type: integer
           description: Rate limit threshold.
+          example: 10
         rate_limiting_interval:
           type: integer
           description: Rate limiting interval in seconds.
+          example: 10
         log_enabled:
           type: boolean
           description: Enable request logging.
+          example: true
     GatewayResponse:
       type: object
       properties:
@@ -263,14 +388,17 @@ components:
           $ref: '#/components/schemas/Gateway'
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []
     GatewayListResponse:
       type: object
       properties:
@@ -278,5 +406,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Gateway'
+          example: []
         success:
           type: boolean
+          example: true

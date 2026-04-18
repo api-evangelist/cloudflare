@@ -16,51 +16,55 @@ externalDocs:
   description: Cloudflare R2 API Documentation
   url: https://developers.cloudflare.com/r2/api/s3/api/
 servers:
-  - url: https://api.cloudflare.com/client/v4
-    description: Cloudflare API v4 Production Server
+- url: https://api.cloudflare.com/client/v4
+  description: Cloudflare API v4 Production Server
 tags:
-  - name: Buckets
-    description: >-
-      Create, list, and delete R2 storage buckets.
-  - name: Configuration
-    description: >-
-      Configure bucket settings including CORS, lifecycle rules, and public access.
-  - name: Objects
-    description: >-
-      Upload, download, and manage objects within R2 buckets.
+- name: Buckets
+  description: >-
+    Create, list, and delete R2 storage buckets.
+- name: Configuration
+  description: >-
+    Configure bucket settings including CORS, lifecycle rules, and public access.
+- name: Objects
+  description: >-
+    Upload, download, and manage objects within R2 buckets.
 security:
-  - bearerAuth: []
+- bearerAuth: []
 paths:
   /accounts/{account_id}/r2/buckets:
     get:
       operationId: listR2Buckets
-      summary: Cloudflare List R2 buckets
+      summary: Cloudflare List R2 Buckets
       description: >-
         Returns a list of all R2 buckets for the account.
       tags:
-        - Buckets
+      - Buckets
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - name: name_contains
-          in: query
-          description: Filter buckets by name substring.
-          schema:
-            type: string
-        - name: start_after
-          in: query
-          description: Bucket name to start listing after for pagination.
-          schema:
-            type: string
-        - name: per_page
-          in: query
-          description: Number of buckets per page.
-          schema:
-            type: integer
-        - name: cursor
-          in: query
-          description: Cursor for pagination.
-          schema:
-            type: string
+      - $ref: '#/components/parameters/AccountId'
+      - name: name_contains
+        in: query
+        description: Filter buckets by name substring.
+        schema:
+          type: string
+        example: example_value
+      - name: start_after
+        in: query
+        description: Bucket name to start listing after for pagination.
+        schema:
+          type: string
+        example: example_value
+      - name: per_page
+        in: query
+        description: Number of buckets per page.
+        schema:
+          type: integer
+        example: 10
+      - name: cursor
+        in: query
+        description: Cursor for pagination.
+        schema:
+          type: string
+        example: example_value
       responses:
         '200':
           description: List of R2 buckets.
@@ -68,18 +72,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BucketListResponse'
+              examples:
+                Listr2buckets200Example:
+                  summary: Default listR2Buckets 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      buckets:
+                      - {}
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createR2Bucket
-      summary: Cloudflare Create R2 bucket
+      summary: Cloudflare Create R2 Bucket
       description: >-
         Create a new R2 storage bucket. Bucket names must be globally unique
         and between 3 and 63 characters.
       tags:
-        - Buckets
+      - Buckets
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
@@ -87,7 +103,7 @@ paths:
             schema:
               type: object
               required:
-                - name
+              - name
               properties:
                 name:
                   type: string
@@ -103,8 +119,16 @@ paths:
                   type: string
                   description: Default storage class for objects.
                   enum:
-                    - Standard
-                    - InfrequentAccess
+                  - Standard
+                  - InfrequentAccess
+            examples:
+              Creater2bucketRequestExample:
+                summary: Default createR2Bucket request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  locationHint: example_value
+                  storageClass: Standard
       responses:
         '200':
           description: Bucket created successfully.
@@ -112,23 +136,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BucketResponse'
+              examples:
+                Creater2bucket200Example:
+                  summary: Default createR2Bucket 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      name: Example Title
+                      creation_date: '2026-01-15T10:30:00Z'
+                      location: example_value
+                      storage_class: example_value
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
         '409':
           description: Bucket name already exists.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/r2/buckets/{bucket_name}:
     get:
       operationId: getR2Bucket
-      summary: Cloudflare Get R2 bucket
+      summary: Cloudflare Get R2 Bucket
       description: >-
         Retrieve details of a specific R2 bucket.
       tags:
-        - Buckets
+      - Buckets
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/BucketName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/BucketName'
       responses:
         '200':
           description: Bucket details.
@@ -136,20 +178,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BucketResponse'
+              examples:
+                Getr2bucket200Example:
+                  summary: Default getR2Bucket 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      name: Example Title
+                      creation_date: '2026-01-15T10:30:00Z'
+                      location: example_value
+                      storage_class: example_value
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '401':
           description: Unauthorized.
         '404':
           description: Bucket not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteR2Bucket
-      summary: Cloudflare Delete R2 bucket
+      summary: Cloudflare Delete R2 Bucket
       description: >-
         Delete an R2 bucket. The bucket must be empty before it can be deleted.
       tags:
-        - Buckets
+      - Buckets
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/BucketName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/BucketName'
       responses:
         '200':
           description: Bucket deleted successfully.
@@ -159,75 +219,91 @@ paths:
           description: Bucket not found.
         '409':
           description: Bucket is not empty.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/r2/buckets/{bucket_name}/objects:
     get:
       operationId: listR2Objects
-      summary: Cloudflare List objects in bucket
+      summary: Cloudflare List Objects in Bucket
       description: >-
         List objects stored in an R2 bucket with optional prefix filtering and
         pagination.
       tags:
-        - Objects
+      - Objects
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/BucketName'
-        - name: prefix
-          in: query
-          description: Filter objects by key prefix.
-          schema:
-            type: string
-        - name: delimiter
-          in: query
-          description: Delimiter for grouping object keys.
-          schema:
-            type: string
-        - name: cursor
-          in: query
-          description: Cursor for pagination.
-          schema:
-            type: string
-        - name: per_page
-          in: query
-          description: Number of objects per page.
-          schema:
-            type: integer
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/BucketName'
+      - name: prefix
+        in: query
+        description: Filter objects by key prefix.
+        schema:
+          type: string
+        example: example_value
+      - name: delimiter
+        in: query
+        description: Delimiter for grouping object keys.
+        schema:
+          type: string
+        example: example_value
+      - name: cursor
+        in: query
+        description: Cursor for pagination.
+        schema:
+          type: string
+        example: example_value
+      - name: per_page
+        in: query
+        description: Number of objects per page.
+        schema:
+          type: integer
+        example: 10
       responses:
         '200':
           description: List of objects.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/r2/buckets/{bucket_name}/configuration:
     get:
       operationId: getR2BucketConfiguration
-      summary: Cloudflare Get bucket configuration
+      summary: Cloudflare Get Bucket Configuration
       description: >-
         Retrieve the configuration settings for an R2 bucket including CORS
         and lifecycle rules.
       tags:
-        - Configuration
+      - Configuration
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/BucketName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/BucketName'
       responses:
         '200':
           description: Bucket configuration.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: updateR2BucketConfiguration
-      summary: Cloudflare Update bucket configuration
+      summary: Cloudflare Update Bucket Configuration
       description: >-
         Update configuration settings for an R2 bucket.
       tags:
-        - Configuration
+      - Configuration
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/BucketName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/BucketName'
       responses:
         '200':
           description: Configuration updated.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     bearerAuth:
@@ -257,16 +333,20 @@ components:
         name:
           type: string
           description: The name of the bucket.
+          example: Example Title
         creation_date:
           type: string
           format: date-time
           description: When the bucket was created.
+          example: '2026-01-15T10:30:00Z'
         location:
           type: string
           description: The location of the bucket.
+          example: example_value
         storage_class:
           type: string
           description: Default storage class for the bucket.
+          example: example_value
     BucketResponse:
       type: object
       properties:
@@ -274,14 +354,17 @@ components:
           $ref: '#/components/schemas/Bucket'
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []
     BucketListResponse:
       type: object
       properties:
@@ -292,5 +375,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Bucket'
+          example: example_value
         success:
           type: boolean
+          example: true

@@ -1,0 +1,288 @@
+naftiko: "1.0.0-alpha1"
+
+info:
+  label: "Cloudflare Queues"
+  description: "Message queues integrating with Workers for guaranteed delivery, work offloading, and data buffering."
+  tags:
+    - Cloudflare
+    - Messaging
+    - Queues
+  created: "2026-04-18"
+  modified: "2026-04-18"
+
+binds:
+  - namespace: env
+    keys:
+      CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
+
+capability:
+  consumes:
+    - type: http
+      namespace: cloudflare-queues
+      baseUri: https://api.cloudflare.com/client/v4
+      description: "Cloudflare Queues API for managing message queues."
+      authentication:
+        type: bearer
+        token: "{{CLOUDFLARE_API_TOKEN}}"
+      resources:
+        - name: queues
+          path: /accounts/{account_id}/queues
+          description: "Manage queues."
+          operations:
+            - name: list-queues
+              method: GET
+              description: "List all queues."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: create-queue
+              method: POST
+              description: "Create a new queue."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              body:
+                type: json
+                data:
+                  queue_name: "{{tools.queue_name}}"
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: queue
+          path: /accounts/{account_id}/queues/{queue_id}
+          description: "Manage a specific queue."
+          operations:
+            - name: get-queue
+              method: GET
+              description: "Get queue details."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: queue_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Queue identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: delete-queue
+              method: DELETE
+              description: "Delete a queue."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: queue_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Queue identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: messages
+          path: /accounts/{account_id}/queues/{queue_id}/messages
+          description: "Send and receive messages."
+          operations:
+            - name: send-message
+              method: POST
+              description: "Send a message to a queue."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: queue_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Queue identifier."
+              body:
+                type: json
+                data:
+                  body: "{{tools.body}}"
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: pull-messages
+              method: POST
+              description: "Pull messages from a queue."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: queue_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Queue identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: consumers
+          path: /accounts/{account_id}/queues/{queue_id}/consumers
+          description: "Manage queue consumers."
+          operations:
+            - name: list-queue-consumers
+              method: GET
+              description: "List consumers for a queue."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: queue_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Queue identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: create-queue-consumer
+              method: POST
+              description: "Create a consumer for a queue."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: queue_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Queue identifier."
+              body:
+                type: json
+                data:
+                  script_name: "{{tools.script_name}}"
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+
+  exposes:
+    - type: rest
+      port: 8107
+      namespace: cloudflare-queues-api
+      resources:
+        - path: /v1/queues
+          name: queues
+          description: "Queue management."
+          operations:
+            - method: GET
+              name: list-queues
+              description: "List queues."
+              call: "cloudflare-queues.list-queues"
+              with:
+                account_id: "rest.account_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+    - type: mcp
+      port: 9107
+      namespace: cloudflare-queues-mcp
+      transport: http
+      tools:
+        - name: list-queues
+          description: "List all queues."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-queues.list-queues"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: create-queue
+          description: "Create a new queue."
+          hints:
+            readOnly: false
+          call: "cloudflare-queues.create-queue"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: get-queue
+          description: "Get queue details."
+          hints:
+            readOnly: true
+          call: "cloudflare-queues.get-queue"
+          with:
+            account_id: "tools.account_id"
+            queue_id: "tools.queue_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: send-message
+          description: "Send a message to a queue."
+          hints:
+            readOnly: false
+          call: "cloudflare-queues.send-message"
+          with:
+            account_id: "tools.account_id"
+            queue_id: "tools.queue_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: pull-messages
+          description: "Pull messages from a queue."
+          hints:
+            readOnly: true
+          call: "cloudflare-queues.pull-messages"
+          with:
+            account_id: "tools.account_id"
+            queue_id: "tools.queue_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: delete-queue
+          description: "Delete a queue."
+          hints:
+            destructive: true
+            idempotent: true
+          call: "cloudflare-queues.delete-queue"
+          with:
+            account_id: "tools.account_id"
+            queue_id: "tools.queue_id"
+          outputParameters:
+            - type: object
+              mapping: "$."

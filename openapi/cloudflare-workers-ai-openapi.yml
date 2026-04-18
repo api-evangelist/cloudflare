@@ -16,46 +16,64 @@ externalDocs:
   description: Cloudflare Workers AI Documentation
   url: https://developers.cloudflare.com/workers-ai/
 servers:
-  - url: https://api.cloudflare.com/client/v4
-    description: Cloudflare API v4 Production Server
+- url: https://api.cloudflare.com/client/v4
+  description: Cloudflare API v4 Production Server
 tags:
-  - name: AI Inference
-    description: >-
-      Execute AI models for text generation, embeddings, image classification,
-      and other machine learning tasks.
-  - name: OpenAI Compatible
-    description: >-
-      OpenAI-compatible endpoints for chat completions, text completions,
-      embeddings, and responses.
+- name: AI Inference
+  description: >-
+    Execute AI models for text generation, embeddings, image classification,
+    and other machine learning tasks.
+- name: OpenAI Compatible
+  description: >-
+    OpenAI-compatible endpoints for chat completions, text completions,
+    embeddings, and responses.
 security:
-  - bearerAuth: []
+- bearerAuth: []
 paths:
   /accounts/{account_id}/ai/run/{model}:
     post:
       operationId: executeAiModel
-      summary: Cloudflare Execute AI model
+      summary: Cloudflare Execute Ai Model
       description: >-
         Run an AI model on Cloudflare's global network. The model parameter
         specifies which model to invoke from the Workers AI catalog. Supports
         text generation, text-to-image, image classification, speech-to-text,
         translation, summarization, and embedding models.
       tags:
-        - AI Inference
+      - AI Inference
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - name: model
-          in: path
-          required: true
-          description: >-
-            The model identifier to execute, e.g. @cf/meta/llama-3.1-8b-instruct.
-          schema:
-            type: string
+      - $ref: '#/components/parameters/AccountId'
+      - name: model
+        in: path
+        required: true
+        description: >-
+          The model identifier to execute, e.g. @cf/meta/llama-3.1-8b-instruct.
+        schema:
+          type: string
+        example: example_value
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/AiRunRequest'
+            examples:
+              ExecuteaimodelRequestExample:
+                summary: Default executeAiModel request
+                x-microcks-default: true
+                value:
+                  prompt: example_value
+                  messages:
+                  - role: system
+                    content: example_value
+                  image:
+                  - 10
+                  text: example_value
+                  source_lang: example_value
+                  target_lang: example_value
+                  max_tokens: 10
+                  temperature: 42.5
+                  stream: true
       responses:
         '200':
           description: Model executed successfully.
@@ -63,30 +81,58 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AiRunResponse'
+              examples:
+                Executeaimodel200Example:
+                  summary: Default executeAiModel 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      response: example_value
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request due to invalid input.
         '401':
           description: Unauthorized.
         '404':
           description: Model not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/ai/v1/chat/completions:
     post:
       operationId: createChatCompletion
-      summary: Cloudflare Create chat completion
+      summary: Cloudflare Create Chat Completion
       description: >-
         OpenAI-compatible endpoint for chat completions. Accepts a messages
         array and returns a model-generated response. Supports streaming via
         server-sent events.
       tags:
-        - OpenAI Compatible
+      - OpenAI Compatible
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ChatCompletionRequest'
+            examples:
+              CreatechatcompletionRequestExample:
+                summary: Default createChatCompletion request
+                x-microcks-default: true
+                value:
+                  model: example_value
+                  messages:
+                  - role: system
+                    content: example_value
+                  max_tokens: 10
+                  temperature: 42.5
+                  top_p: 42.5
+                  stream: true
       responses:
         '200':
           description: Chat completion generated successfully.
@@ -94,21 +140,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ChatCompletionResponse'
+              examples:
+                Createchatcompletion200Example:
+                  summary: Default createChatCompletion 200 response
+                  x-microcks-default: true
+                  value:
+                    id: abc123
+                    object: example_value
+                    created: 10
+                    model: example_value
+                    choices:
+                    - index: 10
+                      message:
+                        role: example_value
+                        content: example_value
+                      finish_reason: stop
+                    usage:
+                      prompt_tokens: 10
+                      completion_tokens: 10
+                      total_tokens: 10
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/ai/v1/completions:
     post:
       operationId: createTextCompletion
-      summary: Cloudflare Create text completion
+      summary: Cloudflare Create Text Completion
       description: >-
         OpenAI-compatible endpoint for text completions. Accepts a prompt
         string and returns a model-generated continuation.
       tags:
-        - OpenAI Compatible
+      - OpenAI Compatible
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
@@ -116,8 +184,8 @@ paths:
             schema:
               type: object
               required:
-                - model
-                - prompt
+              - model
+              - prompt
               properties:
                 model:
                   type: string
@@ -136,6 +204,16 @@ paths:
                 stream:
                   type: boolean
                   description: Whether to stream the response.
+            examples:
+              CreatetextcompletionRequestExample:
+                summary: Default createTextCompletion request
+                x-microcks-default: true
+                value:
+                  model: example_value
+                  prompt: example_value
+                  max_tokens: 10
+                  temperature: 42.5
+                  stream: true
       responses:
         '200':
           description: Text completion generated successfully.
@@ -143,18 +221,21 @@ paths:
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/ai/v1/embeddings:
     post:
       operationId: createEmbeddings
-      summary: Cloudflare Create embeddings
+      summary: Cloudflare Create Embeddings
       description: >-
         OpenAI-compatible endpoint for generating text embeddings. Converts
         text into numerical vector representations for semantic search,
         similarity analysis, and classification.
       tags:
-        - OpenAI Compatible
+      - OpenAI Compatible
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
@@ -162,19 +243,26 @@ paths:
             schema:
               type: object
               required:
-                - model
-                - input
+              - model
+              - input
               properties:
                 model:
                   type: string
                   description: The embedding model identifier.
                 input:
                   oneOf:
-                    - type: string
-                    - type: array
-                      items:
-                        type: string
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
                   description: The text or array of texts to embed.
+            examples:
+              CreateembeddingsRequestExample:
+                summary: Default createEmbeddings request
+                x-microcks-default: true
+                value:
+                  model: example_value
+                  input: example_value
       responses:
         '200':
           description: Embeddings generated successfully.
@@ -182,21 +270,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EmbeddingResponse'
+              examples:
+                Createembeddings200Example:
+                  summary: Default createEmbeddings 200 response
+                  x-microcks-default: true
+                  value:
+                    object: example_value
+                    data:
+                    - object: example_value
+                      index: 10
+                      embedding:
+                      - {}
+                    model: example_value
+                    usage:
+                      prompt_tokens: 10
+                      total_tokens: 10
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/ai/v1/responses:
     post:
       operationId: createResponse
-      summary: Cloudflare Create response
+      summary: Cloudflare Create Response
       description: >-
         OpenAI-compatible responses endpoint for generating model responses
         with additional tool use and structured output capabilities.
       tags:
-        - OpenAI Compatible
+      - OpenAI Compatible
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
@@ -204,8 +310,8 @@ paths:
             schema:
               type: object
               required:
-                - model
-                - input
+              - model
+              - input
               properties:
                 model:
                   type: string
@@ -213,6 +319,13 @@ paths:
                 input:
                   type: string
                   description: The input text for the model.
+            examples:
+              CreateresponseRequestExample:
+                summary: Default createResponse request
+                x-microcks-default: true
+                value:
+                  model: example_value
+                  input: example_value
       responses:
         '200':
           description: Response generated successfully.
@@ -220,6 +333,9 @@ paths:
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     bearerAuth:
@@ -242,6 +358,7 @@ components:
         prompt:
           type: string
           description: The input prompt for text generation models.
+          example: example_value
         messages:
           type: array
           description: >-
@@ -252,34 +369,42 @@ components:
               role:
                 type: string
                 enum:
-                  - system
-                  - user
-                  - assistant
+                - system
+                - user
+                - assistant
               content:
                 type: string
+          example: []
         image:
           type: array
           items:
             type: integer
           description: Raw image bytes for image classification models.
+          example: []
         text:
           type: string
           description: Text input for embedding or translation models.
+          example: example_value
         source_lang:
           type: string
           description: Source language code for translation.
+          example: example_value
         target_lang:
           type: string
           description: Target language code for translation.
+          example: example_value
         max_tokens:
           type: integer
           description: Maximum number of tokens to generate.
+          example: 10
         temperature:
           type: number
           description: Sampling temperature.
+          example: 42.5
         stream:
           type: boolean
           description: Whether to stream the response using server-sent events.
+          example: true
     AiRunResponse:
       type: object
       properties:
@@ -289,73 +414,87 @@ components:
             response:
               type: string
               description: The generated text response.
+          example: example_value
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []
     ChatCompletionRequest:
       type: object
       required:
-        - model
-        - messages
+      - model
+      - messages
       properties:
         model:
           type: string
           description: >-
             The model identifier, e.g. @cf/meta/llama-3.1-8b-instruct.
+          example: example_value
         messages:
           type: array
           items:
             type: object
             required:
-              - role
-              - content
+            - role
+            - content
             properties:
               role:
                 type: string
                 enum:
-                  - system
-                  - user
-                  - assistant
+                - system
+                - user
+                - assistant
               content:
                 type: string
+          example: []
         max_tokens:
           type: integer
           description: Maximum number of tokens to generate.
+          example: 10
         temperature:
           type: number
           description: Sampling temperature between 0 and 2.
           minimum: 0
           maximum: 2
+          example: 42.5
         top_p:
           type: number
           description: Nucleus sampling parameter.
           minimum: 0
           maximum: 1
+          example: 42.5
         stream:
           type: boolean
           description: Whether to stream the response via server-sent events.
+          example: true
     ChatCompletionResponse:
       type: object
       properties:
         id:
           type: string
           description: Unique identifier for the completion.
+          example: abc123
         object:
           type: string
           const: chat.completion
+          example: example_value
         created:
           type: integer
           description: Unix timestamp of when the completion was created.
+          example: 10
         model:
           type: string
           description: The model used for the completion.
+          example: example_value
         choices:
           type: array
           items:
@@ -373,8 +512,9 @@ components:
               finish_reason:
                 type: string
                 enum:
-                  - stop
-                  - length
+                - stop
+                - length
+          example: []
         usage:
           type: object
           properties:
@@ -384,12 +524,14 @@ components:
               type: integer
             total_tokens:
               type: integer
+          example: example_value
     EmbeddingResponse:
       type: object
       properties:
         object:
           type: string
           const: list
+          example: example_value
         data:
           type: array
           items:
@@ -404,8 +546,10 @@ components:
                 type: array
                 items:
                   type: number
+          example: []
         model:
           type: string
+          example: example_value
         usage:
           type: object
           properties:
@@ -413,3 +557,4 @@ components:
               type: integer
             total_tokens:
               type: integer
+          example: example_value

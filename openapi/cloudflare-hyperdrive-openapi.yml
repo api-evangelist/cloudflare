@@ -15,26 +15,26 @@ externalDocs:
   description: Cloudflare Hyperdrive API Documentation
   url: https://developers.cloudflare.com/api/resources/hyperdrive/
 servers:
-  - url: https://api.cloudflare.com/client/v4
-    description: Cloudflare API v4 Production Server
+- url: https://api.cloudflare.com/client/v4
+  description: Cloudflare API v4 Production Server
 tags:
-  - name: Configurations
-    description: >-
-      Create, list, update, and delete Hyperdrive configurations that connect
-      Workers to databases.
+- name: Configurations
+  description: >-
+    Create, list, update, and delete Hyperdrive configurations that connect
+    Workers to databases.
 security:
-  - bearerAuth: []
+- bearerAuth: []
 paths:
   /accounts/{account_id}/hyperdrive/configs:
     get:
       operationId: listHyperdriveConfigs
-      summary: Cloudflare List Hyperdrive configurations
+      summary: Cloudflare List Hyperdrive Configurations
       description: >-
         Returns all Hyperdrive configurations for the account.
       tags:
-        - Configurations
+      - Configurations
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: List of Hyperdrive configurations.
@@ -42,24 +42,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigListResponse'
+              examples:
+                Listhyperdriveconfigs200Example:
+                  summary: Default listHyperdriveConfigs 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      name: Example Title
+                      origin: {}
+                      caching: {}
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createHyperdriveConfig
-      summary: Cloudflare Create Hyperdrive configuration
+      summary: Cloudflare Create Hyperdrive Configuration
       description: >-
         Create a new Hyperdrive configuration with database origin connection
         details and caching settings.
       tags:
-        - Configurations
+      - Configurations
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ConfigInput'
+            examples:
+              CreatehyperdriveconfigRequestExample:
+                summary: Default createHyperdriveConfig request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  origin:
+                    scheme: example_value
+                    host: example_value
+                    port: 10
+                    database: example_value
+                    user: example_value
+                    password: example_value
+                  caching:
+                    disabled: true
+                    max_age: 10
+                    stale_while_revalidate: 10
       responses:
         '200':
           description: Configuration created successfully.
@@ -67,21 +98,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigResponse'
+              examples:
+                Createhyperdriveconfig200Example:
+                  summary: Default createHyperdriveConfig 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      name: Example Title
+                      origin:
+                        scheme: example_value
+                        host: example_value
+                        port: 10
+                        database: example_value
+                        user: example_value
+                      caching:
+                        disabled: true
+                        max_age: 10
+                        stale_while_revalidate: 10
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/hyperdrive/configs/{config_id}:
     get:
       operationId: getHyperdriveConfig
-      summary: Cloudflare Get Hyperdrive configuration
+      summary: Cloudflare Get Hyperdrive Configuration
       description: >-
         Retrieve details of a specific Hyperdrive configuration.
       tags:
-        - Configurations
+      - Configurations
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ConfigId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ConfigId'
       responses:
         '200':
           description: Configuration details.
@@ -89,46 +146,95 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConfigResponse'
+              examples:
+                Gethyperdriveconfig200Example:
+                  summary: Default getHyperdriveConfig 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      name: Example Title
+                      origin:
+                        scheme: example_value
+                        host: example_value
+                        port: 10
+                        database: example_value
+                        user: example_value
+                      caching:
+                        disabled: true
+                        max_age: 10
+                        stale_while_revalidate: 10
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '401':
           description: Unauthorized.
         '404':
           description: Configuration not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: updateHyperdriveConfig
-      summary: Cloudflare Update Hyperdrive configuration
+      summary: Cloudflare Update Hyperdrive Configuration
       description: >-
         Update a Hyperdrive configuration's connection details and settings.
       tags:
-        - Configurations
+      - Configurations
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ConfigId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ConfigId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ConfigInput'
+            examples:
+              UpdatehyperdriveconfigRequestExample:
+                summary: Default updateHyperdriveConfig request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  origin:
+                    scheme: example_value
+                    host: example_value
+                    port: 10
+                    database: example_value
+                    user: example_value
+                    password: example_value
+                  caching:
+                    disabled: true
+                    max_age: 10
+                    stale_while_revalidate: 10
       responses:
         '200':
           description: Configuration updated.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteHyperdriveConfig
-      summary: Cloudflare Delete Hyperdrive configuration
+      summary: Cloudflare Delete Hyperdrive Configuration
       description: >-
         Delete a Hyperdrive configuration.
       tags:
-        - Configurations
+      - Configurations
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ConfigId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ConfigId'
       responses:
         '200':
           description: Configuration deleted.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     bearerAuth:
@@ -158,9 +264,11 @@ components:
         id:
           type: string
           description: The unique identifier.
+          example: abc123
         name:
           type: string
           description: The name of the configuration.
+          example: Example Title
         origin:
           type: object
           properties:
@@ -179,6 +287,7 @@ components:
             user:
               type: string
               description: The database user.
+          example: example_value
         caching:
           type: object
           properties:
@@ -191,24 +300,26 @@ components:
             stale_while_revalidate:
               type: integer
               description: Stale-while-revalidate window in seconds.
+          example: example_value
     ConfigInput:
       type: object
       required:
-        - name
-        - origin
+      - name
+      - origin
       properties:
         name:
           type: string
           description: Name for the configuration.
+          example: Example Title
         origin:
           type: object
           required:
-            - scheme
-            - host
-            - port
-            - database
-            - user
-            - password
+          - scheme
+          - host
+          - port
+          - database
+          - user
+          - password
           properties:
             scheme:
               type: string
@@ -228,6 +339,7 @@ components:
             password:
               type: string
               description: Database password.
+          example: example_value
         caching:
           type: object
           properties:
@@ -237,6 +349,7 @@ components:
               type: integer
             stale_while_revalidate:
               type: integer
+          example: example_value
     ConfigResponse:
       type: object
       properties:
@@ -244,14 +357,17 @@ components:
           $ref: '#/components/schemas/HyperdriveConfig'
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []
     ConfigListResponse:
       type: object
       properties:
@@ -259,5 +375,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/HyperdriveConfig'
+          example: []
         success:
           type: boolean
+          example: true

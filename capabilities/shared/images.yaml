@@ -1,0 +1,245 @@
+naftiko: "1.0.0-alpha1"
+
+info:
+  label: "Cloudflare Images"
+  description: "Upload, store, and transform images at scale with direct uploads, URL-based uploads, and on-the-fly transformations."
+  tags:
+    - Cloudflare
+    - Images
+    - Media
+  created: "2026-04-18"
+  modified: "2026-04-18"
+
+binds:
+  - namespace: env
+    keys:
+      CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
+
+capability:
+  consumes:
+    - type: http
+      namespace: cloudflare-images
+      baseUri: https://api.cloudflare.com/client/v4
+      description: "Cloudflare Images API for managing image uploads, variants, and transformations."
+      authentication:
+        type: bearer
+        token: "{{CLOUDFLARE_API_TOKEN}}"
+      resources:
+        - name: images
+          path: /accounts/{account_id}/images/v1
+          description: "Manage images."
+          operations:
+            - name: list-images
+              method: GET
+              description: "List all images."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: upload-image
+              method: POST
+              description: "Upload an image."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: image
+          path: /accounts/{account_id}/images/v1/{image_id}
+          description: "Manage a specific image."
+          operations:
+            - name: get-image
+              method: GET
+              description: "Get image details."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: image_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Image identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: delete-image
+              method: DELETE
+              description: "Delete an image."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: image_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Image identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: variants
+          path: /accounts/{account_id}/images/v1/variants
+          description: "Manage image variants."
+          operations:
+            - name: list-image-variants
+              method: GET
+              description: "List image variants."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: create-image-variant
+              method: POST
+              description: "Create an image variant."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              body:
+                type: json
+                data:
+                  id: "{{tools.id}}"
+                  options: "{{tools.options}}"
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: direct-upload
+          path: /accounts/{account_id}/images/v2/direct_upload
+          description: "Create direct upload URLs."
+          operations:
+            - name: create-image-direct-upload
+              method: POST
+              description: "Create a direct upload URL for an image."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+
+  exposes:
+    - type: rest
+      port: 8112
+      namespace: cloudflare-images-api
+      resources:
+        - path: /v1/images
+          name: images
+          description: "Image management."
+          operations:
+            - method: GET
+              name: list-images
+              description: "List images."
+              call: "cloudflare-images.list-images"
+              with:
+                account_id: "rest.account_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+    - type: mcp
+      port: 9112
+      namespace: cloudflare-images-mcp
+      transport: http
+      tools:
+        - name: list-images
+          description: "List all images."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-images.list-images"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: upload-image
+          description: "Upload an image."
+          hints:
+            readOnly: false
+          call: "cloudflare-images.upload-image"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: get-image
+          description: "Get image details."
+          hints:
+            readOnly: true
+          call: "cloudflare-images.get-image"
+          with:
+            account_id: "tools.account_id"
+            image_id: "tools.image_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: delete-image
+          description: "Delete an image."
+          hints:
+            destructive: true
+            idempotent: true
+          call: "cloudflare-images.delete-image"
+          with:
+            account_id: "tools.account_id"
+            image_id: "tools.image_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: list-image-variants
+          description: "List image variants."
+          hints:
+            readOnly: true
+          call: "cloudflare-images.list-image-variants"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: create-image-direct-upload
+          description: "Create a direct upload URL for image."
+          hints:
+            readOnly: false
+          call: "cloudflare-images.create-image-direct-upload"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."

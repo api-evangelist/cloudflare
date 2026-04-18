@@ -15,35 +15,35 @@ externalDocs:
   description: Cloudflare Workers API Documentation
   url: https://developers.cloudflare.com/api/resources/workers/
 servers:
-  - url: https://api.cloudflare.com/client/v4
-    description: Cloudflare API v4 Production Server
+- url: https://api.cloudflare.com/client/v4
+  description: Cloudflare API v4 Production Server
 tags:
-  - name: Configuration
-    description: >-
-      Manage Worker script settings, cron triggers, and account settings.
-  - name: Deployments
-    description: >-
-      Manage deployments that direct traffic to specific Worker versions.
-  - name: Domains
-    description: >-
-      Attach and detach custom domains to Worker scripts.
-  - name: Routes
-    description: >-
-      Map URL patterns to Worker scripts within a zone.
-  - name: Scripts
-    description: >-
-      Upload, download, and manage Worker scripts by name.
-  - name: Secrets
-    description: >-
-      Manage encrypted environment variables for Worker scripts.
-  - name: Versions
-    description: >-
-      Manage immutable snapshots of Worker code and configuration.
-  - name: Workers
-    description: >-
-      Manage Worker resources including creating, updating, and deleting Workers.
+- name: Configuration
+  description: >-
+    Manage Worker script settings, cron triggers, and account settings.
+- name: Deployments
+  description: >-
+    Manage deployments that direct traffic to specific Worker versions.
+- name: Domains
+  description: >-
+    Attach and detach custom domains to Worker scripts.
+- name: Routes
+  description: >-
+    Map URL patterns to Worker scripts within a zone.
+- name: Scripts
+  description: >-
+    Upload, download, and manage Worker scripts by name.
+- name: Secrets
+  description: >-
+    Manage encrypted environment variables for Worker scripts.
+- name: Versions
+  description: >-
+    Manage immutable snapshots of Worker code and configuration.
+- name: Workers
+  description: >-
+    Manage Worker resources including creating, updating, and deleting Workers.
 security:
-  - bearerAuth: []
+- bearerAuth: []
 paths:
   /accounts/{account_id}/workers/workers:
     get:
@@ -52,9 +52,9 @@ paths:
       description: >-
         Returns a paginated list of all Workers for an account.
       tags:
-        - Workers
+      - Workers
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: Successful response with list of Workers.
@@ -62,23 +62,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WorkerListResponse'
+              examples:
+                Listworkers200Example:
+                  summary: Default listWorkers 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      name: Example Title
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createWorker
       summary: Cloudflare Create Worker
       description: >-
         Establish a new Worker with the provided configuration.
       tags:
-        - Workers
+      - Workers
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/WorkerInput'
+            examples:
+              CreateworkerRequestExample:
+                summary: Default createWorker request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  main_module: example_value
       responses:
         '200':
           description: Worker created successfully.
@@ -86,10 +107,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WorkerResponse'
+              examples:
+                Createworker200Example:
+                  summary: Default createWorker 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      name: Example Title
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/workers/workers/{worker_id}:
     get:
       operationId: getWorker
@@ -97,10 +136,10 @@ paths:
       description: >-
         Retrieve details of a specific Worker by its identifier.
       tags:
-        - Workers
+      - Workers
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/WorkerId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/WorkerId'
       responses:
         '200':
           description: Worker details retrieved successfully.
@@ -108,26 +147,51 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WorkerResponse'
+              examples:
+                Getworker200Example:
+                  summary: Default getWorker 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      name: Example Title
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '401':
           description: Unauthorized.
         '404':
           description: Worker not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: replaceWorker
       summary: Cloudflare Replace Worker
       description: >-
         Complete replacement of Worker properties.
       tags:
-        - Workers
+      - Workers
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/WorkerId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/WorkerId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/WorkerInput'
+            examples:
+              ReplaceworkerRequestExample:
+                summary: Default replaceWorker request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  main_module: example_value
       responses:
         '200':
           description: Worker replaced successfully.
@@ -135,22 +199,32 @@ paths:
           description: Unauthorized.
         '404':
           description: Worker not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     patch:
       operationId: editWorker
       summary: Cloudflare Edit Worker
       description: >-
         Partial update preserving unchanged fields.
       tags:
-        - Workers
+      - Workers
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/WorkerId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/WorkerId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/WorkerInput'
+            examples:
+              EditworkerRequestExample:
+                summary: Default editWorker request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  main_module: example_value
       responses:
         '200':
           description: Worker updated successfully.
@@ -158,16 +232,19 @@ paths:
           description: Unauthorized.
         '404':
           description: Worker not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteWorker
       summary: Cloudflare Delete Worker
       description: >-
         Remove a Worker and all associated resources.
       tags:
-        - Workers
+      - Workers
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/WorkerId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/WorkerId'
       responses:
         '200':
           description: Worker deleted successfully.
@@ -175,16 +252,19 @@ paths:
           description: Unauthorized.
         '404':
           description: Worker not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/workers/scripts:
     get:
       operationId: listScripts
-      summary: Cloudflare List Worker scripts
+      summary: Cloudflare List Worker Scripts
       description: >-
         Retrieve a list of all Worker scripts for the account.
       tags:
-        - Scripts
+      - Scripts
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: List of Worker scripts.
@@ -192,19 +272,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ScriptListResponse'
+              examples:
+                Listscripts200Example:
+                  summary: Default listScripts 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      tag: example_value
+                      etag: example_value
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/workers/scripts/{script_name}:
     get:
       operationId: downloadScript
-      summary: Cloudflare Download Worker script
+      summary: Cloudflare Download Worker Script
       description: >-
         Download a Worker script by name. Returns the script content.
       tags:
-        - Scripts
+      - Scripts
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ScriptName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
       responses:
         '200':
           description: Worker script content.
@@ -212,17 +307,20 @@ paths:
           description: Unauthorized.
         '404':
           description: Script not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: uploadScript
-      summary: Cloudflare Upload Worker script
+      summary: Cloudflare Upload Worker Script
       description: >-
         Upload or update a Worker script by name using multipart form data or
         JSON with base64-encoded content.
       tags:
-        - Scripts
+      - Scripts
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ScriptName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
       responses:
         '200':
           description: Script uploaded successfully.
@@ -230,16 +328,19 @@ paths:
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteScript
-      summary: Cloudflare Delete Worker script
+      summary: Cloudflare Delete Worker Script
       description: >-
         Delete a Worker script by name.
       tags:
-        - Scripts
+      - Scripts
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ScriptName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
       responses:
         '200':
           description: Script deleted successfully.
@@ -247,78 +348,93 @@ paths:
           description: Unauthorized.
         '404':
           description: Script not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/workers/workers/{worker_id}/versions:
     get:
       operationId: listVersions
-      summary: Cloudflare List Worker versions
+      summary: Cloudflare List Worker Versions
       description: >-
         Retrieve all immutable versions of a Worker's code and configuration.
       tags:
-        - Versions
+      - Versions
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/WorkerId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/WorkerId'
       responses:
         '200':
           description: List of Worker versions.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createVersion
-      summary: Cloudflare Create Worker version
+      summary: Cloudflare Create Worker Version
       description: >-
         Create a new immutable snapshot of Worker code and configuration.
       tags:
-        - Versions
+      - Versions
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/WorkerId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/WorkerId'
       responses:
         '200':
           description: Version created successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/workers/scripts/{script_name}/deployments:
     get:
       operationId: listDeployments
-      summary: Cloudflare List deployments
+      summary: Cloudflare List Deployments
       description: >-
         List all deployments for a Worker script.
       tags:
-        - Deployments
+      - Deployments
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ScriptName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
       responses:
         '200':
           description: List of deployments.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createDeployment
-      summary: Cloudflare Create deployment
+      summary: Cloudflare Create Deployment
       description: >-
         Create a new deployment directing traffic to a specific Worker version.
       tags:
-        - Deployments
+      - Deployments
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ScriptName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
       responses:
         '200':
           description: Deployment created successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/workers/routes:
     get:
       operationId: listRoutes
-      summary: Cloudflare List Worker routes
+      summary: Cloudflare List Worker Routes
       description: >-
         Retrieve all routes mapping URL patterns to Worker scripts for a zone.
       tags:
-        - Routes
+      - Routes
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       responses:
         '200':
           description: List of Worker routes.
@@ -326,23 +442,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RouteListResponse'
+              examples:
+                Listroutes200Example:
+                  summary: Default listRoutes 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      pattern: example_value
+                      script: example_value
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createRoute
-      summary: Cloudflare Create Worker route
+      summary: Cloudflare Create Worker Route
       description: >-
         Map a URL pattern to a Worker script within the zone.
       tags:
-        - Routes
+      - Routes
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/RouteInput'
+            examples:
+              CreaterouteRequestExample:
+                summary: Default createRoute request
+                x-microcks-default: true
+                value:
+                  pattern: example_value
+                  script: example_value
       responses:
         '200':
           description: Route created successfully.
@@ -350,17 +486,20 @@ paths:
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/workers/routes/{route_id}:
     get:
       operationId: getRoute
-      summary: Cloudflare Get Worker route
+      summary: Cloudflare Get Worker Route
       description: >-
         Retrieve details of a specific Worker route.
       tags:
-        - Routes
+      - Routes
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
-        - $ref: '#/components/parameters/RouteId'
+      - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/RouteId'
       responses:
         '200':
           description: Route details.
@@ -368,22 +507,32 @@ paths:
           description: Unauthorized.
         '404':
           description: Route not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: updateRoute
-      summary: Cloudflare Update Worker route
+      summary: Cloudflare Update Worker Route
       description: >-
         Update the pattern or script assignment for a Worker route.
       tags:
-        - Routes
+      - Routes
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
-        - $ref: '#/components/parameters/RouteId'
+      - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/RouteId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/RouteInput'
+            examples:
+              UpdaterouteRequestExample:
+                summary: Default updateRoute request
+                x-microcks-default: true
+                value:
+                  pattern: example_value
+                  script: example_value
       responses:
         '200':
           description: Route updated successfully.
@@ -391,16 +540,19 @@ paths:
           description: Unauthorized.
         '404':
           description: Route not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteRoute
-      summary: Cloudflare Delete Worker route
+      summary: Cloudflare Delete Worker Route
       description: >-
         Remove a Worker route from the zone.
       tags:
-        - Routes
+      - Routes
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
-        - $ref: '#/components/parameters/RouteId'
+      - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/RouteId'
       responses:
         '200':
           description: Route deleted successfully.
@@ -408,61 +560,73 @@ paths:
           description: Unauthorized.
         '404':
           description: Route not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/workers/domains:
     get:
       operationId: listDomains
-      summary: Cloudflare List Worker domains
+      summary: Cloudflare List Worker Domains
       description: >-
         Retrieve all custom domains attached to Worker scripts.
       tags:
-        - Domains
+      - Domains
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: List of Worker domains.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: attachDomain
-      summary: Cloudflare Attach custom domain
+      summary: Cloudflare Attach Custom Domain
       description: >-
         Attach a custom domain to a Worker script.
       tags:
-        - Domains
+      - Domains
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: Domain attached successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/workers/scripts/{script_name}/secrets:
     get:
       operationId: listSecrets
-      summary: Cloudflare List Worker secrets
+      summary: Cloudflare List Worker Secrets
       description: >-
         List all secrets for a Worker script. Secret values are not returned.
       tags:
-        - Secrets
+      - Secrets
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ScriptName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
       responses:
         '200':
           description: List of secret names.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: addSecret
-      summary: Cloudflare Add Worker secret
+      summary: Cloudflare Add Worker Secret
       description: >-
         Add or update an encrypted secret for a Worker script.
       tags:
-        - Secrets
+      - Secrets
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ScriptName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
       requestBody:
         required: true
         content:
@@ -470,9 +634,9 @@ paths:
             schema:
               type: object
               required:
-                - name
-                - text
-                - type
+              - name
+              - text
+              - type
               properties:
                 name:
                   type: string
@@ -483,76 +647,99 @@ paths:
                 type:
                   type: string
                   enum:
-                    - secret_text
+                  - secret_text
                   description: The type of the secret binding.
+            examples:
+              AddsecretRequestExample:
+                summary: Default addSecret request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  text: example_value
+                  type: secret_text
       responses:
         '200':
           description: Secret added successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/workers/scripts/{script_name}/schedules:
     get:
       operationId: getCronTriggers
-      summary: Cloudflare Get cron triggers
+      summary: Cloudflare Get Cron Triggers
       description: >-
         Retrieve the cron trigger schedules for a Worker script.
       tags:
-        - Configuration
+      - Configuration
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ScriptName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
       responses:
         '200':
           description: Cron trigger schedules.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: updateCronTriggers
-      summary: Cloudflare Update cron triggers
+      summary: Cloudflare Update Cron Triggers
       description: >-
         Set the cron trigger schedules for a Worker script.
       tags:
-        - Configuration
+      - Configuration
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ScriptName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
       responses:
         '200':
           description: Cron triggers updated successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/workers/scripts/{script_name}/settings:
     get:
       operationId: getScriptSettings
-      summary: Cloudflare Get script settings
+      summary: Cloudflare Get Script Settings
       description: >-
         Retrieve configuration settings for a Worker script including bindings
         and compatibility settings.
       tags:
-        - Configuration
+      - Configuration
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ScriptName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
       responses:
         '200':
           description: Script settings.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     patch:
       operationId: updateScriptSettings
-      summary: Cloudflare Update script settings
+      summary: Cloudflare Update Script Settings
       description: >-
         Update configuration settings for a Worker script.
       tags:
-        - Configuration
+      - Configuration
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ScriptName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
       responses:
         '200':
           description: Settings updated successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     bearerAuth:
@@ -603,9 +790,11 @@ components:
         name:
           type: string
           description: The name of the Worker.
+          example: Example Title
         main_module:
           type: string
           description: The entry point module for the Worker.
+          example: example_value
     WorkerResponse:
       type: object
       properties:
@@ -626,16 +815,20 @@ components:
               type: string
               format: date-time
               description: When the Worker was last modified.
+          example: example_value
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []
     WorkerListResponse:
       type: object
       properties:
@@ -654,8 +847,10 @@ components:
               modified_on:
                 type: string
                 format: date-time
+          example: []
         success:
           type: boolean
+          example: true
     ScriptListResponse:
       type: object
       properties:
@@ -679,19 +874,23 @@ components:
               modified_on:
                 type: string
                 format: date-time
+          example: []
         success:
           type: boolean
+          example: true
     RouteInput:
       type: object
       required:
-        - pattern
+      - pattern
       properties:
         pattern:
           type: string
           description: The URL pattern for the route, e.g. example.com/*.
+          example: example_value
         script:
           type: string
           description: The name of the Worker script to invoke.
+          example: example_value
     RouteListResponse:
       type: object
       properties:
@@ -706,5 +905,7 @@ components:
                 type: string
               script:
                 type: string
+          example: []
         success:
           type: boolean
+          example: true

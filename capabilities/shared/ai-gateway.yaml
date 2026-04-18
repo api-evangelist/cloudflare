@@ -1,0 +1,244 @@
+naftiko: "1.0.0-alpha1"
+
+info:
+  label: "Cloudflare AI Gateway"
+  description: "Manage AI Gateway instances for visibility and control over AI applications with analytics, logging, caching, and rate limiting."
+  tags:
+    - Cloudflare
+    - Artificial Intelligence
+    - Gateway
+  created: "2026-04-18"
+  modified: "2026-04-18"
+
+binds:
+  - namespace: env
+    keys:
+      CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
+
+capability:
+  consumes:
+    - type: http
+      namespace: cloudflare-ai-gateway
+      baseUri: https://api.cloudflare.com/client/v4
+      description: "Cloudflare AI Gateway API for managing AI gateways and viewing logs."
+      authentication:
+        type: bearer
+        token: "{{CLOUDFLARE_API_TOKEN}}"
+      resources:
+        - name: gateways
+          path: /accounts/{account_id}/ai-gateway/gateways
+          description: "Manage AI Gateway instances."
+          operations:
+            - name: list-ai-gateways
+              method: GET
+              description: "List all AI Gateway instances."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: create-ai-gateway
+              method: POST
+              description: "Create a new AI Gateway."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              body:
+                type: json
+                data:
+                  id: "{{tools.id}}"
+                  name: "{{tools.name}}"
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: gateway
+          path: /accounts/{account_id}/ai-gateway/gateways/{gateway_id}
+          description: "Manage a specific AI Gateway."
+          operations:
+            - name: get-ai-gateway
+              method: GET
+              description: "Get AI Gateway details."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: gateway_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Gateway identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: update-ai-gateway
+              method: PUT
+              description: "Update an AI Gateway."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: gateway_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Gateway identifier."
+              body:
+                type: json
+                data:
+                  name: "{{tools.name}}"
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: delete-ai-gateway
+              method: DELETE
+              description: "Delete an AI Gateway."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: gateway_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Gateway identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: gateway-logs
+          path: /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/logs
+          description: "AI Gateway logs."
+          operations:
+            - name: list-ai-gateway-logs
+              method: GET
+              description: "List logs for an AI Gateway."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: gateway_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Gateway identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+
+  exposes:
+    - type: rest
+      port: 8103
+      namespace: cloudflare-ai-gateway-api
+      resources:
+        - path: /v1/ai-gateways
+          name: ai-gateways
+          description: "AI Gateway management."
+          operations:
+            - method: GET
+              name: list-ai-gateways
+              description: "List AI gateways."
+              call: "cloudflare-ai-gateway.list-ai-gateways"
+              with:
+                account_id: "rest.account_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+    - type: mcp
+      port: 9103
+      namespace: cloudflare-ai-gateway-mcp
+      transport: http
+      tools:
+        - name: list-ai-gateways
+          description: "List all AI Gateway instances."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-ai-gateway.list-ai-gateways"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: create-ai-gateway
+          description: "Create a new AI Gateway."
+          hints:
+            readOnly: false
+          call: "cloudflare-ai-gateway.create-ai-gateway"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: get-ai-gateway
+          description: "Get AI Gateway details."
+          hints:
+            readOnly: true
+          call: "cloudflare-ai-gateway.get-ai-gateway"
+          with:
+            account_id: "tools.account_id"
+            gateway_id: "tools.gateway_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: update-ai-gateway
+          description: "Update an AI Gateway."
+          hints:
+            readOnly: false
+            idempotent: true
+          call: "cloudflare-ai-gateway.update-ai-gateway"
+          with:
+            account_id: "tools.account_id"
+            gateway_id: "tools.gateway_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: delete-ai-gateway
+          description: "Delete an AI Gateway."
+          hints:
+            destructive: true
+            idempotent: true
+          call: "cloudflare-ai-gateway.delete-ai-gateway"
+          with:
+            account_id: "tools.account_id"
+            gateway_id: "tools.gateway_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: list-ai-gateway-logs
+          description: "List logs for an AI Gateway."
+          hints:
+            readOnly: true
+          call: "cloudflare-ai-gateway.list-ai-gateway-logs"
+          with:
+            account_id: "tools.account_id"
+            gateway_id: "tools.gateway_id"
+          outputParameters:
+            - type: object
+              mapping: "$."

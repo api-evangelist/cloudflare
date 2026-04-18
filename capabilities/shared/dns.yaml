@@ -1,0 +1,288 @@
+naftiko: "1.0.0-alpha1"
+
+info:
+  label: "Cloudflare DNS"
+  description: "Programmatically manage DNS records for zones, including creating, listing, updating, and deleting records with batch operations, scanning, and DNSSEC configuration."
+  tags:
+    - Cloudflare
+    - DNS
+    - Domains
+  created: "2026-04-18"
+  modified: "2026-04-18"
+
+binds:
+  - namespace: env
+    keys:
+      CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
+
+capability:
+  consumes:
+    - type: http
+      namespace: cloudflare-dns
+      baseUri: https://api.cloudflare.com/client/v4
+      description: "Cloudflare DNS API for managing DNS records, batch operations, scanning, and DNSSEC."
+      authentication:
+        type: bearer
+        token: "{{CLOUDFLARE_API_TOKEN}}"
+      resources:
+        - name: dns-records
+          path: /zones/{zone_id}/dns_records
+          description: "Manage DNS records for a zone."
+          operations:
+            - name: list-dns-records
+              method: GET
+              description: "List, search, sort, and filter a zone's DNS records."
+              inputParameters:
+                - name: zone_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Zone identifier."
+                - name: type
+                  in: query
+                  type: string
+                  required: false
+                  description: "DNS record type to filter by."
+                - name: name
+                  in: query
+                  type: string
+                  required: false
+                  description: "DNS record name to filter by."
+                - name: page
+                  in: query
+                  type: integer
+                  required: false
+                  description: "Page number of paginated results."
+                - name: per_page
+                  in: query
+                  type: integer
+                  required: false
+                  description: "Number of records per page."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: create-dns-record
+              method: POST
+              description: "Create a new DNS record for a zone."
+              inputParameters:
+                - name: zone_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Zone identifier."
+              body:
+                type: json
+                data:
+                  type: "{{tools.type}}"
+                  name: "{{tools.name}}"
+                  content: "{{tools.content}}"
+                  ttl: "{{tools.ttl}}"
+                  proxied: "{{tools.proxied}}"
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: dns-record
+          path: /zones/{zone_id}/dns_records/{dns_record_id}
+          description: "Manage a specific DNS record."
+          operations:
+            - name: get-dns-record
+              method: GET
+              description: "Get details of a specific DNS record."
+              inputParameters:
+                - name: zone_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Zone identifier."
+                - name: dns_record_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "DNS record identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: update-dns-record
+              method: PATCH
+              description: "Update an existing DNS record."
+              inputParameters:
+                - name: zone_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Zone identifier."
+                - name: dns_record_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "DNS record identifier."
+              body:
+                type: json
+                data:
+                  content: "{{tools.content}}"
+                  ttl: "{{tools.ttl}}"
+                  proxied: "{{tools.proxied}}"
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: delete-dns-record
+              method: DELETE
+              description: "Delete a DNS record."
+              inputParameters:
+                - name: zone_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Zone identifier."
+                - name: dns_record_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "DNS record identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: dns-batch
+          path: /zones/{zone_id}/dns_records/batch
+          description: "Batch DNS record operations."
+          operations:
+            - name: batch-dns-records
+              method: POST
+              description: "Execute multiple DNS record operations in a single call."
+              inputParameters:
+                - name: zone_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Zone identifier."
+              body:
+                type: json
+                data:
+                  posts: "{{tools.posts}}"
+                  puts: "{{tools.puts}}"
+                  patches: "{{tools.patches}}"
+                  deletes: "{{tools.deletes}}"
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: dnssec
+          path: /zones/{zone_id}/dnssec
+          description: "DNSSEC configuration for a zone."
+          operations:
+            - name: get-dnssec
+              method: GET
+              description: "Get DNSSEC settings for a zone."
+              inputParameters:
+                - name: zone_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Zone identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+
+  exposes:
+    - type: rest
+      port: 8100
+      namespace: cloudflare-dns-api
+      resources:
+        - path: /v1/dns-records
+          name: dns-records
+          description: "DNS record management."
+          operations:
+            - method: GET
+              name: list-dns-records
+              description: "List DNS records for a zone."
+              call: "cloudflare-dns.list-dns-records"
+              with:
+                zone_id: "rest.zone_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+    - type: mcp
+      port: 9100
+      namespace: cloudflare-dns-mcp
+      transport: http
+      tools:
+        - name: list-dns-records
+          description: "List DNS records for a zone."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-dns.list-dns-records"
+          with:
+            zone_id: "tools.zone_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: create-dns-record
+          description: "Create a new DNS record."
+          hints:
+            readOnly: false
+          call: "cloudflare-dns.create-dns-record"
+          with:
+            zone_id: "tools.zone_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: get-dns-record
+          description: "Get DNS record details."
+          hints:
+            readOnly: true
+          call: "cloudflare-dns.get-dns-record"
+          with:
+            zone_id: "tools.zone_id"
+            dns_record_id: "tools.dns_record_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: update-dns-record
+          description: "Update a DNS record."
+          hints:
+            readOnly: false
+            idempotent: true
+          call: "cloudflare-dns.update-dns-record"
+          with:
+            zone_id: "tools.zone_id"
+            dns_record_id: "tools.dns_record_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: delete-dns-record
+          description: "Delete a DNS record."
+          hints:
+            destructive: true
+            idempotent: true
+          call: "cloudflare-dns.delete-dns-record"
+          with:
+            zone_id: "tools.zone_id"
+            dns_record_id: "tools.dns_record_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: batch-dns-records
+          description: "Execute batch DNS record operations."
+          hints:
+            readOnly: false
+          call: "cloudflare-dns.batch-dns-records"
+          with:
+            zone_id: "tools.zone_id"
+          outputParameters:
+            - type: object
+              mapping: "$."

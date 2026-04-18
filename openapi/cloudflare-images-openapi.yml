@@ -15,41 +15,43 @@ externalDocs:
   description: Cloudflare Images Documentation
   url: https://developers.cloudflare.com/images/
 servers:
-  - url: https://api.cloudflare.com/client/v4
-    description: Cloudflare API v4 Production Server
+- url: https://api.cloudflare.com/client/v4
+  description: Cloudflare API v4 Production Server
 tags:
-  - name: Direct Uploads
-    description: >-
-      Create one-time upload URLs for client-side image uploads.
-  - name: Images
-    description: >-
-      Upload, list, update, and delete image assets.
-  - name: Variants
-    description: >-
-      Manage image variants that define transformation presets.
+- name: Direct Uploads
+  description: >-
+    Create one-time upload URLs for client-side image uploads.
+- name: Images
+  description: >-
+    Upload, list, update, and delete image assets.
+- name: Variants
+  description: >-
+    Manage image variants that define transformation presets.
 security:
-  - bearerAuth: []
+- bearerAuth: []
 paths:
   /accounts/{account_id}/images/v1:
     get:
       operationId: listImages
-      summary: Cloudflare List images
+      summary: Cloudflare List Images
       description: >-
         Returns a paginated list of all images in the account.
       tags:
-        - Images
+      - Images
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - name: page
-          in: query
-          description: Page number for pagination.
-          schema:
-            type: integer
-        - name: per_page
-          in: query
-          description: Number of images per page.
-          schema:
-            type: integer
+      - $ref: '#/components/parameters/AccountId'
+      - name: page
+        in: query
+        description: Page number for pagination.
+        schema:
+          type: integer
+        example: 10
+      - name: per_page
+        in: query
+        description: Number of images per page.
+        schema:
+          type: integer
+        example: 10
       responses:
         '200':
           description: List of images.
@@ -57,18 +59,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageListResponse'
+              examples:
+                Listimages200Example:
+                  summary: Default listImages 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      images:
+                      - {}
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: uploadImage
-      summary: Cloudflare Upload image
+      summary: Cloudflare Upload Image
       description: >-
         Upload an image via file upload or URL. Supports JPEG, PNG, GIF, WebP,
         and SVG formats.
       tags:
-        - Images
+      - Images
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
@@ -93,6 +107,16 @@ paths:
                 requireSignedURLs:
                   type: boolean
                   description: Whether signed URLs are required.
+            examples:
+              UploadimageRequestExample:
+                summary: Default uploadImage request
+                x-microcks-default: true
+                value:
+                  file: example_value
+                  url: https://www.example.com
+                  id: abc123
+                  metadata: example_value
+                  requireSignedURLs: https://www.example.com
       responses:
         '200':
           description: Image uploaded successfully.
@@ -100,21 +124,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageResponse'
+              examples:
+                Uploadimage200Example:
+                  summary: Default uploadImage 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      filename: example_value
+                      metadata: example_value
+                      uploaded: '2026-01-15T10:30:00Z'
+                      requireSignedURLs: https://www.example.com
+                      variants:
+                      - {}
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/images/v1/{image_id}:
     get:
       operationId: getImage
-      summary: Cloudflare Get image details
+      summary: Cloudflare Get Image Details
       description: >-
         Retrieve details of a specific image.
       tags:
-        - Images
+      - Images
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ImageId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ImageId'
       responses:
         '200':
           description: Image details.
@@ -122,20 +167,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageResponse'
+              examples:
+                Getimage200Example:
+                  summary: Default getImage 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      filename: example_value
+                      metadata: example_value
+                      uploaded: '2026-01-15T10:30:00Z'
+                      requireSignedURLs: https://www.example.com
+                      variants:
+                      - {}
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '401':
           description: Unauthorized.
         '404':
           description: Image not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     patch:
       operationId: updateImage
-      summary: Cloudflare Update image
+      summary: Cloudflare Update Image
       description: >-
         Update image metadata and settings.
       tags:
-        - Images
+      - Images
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ImageId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ImageId'
       requestBody:
         required: true
         content:
@@ -147,21 +213,31 @@ paths:
                   type: object
                 requireSignedURLs:
                   type: boolean
+            examples:
+              UpdateimageRequestExample:
+                summary: Default updateImage request
+                x-microcks-default: true
+                value:
+                  metadata: example_value
+                  requireSignedURLs: https://www.example.com
       responses:
         '200':
           description: Image updated.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteImage
-      summary: Cloudflare Delete image
+      summary: Cloudflare Delete Image
       description: >-
         Delete an image and all its variants.
       tags:
-        - Images
+      - Images
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ImageId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ImageId'
       responses:
         '200':
           description: Image deleted.
@@ -169,17 +245,20 @@ paths:
           description: Unauthorized.
         '404':
           description: Image not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/images/v1/direct_upload:
     post:
       operationId: createImageDirectUpload
-      summary: Cloudflare Create direct upload URL
+      summary: Cloudflare Create Direct Upload Url
       description: >-
         Create a unique one-time upload URL for direct image uploads from
         client-side applications.
       tags:
-        - Direct Uploads
+      - Direct Uploads
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         content:
           application/json:
@@ -198,47 +277,77 @@ paths:
                   type: string
                   format: date-time
                   description: When the upload URL expires.
+            examples:
+              CreateimagedirectuploadRequestExample:
+                summary: Default createImageDirectUpload request
+                x-microcks-default: true
+                value:
+                  id: abc123
+                  metadata: example_value
+                  requireSignedURLs: https://www.example.com
+                  expiry: '2026-01-15T10:30:00Z'
       responses:
         '200':
           description: Direct upload URL created.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/images/v1/variants:
     get:
       operationId: listImageVariants
-      summary: Cloudflare List image variants
+      summary: Cloudflare List Image Variants
       description: >-
         Returns all image variant definitions for the account.
       tags:
-        - Variants
+      - Variants
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: List of variants.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createImageVariant
-      summary: Cloudflare Create image variant
+      summary: Cloudflare Create Image Variant
       description: >-
         Create a new image variant definition specifying transformation
         settings like dimensions, fit mode, and metadata stripping.
       tags:
-        - Variants
+      - Variants
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/VariantInput'
+            examples:
+              CreateimagevariantRequestExample:
+                summary: Default createImageVariant request
+                x-microcks-default: true
+                value:
+                  id: abc123
+                  options:
+                    fit: scale-down
+                    width: 10
+                    height: 10
+                    metadata: keep
+                  neverRequireSignedURLs: https://www.example.com
       responses:
         '200':
           description: Variant created.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     bearerAuth:
@@ -268,24 +377,30 @@ components:
         id:
           type: string
           description: The unique identifier of the image.
+          example: abc123
         filename:
           type: string
           description: Original filename.
+          example: example_value
         metadata:
           type: object
           description: User-defined metadata.
+          example: example_value
         uploaded:
           type: string
           format: date-time
           description: Upload timestamp.
+          example: '2026-01-15T10:30:00Z'
         requireSignedURLs:
           type: boolean
+          example: https://www.example.com
         variants:
           type: array
           items:
             type: string
             format: uri
           description: URLs for each variant of the image.
+          example: []
     ImageResponse:
       type: object
       properties:
@@ -293,14 +408,17 @@ components:
           $ref: '#/components/schemas/Image'
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []
     ImageListResponse:
       type: object
       properties:
@@ -311,28 +429,31 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Image'
+          example: example_value
         success:
           type: boolean
+          example: true
     VariantInput:
       type: object
       required:
-        - id
-        - options
+      - id
+      - options
       properties:
         id:
           type: string
           description: The name of the variant.
+          example: abc123
         options:
           type: object
           properties:
             fit:
               type: string
               enum:
-                - scale-down
-                - contain
-                - cover
-                - crop
-                - pad
+              - scale-down
+              - contain
+              - cover
+              - crop
+              - pad
               description: Resizing behavior.
             width:
               type: integer
@@ -343,10 +464,12 @@ components:
             metadata:
               type: string
               enum:
-                - keep
-                - copyright
-                - none
+              - keep
+              - copyright
+              - none
               description: What metadata to preserve.
+          example: example_value
         neverRequireSignedURLs:
           type: boolean
           description: Allow unsigned URL access for this variant.
+          example: https://www.example.com

@@ -15,73 +15,78 @@ externalDocs:
   description: Cloudflare DNS API Documentation
   url: https://developers.cloudflare.com/api/resources/dns/
 servers:
-  - url: https://api.cloudflare.com/client/v4
-    description: Cloudflare API v4 Production Server
+- url: https://api.cloudflare.com/client/v4
+  description: Cloudflare API v4 Production Server
 tags:
-  - name: DNS Analytics
-    description: >-
-      Access DNS query analytics for a zone with aggregated and time-grouped
-      metrics.
-  - name: DNS Batch Operations
-    description: >-
-      Execute multiple DNS record operations in a single API call.
-  - name: DNS Record Import/Export
-    description: >-
-      Import and export DNS records using BIND zone file format.
-  - name: DNS Record Scanning
-    description: >-
-      Scan for common DNS records on a domain and review discovered records.
-  - name: DNS Records
-    description: >-
-      Manage DNS records for a zone including A, AAAA, CNAME, MX, TXT, SRV,
-      and other record types.
-  - name: DNSSEC
-    description: >-
-      Manage DNSSEC settings for a zone to protect against DNS spoofing.
+- name: DNS Analytics
+  description: >-
+    Access DNS query analytics for a zone with aggregated and time-grouped
+    metrics.
+- name: DNS Batch Operations
+  description: >-
+    Execute multiple DNS record operations in a single API call.
+- name: DNS Record Import/Export
+  description: >-
+    Import and export DNS records using BIND zone file format.
+- name: DNS Record Scanning
+  description: >-
+    Scan for common DNS records on a domain and review discovered records.
+- name: DNS Records
+  description: >-
+    Manage DNS records for a zone including A, AAAA, CNAME, MX, TXT, SRV,
+    and other record types.
+- name: DNSSEC
+  description: >-
+    Manage DNSSEC settings for a zone to protect against DNS spoofing.
 security:
-  - bearerAuth: []
+- bearerAuth: []
 paths:
   /zones/{zone_id}/dns_records:
     get:
       operationId: listDnsRecords
-      summary: Cloudflare List DNS records
+      summary: Cloudflare List Dns Records
       description: >-
         List, search, sort, and filter a zone's DNS records. Returns a
         paginated list of DNS records for the specified zone.
       tags:
-        - DNS Records
+      - DNS Records
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
-        - name: type
-          in: query
-          description: DNS record type to filter by.
-          schema:
-            $ref: '#/components/schemas/RecordType'
-        - name: name
-          in: query
-          description: DNS record name to filter by.
-          schema:
-            type: string
-        - name: content
-          in: query
-          description: DNS record content to filter by.
-          schema:
-            type: string
-        - name: page
-          in: query
-          description: Page number of paginated results.
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-        - name: per_page
-          in: query
-          description: Number of records per page.
-          schema:
-            type: integer
-            minimum: 5
-            maximum: 50000
-            default: 100
+      - $ref: '#/components/parameters/ZoneId'
+      - name: type
+        in: query
+        description: DNS record type to filter by.
+        schema:
+          $ref: '#/components/schemas/RecordType'
+        example: example_value
+      - name: name
+        in: query
+        description: DNS record name to filter by.
+        schema:
+          type: string
+        example: Example Title
+      - name: content
+        in: query
+        description: DNS record content to filter by.
+        schema:
+          type: string
+        example: example_value
+      - name: page
+        in: query
+        description: Page number of paginated results.
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+        example: 10
+      - name: per_page
+        in: query
+        description: Number of records per page.
+        schema:
+          type: integer
+          minimum: 5
+          maximum: 50000
+          default: 100
+        example: 10
       responses:
         '200':
           description: Successful response with a list of DNS records.
@@ -89,29 +94,76 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DnsRecordListResponse'
+              examples:
+                Listdnsrecords200Example:
+                  summary: Default listDnsRecords 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      zone_id: '500123'
+                      zone_name: example_value
+                      name: Example Title
+                      content: example_value
+                      ttl: 10
+                      proxied: true
+                      proxiable: true
+                      locked: true
+                      comment: example_value
+                      tags: {}
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
+                    result_info:
+                      page: 10
+                      per_page: 10
+                      count: 10
+                      total_count: 10
+                      total_pages: 10
         '400':
           description: Bad request due to invalid parameters.
         '401':
           description: Unauthorized due to missing or invalid authentication.
         '403':
           description: Forbidden due to insufficient permissions.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createDnsRecord
-      summary: Cloudflare Create DNS record
+      summary: Cloudflare Create Dns Record
       description: >-
         Create a new DNS record for a zone. A/AAAA records cannot coexist with
         CNAME records on the same name, and NS records cannot share names with
         other record types.
       tags:
-        - DNS Records
+      - DNS Records
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/DnsRecordInput'
+            examples:
+              CreatednsrecordRequestExample:
+                summary: Default createDnsRecord request
+                x-microcks-default: true
+                value:
+                  type: A
+                  name: Example Title
+                  content: example_value
+                  ttl: 10
+                  priority: 10
+                  proxied: true
+                  comment: example_value
+                  tags:
+                  - example_value
       responses:
         '200':
           description: DNS record created successfully.
@@ -119,21 +171,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DnsRecordResponse'
+              examples:
+                Creatednsrecord200Example:
+                  summary: Default createDnsRecord 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      zone_id: '500123'
+                      zone_name: example_value
+                      name: Example Title
+                      content: example_value
+                      ttl: 10
+                      proxied: true
+                      proxiable: true
+                      locked: true
+                      comment: example_value
+                      tags:
+                      - {}
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request due to invalid record data.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/dns_records/{dns_record_id}:
     get:
       operationId: getDnsRecord
-      summary: Cloudflare Get DNS record details
+      summary: Cloudflare Get Dns Record Details
       description: >-
         Retrieve the details of a specific DNS record by its identifier.
       tags:
-        - DNS Records
+      - DNS Records
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
-        - $ref: '#/components/parameters/DnsRecordId'
+      - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/DnsRecordId'
       responses:
         '200':
           description: Successful response with DNS record details.
@@ -141,27 +221,69 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DnsRecordResponse'
+              examples:
+                Getdnsrecord200Example:
+                  summary: Default getDnsRecord 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      zone_id: '500123'
+                      zone_name: example_value
+                      name: Example Title
+                      content: example_value
+                      ttl: 10
+                      proxied: true
+                      proxiable: true
+                      locked: true
+                      comment: example_value
+                      tags:
+                      - {}
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '401':
           description: Unauthorized.
         '404':
           description: DNS record not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     patch:
       operationId: updateDnsRecord
-      summary: Cloudflare Update DNS record
+      summary: Cloudflare Update Dns Record
       description: >-
         Partially update a DNS record. Only the fields provided in the request
         body will be updated.
       tags:
-        - DNS Records
+      - DNS Records
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
-        - $ref: '#/components/parameters/DnsRecordId'
+      - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/DnsRecordId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/DnsRecordInput'
+            examples:
+              UpdatednsrecordRequestExample:
+                summary: Default updateDnsRecord request
+                x-microcks-default: true
+                value:
+                  type: A
+                  name: Example Title
+                  content: example_value
+                  ttl: 10
+                  priority: 10
+                  proxied: true
+                  comment: example_value
+                  tags:
+                  - example_value
       responses:
         '200':
           description: DNS record updated successfully.
@@ -169,29 +291,71 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DnsRecordResponse'
+              examples:
+                Updatednsrecord200Example:
+                  summary: Default updateDnsRecord 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      zone_id: '500123'
+                      zone_name: example_value
+                      name: Example Title
+                      content: example_value
+                      ttl: 10
+                      proxied: true
+                      proxiable: true
+                      locked: true
+                      comment: example_value
+                      tags:
+                      - {}
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
         '404':
           description: DNS record not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: overwriteDnsRecord
-      summary: Cloudflare Overwrite DNS record
+      summary: Cloudflare Overwrite Dns Record
       description: >-
         Completely replace a DNS record with the provided data. All fields must
         be provided.
       tags:
-        - DNS Records
+      - DNS Records
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
-        - $ref: '#/components/parameters/DnsRecordId'
+      - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/DnsRecordId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/DnsRecordInput'
+            examples:
+              OverwritednsrecordRequestExample:
+                summary: Default overwriteDnsRecord request
+                x-microcks-default: true
+                value:
+                  type: A
+                  name: Example Title
+                  content: example_value
+                  ttl: 10
+                  priority: 10
+                  proxied: true
+                  comment: example_value
+                  tags:
+                  - example_value
       responses:
         '200':
           description: DNS record overwritten successfully.
@@ -199,22 +363,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DnsRecordResponse'
+              examples:
+                Overwritednsrecord200Example:
+                  summary: Default overwriteDnsRecord 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      zone_id: '500123'
+                      zone_name: example_value
+                      name: Example Title
+                      content: example_value
+                      ttl: 10
+                      proxied: true
+                      proxiable: true
+                      locked: true
+                      comment: example_value
+                      tags:
+                      - {}
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
         '404':
           description: DNS record not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteDnsRecord
-      summary: Cloudflare Delete DNS record
+      summary: Cloudflare Delete Dns Record
       description: >-
         Delete a specific DNS record from the zone.
       tags:
-        - DNS Records
+      - DNS Records
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
-        - $ref: '#/components/parameters/DnsRecordId'
+      - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/DnsRecordId'
       responses:
         '200':
           description: DNS record deleted successfully.
@@ -231,21 +423,32 @@ paths:
                         description: The identifier of the deleted DNS record.
                   success:
                     type: boolean
+              examples:
+                Deletednsrecord200Example:
+                  summary: Default deleteDnsRecord 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                    success: true
         '401':
           description: Unauthorized.
         '404':
           description: DNS record not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/dns_records/batch:
     post:
       operationId: batchDnsRecords
-      summary: Cloudflare Batch DNS record operations
+      summary: Cloudflare Batch Dns Record Operations
       description: >-
         Send a batch of DNS record API calls to be executed together. Supports
         deletes, patches, puts, and posts executed in order.
       tags:
-        - DNS Batch Operations
+      - DNS Batch Operations
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       requestBody:
         required: true
         content:
@@ -276,6 +479,40 @@ paths:
                   description: DNS records to create.
                   items:
                     $ref: '#/components/schemas/DnsRecordInput'
+            examples:
+              BatchdnsrecordsRequestExample:
+                summary: Default batchDnsRecords request
+                x-microcks-default: true
+                value:
+                  deletes:
+                  - id: abc123
+                  patches:
+                  - name: Example Title
+                    content: example_value
+                    ttl: 10
+                    priority: 10
+                    proxied: true
+                    comment: example_value
+                    tags:
+                    - {}
+                  puts:
+                  - name: Example Title
+                    content: example_value
+                    ttl: 10
+                    priority: 10
+                    proxied: true
+                    comment: example_value
+                    tags:
+                    - {}
+                  posts:
+                  - name: Example Title
+                    content: example_value
+                    ttl: 10
+                    priority: 10
+                    proxied: true
+                    comment: example_value
+                    tags:
+                    - {}
       responses:
         '200':
           description: Batch operation completed successfully.
@@ -283,16 +520,19 @@ paths:
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/dns_records/export:
     get:
       operationId: exportDnsRecords
-      summary: Cloudflare Export DNS records
+      summary: Cloudflare Export Dns Records
       description: >-
         Export all DNS records for a zone in BIND zone file format.
       tags:
-        - DNS Record Import/Export
+      - DNS Record Import/Export
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       responses:
         '200':
           description: BIND zone file content.
@@ -300,19 +540,27 @@ paths:
             text/plain:
               schema:
                 type: string
+              examples:
+                Exportdnsrecords200Example:
+                  summary: Default exportDnsRecords 200 response
+                  x-microcks-default: true
+                  value: example_value
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/dns_records/import:
     post:
       operationId: importDnsRecords
-      summary: Cloudflare Import DNS records
+      summary: Cloudflare Import Dns Records
       description: >-
         Import DNS records from a BIND zone file. Upload the BIND config to
         create DNS records in the zone.
       tags:
-        - DNS Record Import/Export
+      - DNS Record Import/Export
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       requestBody:
         required: true
         content:
@@ -324,6 +572,12 @@ paths:
                   type: string
                   format: binary
                   description: BIND zone file to import.
+            examples:
+              ImportdnsrecordsRequestExample:
+                summary: Default importDnsRecords request
+                x-microcks-default: true
+                value:
+                  file: example_value
       responses:
         '200':
           description: Import completed successfully.
@@ -331,150 +585,176 @@ paths:
           description: Bad request due to invalid BIND config.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/dns_records/scan/trigger:
     post:
       operationId: triggerDnsRecordScan
-      summary: Cloudflare Trigger DNS record scan
+      summary: Cloudflare Trigger Dns Record Scan
       description: >-
         Initiate an asynchronous scan for common DNS records on the domain. The
         scan runs in the background and results can be reviewed using the
         scan review endpoints.
       tags:
-        - DNS Record Scanning
+      - DNS Record Scanning
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       responses:
         '200':
           description: Scan triggered successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/dns_records/scan/review:
     get:
       operationId: listScannedDnsRecords
-      summary: Cloudflare List scanned DNS records
+      summary: Cloudflare List Scanned Dns Records
       description: >-
         Retrieve the DNS records discovered by the most recent scan for review
         before adding them to the zone.
       tags:
-        - DNS Record Scanning
+      - DNS Record Scanning
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       responses:
         '200':
           description: List of scanned DNS records.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: reviewScannedDnsRecords
-      summary: Cloudflare Accept scanned DNS records
+      summary: Cloudflare Accept Scanned Dns Records
       description: >-
         Review and accept scanned DNS records to add them to the zone.
       tags:
-        - DNS Record Scanning
+      - DNS Record Scanning
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       responses:
         '200':
           description: Scanned records accepted.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/dns_analytics/report:
     get:
       operationId: getDnsAnalyticsReport
-      summary: Cloudflare Get DNS analytics report
+      summary: Cloudflare Get Dns Analytics Report
       description: >-
         Retrieve aggregated DNS analytics metrics for the zone including query
         counts, response codes, and record types.
       tags:
-        - DNS Analytics
+      - DNS Analytics
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
-        - name: since
-          in: query
-          description: Start date of the analytics query in ISO 8601 format.
-          schema:
-            type: string
-            format: date-time
-        - name: until
-          in: query
-          description: End date of the analytics query in ISO 8601 format.
-          schema:
-            type: string
-            format: date-time
+      - $ref: '#/components/parameters/ZoneId'
+      - name: since
+        in: query
+        description: Start date of the analytics query in ISO 8601 format.
+        schema:
+          type: string
+          format: date-time
+        example: '2026-01-15T10:30:00Z'
+      - name: until
+        in: query
+        description: End date of the analytics query in ISO 8601 format.
+        schema:
+          type: string
+          format: date-time
+        example: '2026-01-15T10:30:00Z'
       responses:
         '200':
           description: Aggregated DNS analytics report.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/dns_analytics/report/bytime:
     get:
       operationId: getDnsAnalyticsByTime
-      summary: Cloudflare Get DNS analytics by time
+      summary: Cloudflare Get Dns Analytics by Time
       description: >-
         Retrieve time-grouped DNS analytics metrics for the zone.
       tags:
-        - DNS Analytics
+      - DNS Analytics
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
-        - name: since
-          in: query
-          description: Start date in ISO 8601 format.
-          schema:
-            type: string
-            format: date-time
-        - name: until
-          in: query
-          description: End date in ISO 8601 format.
-          schema:
-            type: string
-            format: date-time
-        - name: time_delta
-          in: query
-          description: Time interval for grouping results.
-          schema:
-            type: string
-            enum:
-              - all
-              - auto
-              - year
-              - quarter
-              - month
-              - week
-              - day
-              - dekaminute
-              - hour
-              - minute
+      - $ref: '#/components/parameters/ZoneId'
+      - name: since
+        in: query
+        description: Start date in ISO 8601 format.
+        schema:
+          type: string
+          format: date-time
+        example: '2026-01-15T10:30:00Z'
+      - name: until
+        in: query
+        description: End date in ISO 8601 format.
+        schema:
+          type: string
+          format: date-time
+        example: '2026-01-15T10:30:00Z'
+      - name: time_delta
+        in: query
+        description: Time interval for grouping results.
+        schema:
+          type: string
+          enum:
+          - all
+          - auto
+          - year
+          - quarter
+          - month
+          - week
+          - day
+          - dekaminute
+          - hour
+          - minute
+        example: all
       responses:
         '200':
           description: Time-grouped DNS analytics report.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/dnssec:
     get:
       operationId: getDnssecSettings
-      summary: Cloudflare Get DNSSEC settings
+      summary: Cloudflare Get Dnssec Settings
       description: >-
         Retrieve the current DNSSEC settings for the zone including status,
         algorithm, digest, and DS record details.
       tags:
-        - DNSSEC
+      - DNSSEC
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       responses:
         '200':
           description: DNSSEC settings retrieved successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     patch:
       operationId: updateDnssecSettings
-      summary: Cloudflare Update DNSSEC settings
+      summary: Cloudflare Update Dnssec Settings
       description: >-
         Update DNSSEC configuration for the zone such as enabling or disabling
         DNSSEC.
       tags:
-        - DNSSEC
+      - DNSSEC
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       requestBody:
         required: true
         content:
@@ -485,28 +765,40 @@ paths:
                 status:
                   type: string
                   enum:
-                    - active
-                    - disabled
+                  - active
+                  - disabled
                   description: Desired DNSSEC status.
+            examples:
+              UpdatednssecsettingsRequestExample:
+                summary: Default updateDnssecSettings request
+                x-microcks-default: true
+                value:
+                  status: active
       responses:
         '200':
           description: DNSSEC settings updated successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteDnssecSettings
-      summary: Cloudflare Delete DNSSEC settings
+      summary: Cloudflare Delete Dnssec Settings
       description: >-
         Remove DNSSEC configuration from the zone.
       tags:
-        - DNSSEC
+      - DNSSEC
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       responses:
         '200':
           description: DNSSEC settings deleted successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     bearerAuth:
@@ -541,26 +833,26 @@ components:
       type: string
       description: The type of DNS record.
       enum:
-        - A
-        - AAAA
-        - CAA
-        - CERT
-        - CNAME
-        - DNSKEY
-        - DS
-        - HTTPS
-        - LOC
-        - MX
-        - NAPTR
-        - NS
-        - PTR
-        - SMIMEA
-        - SRV
-        - SSHFP
-        - SVCB
-        - TLSA
-        - TXT
-        - URI
+      - A
+      - AAAA
+      - CAA
+      - CERT
+      - CNAME
+      - DNSKEY
+      - DS
+      - HTTPS
+      - LOC
+      - MX
+      - NAPTR
+      - NS
+      - PTR
+      - SMIMEA
+      - SRV
+      - SSHFP
+      - SVCB
+      - TLSA
+      - TXT
+      - URI
     DnsRecordInput:
       type: object
       properties:
@@ -569,79 +861,99 @@ components:
         name:
           type: string
           description: The DNS record name, e.g. example.com.
+          example: Example Title
         content:
           type: string
           description: The DNS record content value.
+          example: example_value
         ttl:
           type: integer
           description: >-
             Time to live in seconds. A value of 1 indicates automatic TTL.
           minimum: 1
           maximum: 86400
+          example: 10
         priority:
           type: integer
           description: Required for MX, SRV, and URI records. Record priority.
           minimum: 0
           maximum: 65535
+          example: 10
         proxied:
           type: boolean
           description: Whether the record is receiving Cloudflare proxy services.
+          example: true
         comment:
           type: string
           description: A comment about the DNS record.
+          example: example_value
         tags:
           type: array
           items:
             type: string
           description: Custom tags for the DNS record.
+          example: []
     DnsRecord:
       type: object
       properties:
         id:
           type: string
           description: The unique identifier of the DNS record.
+          example: abc123
         zone_id:
           type: string
           description: The zone identifier.
+          example: '500123'
         zone_name:
           type: string
           description: The zone name.
+          example: example_value
         type:
           $ref: '#/components/schemas/RecordType'
         name:
           type: string
           description: The DNS record name.
+          example: Example Title
         content:
           type: string
           description: The DNS record content.
+          example: example_value
         ttl:
           type: integer
           description: Time to live in seconds.
+          example: 10
         proxied:
           type: boolean
           description: Whether the record is proxied through Cloudflare.
+          example: true
         proxiable:
           type: boolean
           description: Whether the record can be proxied.
+          example: true
         locked:
           type: boolean
           description: Whether the record is locked.
+          example: true
         comment:
           type: string
           description: A comment about the DNS record.
+          example: example_value
         tags:
           type: array
           items:
             type: string
           description: Custom tags for the DNS record.
+          example: []
         created_on:
           type: string
           format: date-time
           description: When the record was created.
+          example: '2026-01-15T10:30:00Z'
         modified_on:
           type: string
           format: date-time
           description: When the record was last modified.
+          example: '2026-01-15T10:30:00Z'
     DnsRecordResponse:
       type: object
       properties:
@@ -649,14 +961,17 @@ components:
           $ref: '#/components/schemas/DnsRecord'
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []
     DnsRecordListResponse:
       type: object
       properties:
@@ -664,16 +979,20 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DnsRecord'
+          example: []
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []
         result_info:
           type: object
           properties:
@@ -687,3 +1006,4 @@ components:
               type: integer
             total_pages:
               type: integer
+          example: example_value

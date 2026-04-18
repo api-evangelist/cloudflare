@@ -1,0 +1,175 @@
+naftiko: "1.0.0-alpha1"
+
+info:
+  label: "Cloudflare Hyperdrive"
+  description: "Accelerate database access from Workers with connection pooling and query caching at the edge for PostgreSQL and other databases."
+  tags:
+    - Cloudflare
+    - Database
+    - Performance
+  created: "2026-04-18"
+  modified: "2026-04-18"
+
+binds:
+  - namespace: env
+    keys:
+      CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
+
+capability:
+  consumes:
+    - type: http
+      namespace: cloudflare-hyperdrive
+      baseUri: https://api.cloudflare.com/client/v4
+      description: "Cloudflare Hyperdrive API for managing database acceleration configurations."
+      authentication:
+        type: bearer
+        token: "{{CLOUDFLARE_API_TOKEN}}"
+      resources:
+        - name: configs
+          path: /accounts/{account_id}/hyperdrive/configs
+          description: "Manage Hyperdrive configurations."
+          operations:
+            - name: list-hyperdrive-configs
+              method: GET
+              description: "List all Hyperdrive configurations."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: create-hyperdrive-config
+              method: POST
+              description: "Create a new Hyperdrive configuration."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              body:
+                type: json
+                data:
+                  name: "{{tools.name}}"
+                  origin: "{{tools.origin}}"
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: config
+          path: /accounts/{account_id}/hyperdrive/configs/{config_id}
+          description: "Manage a specific Hyperdrive configuration."
+          operations:
+            - name: get-hyperdrive-config
+              method: GET
+              description: "Get Hyperdrive configuration details."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: config_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Configuration identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: delete-hyperdrive-config
+              method: DELETE
+              description: "Delete a Hyperdrive configuration."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: config_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Configuration identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+
+  exposes:
+    - type: rest
+      port: 8115
+      namespace: cloudflare-hyperdrive-api
+      resources:
+        - path: /v1/hyperdrive-configs
+          name: hyperdrive-configs
+          description: "Hyperdrive configuration management."
+          operations:
+            - method: GET
+              name: list-hyperdrive-configs
+              description: "List Hyperdrive configs."
+              call: "cloudflare-hyperdrive.list-hyperdrive-configs"
+              with:
+                account_id: "rest.account_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+    - type: mcp
+      port: 9115
+      namespace: cloudflare-hyperdrive-mcp
+      transport: http
+      tools:
+        - name: list-hyperdrive-configs
+          description: "List all Hyperdrive configurations."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-hyperdrive.list-hyperdrive-configs"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: create-hyperdrive-config
+          description: "Create a Hyperdrive configuration."
+          hints:
+            readOnly: false
+          call: "cloudflare-hyperdrive.create-hyperdrive-config"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: get-hyperdrive-config
+          description: "Get Hyperdrive configuration details."
+          hints:
+            readOnly: true
+          call: "cloudflare-hyperdrive.get-hyperdrive-config"
+          with:
+            account_id: "tools.account_id"
+            config_id: "tools.config_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: delete-hyperdrive-config
+          description: "Delete a Hyperdrive configuration."
+          hints:
+            destructive: true
+            idempotent: true
+          call: "cloudflare-hyperdrive.delete-hyperdrive-config"
+          with:
+            account_id: "tools.account_id"
+            config_id: "tools.config_id"
+          outputParameters:
+            - type: object
+              mapping: "$."

@@ -16,34 +16,34 @@ externalDocs:
   description: Cloudflare Queues API Documentation
   url: https://developers.cloudflare.com/api/resources/queues/
 servers:
-  - url: https://api.cloudflare.com/client/v4
-    description: Cloudflare API v4 Production Server
+- url: https://api.cloudflare.com/client/v4
+  description: Cloudflare API v4 Production Server
 tags:
-  - name: Consumers
-    description: >-
-      Manage consumers that process messages from queues.
-  - name: Messages
-    description: >-
-      Send, pull, and acknowledge messages.
-  - name: Purge
-    description: >-
-      Purge all messages from a queue.
-  - name: Queues
-    description: >-
-      Create, list, update, and delete message queues.
+- name: Consumers
+  description: >-
+    Manage consumers that process messages from queues.
+- name: Messages
+  description: >-
+    Send, pull, and acknowledge messages.
+- name: Purge
+  description: >-
+    Purge all messages from a queue.
+- name: Queues
+  description: >-
+    Create, list, update, and delete message queues.
 security:
-  - bearerAuth: []
+- bearerAuth: []
 paths:
   /accounts/{account_id}/queues:
     get:
       operationId: listQueues
-      summary: Cloudflare List queues
+      summary: Cloudflare List Queues
       description: >-
         Returns all queues owned by the account.
       tags:
-        - Queues
+      - Queues
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: List of queues.
@@ -51,17 +51,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/QueueListResponse'
+              examples:
+                Listqueues200Example:
+                  summary: Default listQueues 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - queue_id: '500123'
+                      queue_name: example_value
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                      producers_total_count: 10
+                      consumers_total_count: 10
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createQueue
-      summary: Cloudflare Create queue
+      summary: Cloudflare Create Queue
       description: >-
         Create a new message queue for the account.
       tags:
-        - Queues
+      - Queues
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
@@ -69,11 +85,17 @@ paths:
             schema:
               type: object
               required:
-                - queue_name
+              - queue_name
               properties:
                 queue_name:
                   type: string
                   description: The name of the queue.
+            examples:
+              CreatequeueRequestExample:
+                summary: Default createQueue request
+                x-microcks-default: true
+                value:
+                  queue_name: example_value
       responses:
         '200':
           description: Queue created successfully.
@@ -81,21 +103,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/QueueResponse'
+              examples:
+                Createqueue200Example:
+                  summary: Default createQueue 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      queue_id: '500123'
+                      queue_name: example_value
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                      producers_total_count: 10
+                      consumers_total_count: 10
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/queues/{queue_id}:
     get:
       operationId: getQueue
-      summary: Cloudflare Get queue
+      summary: Cloudflare Get Queue
       description: >-
         Retrieve details of a specific queue.
       tags:
-        - Queues
+      - Queues
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
       responses:
         '200':
           description: Queue details.
@@ -103,20 +145,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/QueueResponse'
+              examples:
+                Getqueue200Example:
+                  summary: Default getQueue 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      queue_id: '500123'
+                      queue_name: example_value
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                      producers_total_count: 10
+                      consumers_total_count: 10
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '401':
           description: Unauthorized.
         '404':
           description: Queue not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: replaceQueue
-      summary: Cloudflare Replace queue configuration
+      summary: Cloudflare Replace Queue Configuration
       description: >-
         Overwrite the queue configuration.
       tags:
-        - Queues
+      - Queues
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
       requestBody:
         required: true
         content:
@@ -127,21 +189,30 @@ paths:
                 queue_name:
                   type: string
                   description: The new name of the queue.
+            examples:
+              ReplacequeueRequestExample:
+                summary: Default replaceQueue request
+                x-microcks-default: true
+                value:
+                  queue_name: example_value
       responses:
         '200':
           description: Queue replaced successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     patch:
       operationId: updateQueue
-      summary: Cloudflare Update queue settings
+      summary: Cloudflare Update Queue Settings
       description: >-
         Partially update queue settings.
       tags:
-        - Queues
+      - Queues
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
       requestBody:
         required: true
         content:
@@ -152,21 +223,30 @@ paths:
                 queue_name:
                   type: string
                   description: The new name of the queue.
+            examples:
+              UpdatequeueRequestExample:
+                summary: Default updateQueue request
+                x-microcks-default: true
+                value:
+                  queue_name: example_value
       responses:
         '200':
           description: Queue updated successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteQueue
-      summary: Cloudflare Delete queue
+      summary: Cloudflare Delete Queue
       description: >-
         Remove a queue and all its messages.
       tags:
-        - Queues
+      - Queues
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
       responses:
         '200':
           description: Queue deleted successfully.
@@ -174,38 +254,54 @@ paths:
           description: Unauthorized.
         '404':
           description: Queue not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/queues/{queue_id}/consumers:
     get:
       operationId: listQueueConsumers
-      summary: Cloudflare List queue consumers
+      summary: Cloudflare List Queue Consumers
       description: >-
         Returns the consumers configured for a queue.
       tags:
-        - Consumers
+      - Consumers
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
       responses:
         '200':
           description: List of consumers.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createQueueConsumer
-      summary: Cloudflare Create queue consumer
+      summary: Cloudflare Create Queue Consumer
       description: >-
         Add a new consumer to a queue to process messages.
       tags:
-        - Consumers
+      - Consumers
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ConsumerInput'
+            examples:
+              CreatequeueconsumerRequestExample:
+                summary: Default createQueueConsumer request
+                x-microcks-default: true
+                value:
+                  script_name: example_value
+                  settings:
+                    batch_size: 10
+                    max_retries: 10
+                    max_wait_time_ms: 10
       responses:
         '200':
           description: Consumer created successfully.
@@ -213,18 +309,21 @@ paths:
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/queues/{queue_id}/consumers/{consumer_id}:
     get:
       operationId: getQueueConsumer
-      summary: Cloudflare Get queue consumer
+      summary: Cloudflare Get Queue Consumer
       description: >-
         Retrieve details of a specific queue consumer.
       tags:
-        - Consumers
+      - Consumers
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
-        - $ref: '#/components/parameters/ConsumerId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/ConsumerId'
       responses:
         '200':
           description: Consumer details.
@@ -232,77 +331,106 @@ paths:
           description: Unauthorized.
         '404':
           description: Consumer not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: replaceQueueConsumer
-      summary: Cloudflare Replace queue consumer
+      summary: Cloudflare Replace Queue Consumer
       description: >-
         Update or create a consumer for the queue.
       tags:
-        - Consumers
+      - Consumers
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
-        - $ref: '#/components/parameters/ConsumerId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/ConsumerId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ConsumerInput'
+            examples:
+              ReplacequeueconsumerRequestExample:
+                summary: Default replaceQueueConsumer request
+                x-microcks-default: true
+                value:
+                  script_name: example_value
+                  settings:
+                    batch_size: 10
+                    max_retries: 10
+                    max_wait_time_ms: 10
       responses:
         '200':
           description: Consumer replaced successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteQueueConsumer
-      summary: Cloudflare Delete queue consumer
+      summary: Cloudflare Delete Queue Consumer
       description: >-
         Remove a consumer from the queue.
       tags:
-        - Consumers
+      - Consumers
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
-        - $ref: '#/components/parameters/ConsumerId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/ConsumerId'
       responses:
         '200':
           description: Consumer deleted successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/queues/{queue_id}/messages:
     post:
       operationId: sendMessage
-      summary: Cloudflare Send message
+      summary: Cloudflare Send Message
       description: >-
         Send a single message to the queue.
       tags:
-        - Messages
+      - Messages
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/MessageInput'
+            examples:
+              SendmessageRequestExample:
+                summary: Default sendMessage request
+                x-microcks-default: true
+                value:
+                  body: example_value
+                  content_type: json
       responses:
         '200':
           description: Message sent successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/queues/{queue_id}/messages/batch:
     post:
       operationId: sendMessageBatch
-      summary: Cloudflare Send message batch
+      summary: Cloudflare Send Message Batch
       description: >-
         Send multiple messages to the queue in a single request.
       tags:
-        - Messages
+      - Messages
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
       requestBody:
         required: true
         content:
@@ -314,22 +442,33 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/MessageInput'
+            examples:
+              SendmessagebatchRequestExample:
+                summary: Default sendMessageBatch request
+                x-microcks-default: true
+                value:
+                  messages:
+                  - body: example_value
+                    content_type: json
       responses:
         '200':
           description: Messages sent successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/queues/{queue_id}/messages/pull:
     post:
       operationId: pullMessages
-      summary: Cloudflare Pull messages
+      summary: Cloudflare Pull Messages
       description: >-
         Retrieve a batch of messages from the queue for processing.
       tags:
-        - Messages
+      - Messages
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
       requestBody:
         content:
           application/json:
@@ -344,23 +483,33 @@ paths:
                 batch_size:
                   type: integer
                   description: Maximum number of messages to pull.
+            examples:
+              PullmessagesRequestExample:
+                summary: Default pullMessages request
+                x-microcks-default: true
+                value:
+                  visibility_timeout_ms: 10
+                  batch_size: 10
       responses:
         '200':
           description: Messages pulled successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/queues/{queue_id}/messages/ack:
     post:
       operationId: ackMessages
-      summary: Cloudflare Acknowledge messages
+      summary: Cloudflare Acknowledge Messages
       description: >-
         Acknowledge and optionally retry messages from the queue. Acknowledged
         messages are permanently removed from the queue.
       tags:
-        - Messages
+      - Messages
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
       requestBody:
         required: true
         content:
@@ -387,42 +536,61 @@ paths:
                       delay_seconds:
                         type: integer
                         description: Delay before the message becomes visible again.
+            examples:
+              AckmessagesRequestExample:
+                summary: Default ackMessages request
+                x-microcks-default: true
+                value:
+                  acks:
+                  - lease_id: '500123'
+                  retries:
+                  - lease_id: '500123'
+                    delay_seconds: 10
       responses:
         '200':
           description: Messages acknowledged successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/queues/{queue_id}/purge:
     get:
       operationId: getPurgeStatus
-      summary: Cloudflare Get purge status
+      summary: Cloudflare Get Purge Status
       description: >-
         Check the status of a queue purge operation.
       tags:
-        - Purge
+      - Purge
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
       responses:
         '200':
           description: Purge status.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: purgeQueue
-      summary: Cloudflare Purge queue
+      summary: Cloudflare Purge Queue
       description: >-
         Delete all messages from the queue.
       tags:
-        - Purge
+      - Purge
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
       responses:
         '200':
           description: Purge initiated successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     bearerAuth:
@@ -459,23 +627,29 @@ components:
         queue_id:
           type: string
           description: The unique identifier of the queue.
+          example: '500123'
         queue_name:
           type: string
           description: The name of the queue.
+          example: example_value
         created_on:
           type: string
           format: date-time
           description: When the queue was created.
+          example: '2026-01-15T10:30:00Z'
         modified_on:
           type: string
           format: date-time
           description: When the queue was last modified.
+          example: '2026-01-15T10:30:00Z'
         producers_total_count:
           type: integer
           description: Number of producers attached.
+          example: 10
         consumers_total_count:
           type: integer
           description: Number of consumers attached.
+          example: 10
     QueueResponse:
       type: object
       properties:
@@ -483,14 +657,17 @@ components:
           $ref: '#/components/schemas/Queue'
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []
     QueueListResponse:
       type: object
       properties:
@@ -498,14 +675,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Queue'
+          example: []
         success:
           type: boolean
+          example: true
     ConsumerInput:
       type: object
       properties:
         script_name:
           type: string
           description: The Worker script name that will consume messages.
+          example: example_value
         settings:
           type: object
           properties:
@@ -518,15 +698,18 @@ components:
             max_wait_time_ms:
               type: integer
               description: Maximum time to wait for a full batch in milliseconds.
+          example: example_value
     MessageInput:
       type: object
       properties:
         body:
           description: The message body content.
+          example: example_value
         content_type:
           type: string
           description: The content type of the message body.
           enum:
-            - json
-            - text
-            - bytes
+          - json
+          - text
+          - bytes
+          example: json

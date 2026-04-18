@@ -15,28 +15,28 @@ externalDocs:
   description: Cloudflare Durable Objects Documentation
   url: https://developers.cloudflare.com/durable-objects/
 servers:
-  - url: https://api.cloudflare.com/client/v4
-    description: Cloudflare API v4 Production Server
+- url: https://api.cloudflare.com/client/v4
+  description: Cloudflare API v4 Production Server
 tags:
-  - name: Namespaces
-    description: >-
-      Manage Durable Object namespaces that group related object instances.
-  - name: Objects
-    description: >-
-      List and manage individual Durable Object instances within a namespace.
+- name: Namespaces
+  description: >-
+    Manage Durable Object namespaces that group related object instances.
+- name: Objects
+  description: >-
+    List and manage individual Durable Object instances within a namespace.
 security:
-  - bearerAuth: []
+- bearerAuth: []
 paths:
   /accounts/{account_id}/workers/durable_objects/namespaces:
     get:
       operationId: listDurableObjectNamespaces
-      summary: Cloudflare List Durable Object namespaces
+      summary: Cloudflare List Durable Object Namespaces
       description: >-
         Returns all Durable Object namespaces for the account.
       tags:
-        - Namespaces
+      - Namespaces
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: List of Durable Object namespaces.
@@ -44,8 +44,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NamespaceListResponse'
+              examples:
+                Listdurableobjectnamespaces200Example:
+                  summary: Default listDurableObjectNamespaces 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      name: Example Title
+                      script: example_value
+                      class: example_value
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/workers/durable_objects/namespaces/{namespace_id}/objects:
     get:
       operationId: listDurableObjects
@@ -54,25 +72,30 @@ paths:
         Returns a list of Durable Objects within a namespace with cursor-based
         pagination.
       tags:
-        - Objects
+      - Objects
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/NamespaceId'
-        - name: cursor
-          in: query
-          description: Cursor for pagination.
-          schema:
-            type: string
-        - name: limit
-          in: query
-          description: Maximum number of objects to return.
-          schema:
-            type: integer
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
+      - name: cursor
+        in: query
+        description: Cursor for pagination.
+        schema:
+          type: string
+        example: example_value
+      - name: limit
+        in: query
+        description: Maximum number of objects to return.
+        schema:
+          type: integer
+        example: 10
       responses:
         '200':
           description: List of Durable Objects.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     bearerAuth:
@@ -102,15 +125,19 @@ components:
         id:
           type: string
           description: The unique identifier of the namespace.
+          example: abc123
         name:
           type: string
           description: The name of the namespace.
+          example: Example Title
         script:
           type: string
           description: The Worker script associated with the namespace.
+          example: example_value
         class:
           type: string
           description: The Durable Object class name.
+          example: example_value
     NamespaceListResponse:
       type: object
       properties:
@@ -118,13 +145,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DurableObjectNamespace'
+          example: []
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []

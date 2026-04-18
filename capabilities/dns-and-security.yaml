@@ -1,0 +1,251 @@
+naftiko: "1.0.0-alpha1"
+
+info:
+  label: "Cloudflare DNS and Security"
+  description: "DNS management and web security combining DNS record management with Turnstile bot protection and Logpush observability. Used by site reliability engineers and security teams."
+  tags:
+    - Cloudflare
+    - DNS
+    - Security
+    - Observability
+  created: "2026-04-18"
+  modified: "2026-04-18"
+
+binds:
+  - namespace: env
+    keys:
+      CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
+
+capability:
+  consumes:
+    - import: cloudflare-dns
+      location: ./shared/dns.yaml
+    - import: cloudflare-turnstile
+      location: ./shared/turnstile.yaml
+    - import: cloudflare-logpush
+      location: ./shared/logpush.yaml
+
+  exposes:
+    - type: rest
+      port: 8084
+      namespace: dns-security-api
+      description: "Unified REST API for Cloudflare DNS and security services."
+      resources:
+        - path: /v1/dns-records
+          name: dns-records
+          description: "DNS record management."
+          operations:
+            - method: GET
+              name: list-dns-records
+              description: "List DNS records."
+              call: "cloudflare-dns.list-dns-records"
+              with:
+                zone_id: "rest.zone_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+        - path: /v1/turnstile-widgets
+          name: turnstile-widgets
+          description: "Turnstile widget management."
+          operations:
+            - method: GET
+              name: list-turnstile-widgets
+              description: "List Turnstile widgets."
+              call: "cloudflare-turnstile.list-turnstile-widgets"
+              with:
+                account_id: "rest.account_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+        - path: /v1/logpush-jobs
+          name: logpush-jobs
+          description: "Logpush job management."
+          operations:
+            - method: GET
+              name: list-logpush-jobs
+              description: "List Logpush jobs."
+              call: "cloudflare-logpush.list-logpush-jobs"
+              with:
+                zone_id: "rest.zone_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+    - type: mcp
+      port: 9084
+      namespace: dns-security-mcp
+      transport: http
+      description: "MCP server for AI-assisted Cloudflare DNS and security management."
+      tools:
+        - name: dns-list-records
+          description: "List DNS records for a zone."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-dns.list-dns-records"
+          with:
+            zone_id: "tools.zone_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: dns-create-record
+          description: "Create a DNS record."
+          hints:
+            readOnly: false
+          call: "cloudflare-dns.create-dns-record"
+          with:
+            zone_id: "tools.zone_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: dns-get-record
+          description: "Get DNS record details."
+          hints:
+            readOnly: true
+          call: "cloudflare-dns.get-dns-record"
+          with:
+            zone_id: "tools.zone_id"
+            dns_record_id: "tools.dns_record_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: dns-update-record
+          description: "Update a DNS record."
+          hints:
+            readOnly: false
+            idempotent: true
+          call: "cloudflare-dns.update-dns-record"
+          with:
+            zone_id: "tools.zone_id"
+            dns_record_id: "tools.dns_record_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: dns-delete-record
+          description: "Delete a DNS record."
+          hints:
+            destructive: true
+            idempotent: true
+          call: "cloudflare-dns.delete-dns-record"
+          with:
+            zone_id: "tools.zone_id"
+            dns_record_id: "tools.dns_record_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: dns-batch-records
+          description: "Execute batch DNS operations."
+          hints:
+            readOnly: false
+          call: "cloudflare-dns.batch-dns-records"
+          with:
+            zone_id: "tools.zone_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: dns-get-dnssec
+          description: "Get DNSSEC settings."
+          hints:
+            readOnly: true
+          call: "cloudflare-dns.get-dnssec"
+          with:
+            zone_id: "tools.zone_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: turnstile-list-widgets
+          description: "List Turnstile widgets."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-turnstile.list-turnstile-widgets"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: turnstile-create-widget
+          description: "Create a Turnstile widget."
+          hints:
+            readOnly: false
+          call: "cloudflare-turnstile.create-turnstile-widget"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: turnstile-verify-token
+          description: "Verify a Turnstile token."
+          hints:
+            readOnly: true
+          call: "cloudflare-turnstile.verify-turnstile-token"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: turnstile-delete-widget
+          description: "Delete a Turnstile widget."
+          hints:
+            destructive: true
+            idempotent: true
+          call: "cloudflare-turnstile.delete-turnstile-widget"
+          with:
+            account_id: "tools.account_id"
+            sitekey: "tools.sitekey"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: logpush-list-jobs
+          description: "List Logpush jobs."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-logpush.list-logpush-jobs"
+          with:
+            zone_id: "tools.zone_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: logpush-create-job
+          description: "Create a Logpush job."
+          hints:
+            readOnly: false
+          call: "cloudflare-logpush.create-logpush-job"
+          with:
+            zone_id: "tools.zone_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: logpush-get-job
+          description: "Get Logpush job details."
+          hints:
+            readOnly: true
+          call: "cloudflare-logpush.get-logpush-job"
+          with:
+            zone_id: "tools.zone_id"
+            job_id: "tools.job_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: logpush-delete-job
+          description: "Delete a Logpush job."
+          hints:
+            destructive: true
+            idempotent: true
+          call: "cloudflare-logpush.delete-logpush-job"
+          with:
+            zone_id: "tools.zone_id"
+            job_id: "tools.job_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: logpush-list-dataset-fields
+          description: "List dataset fields."
+          hints:
+            readOnly: true
+          call: "cloudflare-logpush.list-dataset-fields"
+          with:
+            zone_id: "tools.zone_id"
+            dataset: "tools.dataset"
+          outputParameters:
+            - type: object
+              mapping: "$."

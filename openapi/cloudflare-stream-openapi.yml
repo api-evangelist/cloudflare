@@ -15,52 +15,54 @@ externalDocs:
   description: Cloudflare Stream Documentation
   url: https://developers.cloudflare.com/stream/
 servers:
-  - url: https://api.cloudflare.com/client/v4
-    description: Cloudflare API v4 Production Server
+- url: https://api.cloudflare.com/client/v4
+  description: Cloudflare API v4 Production Server
 tags:
-  - name: Live Inputs
-    description: >-
-      Manage live streaming inputs for RTMPS and SRT ingestion.
-  - name: Signing Keys
-    description: >-
-      Manage signing keys for signed video URLs.
-  - name: Videos
-    description: >-
-      Upload, list, update, and delete video assets.
-  - name: Webhooks
-    description: >-
-      Configure webhooks for video processing notifications.
+- name: Live Inputs
+  description: >-
+    Manage live streaming inputs for RTMPS and SRT ingestion.
+- name: Signing Keys
+  description: >-
+    Manage signing keys for signed video URLs.
+- name: Videos
+  description: >-
+    Upload, list, update, and delete video assets.
+- name: Webhooks
+  description: >-
+    Configure webhooks for video processing notifications.
 security:
-  - bearerAuth: []
+- bearerAuth: []
 paths:
   /accounts/{account_id}/stream:
     get:
       operationId: listStreamVideos
-      summary: Cloudflare List videos
+      summary: Cloudflare List Videos
       description: >-
         Returns a list of all videos in the account with pagination and
         filtering support.
       tags:
-        - Videos
+      - Videos
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - name: status
-          in: query
-          description: Filter by video status.
-          schema:
-            type: string
-            enum:
-              - pendingupload
-              - downloading
-              - queued
-              - inprogress
-              - ready
-              - error
-        - name: search
-          in: query
-          description: Search videos by name.
-          schema:
-            type: string
+      - $ref: '#/components/parameters/AccountId'
+      - name: status
+        in: query
+        description: Filter by video status.
+        schema:
+          type: string
+          enum:
+          - pendingupload
+          - downloading
+          - queued
+          - inprogress
+          - ready
+          - error
+        example: pendingupload
+      - name: search
+        in: query
+        description: Search videos by name.
+        schema:
+          type: string
+        example: example_value
       responses:
         '200':
           description: List of videos.
@@ -68,17 +70,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VideoListResponse'
+              examples:
+                Liststreamvideos200Example:
+                  summary: Default listStreamVideos 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - uid: '500123'
+                      thumbnail: https://www.example.com
+                      playback: {}
+                      status: {}
+                      meta: example_value
+                      created: '2026-01-15T10:30:00Z'
+                      modified: '2026-01-15T10:30:00Z'
+                      duration: 42.5
+                      size: 10
+                      requireSignedURLs: https://www.example.com
+                      allowedOrigins: {}
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: uploadStreamVideo
-      summary: Cloudflare Upload video from URL
+      summary: Cloudflare Upload Video From Url
       description: >-
         Upload a video by providing a URL to fetch the video from.
       tags:
-        - Videos
+      - Videos
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
@@ -86,7 +109,7 @@ paths:
             schema:
               type: object
               required:
-                - url
+              - url
               properties:
                 url:
                   type: string
@@ -103,6 +126,16 @@ paths:
                   items:
                     type: string
                   description: Allowed origin domains for video playback.
+            examples:
+              UploadstreamvideoRequestExample:
+                summary: Default uploadStreamVideo request
+                x-microcks-default: true
+                value:
+                  url: https://www.example.com
+                  meta: example_value
+                  requireSignedURLs: https://www.example.com
+                  allowedOrigins:
+                  - example_value
       responses:
         '200':
           description: Video upload initiated.
@@ -110,22 +143,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VideoResponse'
+              examples:
+                Uploadstreamvideo200Example:
+                  summary: Default uploadStreamVideo 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      uid: '500123'
+                      thumbnail: https://www.example.com
+                      playback:
+                        hls: https://www.example.com
+                        dash: https://www.example.com
+                      status:
+                        state: pendingupload
+                        pctComplete: example_value
+                      meta: example_value
+                      created: '2026-01-15T10:30:00Z'
+                      modified: '2026-01-15T10:30:00Z'
+                      duration: 42.5
+                      size: 10
+                      requireSignedURLs: https://www.example.com
+                      allowedOrigins:
+                      - {}
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/stream/{video_id}:
     get:
       operationId: getStreamVideo
-      summary: Cloudflare Get video details
+      summary: Cloudflare Get Video Details
       description: >-
         Retrieve details of a specific video including processing status and
         playback information.
       tags:
-        - Videos
+      - Videos
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/VideoId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/VideoId'
       responses:
         '200':
           description: Video details.
@@ -133,20 +196,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VideoResponse'
+              examples:
+                Getstreamvideo200Example:
+                  summary: Default getStreamVideo 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      uid: '500123'
+                      thumbnail: https://www.example.com
+                      playback:
+                        hls: https://www.example.com
+                        dash: https://www.example.com
+                      status:
+                        state: pendingupload
+                        pctComplete: example_value
+                      meta: example_value
+                      created: '2026-01-15T10:30:00Z'
+                      modified: '2026-01-15T10:30:00Z'
+                      duration: 42.5
+                      size: 10
+                      requireSignedURLs: https://www.example.com
+                      allowedOrigins:
+                      - {}
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '401':
           description: Unauthorized.
         '404':
           description: Video not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: updateStreamVideo
-      summary: Cloudflare Update video
+      summary: Cloudflare Update Video
       description: >-
         Update video metadata and settings.
       tags:
-        - Videos
+      - Videos
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/VideoId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/VideoId'
       requestBody:
         required: true
         content:
@@ -163,37 +256,52 @@ paths:
                   type: array
                   items:
                     type: string
+            examples:
+              UpdatestreamvideoRequestExample:
+                summary: Default updateStreamVideo request
+                x-microcks-default: true
+                value:
+                  meta: example_value
+                  requireSignedURLs: https://www.example.com
+                  allowedOrigins:
+                  - example_value
       responses:
         '200':
           description: Video updated.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteStreamVideo
-      summary: Cloudflare Delete video
+      summary: Cloudflare Delete Video
       description: >-
         Delete a video and all its associated data.
       tags:
-        - Videos
+      - Videos
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/VideoId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/VideoId'
       responses:
         '200':
           description: Video deleted successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/stream/direct_upload:
     post:
       operationId: createDirectUpload
-      summary: Cloudflare Create direct upload URL
+      summary: Cloudflare Create Direct Upload Url
       description: >-
         Create a unique one-time upload URL for direct video uploads from
         client-side applications.
       tags:
-        - Videos
+      - Videos
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
@@ -201,7 +309,7 @@ paths:
             schema:
               type: object
               required:
-                - maxDurationSeconds
+              - maxDurationSeconds
               properties:
                 maxDurationSeconds:
                   type: integer
@@ -213,35 +321,49 @@ paths:
                   description: User-defined metadata.
                 requireSignedURLs:
                   type: boolean
+            examples:
+              CreatedirectuploadRequestExample:
+                summary: Default createDirectUpload request
+                x-microcks-default: true
+                value:
+                  maxDurationSeconds: 10
+                  meta: example_value
+                  requireSignedURLs: https://www.example.com
       responses:
         '200':
           description: Direct upload URL created.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/stream/live_inputs:
     get:
       operationId: listLiveInputs
-      summary: Cloudflare List live inputs
+      summary: Cloudflare List Live Inputs
       description: >-
         Returns all live inputs configured for the account.
       tags:
-        - Live Inputs
+      - Live Inputs
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: List of live inputs.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createLiveInput
-      summary: Cloudflare Create live input
+      summary: Cloudflare Create Live Input
       description: >-
         Create a new live input for RTMPS or SRT ingestion.
       tags:
-        - Live Inputs
+      - Live Inputs
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
@@ -258,70 +380,92 @@ paths:
                     mode:
                       type: string
                       enum:
-                        - off
-                        - automatic
+                      - off
+                      - automatic
                     requireSignedURLs:
                       type: boolean
                     timeoutSeconds:
                       type: integer
+            examples:
+              CreateliveinputRequestExample:
+                summary: Default createLiveInput request
+                x-microcks-default: true
+                value:
+                  meta: example_value
+                  recording:
+                    mode: off
+                    requireSignedURLs: https://www.example.com
+                    timeoutSeconds: 10
       responses:
         '200':
           description: Live input created.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/stream/keys:
     get:
       operationId: listSigningKeys
-      summary: Cloudflare List signing keys
+      summary: Cloudflare List Signing Keys
       description: >-
         Returns all signing keys for creating signed video URLs.
       tags:
-        - Signing Keys
+      - Signing Keys
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: List of signing keys.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createSigningKey
-      summary: Cloudflare Create signing key
+      summary: Cloudflare Create Signing Key
       description: >-
         Create a new signing key for generating signed video URLs.
       tags:
-        - Signing Keys
+      - Signing Keys
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: Signing key created.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/stream/webhook:
     get:
       operationId: getStreamWebhook
-      summary: Cloudflare Get webhook configuration
+      summary: Cloudflare Get Webhook Configuration
       description: >-
         Retrieve the configured webhook URL for video processing notifications.
       tags:
-        - Webhooks
+      - Webhooks
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: Webhook configuration.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: updateStreamWebhook
-      summary: Cloudflare Update webhook configuration
+      summary: Cloudflare Update Webhook Configuration
       description: >-
         Set or update the webhook URL for video processing notifications.
       tags:
-        - Webhooks
+      - Webhooks
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
@@ -329,31 +473,43 @@ paths:
             schema:
               type: object
               required:
-                - notificationUrl
+              - notificationUrl
               properties:
                 notificationUrl:
                   type: string
                   format: uri
                   description: The URL to receive webhook notifications.
+            examples:
+              UpdatestreamwebhookRequestExample:
+                summary: Default updateStreamWebhook request
+                x-microcks-default: true
+                value:
+                  notificationUrl: https://www.example.com
       responses:
         '200':
           description: Webhook updated.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteStreamWebhook
-      summary: Cloudflare Delete webhook configuration
+      summary: Cloudflare Delete Webhook Configuration
       description: >-
         Remove the webhook configuration.
       tags:
-        - Webhooks
+      - Webhooks
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: Webhook deleted.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     bearerAuth:
@@ -383,10 +539,12 @@ components:
         uid:
           type: string
           description: The unique identifier of the video.
+          example: '500123'
         thumbnail:
           type: string
           format: uri
           description: URL of the video thumbnail.
+          example: https://www.example.com
         playback:
           type: object
           properties:
@@ -398,41 +556,50 @@ components:
               type: string
               format: uri
               description: DASH playback URL.
+          example: example_value
         status:
           type: object
           properties:
             state:
               type: string
               enum:
-                - pendingupload
-                - downloading
-                - queued
-                - inprogress
-                - ready
-                - error
+              - pendingupload
+              - downloading
+              - queued
+              - inprogress
+              - ready
+              - error
             pctComplete:
               type: string
+          example: example_value
         meta:
           type: object
           description: User-defined metadata.
+          example: example_value
         created:
           type: string
           format: date-time
+          example: '2026-01-15T10:30:00Z'
         modified:
           type: string
           format: date-time
+          example: '2026-01-15T10:30:00Z'
         duration:
           type: number
           description: Duration of the video in seconds.
+          example: 42.5
         size:
           type: integer
           description: Size of the video in bytes.
+          example: 10
         requireSignedURLs:
           type: boolean
+          example: https://www.example.com
         allowedOrigins:
           type: array
           items:
             type: string
+          example: []
     VideoResponse:
       type: object
       properties:
@@ -440,14 +607,17 @@ components:
           $ref: '#/components/schemas/Video'
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []
     VideoListResponse:
       type: object
       properties:
@@ -455,5 +625,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Video'
+          example: []
         success:
           type: boolean
+          example: true

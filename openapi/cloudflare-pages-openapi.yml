@@ -15,28 +15,28 @@ externalDocs:
   description: Cloudflare Pages API Documentation
   url: https://developers.cloudflare.com/pages/configuration/api/
 servers:
-  - url: https://api.cloudflare.com/client/v4
-    description: Cloudflare API v4 Production Server
+- url: https://api.cloudflare.com/client/v4
+  description: Cloudflare API v4 Production Server
 tags:
-  - name: Deployments
-    description: >-
-      Create, list, and manage deployments for Pages projects.
-  - name: Projects
-    description: >-
-      Manage Pages projects including creation, configuration, and deletion.
+- name: Deployments
+  description: >-
+    Create, list, and manage deployments for Pages projects.
+- name: Projects
+  description: >-
+    Manage Pages projects including creation, configuration, and deletion.
 security:
-  - bearerAuth: []
+- bearerAuth: []
 paths:
   /accounts/{account_id}/pages/projects:
     get:
       operationId: listPagesProjects
-      summary: Cloudflare List Pages projects
+      summary: Cloudflare List Pages Projects
       description: >-
         Returns a list of all Pages projects for the account.
       tags:
-        - Projects
+      - Projects
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: List of Pages projects.
@@ -44,24 +44,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProjectListResponse'
+              examples:
+                Listpagesprojects200Example:
+                  summary: Default listPagesProjects 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      name: Example Title
+                      subdomain: example_value
+                      domains: {}
+                      production_branch: example_value
+                      created_on: '2026-01-15T10:30:00Z'
+                      build_config: {}
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createPagesProject
-      summary: Cloudflare Create Pages project
+      summary: Cloudflare Create Pages Project
       description: >-
         Create a new Pages project with the specified build configuration
         and deployment settings.
       tags:
-        - Projects
+      - Projects
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ProjectInput'
+            examples:
+              CreatepagesprojectRequestExample:
+                summary: Default createPagesProject request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  production_branch: example_value
+                  build_config:
+                    build_command: example_value
+                    destination_dir: example_value
+                    root_dir: example_value
       responses:
         '200':
           description: Project created successfully.
@@ -69,21 +97,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProjectResponse'
+              examples:
+                Createpagesproject200Example:
+                  summary: Default createPagesProject 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      name: Example Title
+                      subdomain: example_value
+                      domains:
+                      - {}
+                      production_branch: example_value
+                      created_on: '2026-01-15T10:30:00Z'
+                      build_config:
+                        build_command: example_value
+                        destination_dir: example_value
+                        root_dir: example_value
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/pages/projects/{project_name}:
     get:
       operationId: getPagesProject
-      summary: Cloudflare Get Pages project
+      summary: Cloudflare Get Pages Project
       description: >-
         Retrieve details of a specific Pages project.
       tags:
-        - Projects
+      - Projects
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ProjectName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ProjectName'
       responses:
         '200':
           description: Project details.
@@ -91,26 +144,62 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProjectResponse'
+              examples:
+                Getpagesproject200Example:
+                  summary: Default getPagesProject 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      name: Example Title
+                      subdomain: example_value
+                      domains:
+                      - {}
+                      production_branch: example_value
+                      created_on: '2026-01-15T10:30:00Z'
+                      build_config:
+                        build_command: example_value
+                        destination_dir: example_value
+                        root_dir: example_value
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '401':
           description: Unauthorized.
         '404':
           description: Project not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     patch:
       operationId: updatePagesProject
-      summary: Cloudflare Update Pages project
+      summary: Cloudflare Update Pages Project
       description: >-
         Update the configuration of a Pages project.
       tags:
-        - Projects
+      - Projects
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ProjectName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ProjectName'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ProjectInput'
+            examples:
+              UpdatepagesprojectRequestExample:
+                summary: Default updatePagesProject request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  production_branch: example_value
+                  build_config:
+                    build_command: example_value
+                    destination_dir: example_value
+                    root_dir: example_value
       responses:
         '200':
           description: Project updated successfully.
@@ -118,16 +207,19 @@ paths:
           description: Unauthorized.
         '404':
           description: Project not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deletePagesProject
-      summary: Cloudflare Delete Pages project
+      summary: Cloudflare Delete Pages Project
       description: >-
         Delete a Pages project and all its deployments.
       tags:
-        - Projects
+      - Projects
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ProjectName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ProjectName'
       responses:
         '200':
           description: Project deleted successfully.
@@ -135,17 +227,20 @@ paths:
           description: Unauthorized.
         '404':
           description: Project not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/pages/projects/{project_name}/deployments:
     get:
       operationId: listPagesDeployments
-      summary: Cloudflare List deployments
+      summary: Cloudflare List Deployments
       description: >-
         Returns a list of all deployments for a Pages project.
       tags:
-        - Deployments
+      - Deployments
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ProjectName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ProjectName'
       responses:
         '200':
           description: List of deployments.
@@ -153,37 +248,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeploymentListResponse'
+              examples:
+                Listpagesdeployments200Example:
+                  summary: Default listPagesDeployments 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      url: https://www.example.com
+                      environment: production
+                      created_on: '2026-01-15T10:30:00Z'
+                      latest_stage: {}
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createPagesDeployment
-      summary: Cloudflare Create deployment
+      summary: Cloudflare Create Deployment
       description: >-
         Create a new deployment for a Pages project by uploading assets or
         triggering a build from a connected repository.
       tags:
-        - Deployments
+      - Deployments
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ProjectName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ProjectName'
       responses:
         '200':
           description: Deployment created successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}:
     get:
       operationId: getPagesDeployment
-      summary: Cloudflare Get deployment
+      summary: Cloudflare Get Deployment
       description: >-
         Retrieve details of a specific deployment including build status and
         deployment URL.
       tags:
-        - Deployments
+      - Deployments
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ProjectName'
-        - $ref: '#/components/parameters/DeploymentId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ProjectName'
+      - $ref: '#/components/parameters/DeploymentId'
       responses:
         '200':
           description: Deployment details.
@@ -191,39 +304,48 @@ paths:
           description: Unauthorized.
         '404':
           description: Deployment not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deletePagesDeployment
-      summary: Cloudflare Delete deployment
+      summary: Cloudflare Delete Deployment
       description: >-
         Delete a specific deployment.
       tags:
-        - Deployments
+      - Deployments
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ProjectName'
-        - $ref: '#/components/parameters/DeploymentId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ProjectName'
+      - $ref: '#/components/parameters/DeploymentId'
       responses:
         '200':
           description: Deployment deleted successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}/rollback:
     post:
       operationId: rollbackPagesDeployment
-      summary: Cloudflare Rollback deployment
+      summary: Cloudflare Rollback Deployment
       description: >-
         Rollback the production deployment to a previous deployment.
       tags:
-        - Deployments
+      - Deployments
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/ProjectName'
-        - $ref: '#/components/parameters/DeploymentId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ProjectName'
+      - $ref: '#/components/parameters/DeploymentId'
       responses:
         '200':
           description: Rollback initiated successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     bearerAuth:
@@ -260,24 +382,30 @@ components:
         id:
           type: string
           description: The unique identifier of the project.
+          example: abc123
         name:
           type: string
           description: The name of the project.
+          example: Example Title
         subdomain:
           type: string
           description: The subdomain for the project.
+          example: example_value
         domains:
           type: array
           items:
             type: string
           description: Custom domains attached to the project.
+          example: []
         production_branch:
           type: string
           description: The production branch name.
+          example: example_value
         created_on:
           type: string
           format: date-time
           description: When the project was created.
+          example: '2026-01-15T10:30:00Z'
         build_config:
           type: object
           properties:
@@ -290,15 +418,18 @@ components:
             root_dir:
               type: string
               description: The root directory of the project.
+          example: example_value
     ProjectInput:
       type: object
       properties:
         name:
           type: string
           description: The name of the project.
+          example: Example Title
         production_branch:
           type: string
           description: The production branch name.
+          example: example_value
         build_config:
           type: object
           properties:
@@ -308,6 +439,7 @@ components:
               type: string
             root_dir:
               type: string
+          example: example_value
     ProjectResponse:
       type: object
       properties:
@@ -315,14 +447,17 @@ components:
           $ref: '#/components/schemas/Project'
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []
     ProjectListResponse:
       type: object
       properties:
@@ -330,28 +465,34 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Project'
+          example: []
         success:
           type: boolean
+          example: true
     Deployment:
       type: object
       properties:
         id:
           type: string
           description: The unique identifier of the deployment.
+          example: abc123
         url:
           type: string
           format: uri
           description: The URL of the deployment.
+          example: https://www.example.com
         environment:
           type: string
           enum:
-            - production
-            - preview
+          - production
+          - preview
           description: The deployment environment.
+          example: production
         created_on:
           type: string
           format: date-time
           description: When the deployment was created.
+          example: '2026-01-15T10:30:00Z'
         latest_stage:
           type: object
           properties:
@@ -360,11 +501,12 @@ components:
             status:
               type: string
               enum:
-                - idle
-                - active
-                - canceled
-                - success
-                - failure
+              - idle
+              - active
+              - canceled
+              - success
+              - failure
+          example: example_value
     DeploymentListResponse:
       type: object
       properties:
@@ -372,5 +514,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Deployment'
+          example: []
         success:
           type: boolean
+          example: true

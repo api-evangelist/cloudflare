@@ -15,48 +15,50 @@ externalDocs:
   description: Cloudflare KV API Documentation
   url: https://developers.cloudflare.com/api/resources/kv/
 servers:
-  - url: https://api.cloudflare.com/client/v4
-    description: Cloudflare API v4 Production Server
+- url: https://api.cloudflare.com/client/v4
+  description: Cloudflare API v4 Production Server
 tags:
-  - name: Bulk Operations
-    description: >-
-      Write, read, and delete multiple key-value pairs in a single request.
-  - name: Key-Value Pairs
-    description: >-
-      Read, write, and delete individual key-value pairs.
-  - name: Keys
-    description: >-
-      List and manage keys within a namespace.
-  - name: Metadata
-    description: >-
-      Read metadata associated with keys.
-  - name: Namespaces
-    description: >-
-      Create, list, rename, and delete KV namespaces.
+- name: Bulk Operations
+  description: >-
+    Write, read, and delete multiple key-value pairs in a single request.
+- name: Key-Value Pairs
+  description: >-
+    Read, write, and delete individual key-value pairs.
+- name: Keys
+  description: >-
+    List and manage keys within a namespace.
+- name: Metadata
+  description: >-
+    Read metadata associated with keys.
+- name: Namespaces
+  description: >-
+    Create, list, rename, and delete KV namespaces.
 security:
-  - bearerAuth: []
+- bearerAuth: []
 paths:
   /accounts/{account_id}/storage/kv/namespaces:
     get:
       operationId: listKvNamespaces
-      summary: Cloudflare List KV namespaces
+      summary: Cloudflare List Kv Namespaces
       description: >-
         Returns a paginated list of all KV namespaces for the account.
       tags:
-        - Namespaces
+      - Namespaces
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - name: page
-          in: query
-          description: Page number of results.
-          schema:
-            type: integer
-            minimum: 1
-        - name: per_page
-          in: query
-          description: Number of results per page.
-          schema:
-            type: integer
+      - $ref: '#/components/parameters/AccountId'
+      - name: page
+        in: query
+        description: Page number of results.
+        schema:
+          type: integer
+          minimum: 1
+        example: 10
+      - name: per_page
+        in: query
+        description: Number of results per page.
+        schema:
+          type: integer
+        example: 10
       responses:
         '200':
           description: List of KV namespaces.
@@ -64,17 +66,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NamespaceListResponse'
+              examples:
+                Listkvnamespaces200Example:
+                  summary: Default listKvNamespaces 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      title: Example Title
+                      supports_url_encoding: https://www.example.com
+                    success: true
+                    result_info:
+                      page: 10
+                      per_page: 10
+                      count: 10
+                      total_count: 10
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createKvNamespace
-      summary: Cloudflare Create KV namespace
+      summary: Cloudflare Create Kv Namespace
       description: >-
         Create a new KV namespace for the account.
       tags:
-        - Namespaces
+      - Namespaces
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
@@ -82,11 +102,17 @@ paths:
             schema:
               type: object
               required:
-                - title
+              - title
               properties:
                 title:
                   type: string
                   description: A human-readable title for the namespace.
+            examples:
+              CreatekvnamespaceRequestExample:
+                summary: Default createKvNamespace request
+                x-microcks-default: true
+                value:
+                  title: Example Title
       responses:
         '200':
           description: Namespace created successfully.
@@ -94,21 +120,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NamespaceResponse'
+              examples:
+                Createkvnamespace200Example:
+                  summary: Default createKvNamespace 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      title: Example Title
+                      supports_url_encoding: https://www.example.com
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}:
     get:
       operationId: getKvNamespace
-      summary: Cloudflare Get KV namespace
+      summary: Cloudflare Get Kv Namespace
       description: >-
         Retrieve details of a specific KV namespace.
       tags:
-        - Namespaces
+      - Namespaces
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/NamespaceId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
       responses:
         '200':
           description: Namespace details.
@@ -116,20 +159,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NamespaceResponse'
+              examples:
+                Getkvnamespace200Example:
+                  summary: Default getKvNamespace 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      title: Example Title
+                      supports_url_encoding: https://www.example.com
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '401':
           description: Unauthorized.
         '404':
           description: Namespace not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: renameKvNamespace
-      summary: Cloudflare Rename KV namespace
+      summary: Cloudflare Rename Kv Namespace
       description: >-
         Rename a KV namespace.
       tags:
-        - Namespaces
+      - Namespaces
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/NamespaceId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
       requestBody:
         required: true
         content:
@@ -137,11 +197,17 @@ paths:
             schema:
               type: object
               required:
-                - title
+              - title
               properties:
                 title:
                   type: string
                   description: The new title for the namespace.
+            examples:
+              RenamekvnamespaceRequestExample:
+                summary: Default renameKvNamespace request
+                x-microcks-default: true
+                value:
+                  title: Example Title
       responses:
         '200':
           description: Namespace renamed successfully.
@@ -149,16 +215,19 @@ paths:
           description: Unauthorized.
         '404':
           description: Namespace not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteKvNamespace
-      summary: Cloudflare Delete KV namespace
+      summary: Cloudflare Delete Kv Namespace
       description: >-
         Delete a KV namespace and all its key-value pairs.
       tags:
-        - Namespaces
+      - Namespaces
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/NamespaceId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
       responses:
         '200':
           description: Namespace deleted successfully.
@@ -166,33 +235,39 @@ paths:
           description: Unauthorized.
         '404':
           description: Namespace not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/keys:
     get:
       operationId: listKvKeys
-      summary: Cloudflare List keys
+      summary: Cloudflare List Keys
       description: >-
         List keys stored in a KV namespace with cursor-based pagination.
       tags:
-        - Keys
+      - Keys
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/NamespaceId'
-        - name: cursor
-          in: query
-          description: Cursor for pagination.
-          schema:
-            type: string
-        - name: limit
-          in: query
-          description: Maximum number of keys to return.
-          schema:
-            type: integer
-            maximum: 1000
-        - name: prefix
-          in: query
-          description: Filter keys by prefix.
-          schema:
-            type: string
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
+      - name: cursor
+        in: query
+        description: Cursor for pagination.
+        schema:
+          type: string
+        example: example_value
+      - name: limit
+        in: query
+        description: Maximum number of keys to return.
+        schema:
+          type: integer
+          maximum: 1000
+        example: 10
+      - name: prefix
+        in: query
+        description: Filter keys by prefix.
+        schema:
+          type: string
+        example: example_value
       responses:
         '200':
           description: List of keys.
@@ -200,20 +275,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/KeyListResponse'
+              examples:
+                Listkvkeys200Example:
+                  summary: Default listKvKeys 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - name: Example Title
+                      expiration: 10
+                      metadata: example_value
+                    success: true
+                    result_info:
+                      cursor: example_value
+                      count: 10
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name}:
     get:
       operationId: readKvValue
-      summary: Cloudflare Read key-value pair
+      summary: Cloudflare Read Key-value Pair
       description: >-
         Read the value of a specific key from the namespace.
       tags:
-        - Key-Value Pairs
+      - Key-Value Pairs
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/NamespaceId'
-        - $ref: '#/components/parameters/KeyName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
+      - $ref: '#/components/parameters/KeyName'
       responses:
         '200':
           description: The value associated with the key.
@@ -221,45 +312,53 @@ paths:
           description: Unauthorized.
         '404':
           description: Key not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: writeKvValue
-      summary: Cloudflare Write key-value pair
+      summary: Cloudflare Write Key-value Pair
       description: >-
         Write a value for a specific key in the namespace. Optionally set
         expiration and metadata.
       tags:
-        - Key-Value Pairs
+      - Key-Value Pairs
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/NamespaceId'
-        - $ref: '#/components/parameters/KeyName'
-        - name: expiration
-          in: query
-          description: Unix timestamp for when the key should expire.
-          schema:
-            type: integer
-        - name: expiration_ttl
-          in: query
-          description: Seconds until the key expires.
-          schema:
-            type: integer
-            minimum: 60
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
+      - $ref: '#/components/parameters/KeyName'
+      - name: expiration
+        in: query
+        description: Unix timestamp for when the key should expire.
+        schema:
+          type: integer
+        example: 10
+      - name: expiration_ttl
+        in: query
+        description: Seconds until the key expires.
+        schema:
+          type: integer
+          minimum: 60
+        example: 10
       responses:
         '200':
           description: Value written successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteKvValue
-      summary: Cloudflare Delete key-value pair
+      summary: Cloudflare Delete Key-value Pair
       description: >-
         Delete a key-value pair from the namespace.
       tags:
-        - Key-Value Pairs
+      - Key-Value Pairs
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/NamespaceId'
-        - $ref: '#/components/parameters/KeyName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
+      - $ref: '#/components/parameters/KeyName'
       responses:
         '200':
           description: Key-value pair deleted.
@@ -267,18 +366,21 @@ paths:
           description: Unauthorized.
         '404':
           description: Key not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/metadata/{key_name}:
     get:
       operationId: readKvMetadata
-      summary: Cloudflare Read key metadata
+      summary: Cloudflare Read Key Metadata
       description: >-
         Retrieve metadata associated with a specific key.
       tags:
-        - Metadata
+      - Metadata
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/NamespaceId'
-        - $ref: '#/components/parameters/KeyName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
+      - $ref: '#/components/parameters/KeyName'
       responses:
         '200':
           description: Key metadata.
@@ -286,18 +388,21 @@ paths:
           description: Unauthorized.
         '404':
           description: Key not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk:
     put:
       operationId: bulkWriteKvPairs
-      summary: Cloudflare Write multiple key-value pairs
+      summary: Cloudflare Write Multiple Key-value Pairs
       description: >-
         Write multiple key-value pairs in a single request. Supports up to
         10,000 pairs per request.
       tags:
-        - Bulk Operations
+      - Bulk Operations
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/NamespaceId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
       requestBody:
         required: true
         content:
@@ -308,8 +413,8 @@ paths:
               items:
                 type: object
                 required:
-                  - key
-                  - value
+                - key
+                - value
                 properties:
                   key:
                     type: string
@@ -331,6 +436,17 @@ paths:
                   base64:
                     type: boolean
                     description: Whether the value is base64-encoded.
+            examples:
+              BulkwritekvpairsRequestExample:
+                summary: Default bulkWriteKvPairs request
+                x-microcks-default: true
+                value:
+                - key: example_value
+                  value: example_value
+                  expiration: 10
+                  expiration_ttl: 10
+                  metadata: example_value
+                  base64: true
       responses:
         '200':
           description: Bulk write completed.
@@ -338,21 +454,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BulkOperationResponse'
+              examples:
+                Bulkwritekvpairs200Example:
+                  summary: Default bulkWriteKvPairs 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      successful_key_count: 10
+                      unsuccessful_keys:
+                      - example_value
+                    success: true
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk/delete:
     post:
       operationId: bulkDeleteKvPairs
-      summary: Cloudflare Delete multiple key-value pairs
+      summary: Cloudflare Delete Multiple Key-value Pairs
       description: >-
         Delete multiple key-value pairs in a single request.
       tags:
-        - Bulk Operations
+      - Bulk Operations
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/NamespaceId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
       requestBody:
         required: true
         content:
@@ -362,6 +491,12 @@ paths:
               items:
                 type: string
               description: Array of key names to delete.
+            examples:
+              BulkdeletekvpairsRequestExample:
+                summary: Default bulkDeleteKvPairs request
+                x-microcks-default: true
+                value:
+                - example_value
       responses:
         '200':
           description: Bulk delete completed.
@@ -369,19 +504,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BulkOperationResponse'
+              examples:
+                Bulkdeletekvpairs200Example:
+                  summary: Default bulkDeleteKvPairs 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      successful_key_count: 10
+                      unsuccessful_keys:
+                      - example_value
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk/get:
     post:
       operationId: bulkGetKvPairs
-      summary: Cloudflare Get multiple key-value pairs
+      summary: Cloudflare Get Multiple Key-value Pairs
       description: >-
         Retrieve multiple key-value pairs in a single request.
       tags:
-        - Bulk Operations
+      - Bulk Operations
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/NamespaceId'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
       requestBody:
         required: true
         content:
@@ -391,11 +539,20 @@ paths:
               items:
                 type: string
               description: Array of key names to retrieve.
+            examples:
+              BulkgetkvpairsRequestExample:
+                summary: Default bulkGetKvPairs request
+                x-microcks-default: true
+                value:
+                - example_value
       responses:
         '200':
           description: Bulk get completed.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     bearerAuth:
@@ -434,12 +591,15 @@ components:
         id:
           type: string
           description: The unique identifier of the namespace.
+          example: abc123
         title:
           type: string
           description: The human-readable title of the namespace.
+          example: Example Title
         supports_url_encoding:
           type: boolean
           description: Whether the namespace supports URL-encoded keys.
+          example: https://www.example.com
     NamespaceResponse:
       type: object
       properties:
@@ -447,14 +607,17 @@ components:
           $ref: '#/components/schemas/Namespace'
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []
     NamespaceListResponse:
       type: object
       properties:
@@ -462,8 +625,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Namespace'
+          example: []
         success:
           type: boolean
+          example: true
         result_info:
           type: object
           properties:
@@ -475,6 +640,7 @@ components:
               type: integer
             total_count:
               type: integer
+          example: example_value
     KeyListResponse:
       type: object
       properties:
@@ -492,8 +658,10 @@ components:
               metadata:
                 type: object
                 description: Metadata associated with the key.
+          example: []
         success:
           type: boolean
+          example: true
         result_info:
           type: object
           properties:
@@ -502,6 +670,7 @@ components:
               description: Cursor for the next page of results.
             count:
               type: integer
+          example: example_value
     BulkOperationResponse:
       type: object
       properties:
@@ -516,5 +685,7 @@ components:
               items:
                 type: string
               description: Keys that failed to be processed.
+          example: example_value
         success:
           type: boolean
+          example: true

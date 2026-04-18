@@ -1,0 +1,262 @@
+naftiko: "1.0.0-alpha1"
+
+info:
+  label: "Cloudflare Stream"
+  description: "Upload, store, encode, and deliver live and on-demand video with direct uploads, live streaming, and signed URL access control."
+  tags:
+    - Cloudflare
+    - Video
+    - Streaming
+  created: "2026-04-18"
+  modified: "2026-04-18"
+
+binds:
+  - namespace: env
+    keys:
+      CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
+
+capability:
+  consumes:
+    - type: http
+      namespace: cloudflare-stream
+      baseUri: https://api.cloudflare.com/client/v4
+      description: "Cloudflare Stream API for video management and live streaming."
+      authentication:
+        type: bearer
+        token: "{{CLOUDFLARE_API_TOKEN}}"
+      resources:
+        - name: videos
+          path: /accounts/{account_id}/stream
+          description: "Manage videos."
+          operations:
+            - name: list-videos
+              method: GET
+              description: "List all videos."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: upload-video
+              method: POST
+              description: "Upload a video from URL."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              body:
+                type: json
+                data:
+                  url: "{{tools.url}}"
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: video
+          path: /accounts/{account_id}/stream/{video_id}
+          description: "Manage a specific video."
+          operations:
+            - name: get-video
+              method: GET
+              description: "Get video details."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: video_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Video identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: delete-video
+              method: DELETE
+              description: "Delete a video."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+                - name: video_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Video identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: live-inputs
+          path: /accounts/{account_id}/stream/live_inputs
+          description: "Manage live inputs."
+          operations:
+            - name: list-live-inputs
+              method: GET
+              description: "List live inputs."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+            - name: create-live-input
+              method: POST
+              description: "Create a live input."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              body:
+                type: json
+                data:
+                  meta: "{{tools.meta}}"
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+        - name: direct-upload
+          path: /accounts/{account_id}/stream/direct_upload
+          description: "Create direct upload URLs."
+          operations:
+            - name: create-direct-upload
+              method: POST
+              description: "Create a direct upload URL."
+              inputParameters:
+                - name: account_id
+                  in: path
+                  type: string
+                  required: true
+                  description: "Account identifier."
+              body:
+                type: json
+                data:
+                  maxDurationSeconds: "{{tools.max_duration_seconds}}"
+              outputRawFormat: json
+              outputParameters:
+                - name: result
+                  type: object
+                  value: "$."
+
+  exposes:
+    - type: rest
+      port: 8111
+      namespace: cloudflare-stream-api
+      resources:
+        - path: /v1/videos
+          name: videos
+          description: "Video management."
+          operations:
+            - method: GET
+              name: list-videos
+              description: "List videos."
+              call: "cloudflare-stream.list-videos"
+              with:
+                account_id: "rest.account_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+    - type: mcp
+      port: 9111
+      namespace: cloudflare-stream-mcp
+      transport: http
+      tools:
+        - name: list-videos
+          description: "List all videos."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-stream.list-videos"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: upload-video
+          description: "Upload a video from URL."
+          hints:
+            readOnly: false
+          call: "cloudflare-stream.upload-video"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: get-video
+          description: "Get video details."
+          hints:
+            readOnly: true
+          call: "cloudflare-stream.get-video"
+          with:
+            account_id: "tools.account_id"
+            video_id: "tools.video_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: delete-video
+          description: "Delete a video."
+          hints:
+            destructive: true
+            idempotent: true
+          call: "cloudflare-stream.delete-video"
+          with:
+            account_id: "tools.account_id"
+            video_id: "tools.video_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: list-live-inputs
+          description: "List live streaming inputs."
+          hints:
+            readOnly: true
+          call: "cloudflare-stream.list-live-inputs"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: create-live-input
+          description: "Create a live streaming input."
+          hints:
+            readOnly: false
+          call: "cloudflare-stream.create-live-input"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: create-direct-upload
+          description: "Create a direct upload URL for video."
+          hints:
+            readOnly: false
+          call: "cloudflare-stream.create-direct-upload"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."

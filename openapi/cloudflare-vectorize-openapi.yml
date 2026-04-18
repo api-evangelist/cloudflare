@@ -15,28 +15,28 @@ externalDocs:
   description: Cloudflare Vectorize Documentation
   url: https://developers.cloudflare.com/vectorize/
 servers:
-  - url: https://api.cloudflare.com/client/v4
-    description: Cloudflare API v4 Production Server
+- url: https://api.cloudflare.com/client/v4
+  description: Cloudflare API v4 Production Server
 tags:
-  - name: Indexes
-    description: >-
-      Create, list, update, and delete vector indexes.
-  - name: Vectors
-    description: >-
-      Insert, upsert, query, get, and delete vectors within an index.
+- name: Indexes
+  description: >-
+    Create, list, update, and delete vector indexes.
+- name: Vectors
+  description: >-
+    Insert, upsert, query, get, and delete vectors within an index.
 security:
-  - bearerAuth: []
+- bearerAuth: []
 paths:
   /accounts/{account_id}/vectorize/v2/indexes:
     get:
       operationId: listVectorizeIndexes
-      summary: Cloudflare List Vectorize indexes
+      summary: Cloudflare List Vectorize Indexes
       description: >-
         Returns all Vectorize indexes for the account.
       tags:
-        - Indexes
+      - Indexes
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       responses:
         '200':
           description: List of indexes.
@@ -44,24 +44,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/IndexListResponse'
+              examples:
+                Listvectorizeindexes200Example:
+                  summary: Default listVectorizeIndexes 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - name: Example Title
+                      description: A sample description.
+                      config: {}
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createVectorizeIndex
-      summary: Cloudflare Create Vectorize index
+      summary: Cloudflare Create Vectorize Index
       description: >-
         Create a new vector index with the specified dimensions and distance
         metric.
       tags:
-        - Indexes
+      - Indexes
       parameters:
-        - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/AccountId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/IndexInput'
+            examples:
+              CreatevectorizeindexRequestExample:
+                summary: Default createVectorizeIndex request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  description: A sample description.
+                  config:
+                    dimensions: 10
+                    metric: cosine
       responses:
         '200':
           description: Index created successfully.
@@ -69,21 +94,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/IndexResponse'
+              examples:
+                Createvectorizeindex200Example:
+                  summary: Default createVectorizeIndex 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      name: Example Title
+                      description: A sample description.
+                      config:
+                        dimensions: 10
+                        metric: cosine
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}:
     get:
       operationId: getVectorizeIndex
-      summary: Cloudflare Get Vectorize index
+      summary: Cloudflare Get Vectorize Index
       description: >-
         Retrieve details of a specific Vectorize index.
       tags:
-        - Indexes
+      - Indexes
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/IndexName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/IndexName'
       responses:
         '200':
           description: Index details.
@@ -91,20 +137,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/IndexResponse'
+              examples:
+                Getvectorizeindex200Example:
+                  summary: Default getVectorizeIndex 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      name: Example Title
+                      description: A sample description.
+                      config:
+                        dimensions: 10
+                        metric: cosine
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '401':
           description: Unauthorized.
         '404':
           description: Index not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: updateVectorizeIndex
-      summary: Cloudflare Update Vectorize index
+      summary: Cloudflare Update Vectorize Index
       description: >-
         Update the configuration of a Vectorize index.
       tags:
-        - Indexes
+      - Indexes
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/IndexName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/IndexName'
       requestBody:
         required: true
         content:
@@ -115,21 +182,30 @@ paths:
                 description:
                   type: string
                   description: Updated description for the index.
+            examples:
+              UpdatevectorizeindexRequestExample:
+                summary: Default updateVectorizeIndex request
+                x-microcks-default: true
+                value:
+                  description: A sample description.
       responses:
         '200':
           description: Index updated successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteVectorizeIndex
-      summary: Cloudflare Delete Vectorize index
+      summary: Cloudflare Delete Vectorize Index
       description: >-
         Delete a Vectorize index and all its vectors.
       tags:
-        - Indexes
+      - Indexes
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/IndexName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/IndexName'
       responses:
         '200':
           description: Index deleted successfully.
@@ -137,18 +213,21 @@ paths:
           description: Unauthorized.
         '404':
           description: Index not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/insert:
     post:
       operationId: insertVectors
-      summary: Cloudflare Insert vectors
+      summary: Cloudflare Insert Vectors
       description: >-
         Insert new vectors into the index. If a vector with the same ID
         already exists, the request will fail.
       tags:
-        - Vectors
+      - Vectors
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/IndexName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/IndexName'
       requestBody:
         required: true
         content:
@@ -156,6 +235,11 @@ paths:
             schema:
               type: string
               description: Newline-delimited JSON vectors.
+            examples:
+              InsertvectorsRequestExample:
+                summary: Default insertVectors request
+                x-microcks-default: true
+                value: example_value
       responses:
         '200':
           description: Vectors inserted successfully.
@@ -163,18 +247,21 @@ paths:
           description: Bad request or duplicate IDs.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/upsert:
     post:
       operationId: upsertVectors
-      summary: Cloudflare Upsert vectors
+      summary: Cloudflare Upsert Vectors
       description: >-
         Insert or update vectors in the index. If a vector with the same ID
         exists, it will be replaced.
       tags:
-        - Vectors
+      - Vectors
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/IndexName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/IndexName'
       requestBody:
         required: true
         content:
@@ -182,23 +269,31 @@ paths:
             schema:
               type: string
               description: Newline-delimited JSON vectors.
+            examples:
+              UpsertvectorsRequestExample:
+                summary: Default upsertVectors request
+                x-microcks-default: true
+                value: example_value
       responses:
         '200':
           description: Vectors upserted successfully.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/query:
     post:
       operationId: queryVectors
-      summary: Cloudflare Query vectors
+      summary: Cloudflare Query Vectors
       description: >-
         Perform a similarity search against the index. Returns the nearest
         vectors to the provided query vector.
       tags:
-        - Vectors
+      - Vectors
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/IndexName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/IndexName'
       requestBody:
         required: true
         content:
@@ -206,7 +301,7 @@ paths:
             schema:
               type: object
               required:
-                - vector
+              - vector
               properties:
                 vector:
                   type: array
@@ -224,12 +319,23 @@ paths:
                   type: string
                   description: Whether to return vector metadata.
                   enum:
-                    - none
-                    - indexed
-                    - all
+                  - none
+                  - indexed
+                  - all
                 filter:
                   type: object
                   description: Metadata filter for the query.
+            examples:
+              QueryvectorsRequestExample:
+                summary: Default queryVectors request
+                x-microcks-default: true
+                value:
+                  vector:
+                  - 42.5
+                  topK: 10
+                  returnValues: true
+                  returnMetadata: none
+                  filter: example_value
       responses:
         '200':
           description: Query results.
@@ -237,19 +343,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/QueryResponse'
+              examples:
+                Queryvectors200Example:
+                  summary: Default queryVectors 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      count: 10
+                      matches:
+                      - id: abc123
+                        score: 42.5
+                        values: {}
+                        metadata: example_value
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/get_by_ids:
     post:
       operationId: getVectorsByIds
-      summary: Cloudflare Get vectors by IDs
+      summary: Cloudflare Get Vectors by Ids
       description: >-
         Retrieve specific vectors by their IDs.
       tags:
-        - Vectors
+      - Vectors
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/IndexName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/IndexName'
       requestBody:
         required: true
         content:
@@ -257,29 +379,39 @@ paths:
             schema:
               type: object
               required:
-                - ids
+              - ids
               properties:
                 ids:
                   type: array
                   items:
                     type: string
                   description: Vector IDs to retrieve.
+            examples:
+              GetvectorsbyidsRequestExample:
+                summary: Default getVectorsByIds request
+                x-microcks-default: true
+                value:
+                  ids:
+                  - example_value
       responses:
         '200':
           description: Vectors retrieved.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /accounts/{account_id}/vectorize/v2/indexes/{index_name}/delete_by_ids:
     post:
       operationId: deleteVectorsByIds
-      summary: Cloudflare Delete vectors by IDs
+      summary: Cloudflare Delete Vectors by Ids
       description: >-
         Delete specific vectors from the index by their IDs.
       tags:
-        - Vectors
+      - Vectors
       parameters:
-        - $ref: '#/components/parameters/AccountId'
-        - $ref: '#/components/parameters/IndexName'
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/IndexName'
       requestBody:
         required: true
         content:
@@ -287,18 +419,28 @@ paths:
             schema:
               type: object
               required:
-                - ids
+              - ids
               properties:
                 ids:
                   type: array
                   items:
                     type: string
                   description: Vector IDs to delete.
+            examples:
+              DeletevectorsbyidsRequestExample:
+                summary: Default deleteVectorsByIds request
+                x-microcks-default: true
+                value:
+                  ids:
+                  - example_value
       responses:
         '200':
           description: Vectors deleted.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     bearerAuth:
@@ -328,9 +470,11 @@ components:
         name:
           type: string
           description: The name of the index.
+          example: Example Title
         description:
           type: string
           description: Description of the index.
+          example: A sample description.
         config:
           type: object
           properties:
@@ -340,33 +484,38 @@ components:
             metric:
               type: string
               enum:
-                - cosine
-                - euclidean
-                - dot-product
+              - cosine
+              - euclidean
+              - dot-product
               description: Distance metric used for similarity.
+          example: example_value
         created_on:
           type: string
           format: date-time
+          example: '2026-01-15T10:30:00Z'
         modified_on:
           type: string
           format: date-time
+          example: '2026-01-15T10:30:00Z'
     IndexInput:
       type: object
       required:
-        - name
-        - config
+      - name
+      - config
       properties:
         name:
           type: string
           description: The name of the index.
+          example: Example Title
         description:
           type: string
           description: Description of the index.
+          example: A sample description.
         config:
           type: object
           required:
-            - dimensions
-            - metric
+          - dimensions
+          - metric
           properties:
             dimensions:
               type: integer
@@ -374,9 +523,10 @@ components:
             metric:
               type: string
               enum:
-                - cosine
-                - euclidean
-                - dot-product
+              - cosine
+              - euclidean
+              - dot-product
+          example: example_value
     IndexResponse:
       type: object
       properties:
@@ -384,14 +534,17 @@ components:
           $ref: '#/components/schemas/VectorizeIndex'
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []
     IndexListResponse:
       type: object
       properties:
@@ -399,8 +552,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/VectorizeIndex'
+          example: []
         success:
           type: boolean
+          example: true
     QueryResponse:
       type: object
       properties:
@@ -427,5 +582,7 @@ components:
                       type: number
                   metadata:
                     type: object
+          example: example_value
         success:
           type: boolean
+          example: true

@@ -1,0 +1,296 @@
+naftiko: "1.0.0-alpha1"
+
+info:
+  label: "Cloudflare Data and Storage"
+  description: "Unified data and storage management combining R2 object storage, D1 serverless SQL, KV key-value store, and Hyperdrive database acceleration. Used by developers building data-driven applications on Cloudflare's edge."
+  tags:
+    - Cloudflare
+    - Storage
+    - Database
+    - Data
+  created: "2026-04-18"
+  modified: "2026-04-18"
+
+binds:
+  - namespace: env
+    keys:
+      CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
+
+capability:
+  consumes:
+    - import: cloudflare-r2
+      location: ./shared/r2.yaml
+    - import: cloudflare-d1
+      location: ./shared/d1.yaml
+    - import: cloudflare-kv
+      location: ./shared/kv.yaml
+    - import: cloudflare-hyperdrive
+      location: ./shared/hyperdrive.yaml
+
+  exposes:
+    - type: rest
+      port: 8081
+      namespace: data-storage-api
+      description: "Unified REST API for Cloudflare data and storage services."
+      resources:
+        - path: /v1/buckets
+          name: buckets
+          description: "R2 bucket management."
+          operations:
+            - method: GET
+              name: list-buckets
+              description: "List R2 buckets."
+              call: "cloudflare-r2.list-r2-buckets"
+              with:
+                account_id: "rest.account_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+        - path: /v1/databases
+          name: databases
+          description: "D1 database management."
+          operations:
+            - method: GET
+              name: list-databases
+              description: "List D1 databases."
+              call: "cloudflare-d1.list-databases"
+              with:
+                account_id: "rest.account_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+        - path: /v1/kv-namespaces
+          name: kv-namespaces
+          description: "KV namespace management."
+          operations:
+            - method: GET
+              name: list-kv-namespaces
+              description: "List KV namespaces."
+              call: "cloudflare-kv.list-kv-namespaces"
+              with:
+                account_id: "rest.account_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+        - path: /v1/hyperdrive-configs
+          name: hyperdrive-configs
+          description: "Hyperdrive configuration management."
+          operations:
+            - method: GET
+              name: list-hyperdrive-configs
+              description: "List Hyperdrive configs."
+              call: "cloudflare-hyperdrive.list-hyperdrive-configs"
+              with:
+                account_id: "rest.account_id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+    - type: mcp
+      port: 9081
+      namespace: data-storage-mcp
+      transport: http
+      description: "MCP server for AI-assisted Cloudflare data and storage management."
+      tools:
+        - name: r2-list-buckets
+          description: "List R2 storage buckets."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-r2.list-r2-buckets"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: r2-create-bucket
+          description: "Create an R2 bucket."
+          hints:
+            readOnly: false
+          call: "cloudflare-r2.create-r2-bucket"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: r2-get-bucket
+          description: "Get R2 bucket details."
+          hints:
+            readOnly: true
+          call: "cloudflare-r2.get-r2-bucket"
+          with:
+            account_id: "tools.account_id"
+            bucket_name: "tools.bucket_name"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: r2-list-objects
+          description: "List objects in an R2 bucket."
+          hints:
+            readOnly: true
+          call: "cloudflare-r2.list-r2-objects"
+          with:
+            account_id: "tools.account_id"
+            bucket_name: "tools.bucket_name"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: r2-delete-bucket
+          description: "Delete an R2 bucket."
+          hints:
+            destructive: true
+            idempotent: true
+          call: "cloudflare-r2.delete-r2-bucket"
+          with:
+            account_id: "tools.account_id"
+            bucket_name: "tools.bucket_name"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: d1-list-databases
+          description: "List D1 databases."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-d1.list-databases"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: d1-create-database
+          description: "Create a D1 database."
+          hints:
+            readOnly: false
+          call: "cloudflare-d1.create-database"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: d1-query-database
+          description: "Execute SQL query on a D1 database."
+          hints:
+            readOnly: false
+          call: "cloudflare-d1.query-database"
+          with:
+            account_id: "tools.account_id"
+            database_id: "tools.database_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: d1-delete-database
+          description: "Delete a D1 database."
+          hints:
+            destructive: true
+            idempotent: true
+          call: "cloudflare-d1.delete-database"
+          with:
+            account_id: "tools.account_id"
+            database_id: "tools.database_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: kv-list-namespaces
+          description: "List KV namespaces."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-kv.list-kv-namespaces"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: kv-create-namespace
+          description: "Create a KV namespace."
+          hints:
+            readOnly: false
+          call: "cloudflare-kv.create-kv-namespace"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: kv-list-keys
+          description: "List keys in a KV namespace."
+          hints:
+            readOnly: true
+          call: "cloudflare-kv.list-kv-keys"
+          with:
+            account_id: "tools.account_id"
+            namespace_id: "tools.namespace_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: kv-read-value
+          description: "Read a KV value."
+          hints:
+            readOnly: true
+          call: "cloudflare-kv.read-kv-value"
+          with:
+            account_id: "tools.account_id"
+            namespace_id: "tools.namespace_id"
+            key_name: "tools.key_name"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: kv-write-value
+          description: "Write a KV value."
+          hints:
+            readOnly: false
+            idempotent: true
+          call: "cloudflare-kv.write-kv-value"
+          with:
+            account_id: "tools.account_id"
+            namespace_id: "tools.namespace_id"
+            key_name: "tools.key_name"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: kv-delete-value
+          description: "Delete a KV value."
+          hints:
+            destructive: true
+            idempotent: true
+          call: "cloudflare-kv.delete-kv-value"
+          with:
+            account_id: "tools.account_id"
+            namespace_id: "tools.namespace_id"
+            key_name: "tools.key_name"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: hyperdrive-list-configs
+          description: "List Hyperdrive configurations."
+          hints:
+            readOnly: true
+            openWorld: true
+          call: "cloudflare-hyperdrive.list-hyperdrive-configs"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: hyperdrive-create-config
+          description: "Create a Hyperdrive configuration."
+          hints:
+            readOnly: false
+          call: "cloudflare-hyperdrive.create-hyperdrive-config"
+          with:
+            account_id: "tools.account_id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: hyperdrive-delete-config
+          description: "Delete a Hyperdrive configuration."
+          hints:
+            destructive: true
+            idempotent: true
+          call: "cloudflare-hyperdrive.delete-hyperdrive-config"
+          with:
+            account_id: "tools.account_id"
+            config_id: "tools.config_id"
+          outputParameters:
+            - type: object
+              mapping: "$."

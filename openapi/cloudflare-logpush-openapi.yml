@@ -15,32 +15,32 @@ externalDocs:
   description: Cloudflare Logpush API Documentation
   url: https://developers.cloudflare.com/api/resources/logpush/
 servers:
-  - url: https://api.cloudflare.com/client/v4
-    description: Cloudflare API v4 Production Server
+- url: https://api.cloudflare.com/client/v4
+  description: Cloudflare API v4 Production Server
 tags:
-  - name: Datasets
-    description: >-
-      List available datasets and their fields for log exports.
-  - name: Logpush Jobs
-    description: >-
-      Create, list, update, and delete Logpush jobs that push logs to
-      external destinations.
-  - name: Ownership
-    description: >-
-      Validate ownership of a log destination.
+- name: Datasets
+  description: >-
+    List available datasets and their fields for log exports.
+- name: Logpush Jobs
+  description: >-
+    Create, list, update, and delete Logpush jobs that push logs to
+    external destinations.
+- name: Ownership
+  description: >-
+    Validate ownership of a log destination.
 security:
-  - bearerAuth: []
+- bearerAuth: []
 paths:
   /zones/{zone_id}/logpush/jobs:
     get:
       operationId: listLogpushJobs
-      summary: Cloudflare List Logpush jobs
+      summary: Cloudflare List Logpush Jobs
       description: >-
         Returns all Logpush jobs for the zone.
       tags:
-        - Logpush Jobs
+      - Logpush Jobs
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       responses:
         '200':
           description: List of Logpush jobs.
@@ -48,23 +48,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LogpushJobListResponse'
+              examples:
+                Listlogpushjobs200Example:
+                  summary: Default listLogpushJobs 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      name: Example Title
+                      enabled: true
+                      dataset: http_requests
+                      destination_conf: example_value
+                      logpull_options: example_value
+                      frequency: high
+                      last_complete: '2026-01-15T10:30:00Z'
+                      last_error: '2026-01-15T10:30:00Z'
+                      error_message: example_value
+                    success: true
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     post:
       operationId: createLogpushJob
-      summary: Cloudflare Create Logpush job
+      summary: Cloudflare Create Logpush Job
       description: >-
         Create a new Logpush job to push logs to an external destination.
       tags:
-        - Logpush Jobs
+      - Logpush Jobs
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/LogpushJobInput'
+            examples:
+              CreatelogpushjobRequestExample:
+                summary: Default createLogpushJob request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  enabled: true
+                  dataset: example_value
+                  destination_conf: example_value
+                  logpull_options: example_value
+                  frequency: high
+                  filter: example_value
+                  ownership_challenge: example_value
       responses:
         '200':
           description: Logpush job created.
@@ -72,21 +105,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LogpushJobResponse'
+              examples:
+                Createlogpushjob200Example:
+                  summary: Default createLogpushJob 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      name: Example Title
+                      enabled: true
+                      dataset: http_requests
+                      destination_conf: example_value
+                      logpull_options: example_value
+                      frequency: high
+                      last_complete: '2026-01-15T10:30:00Z'
+                      last_error: '2026-01-15T10:30:00Z'
+                      error_message: example_value
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '400':
           description: Bad request.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/logpush/jobs/{job_id}:
     get:
       operationId: getLogpushJob
-      summary: Cloudflare Get Logpush job
+      summary: Cloudflare Get Logpush Job
       description: >-
         Retrieve details of a specific Logpush job.
       tags:
-        - Logpush Jobs
+      - Logpush Jobs
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
-        - $ref: '#/components/parameters/JobId'
+      - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/JobId'
       responses:
         '200':
           description: Logpush job details.
@@ -94,80 +151,127 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LogpushJobResponse'
+              examples:
+                Getlogpushjob200Example:
+                  summary: Default getLogpushJob 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      name: Example Title
+                      enabled: true
+                      dataset: http_requests
+                      destination_conf: example_value
+                      logpull_options: example_value
+                      frequency: high
+                      last_complete: '2026-01-15T10:30:00Z'
+                      last_error: '2026-01-15T10:30:00Z'
+                      error_message: example_value
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
         '401':
           description: Unauthorized.
         '404':
           description: Job not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     put:
       operationId: updateLogpushJob
-      summary: Cloudflare Update Logpush job
+      summary: Cloudflare Update Logpush Job
       description: >-
         Update the configuration of a Logpush job.
       tags:
-        - Logpush Jobs
+      - Logpush Jobs
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
-        - $ref: '#/components/parameters/JobId'
+      - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/JobId'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/LogpushJobInput'
+            examples:
+              UpdatelogpushjobRequestExample:
+                summary: Default updateLogpushJob request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  enabled: true
+                  dataset: example_value
+                  destination_conf: example_value
+                  logpull_options: example_value
+                  frequency: high
+                  filter: example_value
+                  ownership_challenge: example_value
       responses:
         '200':
           description: Job updated.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
     delete:
       operationId: deleteLogpushJob
-      summary: Cloudflare Delete Logpush job
+      summary: Cloudflare Delete Logpush Job
       description: >-
         Delete a Logpush job.
       tags:
-        - Logpush Jobs
+      - Logpush Jobs
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
-        - $ref: '#/components/parameters/JobId'
+      - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/JobId'
       responses:
         '200':
           description: Job deleted.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/logpush/datasets/{dataset_id}/fields:
     get:
       operationId: listDatasetFields
-      summary: Cloudflare List dataset fields
+      summary: Cloudflare List Dataset Fields
       description: >-
         Returns the available fields for a specific log dataset.
       tags:
-        - Datasets
+      - Datasets
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
-        - name: dataset_id
-          in: path
-          required: true
-          description: >-
-            The dataset identifier such as http_requests, firewall_events,
-            dns_logs, or spectrum_events.
-          schema:
-            type: string
+      - $ref: '#/components/parameters/ZoneId'
+      - name: dataset_id
+        in: path
+        required: true
+        description: >-
+          The dataset identifier such as http_requests, firewall_events,
+          dns_logs, or spectrum_events.
+        schema:
+          type: string
+        example: '500123'
       responses:
         '200':
           description: Dataset fields.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/logpush/ownership:
     post:
       operationId: validateLogpushOwnership
-      summary: Cloudflare Validate ownership
+      summary: Cloudflare Validate Ownership
       description: >-
         Validate ownership of a destination for Logpush by providing the
         ownership challenge token.
       tags:
-        - Ownership
+      - Ownership
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       requestBody:
         required: true
         content:
@@ -175,26 +279,35 @@ paths:
             schema:
               type: object
               required:
-                - destination_conf
+              - destination_conf
               properties:
                 destination_conf:
                   type: string
                   description: The destination configuration string.
+            examples:
+              ValidatelogpushownershipRequestExample:
+                summary: Default validateLogpushOwnership request
+                x-microcks-default: true
+                value:
+                  destination_conf: example_value
       responses:
         '200':
           description: Ownership validation result.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
   /zones/{zone_id}/logpush/ownership/validate:
     post:
       operationId: confirmLogpushOwnership
-      summary: Cloudflare Confirm ownership
+      summary: Cloudflare Confirm Ownership
       description: >-
         Confirm ownership of the destination using the ownership token.
       tags:
-        - Ownership
+      - Ownership
       parameters:
-        - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/ZoneId'
       requestBody:
         required: true
         content:
@@ -202,8 +315,8 @@ paths:
             schema:
               type: object
               required:
-                - destination_conf
-                - ownership_challenge
+              - destination_conf
+              - ownership_challenge
               properties:
                 destination_conf:
                   type: string
@@ -211,11 +324,21 @@ paths:
                 ownership_challenge:
                   type: string
                   description: The ownership challenge token.
+            examples:
+              ConfirmlogpushownershipRequestExample:
+                summary: Default confirmLogpushOwnership request
+                x-microcks-default: true
+                value:
+                  destination_conf: example_value
+                  ownership_challenge: example_value
       responses:
         '200':
           description: Ownership confirmed.
         '401':
           description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
 components:
   securitySchemes:
     bearerAuth:
@@ -245,75 +368,93 @@ components:
         id:
           type: integer
           description: The unique identifier of the job.
+          example: abc123
         name:
           type: string
           description: A human-readable name for the job.
+          example: Example Title
         enabled:
           type: boolean
           description: Whether the job is active.
+          example: true
         dataset:
           type: string
           description: The log dataset.
           enum:
-            - http_requests
-            - firewall_events
-            - dns_logs
-            - spectrum_events
-            - nel_reports
-            - audit_logs
+          - http_requests
+          - firewall_events
+          - dns_logs
+          - spectrum_events
+          - nel_reports
+          - audit_logs
+          example: http_requests
         destination_conf:
           type: string
           description: The destination configuration URI.
+          example: example_value
         logpull_options:
           type: string
           description: >-
             Logpull options specifying fields, timestamps, and sample rate.
+          example: example_value
         frequency:
           type: string
           enum:
-            - high
-            - low
+          - high
+          - low
           description: Log push frequency.
+          example: high
         last_complete:
           type: string
           format: date-time
           description: Timestamp of the last successful push.
+          example: '2026-01-15T10:30:00Z'
         last_error:
           type: string
           format: date-time
           description: Timestamp of the last error.
+          example: '2026-01-15T10:30:00Z'
         error_message:
           type: string
           description: Last error message.
+          example: example_value
     LogpushJobInput:
       type: object
       properties:
         name:
           type: string
           description: Name for the job.
+          example: Example Title
         enabled:
           type: boolean
           description: Whether the job is active.
+          example: true
         dataset:
           type: string
           description: The log dataset to push.
+          example: example_value
         destination_conf:
           type: string
           description: Destination URI.
+          example: example_value
         logpull_options:
           type: string
           description: Options for log fields and formatting.
+          example: example_value
         frequency:
           type: string
           enum:
-            - high
-            - low
+          - high
+          - low
+          example: high
         filter:
           type: string
           description: JSON filter expression to limit logs pushed.
+          example: example_value
         ownership_challenge:
           type: string
           description: The ownership challenge token.
+          example: example_value
     LogpushJobResponse:
       type: object
       properties:
@@ -321,14 +462,17 @@ components:
           $ref: '#/components/schemas/LogpushJob'
         success:
           type: boolean
+          example: true
         errors:
           type: array
           items:
             type: object
+          example: []
         messages:
           type: array
           items:
             type: object
+          example: []
     LogpushJobListResponse:
       type: object
       properties:
@@ -336,5 +480,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LogpushJob'
+          example: []
         success:
           type: boolean
+          example: true
