@@ -1,0 +1,171 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Cloudflare
+providerId: cloudflare
+created: '2026-05-04'
+modified: '2026-05-04'
+reconciled: true
+tags:
+  - CDN
+  - DDoS
+  - DNS
+  - Edge Compute
+  - WAF
+description: Cloudflare application services plans, billed per zone (domain). Workers/R2/KV/D1 priced
+  separately.
+sources:
+  - https://www.cloudflare.com/plans/
+  - https://developers.cloudflare.com/workers/platform/pricing/
+plans:
+  - id: cloudflare-free
+    name: Free
+    type: freemium
+    description: Unlimited bandwidth CDN, DDoS protection, free SSL, DNS.
+    entries:
+      - label: Per zone
+        name: zone
+        type: subscription
+        metric: domain
+        limit: -1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+    elements:
+      - name: Unlimited bandwidth CDN
+      - name: DDoS protection
+      - name: Universal SSL
+      - name: DNS
+      - name: 3 page rules
+  - id: cloudflare-pro
+    name: Pro
+    type: paid
+    description: $25/month per zone. WAF managed ruleset, image optimization, mobile redirect.
+    entries:
+      - label: Per zone
+        name: zone
+        type: subscription
+        metric: domain
+        limit: -1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '25.00'
+        userMultiplied: false
+    elements:
+      - name: WAF managed ruleset
+      - name: Image optimization
+      - name: Mobile redirect
+      - name: 20 page rules
+      - name: Bot Fight Mode
+  - id: cloudflare-business
+    name: Business
+    type: paid
+    description: $200/month per zone. Custom SSL, prioritized support, 100% uptime SLA.
+    entries:
+      - label: Per zone
+        name: zone
+        type: subscription
+        metric: domain
+        limit: -1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '200.00'
+        userMultiplied: false
+    elements:
+      - name: Custom WAF rules (100)
+      - name: 100% uptime SLA
+      - name: Custom SSL
+      - name: PCI compliance
+  - id: cloudflare-enterprise
+    name: Enterprise
+    type: enterprise
+    description: Custom contracts; entry-level ~$5,000/month per zone.
+    entries:
+      - label: Per zone (custom)
+        name: zone
+        type: subscription
+        metric: domain
+        limit: -1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: custom
+        userMultiplied: false
+    elements:
+      - name: Bot Management
+      - name: Argo Smart Routing
+      - name: Load Balancing
+      - name: Dedicated account manager
+      - name: Custom SLAs
+  - id: cloudflare-workers-free
+    name: Workers Free
+    type: freemium
+    description: 100k requests/day; 10ms CPU/request.
+    entries:
+      - label: Workers requests
+        name: requests
+        type: quota
+        metric: request
+        limit: 100000
+        timeFrame: day
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+    elements:
+      - name: 100k requests/day
+      - name: 10ms CPU per request
+  - id: cloudflare-workers-paid
+    name: Workers Paid
+    type: paid
+    description: $5/month minimum. 10M requests included; $0.30/1M overage.
+    entries:
+      - label: Base
+        name: base
+        type: subscription
+        metric: month
+        limit: -1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '5.00'
+        userMultiplied: false
+      - label: Included requests
+        name: included
+        type: quota
+        metric: request
+        limit: 10000000
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+      - label: Additional requests
+        name: extra
+        type: metered
+        metric: request
+        limit: -1
+        timeFrame: month
+        geo: global
+        unit: 1000000
+        price: '0.30'
+        userMultiplied: false
+      - label: CPU time per million ms
+        name: cpu
+        type: metered
+        metric: ms
+        limit: -1
+        timeFrame: month
+        geo: global
+        unit: 1000000
+        price: '0.02'
+        userMultiplied: false
+    elements:
+      - name: 30s CPU/request
+      - name: Cron triggers
+      - name: Durable Objects
+      - name: KV/D1/R2 access

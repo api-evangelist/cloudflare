@@ -1,0 +1,85 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Cloudflare
+providerId: cloudflare
+created: '2026-05-04'
+modified: '2026-05-04'
+reconciled: true
+tags:
+  - FinOps
+  - FOCUS
+  - Edge
+  - CDN
+description: FOCUS-aligned FinOps for Cloudflare.
+sources:
+  - https://www.cloudflare.com/plans/
+  - https://developers.cloudflare.com/workers/platform/pricing/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Cloudflare, Inc.
+serviceCategory: Edge Network
+billingModel:
+  pricingCategory: Subscription + Usage-Based
+  billingFrequency: Monthly
+  billingCurrency: USD
+focusColumns:
+  ServiceName: Cloudflare
+  ServiceCategory: Edge Network
+  ProviderName: Cloudflare
+  PublisherName: Cloudflare, Inc.
+  BillingCurrency: USD
+meters:
+  - name: zone_subscriptions
+    unit: zone-month
+    aggregation: max
+    dimensions:
+      - plan
+      - zone
+  - name: workers_requests
+    unit: request
+    aggregation: sum
+  - name: workers_cpu_ms
+    unit: ms
+    aggregation: sum
+  - name: r2_storage
+    unit: GB-month
+    aggregation: max
+  - name: r2_class_a_ops
+    unit: operation
+    aggregation: sum
+  - name: r2_class_b_ops
+    unit: operation
+    aggregation: sum
+  - name: d1_reads
+    unit: row_read
+    aggregation: sum
+  - name: d1_writes
+    unit: row_write
+    aggregation: sum
+  - name: kv_reads
+    unit: read
+    aggregation: sum
+  - name: kv_writes
+    unit: write
+    aggregation: sum
+  - name: images_delivered
+    unit: image
+    aggregation: sum
+  - name: stream_minutes_delivered
+    unit: minute
+    aggregation: sum
+principles:
+  - name: Visibility
+    description: Pull GraphQL Analytics for per-zone and per-Worker traffic; Billing API for per-product
+      cost.
+  - name: Allocation
+    description: Group zones into accounts by team/product; tag Workers metadata for chargeback.
+  - name: Optimization
+    description: Move egress-heavy assets to R2 (zero egress); use Cache Reserve; right-size Workers CPU.
+  - name: Accountability
+    description: Per-zone and per-Worker spend alerts; quarterly zone audit.

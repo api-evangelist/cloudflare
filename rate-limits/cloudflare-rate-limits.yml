@@ -1,0 +1,50 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Cloudflare
+providerId: cloudflare
+created: '2026-05-04'
+modified: '2026-05-04'
+reconciled: true
+tags:
+  - Rate Limiting
+  - CDN
+  - Edge
+description: Cloudflare global API limit + per-product limits.
+sources:
+  - https://developers.cloudflare.com/fundamentals/api/reference/limits/
+headers:
+  retryAfter: Retry-After
+responseCodes:
+  throttled: 429
+limits:
+  - name: Global REST API
+    scope: user/account
+    metric: requests_per_5min
+    limit: 1200
+    timeFrame: 5 minutes
+  - name: GraphQL Analytics
+    scope: account
+    metric: requests_per_minute
+    limit: 300
+    timeFrame: minute
+  - name: Workers KV writes
+    scope: key
+    metric: writes_per_second
+    limit: 1
+    timeFrame: second per key
+  - name: Workers Subrequests (Free)
+    scope: request
+    metric: subrequests
+    limit: 50
+    timeFrame: request
+  - name: Workers Subrequests (Paid)
+    scope: request
+    metric: subrequests
+    limit: 1000
+    timeFrame: request
+policies:
+  - name: Per-zone billing
+    description: Paid plans bill per zone, not per account.
+  - name: Per-product limits
+    description: Workers, R2, D1, KV, Stream, Images each have own limits.
