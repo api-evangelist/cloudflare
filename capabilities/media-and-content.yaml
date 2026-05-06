@@ -1,202 +1,475 @@
-naftiko: "1.0.0-alpha1"
-
+naftiko: 1.0.0-alpha2
 info:
-  label: "Cloudflare Media and Content"
-  description: "Media management combining Stream video platform and Images service for uploading, processing, and delivering video and image content at scale. Used by content creators and media engineers."
+  label: Cloudflare Media and Content
+  description: Media management combining Stream video platform and Images service for uploading, processing, and delivering
+    video and image content at scale. Used by content creators and media engineers.
   tags:
-    - Cloudflare
-    - Media
-    - Video
-    - Images
-  created: "2026-04-18"
-  modified: "2026-04-18"
-
+  - Cloudflare
+  - Media
+  - Video
+  - Images
+  created: '2026-04-18'
+  modified: '2026-05-06'
 binds:
-  - namespace: env
-    keys:
-      CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
-
+- namespace: env
+  keys:
+    CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
 capability:
   consumes:
-    - import: cloudflare-stream
-      location: ./shared/stream.yaml
-    - import: cloudflare-images
-      location: ./shared/images.yaml
-
+  - type: http
+    namespace: cloudflare-stream
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Stream API for video management and live streaming.
+    authentication:
+      type: bearer
+      token: '{{CLOUDFLARE_API_TOKEN}}'
+    resources:
+    - name: videos
+      path: /accounts/{account_id}/stream
+      description: Manage videos.
+      operations:
+      - name: list-videos
+        method: GET
+        description: List all videos.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: upload-video
+        method: POST
+        description: Upload a video from URL.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        body:
+          type: json
+          data:
+            url: '{{tools.url}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: video
+      path: /accounts/{account_id}/stream/{video_id}
+      description: Manage a specific video.
+      operations:
+      - name: get-video
+        method: GET
+        description: Get video details.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: video_id
+          in: path
+          type: string
+          required: true
+          description: Video identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: delete-video
+        method: DELETE
+        description: Delete a video.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: video_id
+          in: path
+          type: string
+          required: true
+          description: Video identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: live-inputs
+      path: /accounts/{account_id}/stream/live_inputs
+      description: Manage live inputs.
+      operations:
+      - name: list-live-inputs
+        method: GET
+        description: List live inputs.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: create-live-input
+        method: POST
+        description: Create a live input.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        body:
+          type: json
+          data:
+            meta: '{{tools.meta}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: direct-upload
+      path: /accounts/{account_id}/stream/direct_upload
+      description: Create direct upload URLs.
+      operations:
+      - name: create-direct-upload
+        method: POST
+        description: Create a direct upload URL.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        body:
+          type: json
+          data:
+            maxDurationSeconds: '{{tools.max_duration_seconds}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+  - type: http
+    namespace: cloudflare-images
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Images API for managing image uploads, variants, and transformations.
+    authentication:
+      type: bearer
+      token: '{{CLOUDFLARE_API_TOKEN}}'
+    resources:
+    - name: images
+      path: /accounts/{account_id}/images/v1
+      description: Manage images.
+      operations:
+      - name: list-images
+        method: GET
+        description: List all images.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: upload-image
+        method: POST
+        description: Upload an image.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: image
+      path: /accounts/{account_id}/images/v1/{image_id}
+      description: Manage a specific image.
+      operations:
+      - name: get-image
+        method: GET
+        description: Get image details.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: image_id
+          in: path
+          type: string
+          required: true
+          description: Image identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: delete-image
+        method: DELETE
+        description: Delete an image.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: image_id
+          in: path
+          type: string
+          required: true
+          description: Image identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: variants
+      path: /accounts/{account_id}/images/v1/variants
+      description: Manage image variants.
+      operations:
+      - name: list-image-variants
+        method: GET
+        description: List image variants.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: create-image-variant
+        method: POST
+        description: Create an image variant.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        body:
+          type: json
+          data:
+            id: '{{tools.id}}'
+            options: '{{tools.options}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: direct-upload
+      path: /accounts/{account_id}/images/v2/direct_upload
+      description: Create direct upload URLs.
+      operations:
+      - name: create-image-direct-upload
+        method: POST
+        description: Create a direct upload URL for an image.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
   exposes:
-    - type: rest
-      port: 8083
-      namespace: media-content-api
-      description: "Unified REST API for Cloudflare media and content services."
-      resources:
-        - path: /v1/videos
-          name: videos
-          description: "Video management."
-          operations:
-            - method: GET
-              name: list-videos
-              description: "List videos."
-              call: "cloudflare-stream.list-videos"
-              with:
-                account_id: "rest.account_id"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-        - path: /v1/images
-          name: images
-          description: "Image management."
-          operations:
-            - method: GET
-              name: list-images
-              description: "List images."
-              call: "cloudflare-images.list-images"
-              with:
-                account_id: "rest.account_id"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-
-    - type: mcp
-      port: 9083
-      namespace: media-content-mcp
-      transport: http
-      description: "MCP server for AI-assisted Cloudflare media management."
-      tools:
-        - name: stream-list-videos
-          description: "List all videos."
-          hints:
-            readOnly: true
-            openWorld: true
-          call: "cloudflare-stream.list-videos"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: stream-upload-video
-          description: "Upload a video from URL."
-          hints:
-            readOnly: false
-          call: "cloudflare-stream.upload-video"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: stream-get-video
-          description: "Get video details."
-          hints:
-            readOnly: true
-          call: "cloudflare-stream.get-video"
-          with:
-            account_id: "tools.account_id"
-            video_id: "tools.video_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: stream-delete-video
-          description: "Delete a video."
-          hints:
-            destructive: true
-            idempotent: true
-          call: "cloudflare-stream.delete-video"
-          with:
-            account_id: "tools.account_id"
-            video_id: "tools.video_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: stream-list-live-inputs
-          description: "List live streaming inputs."
-          hints:
-            readOnly: true
-          call: "cloudflare-stream.list-live-inputs"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: stream-create-live-input
-          description: "Create a live streaming input."
-          hints:
-            readOnly: false
-          call: "cloudflare-stream.create-live-input"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: stream-create-direct-upload
-          description: "Create a direct upload URL."
-          hints:
-            readOnly: false
-          call: "cloudflare-stream.create-direct-upload"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: images-list-images
-          description: "List all images."
-          hints:
-            readOnly: true
-            openWorld: true
-          call: "cloudflare-images.list-images"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: images-upload-image
-          description: "Upload an image."
-          hints:
-            readOnly: false
-          call: "cloudflare-images.upload-image"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: images-get-image
-          description: "Get image details."
-          hints:
-            readOnly: true
-          call: "cloudflare-images.get-image"
-          with:
-            account_id: "tools.account_id"
-            image_id: "tools.image_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: images-delete-image
-          description: "Delete an image."
-          hints:
-            destructive: true
-            idempotent: true
-          call: "cloudflare-images.delete-image"
-          with:
-            account_id: "tools.account_id"
-            image_id: "tools.image_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: images-list-variants
-          description: "List image variants."
-          hints:
-            readOnly: true
-          call: "cloudflare-images.list-image-variants"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: images-create-direct-upload
-          description: "Create a direct upload URL for images."
-          hints:
-            readOnly: false
-          call: "cloudflare-images.create-image-direct-upload"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
+  - type: rest
+    port: 8083
+    namespace: media-content-api
+    description: Unified REST API for Cloudflare media and content services.
+    resources:
+    - path: /v1/videos
+      name: videos
+      description: Video management.
+      operations:
+      - method: GET
+        name: list-videos
+        description: List videos.
+        call: cloudflare-stream.list-videos
+        with:
+          account_id: rest.account_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/images
+      name: images
+      description: Image management.
+      operations:
+      - method: GET
+        name: list-images
+        description: List images.
+        call: cloudflare-images.list-images
+        with:
+          account_id: rest.account_id
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    port: 9083
+    namespace: media-content-mcp
+    transport: http
+    description: MCP server for AI-assisted Cloudflare media management.
+    tools:
+    - name: stream-list-videos
+      description: List all videos.
+      hints:
+        readOnly: true
+        openWorld: true
+      call: cloudflare-stream.list-videos
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: stream-upload-video
+      description: Upload a video from URL.
+      hints:
+        readOnly: false
+      call: cloudflare-stream.upload-video
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: stream-get-video
+      description: Get video details.
+      hints:
+        readOnly: true
+      call: cloudflare-stream.get-video
+      with:
+        account_id: tools.account_id
+        video_id: tools.video_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: stream-delete-video
+      description: Delete a video.
+      hints:
+        destructive: true
+        idempotent: true
+      call: cloudflare-stream.delete-video
+      with:
+        account_id: tools.account_id
+        video_id: tools.video_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: stream-list-live-inputs
+      description: List live streaming inputs.
+      hints:
+        readOnly: true
+      call: cloudflare-stream.list-live-inputs
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: stream-create-live-input
+      description: Create a live streaming input.
+      hints:
+        readOnly: false
+      call: cloudflare-stream.create-live-input
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: stream-create-direct-upload
+      description: Create a direct upload URL.
+      hints:
+        readOnly: false
+      call: cloudflare-stream.create-direct-upload
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: images-list-images
+      description: List all images.
+      hints:
+        readOnly: true
+        openWorld: true
+      call: cloudflare-images.list-images
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: images-upload-image
+      description: Upload an image.
+      hints:
+        readOnly: false
+      call: cloudflare-images.upload-image
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: images-get-image
+      description: Get image details.
+      hints:
+        readOnly: true
+      call: cloudflare-images.get-image
+      with:
+        account_id: tools.account_id
+        image_id: tools.image_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: images-delete-image
+      description: Delete an image.
+      hints:
+        destructive: true
+        idempotent: true
+      call: cloudflare-images.delete-image
+      with:
+        account_id: tools.account_id
+        image_id: tools.image_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: images-list-variants
+      description: List image variants.
+      hints:
+        readOnly: true
+      call: cloudflare-images.list-image-variants
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: images-create-direct-upload
+      description: Create a direct upload URL for images.
+      hints:
+        readOnly: false
+      call: cloudflare-images.create-image-direct-upload
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.

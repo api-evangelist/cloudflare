@@ -1,251 +1,635 @@
-naftiko: "1.0.0-alpha1"
-
+naftiko: 1.0.0-alpha2
 info:
-  label: "Cloudflare DNS and Security"
-  description: "DNS management and web security combining DNS record management with Turnstile bot protection and Logpush observability. Used by site reliability engineers and security teams."
+  label: Cloudflare DNS and Security
+  description: DNS management and web security combining DNS record management with Turnstile bot protection and Logpush observability.
+    Used by site reliability engineers and security teams.
   tags:
-    - Cloudflare
-    - DNS
-    - Security
-    - Observability
-  created: "2026-04-18"
-  modified: "2026-04-18"
-
+  - Cloudflare
+  - DNS
+  - Security
+  - Observability
+  created: '2026-04-18'
+  modified: '2026-05-06'
 binds:
-  - namespace: env
-    keys:
-      CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
-
+- namespace: env
+  keys:
+    CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
 capability:
   consumes:
-    - import: cloudflare-dns
-      location: ./shared/dns.yaml
-    - import: cloudflare-turnstile
-      location: ./shared/turnstile.yaml
-    - import: cloudflare-logpush
-      location: ./shared/logpush.yaml
-
+  - type: http
+    namespace: cloudflare-dns
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare DNS API for managing DNS records, batch operations, scanning, and DNSSEC.
+    authentication:
+      type: bearer
+      token: '{{CLOUDFLARE_API_TOKEN}}'
+    resources:
+    - name: dns-records
+      path: /zones/{zone_id}/dns_records
+      description: Manage DNS records for a zone.
+      operations:
+      - name: list-dns-records
+        method: GET
+        description: List, search, sort, and filter a zone's DNS records.
+        inputParameters:
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+          description: Zone identifier.
+        - name: type
+          in: query
+          type: string
+          required: false
+          description: DNS record type to filter by.
+        - name: name
+          in: query
+          type: string
+          required: false
+          description: DNS record name to filter by.
+        - name: page
+          in: query
+          type: integer
+          required: false
+          description: Page number of paginated results.
+        - name: per_page
+          in: query
+          type: integer
+          required: false
+          description: Number of records per page.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: create-dns-record
+        method: POST
+        description: Create a new DNS record for a zone.
+        inputParameters:
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+          description: Zone identifier.
+        body:
+          type: json
+          data:
+            type: '{{tools.type}}'
+            name: '{{tools.name}}'
+            content: '{{tools.content}}'
+            ttl: '{{tools.ttl}}'
+            proxied: '{{tools.proxied}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: dns-record
+      path: /zones/{zone_id}/dns_records/{dns_record_id}
+      description: Manage a specific DNS record.
+      operations:
+      - name: get-dns-record
+        method: GET
+        description: Get details of a specific DNS record.
+        inputParameters:
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+          description: Zone identifier.
+        - name: dns_record_id
+          in: path
+          type: string
+          required: true
+          description: DNS record identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: update-dns-record
+        method: PATCH
+        description: Update an existing DNS record.
+        inputParameters:
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+          description: Zone identifier.
+        - name: dns_record_id
+          in: path
+          type: string
+          required: true
+          description: DNS record identifier.
+        body:
+          type: json
+          data:
+            content: '{{tools.content}}'
+            ttl: '{{tools.ttl}}'
+            proxied: '{{tools.proxied}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: delete-dns-record
+        method: DELETE
+        description: Delete a DNS record.
+        inputParameters:
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+          description: Zone identifier.
+        - name: dns_record_id
+          in: path
+          type: string
+          required: true
+          description: DNS record identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: dns-batch
+      path: /zones/{zone_id}/dns_records/batch
+      description: Batch DNS record operations.
+      operations:
+      - name: batch-dns-records
+        method: POST
+        description: Execute multiple DNS record operations in a single call.
+        inputParameters:
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+          description: Zone identifier.
+        body:
+          type: json
+          data:
+            posts: '{{tools.posts}}'
+            puts: '{{tools.puts}}'
+            patches: '{{tools.patches}}'
+            deletes: '{{tools.deletes}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: dnssec
+      path: /zones/{zone_id}/dnssec
+      description: DNSSEC configuration for a zone.
+      operations:
+      - name: get-dnssec
+        method: GET
+        description: Get DNSSEC settings for a zone.
+        inputParameters:
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+          description: Zone identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+  - type: http
+    namespace: cloudflare-turnstile
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Turnstile API for managing CAPTCHA widgets and verifying tokens.
+    authentication:
+      type: bearer
+      token: '{{CLOUDFLARE_API_TOKEN}}'
+    resources:
+    - name: widgets
+      path: /accounts/{account_id}/challenges/widgets
+      description: Manage Turnstile widgets.
+      operations:
+      - name: list-turnstile-widgets
+        method: GET
+        description: List all Turnstile widgets.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: create-turnstile-widget
+        method: POST
+        description: Create a new Turnstile widget.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        body:
+          type: json
+          data:
+            name: '{{tools.name}}'
+            domains: '{{tools.domains}}'
+            mode: '{{tools.mode}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: widget
+      path: /accounts/{account_id}/challenges/widgets/{sitekey}
+      description: Manage a specific Turnstile widget.
+      operations:
+      - name: get-turnstile-widget
+        method: GET
+        description: Get Turnstile widget details.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: sitekey
+          in: path
+          type: string
+          required: true
+          description: Widget site key.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: delete-turnstile-widget
+        method: DELETE
+        description: Delete a Turnstile widget.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: sitekey
+          in: path
+          type: string
+          required: true
+          description: Widget site key.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: verify
+      path: /siteverify
+      description: Verify Turnstile tokens.
+      operations:
+      - name: verify-turnstile-token
+        method: POST
+        description: Verify a Turnstile response token.
+        body:
+          type: json
+          data:
+            secret: '{{tools.secret}}'
+            response: '{{tools.response}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+  - type: http
+    namespace: cloudflare-logpush
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Logpush API for managing log push jobs and datasets.
+    authentication:
+      type: bearer
+      token: '{{CLOUDFLARE_API_TOKEN}}'
+    resources:
+    - name: jobs
+      path: /zones/{zone_id}/logpush/jobs
+      description: Manage Logpush jobs.
+      operations:
+      - name: list-logpush-jobs
+        method: GET
+        description: List all Logpush jobs for a zone.
+        inputParameters:
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+          description: Zone identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: create-logpush-job
+        method: POST
+        description: Create a new Logpush job.
+        inputParameters:
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+          description: Zone identifier.
+        body:
+          type: json
+          data:
+            destination_conf: '{{tools.destination_conf}}'
+            dataset: '{{tools.dataset}}'
+            enabled: '{{tools.enabled}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: job
+      path: /zones/{zone_id}/logpush/jobs/{job_id}
+      description: Manage a specific Logpush job.
+      operations:
+      - name: get-logpush-job
+        method: GET
+        description: Get Logpush job details.
+        inputParameters:
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+          description: Zone identifier.
+        - name: job_id
+          in: path
+          type: string
+          required: true
+          description: Job identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: delete-logpush-job
+        method: DELETE
+        description: Delete a Logpush job.
+        inputParameters:
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+          description: Zone identifier.
+        - name: job_id
+          in: path
+          type: string
+          required: true
+          description: Job identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: datasets
+      path: /zones/{zone_id}/logpush/datasets/{dataset}/fields
+      description: List dataset fields.
+      operations:
+      - name: list-dataset-fields
+        method: GET
+        description: List available fields for a dataset.
+        inputParameters:
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+          description: Zone identifier.
+        - name: dataset
+          in: path
+          type: string
+          required: true
+          description: Dataset name.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
   exposes:
-    - type: rest
-      port: 8084
-      namespace: dns-security-api
-      description: "Unified REST API for Cloudflare DNS and security services."
-      resources:
-        - path: /v1/dns-records
-          name: dns-records
-          description: "DNS record management."
-          operations:
-            - method: GET
-              name: list-dns-records
-              description: "List DNS records."
-              call: "cloudflare-dns.list-dns-records"
-              with:
-                zone_id: "rest.zone_id"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-        - path: /v1/turnstile-widgets
-          name: turnstile-widgets
-          description: "Turnstile widget management."
-          operations:
-            - method: GET
-              name: list-turnstile-widgets
-              description: "List Turnstile widgets."
-              call: "cloudflare-turnstile.list-turnstile-widgets"
-              with:
-                account_id: "rest.account_id"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-        - path: /v1/logpush-jobs
-          name: logpush-jobs
-          description: "Logpush job management."
-          operations:
-            - method: GET
-              name: list-logpush-jobs
-              description: "List Logpush jobs."
-              call: "cloudflare-logpush.list-logpush-jobs"
-              with:
-                zone_id: "rest.zone_id"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-
-    - type: mcp
-      port: 9084
-      namespace: dns-security-mcp
-      transport: http
-      description: "MCP server for AI-assisted Cloudflare DNS and security management."
-      tools:
-        - name: dns-list-records
-          description: "List DNS records for a zone."
-          hints:
-            readOnly: true
-            openWorld: true
-          call: "cloudflare-dns.list-dns-records"
-          with:
-            zone_id: "tools.zone_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: dns-create-record
-          description: "Create a DNS record."
-          hints:
-            readOnly: false
-          call: "cloudflare-dns.create-dns-record"
-          with:
-            zone_id: "tools.zone_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: dns-get-record
-          description: "Get DNS record details."
-          hints:
-            readOnly: true
-          call: "cloudflare-dns.get-dns-record"
-          with:
-            zone_id: "tools.zone_id"
-            dns_record_id: "tools.dns_record_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: dns-update-record
-          description: "Update a DNS record."
-          hints:
-            readOnly: false
-            idempotent: true
-          call: "cloudflare-dns.update-dns-record"
-          with:
-            zone_id: "tools.zone_id"
-            dns_record_id: "tools.dns_record_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: dns-delete-record
-          description: "Delete a DNS record."
-          hints:
-            destructive: true
-            idempotent: true
-          call: "cloudflare-dns.delete-dns-record"
-          with:
-            zone_id: "tools.zone_id"
-            dns_record_id: "tools.dns_record_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: dns-batch-records
-          description: "Execute batch DNS operations."
-          hints:
-            readOnly: false
-          call: "cloudflare-dns.batch-dns-records"
-          with:
-            zone_id: "tools.zone_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: dns-get-dnssec
-          description: "Get DNSSEC settings."
-          hints:
-            readOnly: true
-          call: "cloudflare-dns.get-dnssec"
-          with:
-            zone_id: "tools.zone_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: turnstile-list-widgets
-          description: "List Turnstile widgets."
-          hints:
-            readOnly: true
-            openWorld: true
-          call: "cloudflare-turnstile.list-turnstile-widgets"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: turnstile-create-widget
-          description: "Create a Turnstile widget."
-          hints:
-            readOnly: false
-          call: "cloudflare-turnstile.create-turnstile-widget"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: turnstile-verify-token
-          description: "Verify a Turnstile token."
-          hints:
-            readOnly: true
-          call: "cloudflare-turnstile.verify-turnstile-token"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: turnstile-delete-widget
-          description: "Delete a Turnstile widget."
-          hints:
-            destructive: true
-            idempotent: true
-          call: "cloudflare-turnstile.delete-turnstile-widget"
-          with:
-            account_id: "tools.account_id"
-            sitekey: "tools.sitekey"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: logpush-list-jobs
-          description: "List Logpush jobs."
-          hints:
-            readOnly: true
-            openWorld: true
-          call: "cloudflare-logpush.list-logpush-jobs"
-          with:
-            zone_id: "tools.zone_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: logpush-create-job
-          description: "Create a Logpush job."
-          hints:
-            readOnly: false
-          call: "cloudflare-logpush.create-logpush-job"
-          with:
-            zone_id: "tools.zone_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: logpush-get-job
-          description: "Get Logpush job details."
-          hints:
-            readOnly: true
-          call: "cloudflare-logpush.get-logpush-job"
-          with:
-            zone_id: "tools.zone_id"
-            job_id: "tools.job_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: logpush-delete-job
-          description: "Delete a Logpush job."
-          hints:
-            destructive: true
-            idempotent: true
-          call: "cloudflare-logpush.delete-logpush-job"
-          with:
-            zone_id: "tools.zone_id"
-            job_id: "tools.job_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: logpush-list-dataset-fields
-          description: "List dataset fields."
-          hints:
-            readOnly: true
-          call: "cloudflare-logpush.list-dataset-fields"
-          with:
-            zone_id: "tools.zone_id"
-            dataset: "tools.dataset"
-          outputParameters:
-            - type: object
-              mapping: "$."
+  - type: rest
+    port: 8084
+    namespace: dns-security-api
+    description: Unified REST API for Cloudflare DNS and security services.
+    resources:
+    - path: /v1/dns-records
+      name: dns-records
+      description: DNS record management.
+      operations:
+      - method: GET
+        name: list-dns-records
+        description: List DNS records.
+        call: cloudflare-dns.list-dns-records
+        with:
+          zone_id: rest.zone_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/turnstile-widgets
+      name: turnstile-widgets
+      description: Turnstile widget management.
+      operations:
+      - method: GET
+        name: list-turnstile-widgets
+        description: List Turnstile widgets.
+        call: cloudflare-turnstile.list-turnstile-widgets
+        with:
+          account_id: rest.account_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/logpush-jobs
+      name: logpush-jobs
+      description: Logpush job management.
+      operations:
+      - method: GET
+        name: list-logpush-jobs
+        description: List Logpush jobs.
+        call: cloudflare-logpush.list-logpush-jobs
+        with:
+          zone_id: rest.zone_id
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    port: 9084
+    namespace: dns-security-mcp
+    transport: http
+    description: MCP server for AI-assisted Cloudflare DNS and security management.
+    tools:
+    - name: dns-list-records
+      description: List DNS records for a zone.
+      hints:
+        readOnly: true
+        openWorld: true
+      call: cloudflare-dns.list-dns-records
+      with:
+        zone_id: tools.zone_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: dns-create-record
+      description: Create a DNS record.
+      hints:
+        readOnly: false
+      call: cloudflare-dns.create-dns-record
+      with:
+        zone_id: tools.zone_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: dns-get-record
+      description: Get DNS record details.
+      hints:
+        readOnly: true
+      call: cloudflare-dns.get-dns-record
+      with:
+        zone_id: tools.zone_id
+        dns_record_id: tools.dns_record_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: dns-update-record
+      description: Update a DNS record.
+      hints:
+        readOnly: false
+        idempotent: true
+      call: cloudflare-dns.update-dns-record
+      with:
+        zone_id: tools.zone_id
+        dns_record_id: tools.dns_record_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: dns-delete-record
+      description: Delete a DNS record.
+      hints:
+        destructive: true
+        idempotent: true
+      call: cloudflare-dns.delete-dns-record
+      with:
+        zone_id: tools.zone_id
+        dns_record_id: tools.dns_record_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: dns-batch-records
+      description: Execute batch DNS operations.
+      hints:
+        readOnly: false
+      call: cloudflare-dns.batch-dns-records
+      with:
+        zone_id: tools.zone_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: dns-get-dnssec
+      description: Get DNSSEC settings.
+      hints:
+        readOnly: true
+      call: cloudflare-dns.get-dnssec
+      with:
+        zone_id: tools.zone_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: turnstile-list-widgets
+      description: List Turnstile widgets.
+      hints:
+        readOnly: true
+        openWorld: true
+      call: cloudflare-turnstile.list-turnstile-widgets
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: turnstile-create-widget
+      description: Create a Turnstile widget.
+      hints:
+        readOnly: false
+      call: cloudflare-turnstile.create-turnstile-widget
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: turnstile-verify-token
+      description: Verify a Turnstile token.
+      hints:
+        readOnly: true
+      call: cloudflare-turnstile.verify-turnstile-token
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: turnstile-delete-widget
+      description: Delete a Turnstile widget.
+      hints:
+        destructive: true
+        idempotent: true
+      call: cloudflare-turnstile.delete-turnstile-widget
+      with:
+        account_id: tools.account_id
+        sitekey: tools.sitekey
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: logpush-list-jobs
+      description: List Logpush jobs.
+      hints:
+        readOnly: true
+        openWorld: true
+      call: cloudflare-logpush.list-logpush-jobs
+      with:
+        zone_id: tools.zone_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: logpush-create-job
+      description: Create a Logpush job.
+      hints:
+        readOnly: false
+      call: cloudflare-logpush.create-logpush-job
+      with:
+        zone_id: tools.zone_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: logpush-get-job
+      description: Get Logpush job details.
+      hints:
+        readOnly: true
+      call: cloudflare-logpush.get-logpush-job
+      with:
+        zone_id: tools.zone_id
+        job_id: tools.job_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: logpush-delete-job
+      description: Delete a Logpush job.
+      hints:
+        destructive: true
+        idempotent: true
+      call: cloudflare-logpush.delete-logpush-job
+      with:
+        zone_id: tools.zone_id
+        job_id: tools.job_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: logpush-list-dataset-fields
+      description: List dataset fields.
+      hints:
+        readOnly: true
+      call: cloudflare-logpush.list-dataset-fields
+      with:
+        zone_id: tools.zone_id
+        dataset: tools.dataset
+      outputParameters:
+      - type: object
+        mapping: $.

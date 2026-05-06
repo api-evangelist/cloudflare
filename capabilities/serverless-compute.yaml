@@ -1,355 +1,936 @@
-naftiko: "1.0.0-alpha1"
-
+naftiko: 1.0.0-alpha2
 info:
-  label: "Cloudflare Serverless Compute"
-  description: "Deploy and manage serverless applications on Cloudflare's edge network combining Workers scripts, Pages deployments, Durable Objects for state, and Queues for async messaging. Used by developers and platform engineers building edge-first applications."
+  label: Cloudflare Serverless Compute
+  description: Deploy and manage serverless applications on Cloudflare's edge network combining Workers scripts, Pages deployments,
+    Durable Objects for state, and Queues for async messaging. Used by developers and platform engineers building edge-first
+    applications.
   tags:
-    - Cloudflare
-    - Serverless
-    - Edge Computing
-    - Deployment
-  created: "2026-04-18"
-  modified: "2026-04-18"
-
+  - Cloudflare
+  - Serverless
+  - Edge Computing
+  - Deployment
+  created: '2026-04-18'
+  modified: '2026-05-06'
 binds:
-  - namespace: env
-    keys:
-      CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
-
+- namespace: env
+  keys:
+    CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
 capability:
   consumes:
-    - import: cloudflare-workers
-      location: ./shared/workers.yaml
-    - import: cloudflare-pages
-      location: ./shared/pages.yaml
-    - import: cloudflare-durable-objects
-      location: ./shared/durable-objects.yaml
-    - import: cloudflare-queues
-      location: ./shared/queues.yaml
-
+  - type: http
+    namespace: cloudflare-workers
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Workers API for managing serverless scripts, deployments, and configuration.
+    authentication:
+      type: bearer
+      token: '{{CLOUDFLARE_API_TOKEN}}'
+    resources:
+    - name: workers
+      path: /accounts/{account_id}/workers/workers
+      description: Manage Worker resources.
+      operations:
+      - name: list-workers
+        method: GET
+        description: List all Workers for an account.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: scripts
+      path: /accounts/{account_id}/workers/scripts
+      description: Manage Worker scripts.
+      operations:
+      - name: list-worker-scripts
+        method: GET
+        description: List all Worker scripts for an account.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: upload-worker-script
+        method: PUT
+        description: Upload a Worker script.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: script_name
+          in: path
+          type: string
+          required: true
+          description: Script name.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: delete-worker-script
+        method: DELETE
+        description: Delete a Worker script.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: script_name
+          in: path
+          type: string
+          required: true
+          description: Script name.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: deployments
+      path: /accounts/{account_id}/workers/scripts/{script_name}/deployments
+      description: Manage Worker deployments.
+      operations:
+      - name: list-deployments
+        method: GET
+        description: List deployments for a Worker script.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: script_name
+          in: path
+          type: string
+          required: true
+          description: Script name.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: create-deployment
+        method: POST
+        description: Create a deployment for a Worker script.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: script_name
+          in: path
+          type: string
+          required: true
+          description: Script name.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: routes
+      path: /zones/{zone_id}/workers/routes
+      description: Manage Worker routes.
+      operations:
+      - name: list-routes
+        method: GET
+        description: List Worker routes for a zone.
+        inputParameters:
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+          description: Zone identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: create-route
+        method: POST
+        description: Create a Worker route.
+        inputParameters:
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+          description: Zone identifier.
+        body:
+          type: json
+          data:
+            pattern: '{{tools.pattern}}'
+            script: '{{tools.script}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: secrets
+      path: /accounts/{account_id}/workers/scripts/{script_name}/secrets
+      description: Manage Worker secrets.
+      operations:
+      - name: list-secrets
+        method: GET
+        description: List secrets for a Worker script.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: script_name
+          in: path
+          type: string
+          required: true
+          description: Script name.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+  - type: http
+    namespace: cloudflare-pages
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Pages API for managing projects and deployments.
+    authentication:
+      type: bearer
+      token: '{{CLOUDFLARE_API_TOKEN}}'
+    resources:
+    - name: projects
+      path: /accounts/{account_id}/pages/projects
+      description: Manage Pages projects.
+      operations:
+      - name: list-pages-projects
+        method: GET
+        description: List all Pages projects.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: create-pages-project
+        method: POST
+        description: Create a new Pages project.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        body:
+          type: json
+          data:
+            name: '{{tools.name}}'
+            production_branch: '{{tools.production_branch}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: project
+      path: /accounts/{account_id}/pages/projects/{project_name}
+      description: Manage a specific Pages project.
+      operations:
+      - name: get-pages-project
+        method: GET
+        description: Get Pages project details.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: project_name
+          in: path
+          type: string
+          required: true
+          description: Project name.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: delete-pages-project
+        method: DELETE
+        description: Delete a Pages project.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: project_name
+          in: path
+          type: string
+          required: true
+          description: Project name.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: deployments
+      path: /accounts/{account_id}/pages/projects/{project_name}/deployments
+      description: Manage Pages deployments.
+      operations:
+      - name: list-pages-deployments
+        method: GET
+        description: List deployments for a project.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: project_name
+          in: path
+          type: string
+          required: true
+          description: Project name.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: create-pages-deployment
+        method: POST
+        description: Create a new deployment.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: project_name
+          in: path
+          type: string
+          required: true
+          description: Project name.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: deployment
+      path: /accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}
+      description: Manage a specific deployment.
+      operations:
+      - name: get-pages-deployment
+        method: GET
+        description: Get deployment details.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: project_name
+          in: path
+          type: string
+          required: true
+          description: Project name.
+        - name: deployment_id
+          in: path
+          type: string
+          required: true
+          description: Deployment identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: rollback-pages-deployment
+        method: POST
+        description: Rollback to a previous deployment.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: project_name
+          in: path
+          type: string
+          required: true
+          description: Project name.
+        - name: deployment_id
+          in: path
+          type: string
+          required: true
+          description: Deployment identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+  - type: http
+    namespace: cloudflare-durable-objects
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Durable Objects API for managing stateful serverless objects.
+    authentication:
+      type: bearer
+      token: '{{CLOUDFLARE_API_TOKEN}}'
+    resources:
+    - name: namespaces
+      path: /accounts/{account_id}/workers/durable_objects/namespaces
+      description: Manage Durable Object namespaces.
+      operations:
+      - name: list-durable-object-namespaces
+        method: GET
+        description: List all Durable Object namespaces.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: objects
+      path: /accounts/{account_id}/workers/durable_objects/namespaces/{namespace_id}/objects
+      description: Manage objects within a namespace.
+      operations:
+      - name: list-durable-objects
+        method: GET
+        description: List Durable Objects in a namespace.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: namespace_id
+          in: path
+          type: string
+          required: true
+          description: Namespace identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+  - type: http
+    namespace: cloudflare-queues
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Queues API for managing message queues.
+    authentication:
+      type: bearer
+      token: '{{CLOUDFLARE_API_TOKEN}}'
+    resources:
+    - name: queues
+      path: /accounts/{account_id}/queues
+      description: Manage queues.
+      operations:
+      - name: list-queues
+        method: GET
+        description: List all queues.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: create-queue
+        method: POST
+        description: Create a new queue.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        body:
+          type: json
+          data:
+            queue_name: '{{tools.queue_name}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: queue
+      path: /accounts/{account_id}/queues/{queue_id}
+      description: Manage a specific queue.
+      operations:
+      - name: get-queue
+        method: GET
+        description: Get queue details.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: queue_id
+          in: path
+          type: string
+          required: true
+          description: Queue identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: delete-queue
+        method: DELETE
+        description: Delete a queue.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: queue_id
+          in: path
+          type: string
+          required: true
+          description: Queue identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: messages
+      path: /accounts/{account_id}/queues/{queue_id}/messages
+      description: Send and receive messages.
+      operations:
+      - name: send-message
+        method: POST
+        description: Send a message to a queue.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: queue_id
+          in: path
+          type: string
+          required: true
+          description: Queue identifier.
+        body:
+          type: json
+          data:
+            body: '{{tools.body}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: pull-messages
+        method: POST
+        description: Pull messages from a queue.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: queue_id
+          in: path
+          type: string
+          required: true
+          description: Queue identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: consumers
+      path: /accounts/{account_id}/queues/{queue_id}/consumers
+      description: Manage queue consumers.
+      operations:
+      - name: list-queue-consumers
+        method: GET
+        description: List consumers for a queue.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: queue_id
+          in: path
+          type: string
+          required: true
+          description: Queue identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: create-queue-consumer
+        method: POST
+        description: Create a consumer for a queue.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: queue_id
+          in: path
+          type: string
+          required: true
+          description: Queue identifier.
+        body:
+          type: json
+          data:
+            script_name: '{{tools.script_name}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
   exposes:
-    - type: rest
-      port: 8080
-      namespace: serverless-compute-api
-      description: "Unified REST API for Cloudflare serverless compute management."
-      resources:
-        - path: /v1/workers
-          name: workers
-          description: "Worker script management."
-          operations:
-            - method: GET
-              name: list-workers
-              description: "List all Workers."
-              call: "cloudflare-workers.list-workers"
-              with:
-                account_id: "rest.account_id"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-        - path: /v1/scripts
-          name: scripts
-          description: "Worker script management."
-          operations:
-            - method: GET
-              name: list-worker-scripts
-              description: "List Worker scripts."
-              call: "cloudflare-workers.list-worker-scripts"
-              with:
-                account_id: "rest.account_id"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-        - path: /v1/deployments
-          name: deployments
-          description: "Worker deployment management."
-          operations:
-            - method: GET
-              name: list-deployments
-              description: "List Worker deployments."
-              call: "cloudflare-workers.list-deployments"
-              with:
-                account_id: "rest.account_id"
-                script_name: "rest.script_name"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-        - path: /v1/pages-projects
-          name: pages-projects
-          description: "Pages project management."
-          operations:
-            - method: GET
-              name: list-pages-projects
-              description: "List Pages projects."
-              call: "cloudflare-pages.list-pages-projects"
-              with:
-                account_id: "rest.account_id"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-        - path: /v1/pages-deployments
-          name: pages-deployments
-          description: "Pages deployment management."
-          operations:
-            - method: GET
-              name: list-pages-deployments
-              description: "List Pages deployments."
-              call: "cloudflare-pages.list-pages-deployments"
-              with:
-                account_id: "rest.account_id"
-                project_name: "rest.project_name"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-        - path: /v1/durable-object-namespaces
-          name: durable-object-namespaces
-          description: "Durable Object namespace management."
-          operations:
-            - method: GET
-              name: list-durable-object-namespaces
-              description: "List Durable Object namespaces."
-              call: "cloudflare-durable-objects.list-durable-object-namespaces"
-              with:
-                account_id: "rest.account_id"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-        - path: /v1/queues
-          name: queues
-          description: "Queue management."
-          operations:
-            - method: GET
-              name: list-queues
-              description: "List queues."
-              call: "cloudflare-queues.list-queues"
-              with:
-                account_id: "rest.account_id"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-
-    - type: mcp
-      port: 9080
-      namespace: serverless-compute-mcp
-      transport: http
-      description: "MCP server for AI-assisted Cloudflare serverless compute management."
-      tools:
-        - name: workers-list-workers
-          description: "List all Workers for an account."
-          hints:
-            readOnly: true
-            openWorld: true
-          call: "cloudflare-workers.list-workers"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: workers-list-scripts
-          description: "List Worker scripts."
-          hints:
-            readOnly: true
-          call: "cloudflare-workers.list-worker-scripts"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: workers-upload-script
-          description: "Upload a Worker script."
-          hints:
-            readOnly: false
-            idempotent: true
-          call: "cloudflare-workers.upload-worker-script"
-          with:
-            account_id: "tools.account_id"
-            script_name: "tools.script_name"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: workers-delete-script
-          description: "Delete a Worker script."
-          hints:
-            destructive: true
-            idempotent: true
-          call: "cloudflare-workers.delete-worker-script"
-          with:
-            account_id: "tools.account_id"
-            script_name: "tools.script_name"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: workers-list-deployments
-          description: "List Worker deployments."
-          hints:
-            readOnly: true
-          call: "cloudflare-workers.list-deployments"
-          with:
-            account_id: "tools.account_id"
-            script_name: "tools.script_name"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: workers-create-deployment
-          description: "Create a Worker deployment."
-          hints:
-            readOnly: false
-          call: "cloudflare-workers.create-deployment"
-          with:
-            account_id: "tools.account_id"
-            script_name: "tools.script_name"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: workers-list-routes
-          description: "List Worker routes."
-          hints:
-            readOnly: true
-          call: "cloudflare-workers.list-routes"
-          with:
-            zone_id: "tools.zone_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: workers-list-secrets
-          description: "List Worker secrets."
-          hints:
-            readOnly: true
-          call: "cloudflare-workers.list-secrets"
-          with:
-            account_id: "tools.account_id"
-            script_name: "tools.script_name"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: pages-list-projects
-          description: "List Pages projects."
-          hints:
-            readOnly: true
-            openWorld: true
-          call: "cloudflare-pages.list-pages-projects"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: pages-create-project
-          description: "Create a Pages project."
-          hints:
-            readOnly: false
-          call: "cloudflare-pages.create-pages-project"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: pages-get-project
-          description: "Get Pages project details."
-          hints:
-            readOnly: true
-          call: "cloudflare-pages.get-pages-project"
-          with:
-            account_id: "tools.account_id"
-            project_name: "tools.project_name"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: pages-list-deployments
-          description: "List Pages deployments."
-          hints:
-            readOnly: true
-          call: "cloudflare-pages.list-pages-deployments"
-          with:
-            account_id: "tools.account_id"
-            project_name: "tools.project_name"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: pages-rollback-deployment
-          description: "Rollback a Pages deployment."
-          hints:
-            readOnly: false
-          call: "cloudflare-pages.rollback-pages-deployment"
-          with:
-            account_id: "tools.account_id"
-            project_name: "tools.project_name"
-            deployment_id: "tools.deployment_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: durable-objects-list-namespaces
-          description: "List Durable Object namespaces."
-          hints:
-            readOnly: true
-            openWorld: true
-          call: "cloudflare-durable-objects.list-durable-object-namespaces"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: durable-objects-list-objects
-          description: "List Durable Objects in a namespace."
-          hints:
-            readOnly: true
-          call: "cloudflare-durable-objects.list-durable-objects"
-          with:
-            account_id: "tools.account_id"
-            namespace_id: "tools.namespace_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: queues-list-queues
-          description: "List message queues."
-          hints:
-            readOnly: true
-            openWorld: true
-          call: "cloudflare-queues.list-queues"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: queues-create-queue
-          description: "Create a message queue."
-          hints:
-            readOnly: false
-          call: "cloudflare-queues.create-queue"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: queues-send-message
-          description: "Send a message to a queue."
-          hints:
-            readOnly: false
-          call: "cloudflare-queues.send-message"
-          with:
-            account_id: "tools.account_id"
-            queue_id: "tools.queue_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: queues-pull-messages
-          description: "Pull messages from a queue."
-          hints:
-            readOnly: true
-          call: "cloudflare-queues.pull-messages"
-          with:
-            account_id: "tools.account_id"
-            queue_id: "tools.queue_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: queues-delete-queue
-          description: "Delete a queue."
-          hints:
-            destructive: true
-            idempotent: true
-          call: "cloudflare-queues.delete-queue"
-          with:
-            account_id: "tools.account_id"
-            queue_id: "tools.queue_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
+  - type: rest
+    port: 8080
+    namespace: serverless-compute-api
+    description: Unified REST API for Cloudflare serverless compute management.
+    resources:
+    - path: /v1/workers
+      name: workers
+      description: Worker script management.
+      operations:
+      - method: GET
+        name: list-workers
+        description: List all Workers.
+        call: cloudflare-workers.list-workers
+        with:
+          account_id: rest.account_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/scripts
+      name: scripts
+      description: Worker script management.
+      operations:
+      - method: GET
+        name: list-worker-scripts
+        description: List Worker scripts.
+        call: cloudflare-workers.list-worker-scripts
+        with:
+          account_id: rest.account_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/deployments
+      name: deployments
+      description: Worker deployment management.
+      operations:
+      - method: GET
+        name: list-deployments
+        description: List Worker deployments.
+        call: cloudflare-workers.list-deployments
+        with:
+          account_id: rest.account_id
+          script_name: rest.script_name
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/pages-projects
+      name: pages-projects
+      description: Pages project management.
+      operations:
+      - method: GET
+        name: list-pages-projects
+        description: List Pages projects.
+        call: cloudflare-pages.list-pages-projects
+        with:
+          account_id: rest.account_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/pages-deployments
+      name: pages-deployments
+      description: Pages deployment management.
+      operations:
+      - method: GET
+        name: list-pages-deployments
+        description: List Pages deployments.
+        call: cloudflare-pages.list-pages-deployments
+        with:
+          account_id: rest.account_id
+          project_name: rest.project_name
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/durable-object-namespaces
+      name: durable-object-namespaces
+      description: Durable Object namespace management.
+      operations:
+      - method: GET
+        name: list-durable-object-namespaces
+        description: List Durable Object namespaces.
+        call: cloudflare-durable-objects.list-durable-object-namespaces
+        with:
+          account_id: rest.account_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/queues
+      name: queues
+      description: Queue management.
+      operations:
+      - method: GET
+        name: list-queues
+        description: List queues.
+        call: cloudflare-queues.list-queues
+        with:
+          account_id: rest.account_id
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    port: 9080
+    namespace: serverless-compute-mcp
+    transport: http
+    description: MCP server for AI-assisted Cloudflare serverless compute management.
+    tools:
+    - name: workers-list-workers
+      description: List all Workers for an account.
+      hints:
+        readOnly: true
+        openWorld: true
+      call: cloudflare-workers.list-workers
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: workers-list-scripts
+      description: List Worker scripts.
+      hints:
+        readOnly: true
+      call: cloudflare-workers.list-worker-scripts
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: workers-upload-script
+      description: Upload a Worker script.
+      hints:
+        readOnly: false
+        idempotent: true
+      call: cloudflare-workers.upload-worker-script
+      with:
+        account_id: tools.account_id
+        script_name: tools.script_name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: workers-delete-script
+      description: Delete a Worker script.
+      hints:
+        destructive: true
+        idempotent: true
+      call: cloudflare-workers.delete-worker-script
+      with:
+        account_id: tools.account_id
+        script_name: tools.script_name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: workers-list-deployments
+      description: List Worker deployments.
+      hints:
+        readOnly: true
+      call: cloudflare-workers.list-deployments
+      with:
+        account_id: tools.account_id
+        script_name: tools.script_name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: workers-create-deployment
+      description: Create a Worker deployment.
+      hints:
+        readOnly: false
+      call: cloudflare-workers.create-deployment
+      with:
+        account_id: tools.account_id
+        script_name: tools.script_name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: workers-list-routes
+      description: List Worker routes.
+      hints:
+        readOnly: true
+      call: cloudflare-workers.list-routes
+      with:
+        zone_id: tools.zone_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: workers-list-secrets
+      description: List Worker secrets.
+      hints:
+        readOnly: true
+      call: cloudflare-workers.list-secrets
+      with:
+        account_id: tools.account_id
+        script_name: tools.script_name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: pages-list-projects
+      description: List Pages projects.
+      hints:
+        readOnly: true
+        openWorld: true
+      call: cloudflare-pages.list-pages-projects
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: pages-create-project
+      description: Create a Pages project.
+      hints:
+        readOnly: false
+      call: cloudflare-pages.create-pages-project
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: pages-get-project
+      description: Get Pages project details.
+      hints:
+        readOnly: true
+      call: cloudflare-pages.get-pages-project
+      with:
+        account_id: tools.account_id
+        project_name: tools.project_name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: pages-list-deployments
+      description: List Pages deployments.
+      hints:
+        readOnly: true
+      call: cloudflare-pages.list-pages-deployments
+      with:
+        account_id: tools.account_id
+        project_name: tools.project_name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: pages-rollback-deployment
+      description: Rollback a Pages deployment.
+      hints:
+        readOnly: false
+      call: cloudflare-pages.rollback-pages-deployment
+      with:
+        account_id: tools.account_id
+        project_name: tools.project_name
+        deployment_id: tools.deployment_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: durable-objects-list-namespaces
+      description: List Durable Object namespaces.
+      hints:
+        readOnly: true
+        openWorld: true
+      call: cloudflare-durable-objects.list-durable-object-namespaces
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: durable-objects-list-objects
+      description: List Durable Objects in a namespace.
+      hints:
+        readOnly: true
+      call: cloudflare-durable-objects.list-durable-objects
+      with:
+        account_id: tools.account_id
+        namespace_id: tools.namespace_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: queues-list-queues
+      description: List message queues.
+      hints:
+        readOnly: true
+        openWorld: true
+      call: cloudflare-queues.list-queues
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: queues-create-queue
+      description: Create a message queue.
+      hints:
+        readOnly: false
+      call: cloudflare-queues.create-queue
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: queues-send-message
+      description: Send a message to a queue.
+      hints:
+        readOnly: false
+      call: cloudflare-queues.send-message
+      with:
+        account_id: tools.account_id
+        queue_id: tools.queue_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: queues-pull-messages
+      description: Pull messages from a queue.
+      hints:
+        readOnly: true
+      call: cloudflare-queues.pull-messages
+      with:
+        account_id: tools.account_id
+        queue_id: tools.queue_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: queues-delete-queue
+      description: Delete a queue.
+      hints:
+        destructive: true
+        idempotent: true
+      call: cloudflare-queues.delete-queue
+      with:
+        account_id: tools.account_id
+        queue_id: tools.queue_id
+      outputParameters:
+      - type: object
+        mapping: $.

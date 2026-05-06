@@ -1,253 +1,641 @@
-naftiko: "1.0.0-alpha1"
-
+naftiko: 1.0.0-alpha2
 info:
-  label: "Cloudflare AI and ML"
-  description: "AI and machine learning capabilities combining Workers AI model inference, AI Gateway for observability and control, and Vectorize for vector search. Used by AI/ML engineers building intelligent applications at the edge."
+  label: Cloudflare AI and ML
+  description: AI and machine learning capabilities combining Workers AI model inference, AI Gateway for observability and
+    control, and Vectorize for vector search. Used by AI/ML engineers building intelligent applications at the edge.
   tags:
-    - Cloudflare
-    - Artificial Intelligence
-    - Machine Learning
-    - Vector Database
-  created: "2026-04-18"
-  modified: "2026-04-18"
-
+  - Cloudflare
+  - Artificial Intelligence
+  - Machine Learning
+  - Vector Database
+  created: '2026-04-18'
+  modified: '2026-05-06'
 binds:
-  - namespace: env
-    keys:
-      CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
-
+- namespace: env
+  keys:
+    CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
 capability:
   consumes:
-    - import: cloudflare-workers-ai
-      location: ./shared/workers-ai.yaml
-    - import: cloudflare-ai-gateway
-      location: ./shared/ai-gateway.yaml
-    - import: cloudflare-vectorize
-      location: ./shared/vectorize.yaml
-
+  - type: http
+    namespace: cloudflare-workers-ai
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Workers AI API for running ML models at the edge.
+    authentication:
+      type: bearer
+      token: '{{CLOUDFLARE_API_TOKEN}}'
+    resources:
+    - name: ai-models
+      path: /accounts/{account_id}/ai/run/{model_name}
+      description: Execute AI models.
+      operations:
+      - name: execute-ai-model
+        method: POST
+        description: Run an AI model with the given input.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: model_name
+          in: path
+          type: string
+          required: true
+          description: Model name to execute.
+        body:
+          type: json
+          data:
+            prompt: '{{tools.prompt}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: chat-completions
+      path: /accounts/{account_id}/ai/v1/chat/completions
+      description: OpenAI-compatible chat completions.
+      operations:
+      - name: create-chat-completion
+        method: POST
+        description: Create a chat completion using OpenAI-compatible endpoint.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        body:
+          type: json
+          data:
+            model: '{{tools.model}}'
+            messages: '{{tools.messages}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: embeddings
+      path: /accounts/{account_id}/ai/v1/embeddings
+      description: Generate text embeddings.
+      operations:
+      - name: create-embeddings
+        method: POST
+        description: Create embeddings for input text.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        body:
+          type: json
+          data:
+            model: '{{tools.model}}'
+            input: '{{tools.input}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: text-completions
+      path: /accounts/{account_id}/ai/v1/completions
+      description: Text completions.
+      operations:
+      - name: create-text-completion
+        method: POST
+        description: Create a text completion.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        body:
+          type: json
+          data:
+            model: '{{tools.model}}'
+            prompt: '{{tools.prompt}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: responses
+      path: /accounts/{account_id}/ai/v1/responses
+      description: Create AI responses.
+      operations:
+      - name: create-response
+        method: POST
+        description: Create an AI response.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        body:
+          type: json
+          data:
+            model: '{{tools.model}}'
+            input: '{{tools.input}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+  - type: http
+    namespace: cloudflare-ai-gateway
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare AI Gateway API for managing AI gateways and viewing logs.
+    authentication:
+      type: bearer
+      token: '{{CLOUDFLARE_API_TOKEN}}'
+    resources:
+    - name: gateways
+      path: /accounts/{account_id}/ai-gateway/gateways
+      description: Manage AI Gateway instances.
+      operations:
+      - name: list-ai-gateways
+        method: GET
+        description: List all AI Gateway instances.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: create-ai-gateway
+        method: POST
+        description: Create a new AI Gateway.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        body:
+          type: json
+          data:
+            id: '{{tools.id}}'
+            name: '{{tools.name}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: gateway
+      path: /accounts/{account_id}/ai-gateway/gateways/{gateway_id}
+      description: Manage a specific AI Gateway.
+      operations:
+      - name: get-ai-gateway
+        method: GET
+        description: Get AI Gateway details.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: gateway_id
+          in: path
+          type: string
+          required: true
+          description: Gateway identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: update-ai-gateway
+        method: PUT
+        description: Update an AI Gateway.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: gateway_id
+          in: path
+          type: string
+          required: true
+          description: Gateway identifier.
+        body:
+          type: json
+          data:
+            name: '{{tools.name}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: delete-ai-gateway
+        method: DELETE
+        description: Delete an AI Gateway.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: gateway_id
+          in: path
+          type: string
+          required: true
+          description: Gateway identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: gateway-logs
+      path: /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/logs
+      description: AI Gateway logs.
+      operations:
+      - name: list-ai-gateway-logs
+        method: GET
+        description: List logs for an AI Gateway.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: gateway_id
+          in: path
+          type: string
+          required: true
+          description: Gateway identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+  - type: http
+    namespace: cloudflare-vectorize
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Vectorize API for managing vector indexes and performing similarity queries.
+    authentication:
+      type: bearer
+      token: '{{CLOUDFLARE_API_TOKEN}}'
+    resources:
+    - name: indexes
+      path: /accounts/{account_id}/vectorize/v2/indexes
+      description: Manage vector indexes.
+      operations:
+      - name: list-vectorize-indexes
+        method: GET
+        description: List all Vectorize indexes.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: create-vectorize-index
+        method: POST
+        description: Create a new Vectorize index.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        body:
+          type: json
+          data:
+            name: '{{tools.name}}'
+            config: '{{tools.config}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: index
+      path: /accounts/{account_id}/vectorize/v2/indexes/{index_name}
+      description: Manage a specific vector index.
+      operations:
+      - name: get-vectorize-index
+        method: GET
+        description: Get Vectorize index details.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: index_name
+          in: path
+          type: string
+          required: true
+          description: Index name.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: delete-vectorize-index
+        method: DELETE
+        description: Delete a Vectorize index.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: index_name
+          in: path
+          type: string
+          required: true
+          description: Index name.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: vectors
+      path: /accounts/{account_id}/vectorize/v2/indexes/{index_name}/insert
+      description: Insert vectors.
+      operations:
+      - name: insert-vectors
+        method: POST
+        description: Insert vectors into an index.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: index_name
+          in: path
+          type: string
+          required: true
+          description: Index name.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: query
+      path: /accounts/{account_id}/vectorize/v2/indexes/{index_name}/query
+      description: Query vectors.
+      operations:
+      - name: query-vectors
+        method: POST
+        description: Perform a similarity query on vectors.
+        inputParameters:
+        - name: account_id
+          in: path
+          type: string
+          required: true
+          description: Account identifier.
+        - name: index_name
+          in: path
+          type: string
+          required: true
+          description: Index name.
+        body:
+          type: json
+          data:
+            vector: '{{tools.vector}}'
+            topK: '{{tools.top_k}}'
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
   exposes:
-    - type: rest
-      port: 8082
-      namespace: ai-ml-api
-      description: "Unified REST API for Cloudflare AI and ML services."
-      resources:
-        - path: /v1/chat-completions
-          name: chat-completions
-          description: "Chat completions."
-          operations:
-            - method: POST
-              name: create-chat-completion
-              description: "Create a chat completion."
-              call: "cloudflare-workers-ai.create-chat-completion"
-              with:
-                account_id: "rest.account_id"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-        - path: /v1/embeddings
-          name: embeddings
-          description: "Text embeddings."
-          operations:
-            - method: POST
-              name: create-embeddings
-              description: "Generate text embeddings."
-              call: "cloudflare-workers-ai.create-embeddings"
-              with:
-                account_id: "rest.account_id"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-        - path: /v1/ai-gateways
-          name: ai-gateways
-          description: "AI Gateway management."
-          operations:
-            - method: GET
-              name: list-ai-gateways
-              description: "List AI gateways."
-              call: "cloudflare-ai-gateway.list-ai-gateways"
-              with:
-                account_id: "rest.account_id"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-        - path: /v1/vectorize-indexes
-          name: vectorize-indexes
-          description: "Vectorize index management."
-          operations:
-            - method: GET
-              name: list-vectorize-indexes
-              description: "List Vectorize indexes."
-              call: "cloudflare-vectorize.list-vectorize-indexes"
-              with:
-                account_id: "rest.account_id"
-              outputParameters:
-                - type: object
-                  mapping: "$."
-
-    - type: mcp
-      port: 9082
-      namespace: ai-ml-mcp
-      transport: http
-      description: "MCP server for AI-assisted Cloudflare AI and ML management."
-      tools:
-        - name: ai-execute-model
-          description: "Run an AI model."
-          hints:
-            readOnly: true
-          call: "cloudflare-workers-ai.execute-ai-model"
-          with:
-            account_id: "tools.account_id"
-            model_name: "tools.model_name"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: ai-create-chat-completion
-          description: "Create a chat completion."
-          hints:
-            readOnly: true
-          call: "cloudflare-workers-ai.create-chat-completion"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: ai-create-embeddings
-          description: "Generate text embeddings."
-          hints:
-            readOnly: true
-          call: "cloudflare-workers-ai.create-embeddings"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: ai-create-text-completion
-          description: "Create a text completion."
-          hints:
-            readOnly: true
-          call: "cloudflare-workers-ai.create-text-completion"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: ai-create-response
-          description: "Create an AI response."
-          hints:
-            readOnly: true
-          call: "cloudflare-workers-ai.create-response"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: gateway-list-gateways
-          description: "List AI Gateway instances."
-          hints:
-            readOnly: true
-            openWorld: true
-          call: "cloudflare-ai-gateway.list-ai-gateways"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: gateway-create-gateway
-          description: "Create an AI Gateway."
-          hints:
-            readOnly: false
-          call: "cloudflare-ai-gateway.create-ai-gateway"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: gateway-get-gateway
-          description: "Get AI Gateway details."
-          hints:
-            readOnly: true
-          call: "cloudflare-ai-gateway.get-ai-gateway"
-          with:
-            account_id: "tools.account_id"
-            gateway_id: "tools.gateway_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: gateway-list-logs
-          description: "List AI Gateway logs."
-          hints:
-            readOnly: true
-          call: "cloudflare-ai-gateway.list-ai-gateway-logs"
-          with:
-            account_id: "tools.account_id"
-            gateway_id: "tools.gateway_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: gateway-delete-gateway
-          description: "Delete an AI Gateway."
-          hints:
-            destructive: true
-            idempotent: true
-          call: "cloudflare-ai-gateway.delete-ai-gateway"
-          with:
-            account_id: "tools.account_id"
-            gateway_id: "tools.gateway_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: vectorize-list-indexes
-          description: "List Vectorize indexes."
-          hints:
-            readOnly: true
-            openWorld: true
-          call: "cloudflare-vectorize.list-vectorize-indexes"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: vectorize-create-index
-          description: "Create a Vectorize index."
-          hints:
-            readOnly: false
-          call: "cloudflare-vectorize.create-vectorize-index"
-          with:
-            account_id: "tools.account_id"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: vectorize-query-vectors
-          description: "Perform similarity query."
-          hints:
-            readOnly: true
-          call: "cloudflare-vectorize.query-vectors"
-          with:
-            account_id: "tools.account_id"
-            index_name: "tools.index_name"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: vectorize-insert-vectors
-          description: "Insert vectors into an index."
-          hints:
-            readOnly: false
-          call: "cloudflare-vectorize.insert-vectors"
-          with:
-            account_id: "tools.account_id"
-            index_name: "tools.index_name"
-          outputParameters:
-            - type: object
-              mapping: "$."
-        - name: vectorize-delete-index
-          description: "Delete a Vectorize index."
-          hints:
-            destructive: true
-            idempotent: true
-          call: "cloudflare-vectorize.delete-vectorize-index"
-          with:
-            account_id: "tools.account_id"
-            index_name: "tools.index_name"
-          outputParameters:
-            - type: object
-              mapping: "$."
+  - type: rest
+    port: 8082
+    namespace: ai-ml-api
+    description: Unified REST API for Cloudflare AI and ML services.
+    resources:
+    - path: /v1/chat-completions
+      name: chat-completions
+      description: Chat completions.
+      operations:
+      - method: POST
+        name: create-chat-completion
+        description: Create a chat completion.
+        call: cloudflare-workers-ai.create-chat-completion
+        with:
+          account_id: rest.account_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/embeddings
+      name: embeddings
+      description: Text embeddings.
+      operations:
+      - method: POST
+        name: create-embeddings
+        description: Generate text embeddings.
+        call: cloudflare-workers-ai.create-embeddings
+        with:
+          account_id: rest.account_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/ai-gateways
+      name: ai-gateways
+      description: AI Gateway management.
+      operations:
+      - method: GET
+        name: list-ai-gateways
+        description: List AI gateways.
+        call: cloudflare-ai-gateway.list-ai-gateways
+        with:
+          account_id: rest.account_id
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/vectorize-indexes
+      name: vectorize-indexes
+      description: Vectorize index management.
+      operations:
+      - method: GET
+        name: list-vectorize-indexes
+        description: List Vectorize indexes.
+        call: cloudflare-vectorize.list-vectorize-indexes
+        with:
+          account_id: rest.account_id
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    port: 9082
+    namespace: ai-ml-mcp
+    transport: http
+    description: MCP server for AI-assisted Cloudflare AI and ML management.
+    tools:
+    - name: ai-execute-model
+      description: Run an AI model.
+      hints:
+        readOnly: true
+      call: cloudflare-workers-ai.execute-ai-model
+      with:
+        account_id: tools.account_id
+        model_name: tools.model_name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: ai-create-chat-completion
+      description: Create a chat completion.
+      hints:
+        readOnly: true
+      call: cloudflare-workers-ai.create-chat-completion
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: ai-create-embeddings
+      description: Generate text embeddings.
+      hints:
+        readOnly: true
+      call: cloudflare-workers-ai.create-embeddings
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: ai-create-text-completion
+      description: Create a text completion.
+      hints:
+        readOnly: true
+      call: cloudflare-workers-ai.create-text-completion
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: ai-create-response
+      description: Create an AI response.
+      hints:
+        readOnly: true
+      call: cloudflare-workers-ai.create-response
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: gateway-list-gateways
+      description: List AI Gateway instances.
+      hints:
+        readOnly: true
+        openWorld: true
+      call: cloudflare-ai-gateway.list-ai-gateways
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: gateway-create-gateway
+      description: Create an AI Gateway.
+      hints:
+        readOnly: false
+      call: cloudflare-ai-gateway.create-ai-gateway
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: gateway-get-gateway
+      description: Get AI Gateway details.
+      hints:
+        readOnly: true
+      call: cloudflare-ai-gateway.get-ai-gateway
+      with:
+        account_id: tools.account_id
+        gateway_id: tools.gateway_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: gateway-list-logs
+      description: List AI Gateway logs.
+      hints:
+        readOnly: true
+      call: cloudflare-ai-gateway.list-ai-gateway-logs
+      with:
+        account_id: tools.account_id
+        gateway_id: tools.gateway_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: gateway-delete-gateway
+      description: Delete an AI Gateway.
+      hints:
+        destructive: true
+        idempotent: true
+      call: cloudflare-ai-gateway.delete-ai-gateway
+      with:
+        account_id: tools.account_id
+        gateway_id: tools.gateway_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: vectorize-list-indexes
+      description: List Vectorize indexes.
+      hints:
+        readOnly: true
+        openWorld: true
+      call: cloudflare-vectorize.list-vectorize-indexes
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: vectorize-create-index
+      description: Create a Vectorize index.
+      hints:
+        readOnly: false
+      call: cloudflare-vectorize.create-vectorize-index
+      with:
+        account_id: tools.account_id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: vectorize-query-vectors
+      description: Perform similarity query.
+      hints:
+        readOnly: true
+      call: cloudflare-vectorize.query-vectors
+      with:
+        account_id: tools.account_id
+        index_name: tools.index_name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: vectorize-insert-vectors
+      description: Insert vectors into an index.
+      hints:
+        readOnly: false
+      call: cloudflare-vectorize.insert-vectors
+      with:
+        account_id: tools.account_id
+        index_name: tools.index_name
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: vectorize-delete-index
+      description: Delete a Vectorize index.
+      hints:
+        destructive: true
+        idempotent: true
+      call: cloudflare-vectorize.delete-vectorize-index
+      with:
+        account_id: tools.account_id
+        index_name: tools.index_name
+      outputParameters:
+      - type: object
+        mapping: $.
