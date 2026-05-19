@@ -1,0 +1,127 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare DNS API — DNS Record Scanning
+  description: 'Cloudflare DNS API — DNS Record Scanning. 3 operations. Lead operation: Cloudflare List Scanned Dns Records.
+    Self-contained Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - DNS Record Scanning
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: dns-dns-record-scanning
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare DNS API — DNS Record Scanning business capability. Self-contained, no shared references.
+    resources:
+    - name: zones-zone_id-dns_records-scan-review
+      path: /zones/{zone_id}/dns_records/scan/review
+      operations:
+      - name: listscanneddnsrecords
+        method: GET
+        description: Cloudflare List Scanned Dns Records
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: reviewscanneddnsrecords
+        method: POST
+        description: Cloudflare Accept Scanned Dns Records
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: zones-zone_id-dns_records-scan-trigger
+      path: /zones/{zone_id}/dns_records/scan/trigger
+      operations:
+      - name: triggerdnsrecordscan
+        method: POST
+        description: Cloudflare Trigger Dns Record Scan
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: dns-dns-record-scanning-rest
+    port: 8080
+    description: REST adapter for Cloudflare DNS API — DNS Record Scanning. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/zones/{zone-id}/dns-records/scan/review
+      name: zones-zone-id-dns-records-scan-review
+      description: REST surface for zones-zone_id-dns_records-scan-review.
+      operations:
+      - method: GET
+        name: listscanneddnsrecords
+        description: Cloudflare List Scanned Dns Records
+        call: dns-dns-record-scanning.listscanneddnsrecords
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: reviewscanneddnsrecords
+        description: Cloudflare Accept Scanned Dns Records
+        call: dns-dns-record-scanning.reviewscanneddnsrecords
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/zones/{zone-id}/dns-records/scan/trigger
+      name: zones-zone-id-dns-records-scan-trigger
+      description: REST surface for zones-zone_id-dns_records-scan-trigger.
+      operations:
+      - method: POST
+        name: triggerdnsrecordscan
+        description: Cloudflare Trigger Dns Record Scan
+        call: dns-dns-record-scanning.triggerdnsrecordscan
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: dns-dns-record-scanning-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare DNS API — DNS Record Scanning. One tool per consumed operation, routed inline
+      through this capability's consumes block.
+    tools:
+    - name: cloudflare-list-scanned-dns-records
+      description: Cloudflare List Scanned Dns Records
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: dns-dns-record-scanning.listscanneddnsrecords
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-accept-scanned-dns-records
+      description: Cloudflare Accept Scanned Dns Records
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: dns-dns-record-scanning.reviewscanneddnsrecords
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-trigger-dns-record-scan
+      description: Cloudflare Trigger Dns Record Scan
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: dns-dns-record-scanning.triggerdnsrecordscan
+      outputParameters:
+      - type: object
+        mapping: $.

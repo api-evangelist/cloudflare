@@ -1,0 +1,80 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare Images API — Direct Uploads
+  description: 'Cloudflare Images API — Direct Uploads. 1 operations. Lead operation: Cloudflare Create Direct Upload Url.
+    Self-contained Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Direct Uploads
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: images-direct-uploads
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Images API — Direct Uploads business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-images-v1-direct_upload
+      path: /accounts/{account_id}/images/v1/direct_upload
+      operations:
+      - name: createimagedirectupload
+        method: POST
+        description: Cloudflare Create Direct Upload Url
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: false
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: images-direct-uploads-rest
+    port: 8080
+    description: REST adapter for Cloudflare Images API — Direct Uploads. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/images/v1/direct-upload
+      name: accounts-account-id-images-v1-direct-upload
+      description: REST surface for accounts-account_id-images-v1-direct_upload.
+      operations:
+      - method: POST
+        name: createimagedirectupload
+        description: Cloudflare Create Direct Upload Url
+        call: images-direct-uploads.createimagedirectupload
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: images-direct-uploads-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare Images API — Direct Uploads. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: cloudflare-create-direct-upload-url
+      description: Cloudflare Create Direct Upload Url
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: images-direct-uploads.createimagedirectupload
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

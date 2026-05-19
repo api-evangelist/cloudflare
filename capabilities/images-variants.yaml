@@ -1,0 +1,105 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare Images API — Variants
+  description: 'Cloudflare Images API — Variants. 2 operations. Lead operation: Cloudflare List Image Variants. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Variants
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: images-variants
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Images API — Variants business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-images-v1-variants
+      path: /accounts/{account_id}/images/v1/variants
+      operations:
+      - name: listimagevariants
+        method: GET
+        description: Cloudflare List Image Variants
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createimagevariant
+        method: POST
+        description: Cloudflare Create Image Variant
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: images-variants-rest
+    port: 8080
+    description: REST adapter for Cloudflare Images API — Variants. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/images/v1/variants
+      name: accounts-account-id-images-v1-variants
+      description: REST surface for accounts-account_id-images-v1-variants.
+      operations:
+      - method: GET
+        name: listimagevariants
+        description: Cloudflare List Image Variants
+        call: images-variants.listimagevariants
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createimagevariant
+        description: Cloudflare Create Image Variant
+        call: images-variants.createimagevariant
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: images-variants-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare Images API — Variants. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: cloudflare-list-image-variants
+      description: Cloudflare List Image Variants
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: images-variants.listimagevariants
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-create-image-variant
+      description: Cloudflare Create Image Variant
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: images-variants.createimagevariant
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

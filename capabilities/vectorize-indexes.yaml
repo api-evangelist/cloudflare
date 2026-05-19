@@ -1,0 +1,197 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare Vectorize API — Indexes
+  description: 'Cloudflare Vectorize API — Indexes. 5 operations. Lead operation: Cloudflare List Vectorize Indexes. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Indexes
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: vectorize-indexes
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Vectorize API — Indexes business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-vectorize-v2-indexes
+      path: /accounts/{account_id}/vectorize/v2/indexes
+      operations:
+      - name: listvectorizeindexes
+        method: GET
+        description: Cloudflare List Vectorize Indexes
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createvectorizeindex
+        method: POST
+        description: Cloudflare Create Vectorize Index
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: accounts-account_id-vectorize-v2-indexes-index_name
+      path: /accounts/{account_id}/vectorize/v2/indexes/{index_name}
+      operations:
+      - name: getvectorizeindex
+        method: GET
+        description: Cloudflare Get Vectorize Index
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatevectorizeindex
+        method: PUT
+        description: Cloudflare Update Vectorize Index
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: deletevectorizeindex
+        method: DELETE
+        description: Cloudflare Delete Vectorize Index
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: vectorize-indexes-rest
+    port: 8080
+    description: REST adapter for Cloudflare Vectorize API — Indexes. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/vectorize/v2/indexes
+      name: accounts-account-id-vectorize-v2-indexes
+      description: REST surface for accounts-account_id-vectorize-v2-indexes.
+      operations:
+      - method: GET
+        name: listvectorizeindexes
+        description: Cloudflare List Vectorize Indexes
+        call: vectorize-indexes.listvectorizeindexes
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createvectorizeindex
+        description: Cloudflare Create Vectorize Index
+        call: vectorize-indexes.createvectorizeindex
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{account-id}/vectorize/v2/indexes/{index-name}
+      name: accounts-account-id-vectorize-v2-indexes-index-name
+      description: REST surface for accounts-account_id-vectorize-v2-indexes-index_name.
+      operations:
+      - method: GET
+        name: getvectorizeindex
+        description: Cloudflare Get Vectorize Index
+        call: vectorize-indexes.getvectorizeindex
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: updatevectorizeindex
+        description: Cloudflare Update Vectorize Index
+        call: vectorize-indexes.updatevectorizeindex
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deletevectorizeindex
+        description: Cloudflare Delete Vectorize Index
+        call: vectorize-indexes.deletevectorizeindex
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: vectorize-indexes-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare Vectorize API — Indexes. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: cloudflare-list-vectorize-indexes
+      description: Cloudflare List Vectorize Indexes
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: vectorize-indexes.listvectorizeindexes
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-create-vectorize-index
+      description: Cloudflare Create Vectorize Index
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: vectorize-indexes.createvectorizeindex
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-get-vectorize-index
+      description: Cloudflare Get Vectorize Index
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: vectorize-indexes.getvectorizeindex
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-update-vectorize-index
+      description: Cloudflare Update Vectorize Index
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: vectorize-indexes.updatevectorizeindex
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-delete-vectorize-index
+      description: Cloudflare Delete Vectorize Index
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: vectorize-indexes.deletevectorizeindex
+      outputParameters:
+      - type: object
+        mapping: $.

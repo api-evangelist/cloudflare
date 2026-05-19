@@ -1,0 +1,85 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare Durable Objects API — Objects
+  description: 'Cloudflare Durable Objects API — Objects. 1 operations. Lead operation: Cloudflare List Durable Objects. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Objects
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: durable-objects-objects
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Durable Objects API — Objects business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-workers-durable_objects-namespaces-namespace_id-objects
+      path: /accounts/{account_id}/workers/durable_objects/namespaces/{namespace_id}/objects
+      operations:
+      - name: listdurableobjects
+        method: GET
+        description: Cloudflare List Durable Objects
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: cursor
+          in: query
+          type: string
+          description: Cursor for pagination.
+        - name: limit
+          in: query
+          type: integer
+          description: Maximum number of objects to return.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: durable-objects-objects-rest
+    port: 8080
+    description: REST adapter for Cloudflare Durable Objects API — Objects. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/workers/durable-objects/namespaces/{namespace-id}/objects
+      name: accounts-account-id-workers-durable-objects-namespaces-namespace-id-objects
+      description: REST surface for accounts-account_id-workers-durable_objects-namespaces-namespace_id-objects.
+      operations:
+      - method: GET
+        name: listdurableobjects
+        description: Cloudflare List Durable Objects
+        call: durable-objects-objects.listdurableobjects
+        with:
+          cursor: rest.cursor
+          limit: rest.limit
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: durable-objects-objects-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare Durable Objects API — Objects. One tool per consumed operation, routed inline
+      through this capability's consumes block.
+    tools:
+    - name: cloudflare-list-durable-objects
+      description: Cloudflare List Durable Objects
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: durable-objects-objects.listdurableobjects
+      with:
+        cursor: tools.cursor
+        limit: tools.limit
+      outputParameters:
+      - type: object
+        mapping: $.

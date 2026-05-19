@@ -1,0 +1,91 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare KV API — Keys
+  description: 'Cloudflare KV API — Keys. 1 operations. Lead operation: Cloudflare List Keys. Self-contained Naftiko capability
+    covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Keys
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: kv-keys
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare KV API — Keys business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-storage-kv-namespaces-namespace_id-keys
+      path: /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/keys
+      operations:
+      - name: listkvkeys
+        method: GET
+        description: Cloudflare List Keys
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: cursor
+          in: query
+          type: string
+          description: Cursor for pagination.
+        - name: limit
+          in: query
+          type: integer
+          description: Maximum number of keys to return.
+        - name: prefix
+          in: query
+          type: string
+          description: Filter keys by prefix.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: kv-keys-rest
+    port: 8080
+    description: REST adapter for Cloudflare KV API — Keys. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/storage/kv/namespaces/{namespace-id}/keys
+      name: accounts-account-id-storage-kv-namespaces-namespace-id-keys
+      description: REST surface for accounts-account_id-storage-kv-namespaces-namespace_id-keys.
+      operations:
+      - method: GET
+        name: listkvkeys
+        description: Cloudflare List Keys
+        call: kv-keys.listkvkeys
+        with:
+          cursor: rest.cursor
+          limit: rest.limit
+          prefix: rest.prefix
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: kv-keys-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare KV API — Keys. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: cloudflare-list-keys
+      description: Cloudflare List Keys
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: kv-keys.listkvkeys
+      with:
+        cursor: tools.cursor
+        limit: tools.limit
+        prefix: tools.prefix
+      outputParameters:
+      - type: object
+        mapping: $.

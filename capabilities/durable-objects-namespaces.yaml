@@ -1,0 +1,70 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare Durable Objects API — Namespaces
+  description: 'Cloudflare Durable Objects API — Namespaces. 1 operations. Lead operation: Cloudflare List Durable Object
+    Namespaces. Self-contained Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Namespaces
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: durable-objects-namespaces
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Durable Objects API — Namespaces business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-workers-durable_objects-namespaces
+      path: /accounts/{account_id}/workers/durable_objects/namespaces
+      operations:
+      - name: listdurableobjectnamespaces
+        method: GET
+        description: Cloudflare List Durable Object Namespaces
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: durable-objects-namespaces-rest
+    port: 8080
+    description: REST adapter for Cloudflare Durable Objects API — Namespaces. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/workers/durable-objects/namespaces
+      name: accounts-account-id-workers-durable-objects-namespaces
+      description: REST surface for accounts-account_id-workers-durable_objects-namespaces.
+      operations:
+      - method: GET
+        name: listdurableobjectnamespaces
+        description: Cloudflare List Durable Object Namespaces
+        call: durable-objects-namespaces.listdurableobjectnamespaces
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: durable-objects-namespaces-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare Durable Objects API — Namespaces. One tool per consumed operation, routed inline
+      through this capability's consumes block.
+    tools:
+    - name: cloudflare-list-durable-object-namespaces
+      description: Cloudflare List Durable Object Namespaces
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: durable-objects-namespaces.listdurableobjectnamespaces
+      outputParameters:
+      - type: object
+        mapping: $.

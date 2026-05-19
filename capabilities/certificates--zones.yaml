@@ -1,0 +1,345 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare certificates/ — Zones
+  description: 'Cloudflare certificates/ — Zones. 7 operations. Lead operation: Cloudflare List all mTLS hostname settings.
+    Self-contained Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Zones
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: certificates--zones
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare certificates/ — Zones business capability. Self-contained, no shared references.
+    resources:
+    - name: zones-identifier-access-certificates-settings
+      path: /zones/{identifier}/access/certificates/settings
+      operations:
+      - name: zonelevelaccessmtlsauthenticationlistmtlscertificateshostnamesettings
+        method: GET
+        description: Cloudflare List all mTLS hostname settings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: identifier
+          in: path
+          type: string
+          required: true
+      - name: zonelevelaccessmtlsauthenticationupdateanmtlscertificatesettings
+        method: PUT
+        description: Cloudflare Update an mTLS certificate's hostname settings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: identifier
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: zones-identifier-access-certificates-uuid
+      path: /zones/{identifier}/access/certificates/{uuid}
+      operations:
+      - name: zonelevelaccessmtlsauthenticationdeleteanmtlscertificate
+        method: DELETE
+        description: Cloudflare Delete an mTLS certificate
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: uuid
+          in: path
+          type: string
+          required: true
+        - name: identifier
+          in: path
+          type: string
+          required: true
+      - name: zonelevelaccessmtlsauthenticationgetanmtlscertificate
+        method: GET
+        description: Cloudflare Get an mTLS certificate
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: uuid
+          in: path
+          type: string
+          required: true
+        - name: identifier
+          in: path
+          type: string
+          required: true
+      - name: zonelevelaccessmtlsauthenticationupdateanmtlscertificate
+        method: PUT
+        description: Cloudflare Update an mTLS certificate
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: uuid
+          in: path
+          type: string
+          required: true
+        - name: identifier
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: zones-zone_id-origin_tls_client_auth-hostnames-certificates-certificate_id
+      path: /zones/{zone_id}/origin_tls_client_auth/hostnames/certificates/{certificate_id}
+      operations:
+      - name: perhostnameauthenticatedoriginpulldeletehostnameclientcertificate
+        method: DELETE
+        description: Cloudflare Delete Hostname Client Certificate
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: certificate_id
+          in: path
+          type: string
+          required: true
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: perhostnameauthenticatedoriginpullgetthehostnameclientcertificate
+        method: GET
+        description: Cloudflare Get the Hostname Client Certificate
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: certificate_id
+          in: path
+          type: string
+          required: true
+        - name: zone_id
+          in: path
+          type: string
+          required: true
+  exposes:
+  - type: rest
+    namespace: certificates--zones-rest
+    port: 8080
+    description: REST adapter for Cloudflare certificates/ — Zones. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/zones/{identifier}/access/certificates/settings
+      name: zones-identifier-access-certificates-settings
+      description: REST surface for zones-identifier-access-certificates-settings.
+      operations:
+      - method: GET
+        name: zonelevelaccessmtlsauthenticationlistmtlscertificateshostnamesettings
+        description: Cloudflare List all mTLS hostname settings
+        call: certificates--zones.zonelevelaccessmtlsauthenticationlistmtlscertificateshostnamesettings
+        with:
+          identifier: rest.identifier
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: zonelevelaccessmtlsauthenticationupdateanmtlscertificatesettings
+        description: Cloudflare Update an mTLS certificate's hostname settings
+        call: certificates--zones.zonelevelaccessmtlsauthenticationupdateanmtlscertificatesettings
+        with:
+          identifier: rest.identifier
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/zones/{identifier}/access/certificates/{uuid}
+      name: zones-identifier-access-certificates-uuid
+      description: REST surface for zones-identifier-access-certificates-uuid.
+      operations:
+      - method: DELETE
+        name: zonelevelaccessmtlsauthenticationdeleteanmtlscertificate
+        description: Cloudflare Delete an mTLS certificate
+        call: certificates--zones.zonelevelaccessmtlsauthenticationdeleteanmtlscertificate
+        with:
+          uuid: rest.uuid
+          identifier: rest.identifier
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: zonelevelaccessmtlsauthenticationgetanmtlscertificate
+        description: Cloudflare Get an mTLS certificate
+        call: certificates--zones.zonelevelaccessmtlsauthenticationgetanmtlscertificate
+        with:
+          uuid: rest.uuid
+          identifier: rest.identifier
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: zonelevelaccessmtlsauthenticationupdateanmtlscertificate
+        description: Cloudflare Update an mTLS certificate
+        call: certificates--zones.zonelevelaccessmtlsauthenticationupdateanmtlscertificate
+        with:
+          uuid: rest.uuid
+          identifier: rest.identifier
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/zones/{zone-id}/origin-tls-client-auth/hostnames/certificates/{certificate-id}
+      name: zones-zone-id-origin-tls-client-auth-hostnames-certificates-certificate-id
+      description: REST surface for zones-zone_id-origin_tls_client_auth-hostnames-certificates-certificate_id.
+      operations:
+      - method: DELETE
+        name: perhostnameauthenticatedoriginpulldeletehostnameclientcertificate
+        description: Cloudflare Delete Hostname Client Certificate
+        call: certificates--zones.perhostnameauthenticatedoriginpulldeletehostnameclientcertificate
+        with:
+          certificate_id: rest.certificate_id
+          zone_id: rest.zone_id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: GET
+        name: perhostnameauthenticatedoriginpullgetthehostnameclientcertificate
+        description: Cloudflare Get the Hostname Client Certificate
+        call: certificates--zones.perhostnameauthenticatedoriginpullgetthehostnameclientcertificate
+        with:
+          certificate_id: rest.certificate_id
+          zone_id: rest.zone_id
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: certificates--zones-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare certificates/ — Zones. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: cloudflare-list-all-mtls-hostname
+      description: Cloudflare List all mTLS hostname settings
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: certificates--zones.zonelevelaccessmtlsauthenticationlistmtlscertificateshostnamesettings
+      with:
+        identifier: tools.identifier
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-update-mtls-certificate-s-hostname
+      description: Cloudflare Update an mTLS certificate's hostname settings
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: certificates--zones.zonelevelaccessmtlsauthenticationupdateanmtlscertificatesettings
+      with:
+        identifier: tools.identifier
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-delete-mtls-certificate
+      description: Cloudflare Delete an mTLS certificate
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: certificates--zones.zonelevelaccessmtlsauthenticationdeleteanmtlscertificate
+      with:
+        uuid: tools.uuid
+        identifier: tools.identifier
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-get-mtls-certificate
+      description: Cloudflare Get an mTLS certificate
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: certificates--zones.zonelevelaccessmtlsauthenticationgetanmtlscertificate
+      with:
+        uuid: tools.uuid
+        identifier: tools.identifier
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-update-mtls-certificate
+      description: Cloudflare Update an mTLS certificate
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: certificates--zones.zonelevelaccessmtlsauthenticationupdateanmtlscertificate
+      with:
+        uuid: tools.uuid
+        identifier: tools.identifier
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-delete-hostname-client-certificate
+      description: Cloudflare Delete Hostname Client Certificate
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: certificates--zones.perhostnameauthenticatedoriginpulldeletehostnameclientcertificate
+      with:
+        certificate_id: tools.certificate_id
+        zone_id: tools.zone_id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-get-hostname-client-certificate
+      description: Cloudflare Get the Hostname Client Certificate
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: certificates--zones.perhostnameauthenticatedoriginpullgetthehostnameclientcertificate
+      with:
+        certificate_id: tools.certificate_id
+        zone_id: tools.zone_id
+      outputParameters:
+      - type: object
+        mapping: $.

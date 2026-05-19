@@ -1,0 +1,265 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare DNS API — DNS Records
+  description: 'Cloudflare DNS API — DNS Records. 6 operations. Lead operation: Cloudflare List Dns Records. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - DNS Records
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: dns-dns-records
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare DNS API — DNS Records business capability. Self-contained, no shared references.
+    resources:
+    - name: zones-zone_id-dns_records
+      path: /zones/{zone_id}/dns_records
+      operations:
+      - name: listdnsrecords
+        method: GET
+        description: Cloudflare List Dns Records
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: type
+          in: query
+          type: string
+          description: DNS record type to filter by.
+        - name: name
+          in: query
+          type: string
+          description: DNS record name to filter by.
+        - name: content
+          in: query
+          type: string
+          description: DNS record content to filter by.
+        - name: page
+          in: query
+          type: integer
+          description: Page number of paginated results.
+        - name: per_page
+          in: query
+          type: integer
+          description: Number of records per page.
+      - name: creatednsrecord
+        method: POST
+        description: Cloudflare Create Dns Record
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: zones-zone_id-dns_records-dns_record_id
+      path: /zones/{zone_id}/dns_records/{dns_record_id}
+      operations:
+      - name: getdnsrecord
+        method: GET
+        description: Cloudflare Get Dns Record Details
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatednsrecord
+        method: PATCH
+        description: Cloudflare Update Dns Record
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: overwritednsrecord
+        method: PUT
+        description: Cloudflare Overwrite Dns Record
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: deletednsrecord
+        method: DELETE
+        description: Cloudflare Delete Dns Record
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: dns-dns-records-rest
+    port: 8080
+    description: REST adapter for Cloudflare DNS API — DNS Records. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/zones/{zone-id}/dns-records
+      name: zones-zone-id-dns-records
+      description: REST surface for zones-zone_id-dns_records.
+      operations:
+      - method: GET
+        name: listdnsrecords
+        description: Cloudflare List Dns Records
+        call: dns-dns-records.listdnsrecords
+        with:
+          type: rest.type
+          name: rest.name
+          content: rest.content
+          page: rest.page
+          per_page: rest.per_page
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creatednsrecord
+        description: Cloudflare Create Dns Record
+        call: dns-dns-records.creatednsrecord
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/zones/{zone-id}/dns-records/{dns-record-id}
+      name: zones-zone-id-dns-records-dns-record-id
+      description: REST surface for zones-zone_id-dns_records-dns_record_id.
+      operations:
+      - method: GET
+        name: getdnsrecord
+        description: Cloudflare Get Dns Record Details
+        call: dns-dns-records.getdnsrecord
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updatednsrecord
+        description: Cloudflare Update Dns Record
+        call: dns-dns-records.updatednsrecord
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: overwritednsrecord
+        description: Cloudflare Overwrite Dns Record
+        call: dns-dns-records.overwritednsrecord
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deletednsrecord
+        description: Cloudflare Delete Dns Record
+        call: dns-dns-records.deletednsrecord
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: dns-dns-records-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare DNS API — DNS Records. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: cloudflare-list-dns-records
+      description: Cloudflare List Dns Records
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: dns-dns-records.listdnsrecords
+      with:
+        type: tools.type
+        name: tools.name
+        content: tools.content
+        page: tools.page
+        per_page: tools.per_page
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-create-dns-record
+      description: Cloudflare Create Dns Record
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: dns-dns-records.creatednsrecord
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-get-dns-record-details
+      description: Cloudflare Get Dns Record Details
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: dns-dns-records.getdnsrecord
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-update-dns-record
+      description: Cloudflare Update Dns Record
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: dns-dns-records.updatednsrecord
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-overwrite-dns-record
+      description: Cloudflare Overwrite Dns Record
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: dns-dns-records.overwritednsrecord
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-delete-dns-record
+      description: Cloudflare Delete Dns Record
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: dns-dns-records.deletednsrecord
+      outputParameters:
+      - type: object
+        mapping: $.

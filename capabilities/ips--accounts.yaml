@@ -1,0 +1,148 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare ips/ — Accounts
+  description: 'Cloudflare ips/ — Accounts. 2 operations. Lead operation: Cloudflare Remove an IP from an Address Map. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Accounts
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: ips--accounts
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare ips/ — Accounts business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-addressing-address_maps-address_map_id-ips-ip_address
+      path: /accounts/{account_id}/addressing/address_maps/{address_map_id}/ips/{ip_address}
+      operations:
+      - name: ipaddressmanagementaddressmapsremoveanipfromanaddressmap
+        method: DELETE
+        description: Cloudflare Remove an IP from an Address Map
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: ip_address
+          in: path
+          type: string
+          required: true
+        - name: address_map_id
+          in: path
+          type: string
+          required: true
+        - name: account_id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: ipaddressmanagementaddressmapsaddaniptoanaddressmap
+        method: PUT
+        description: Cloudflare Add an IP to an Address Map
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: ip_address
+          in: path
+          type: string
+          required: true
+        - name: address_map_id
+          in: path
+          type: string
+          required: true
+        - name: account_id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+  exposes:
+  - type: rest
+    namespace: ips--accounts-rest
+    port: 8080
+    description: REST adapter for Cloudflare ips/ — Accounts. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/addressing/address-maps/{address-map-id}/ips/{ip-address}
+      name: accounts-account-id-addressing-address-maps-address-map-id-ips-ip-address
+      description: REST surface for accounts-account_id-addressing-address_maps-address_map_id-ips-ip_address.
+      operations:
+      - method: DELETE
+        name: ipaddressmanagementaddressmapsremoveanipfromanaddressmap
+        description: Cloudflare Remove an IP from an Address Map
+        call: ips--accounts.ipaddressmanagementaddressmapsremoveanipfromanaddressmap
+        with:
+          ip_address: rest.ip_address
+          address_map_id: rest.address_map_id
+          account_id: rest.account_id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: ipaddressmanagementaddressmapsaddaniptoanaddressmap
+        description: Cloudflare Add an IP to an Address Map
+        call: ips--accounts.ipaddressmanagementaddressmapsaddaniptoanaddressmap
+        with:
+          ip_address: rest.ip_address
+          address_map_id: rest.address_map_id
+          account_id: rest.account_id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: ips--accounts-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare ips/ — Accounts. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: cloudflare-remove-ip-address-map
+      description: Cloudflare Remove an IP from an Address Map
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: ips--accounts.ipaddressmanagementaddressmapsremoveanipfromanaddressmap
+      with:
+        ip_address: tools.ip_address
+        address_map_id: tools.address_map_id
+        account_id: tools.account_id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-add-ip-address-map
+      description: Cloudflare Add an IP to an Address Map
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: ips--accounts.ipaddressmanagementaddressmapsaddaniptoanaddressmap
+      with:
+        ip_address: tools.ip_address
+        address_map_id: tools.address_map_id
+        account_id: tools.account_id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

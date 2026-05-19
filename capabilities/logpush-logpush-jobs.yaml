@@ -1,0 +1,197 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare Logpush API — Logpush Jobs
+  description: 'Cloudflare Logpush API — Logpush Jobs. 5 operations. Lead operation: Cloudflare List Logpush Jobs. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Logpush Jobs
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: logpush-logpush-jobs
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Logpush API — Logpush Jobs business capability. Self-contained, no shared references.
+    resources:
+    - name: zones-zone_id-logpush-jobs
+      path: /zones/{zone_id}/logpush/jobs
+      operations:
+      - name: listlogpushjobs
+        method: GET
+        description: Cloudflare List Logpush Jobs
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createlogpushjob
+        method: POST
+        description: Cloudflare Create Logpush Job
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: zones-zone_id-logpush-jobs-job_id
+      path: /zones/{zone_id}/logpush/jobs/{job_id}
+      operations:
+      - name: getlogpushjob
+        method: GET
+        description: Cloudflare Get Logpush Job
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatelogpushjob
+        method: PUT
+        description: Cloudflare Update Logpush Job
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: deletelogpushjob
+        method: DELETE
+        description: Cloudflare Delete Logpush Job
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: logpush-logpush-jobs-rest
+    port: 8080
+    description: REST adapter for Cloudflare Logpush API — Logpush Jobs. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/zones/{zone-id}/logpush/jobs
+      name: zones-zone-id-logpush-jobs
+      description: REST surface for zones-zone_id-logpush-jobs.
+      operations:
+      - method: GET
+        name: listlogpushjobs
+        description: Cloudflare List Logpush Jobs
+        call: logpush-logpush-jobs.listlogpushjobs
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createlogpushjob
+        description: Cloudflare Create Logpush Job
+        call: logpush-logpush-jobs.createlogpushjob
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/zones/{zone-id}/logpush/jobs/{job-id}
+      name: zones-zone-id-logpush-jobs-job-id
+      description: REST surface for zones-zone_id-logpush-jobs-job_id.
+      operations:
+      - method: GET
+        name: getlogpushjob
+        description: Cloudflare Get Logpush Job
+        call: logpush-logpush-jobs.getlogpushjob
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: updatelogpushjob
+        description: Cloudflare Update Logpush Job
+        call: logpush-logpush-jobs.updatelogpushjob
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deletelogpushjob
+        description: Cloudflare Delete Logpush Job
+        call: logpush-logpush-jobs.deletelogpushjob
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: logpush-logpush-jobs-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare Logpush API — Logpush Jobs. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: cloudflare-list-logpush-jobs
+      description: Cloudflare List Logpush Jobs
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: logpush-logpush-jobs.listlogpushjobs
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-create-logpush-job
+      description: Cloudflare Create Logpush Job
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: logpush-logpush-jobs.createlogpushjob
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-get-logpush-job
+      description: Cloudflare Get Logpush Job
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: logpush-logpush-jobs.getlogpushjob
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-update-logpush-job
+      description: Cloudflare Update Logpush Job
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: logpush-logpush-jobs.updatelogpushjob
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-delete-logpush-job
+      description: Cloudflare Delete Logpush Job
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: logpush-logpush-jobs.deletelogpushjob
+      outputParameters:
+      - type: object
+        mapping: $.

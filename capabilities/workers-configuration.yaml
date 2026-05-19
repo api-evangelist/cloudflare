@@ -1,0 +1,152 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare Workers API — Configuration
+  description: 'Cloudflare Workers API — Configuration. 4 operations. Lead operation: Cloudflare Get Cron Triggers. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Configuration
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: workers-configuration
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Workers API — Configuration business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-workers-scripts-script_name-schedules
+      path: /accounts/{account_id}/workers/scripts/{script_name}/schedules
+      operations:
+      - name: getcrontriggers
+        method: GET
+        description: Cloudflare Get Cron Triggers
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatecrontriggers
+        method: PUT
+        description: Cloudflare Update Cron Triggers
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    - name: accounts-account_id-workers-scripts-script_name-settings
+      path: /accounts/{account_id}/workers/scripts/{script_name}/settings
+      operations:
+      - name: getscriptsettings
+        method: GET
+        description: Cloudflare Get Script Settings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatescriptsettings
+        method: PATCH
+        description: Cloudflare Update Script Settings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: workers-configuration-rest
+    port: 8080
+    description: REST adapter for Cloudflare Workers API — Configuration. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/workers/scripts/{script-name}/schedules
+      name: accounts-account-id-workers-scripts-script-name-schedules
+      description: REST surface for accounts-account_id-workers-scripts-script_name-schedules.
+      operations:
+      - method: GET
+        name: getcrontriggers
+        description: Cloudflare Get Cron Triggers
+        call: workers-configuration.getcrontriggers
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: updatecrontriggers
+        description: Cloudflare Update Cron Triggers
+        call: workers-configuration.updatecrontriggers
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{account-id}/workers/scripts/{script-name}/settings
+      name: accounts-account-id-workers-scripts-script-name-settings
+      description: REST surface for accounts-account_id-workers-scripts-script_name-settings.
+      operations:
+      - method: GET
+        name: getscriptsettings
+        description: Cloudflare Get Script Settings
+        call: workers-configuration.getscriptsettings
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updatescriptsettings
+        description: Cloudflare Update Script Settings
+        call: workers-configuration.updatescriptsettings
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: workers-configuration-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare Workers API — Configuration. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: cloudflare-get-cron-triggers
+      description: Cloudflare Get Cron Triggers
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: workers-configuration.getcrontriggers
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-update-cron-triggers
+      description: Cloudflare Update Cron Triggers
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: workers-configuration.updatecrontriggers
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-get-script-settings
+      description: Cloudflare Get Script Settings
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: workers-configuration.getscriptsettings
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-update-script-settings
+      description: Cloudflare Update Script Settings
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: workers-configuration.updatescriptsettings
+      outputParameters:
+      - type: object
+        mapping: $.

@@ -1,0 +1,197 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare Pages API — Projects
+  description: 'Cloudflare Pages API — Projects. 5 operations. Lead operation: Cloudflare List Pages Projects. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Projects
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: pages-projects
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Pages API — Projects business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-pages-projects
+      path: /accounts/{account_id}/pages/projects
+      operations:
+      - name: listpagesprojects
+        method: GET
+        description: Cloudflare List Pages Projects
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createpagesproject
+        method: POST
+        description: Cloudflare Create Pages Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: accounts-account_id-pages-projects-project_name
+      path: /accounts/{account_id}/pages/projects/{project_name}
+      operations:
+      - name: getpagesproject
+        method: GET
+        description: Cloudflare Get Pages Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatepagesproject
+        method: PATCH
+        description: Cloudflare Update Pages Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: deletepagesproject
+        method: DELETE
+        description: Cloudflare Delete Pages Project
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: pages-projects-rest
+    port: 8080
+    description: REST adapter for Cloudflare Pages API — Projects. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/pages/projects
+      name: accounts-account-id-pages-projects
+      description: REST surface for accounts-account_id-pages-projects.
+      operations:
+      - method: GET
+        name: listpagesprojects
+        description: Cloudflare List Pages Projects
+        call: pages-projects.listpagesprojects
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createpagesproject
+        description: Cloudflare Create Pages Project
+        call: pages-projects.createpagesproject
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{account-id}/pages/projects/{project-name}
+      name: accounts-account-id-pages-projects-project-name
+      description: REST surface for accounts-account_id-pages-projects-project_name.
+      operations:
+      - method: GET
+        name: getpagesproject
+        description: Cloudflare Get Pages Project
+        call: pages-projects.getpagesproject
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updatepagesproject
+        description: Cloudflare Update Pages Project
+        call: pages-projects.updatepagesproject
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deletepagesproject
+        description: Cloudflare Delete Pages Project
+        call: pages-projects.deletepagesproject
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: pages-projects-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare Pages API — Projects. One tool per consumed operation, routed inline through this
+      capability's consumes block.
+    tools:
+    - name: cloudflare-list-pages-projects
+      description: Cloudflare List Pages Projects
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: pages-projects.listpagesprojects
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-create-pages-project
+      description: Cloudflare Create Pages Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: pages-projects.createpagesproject
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-get-pages-project
+      description: Cloudflare Get Pages Project
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: pages-projects.getpagesproject
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-update-pages-project
+      description: Cloudflare Update Pages Project
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: pages-projects.updatepagesproject
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-delete-pages-project
+      description: Cloudflare Delete Pages Project
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: pages-projects.deletepagesproject
+      outputParameters:
+      - type: object
+        mapping: $.

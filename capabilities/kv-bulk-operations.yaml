@@ -1,0 +1,164 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare KV API — Bulk Operations
+  description: 'Cloudflare KV API — Bulk Operations. 3 operations. Lead operation: Cloudflare Write Multiple Key-value Pairs.
+    Self-contained Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Bulk Operations
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: kv-bulk-operations
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare KV API — Bulk Operations business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-storage-kv-namespaces-namespace_id-bulk
+      path: /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk
+      operations:
+      - name: bulkwritekvpairs
+        method: PUT
+        description: Cloudflare Write Multiple Key-value Pairs
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: accounts-account_id-storage-kv-namespaces-namespace_id-bulk-delete
+      path: /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk/delete
+      operations:
+      - name: bulkdeletekvpairs
+        method: POST
+        description: Cloudflare Delete Multiple Key-value Pairs
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: accounts-account_id-storage-kv-namespaces-namespace_id-bulk-get
+      path: /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk/get
+      operations:
+      - name: bulkgetkvpairs
+        method: POST
+        description: Cloudflare Get Multiple Key-value Pairs
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: kv-bulk-operations-rest
+    port: 8080
+    description: REST adapter for Cloudflare KV API — Bulk Operations. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/storage/kv/namespaces/{namespace-id}/bulk
+      name: accounts-account-id-storage-kv-namespaces-namespace-id-bulk
+      description: REST surface for accounts-account_id-storage-kv-namespaces-namespace_id-bulk.
+      operations:
+      - method: PUT
+        name: bulkwritekvpairs
+        description: Cloudflare Write Multiple Key-value Pairs
+        call: kv-bulk-operations.bulkwritekvpairs
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{account-id}/storage/kv/namespaces/{namespace-id}/bulk/delete
+      name: accounts-account-id-storage-kv-namespaces-namespace-id-bulk-delete
+      description: REST surface for accounts-account_id-storage-kv-namespaces-namespace_id-bulk-delete.
+      operations:
+      - method: POST
+        name: bulkdeletekvpairs
+        description: Cloudflare Delete Multiple Key-value Pairs
+        call: kv-bulk-operations.bulkdeletekvpairs
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{account-id}/storage/kv/namespaces/{namespace-id}/bulk/get
+      name: accounts-account-id-storage-kv-namespaces-namespace-id-bulk-get
+      description: REST surface for accounts-account_id-storage-kv-namespaces-namespace_id-bulk-get.
+      operations:
+      - method: POST
+        name: bulkgetkvpairs
+        description: Cloudflare Get Multiple Key-value Pairs
+        call: kv-bulk-operations.bulkgetkvpairs
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: kv-bulk-operations-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare KV API — Bulk Operations. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: cloudflare-write-multiple-key-value
+      description: Cloudflare Write Multiple Key-value Pairs
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: kv-bulk-operations.bulkwritekvpairs
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-delete-multiple-key-value
+      description: Cloudflare Delete Multiple Key-value Pairs
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: kv-bulk-operations.bulkdeletekvpairs
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-get-multiple-key-value
+      description: Cloudflare Get Multiple Key-value Pairs
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: false
+      call: kv-bulk-operations.bulkgetkvpairs
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

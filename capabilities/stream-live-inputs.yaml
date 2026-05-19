@@ -1,0 +1,105 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare Stream API — Live Inputs
+  description: 'Cloudflare Stream API — Live Inputs. 2 operations. Lead operation: Cloudflare List Live Inputs. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Live Inputs
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: stream-live-inputs
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Stream API — Live Inputs business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-stream-live_inputs
+      path: /accounts/{account_id}/stream/live_inputs
+      operations:
+      - name: listliveinputs
+        method: GET
+        description: Cloudflare List Live Inputs
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createliveinput
+        method: POST
+        description: Cloudflare Create Live Input
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: stream-live-inputs-rest
+    port: 8080
+    description: REST adapter for Cloudflare Stream API — Live Inputs. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/stream/live-inputs
+      name: accounts-account-id-stream-live-inputs
+      description: REST surface for accounts-account_id-stream-live_inputs.
+      operations:
+      - method: GET
+        name: listliveinputs
+        description: Cloudflare List Live Inputs
+        call: stream-live-inputs.listliveinputs
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createliveinput
+        description: Cloudflare Create Live Input
+        call: stream-live-inputs.createliveinput
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: stream-live-inputs-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare Stream API — Live Inputs. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: cloudflare-list-live-inputs
+      description: Cloudflare List Live Inputs
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: stream-live-inputs.listliveinputs
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-create-live-input
+      description: Cloudflare Create Live Input
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: stream-live-inputs.createliveinput
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

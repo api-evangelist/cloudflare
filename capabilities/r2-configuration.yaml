@@ -1,0 +1,95 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare R2 API — Configuration
+  description: 'Cloudflare R2 API — Configuration. 2 operations. Lead operation: Cloudflare Get Bucket Configuration. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Configuration
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: r2-configuration
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare R2 API — Configuration business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-r2-buckets-bucket_name-configuration
+      path: /accounts/{account_id}/r2/buckets/{bucket_name}/configuration
+      operations:
+      - name: getr2bucketconfiguration
+        method: GET
+        description: Cloudflare Get Bucket Configuration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updater2bucketconfiguration
+        method: PUT
+        description: Cloudflare Update Bucket Configuration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: r2-configuration-rest
+    port: 8080
+    description: REST adapter for Cloudflare R2 API — Configuration. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/r2/buckets/{bucket-name}/configuration
+      name: accounts-account-id-r2-buckets-bucket-name-configuration
+      description: REST surface for accounts-account_id-r2-buckets-bucket_name-configuration.
+      operations:
+      - method: GET
+        name: getr2bucketconfiguration
+        description: Cloudflare Get Bucket Configuration
+        call: r2-configuration.getr2bucketconfiguration
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: updater2bucketconfiguration
+        description: Cloudflare Update Bucket Configuration
+        call: r2-configuration.updater2bucketconfiguration
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: r2-configuration-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare R2 API — Configuration. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: cloudflare-get-bucket-configuration
+      description: Cloudflare Get Bucket Configuration
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: r2-configuration.getr2bucketconfiguration
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-update-bucket-configuration
+      description: Cloudflare Update Bucket Configuration
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: r2-configuration.updater2bucketconfiguration
+      outputParameters:
+      - type: object
+        mapping: $.

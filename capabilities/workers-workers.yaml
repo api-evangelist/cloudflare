@@ -1,0 +1,232 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare Workers API — Workers
+  description: 'Cloudflare Workers API — Workers. 6 operations. Lead operation: Cloudflare List Workers. Self-contained Naftiko
+    capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Workers
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: workers-workers
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Workers API — Workers business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-workers-workers
+      path: /accounts/{account_id}/workers/workers
+      operations:
+      - name: listworkers
+        method: GET
+        description: Cloudflare List Workers
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createworker
+        method: POST
+        description: Cloudflare Create Worker
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: accounts-account_id-workers-workers-worker_id
+      path: /accounts/{account_id}/workers/workers/{worker_id}
+      operations:
+      - name: getworker
+        method: GET
+        description: Cloudflare Get Worker
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: replaceworker
+        method: PUT
+        description: Cloudflare Replace Worker
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: editworker
+        method: PATCH
+        description: Cloudflare Edit Worker
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: deleteworker
+        method: DELETE
+        description: Cloudflare Delete Worker
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: workers-workers-rest
+    port: 8080
+    description: REST adapter for Cloudflare Workers API — Workers. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/workers/workers
+      name: accounts-account-id-workers-workers
+      description: REST surface for accounts-account_id-workers-workers.
+      operations:
+      - method: GET
+        name: listworkers
+        description: Cloudflare List Workers
+        call: workers-workers.listworkers
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createworker
+        description: Cloudflare Create Worker
+        call: workers-workers.createworker
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{account-id}/workers/workers/{worker-id}
+      name: accounts-account-id-workers-workers-worker-id
+      description: REST surface for accounts-account_id-workers-workers-worker_id.
+      operations:
+      - method: GET
+        name: getworker
+        description: Cloudflare Get Worker
+        call: workers-workers.getworker
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: replaceworker
+        description: Cloudflare Replace Worker
+        call: workers-workers.replaceworker
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: editworker
+        description: Cloudflare Edit Worker
+        call: workers-workers.editworker
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deleteworker
+        description: Cloudflare Delete Worker
+        call: workers-workers.deleteworker
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: workers-workers-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare Workers API — Workers. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: cloudflare-list-workers
+      description: Cloudflare List Workers
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: workers-workers.listworkers
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-create-worker
+      description: Cloudflare Create Worker
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: workers-workers.createworker
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-get-worker
+      description: Cloudflare Get Worker
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: workers-workers.getworker
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-replace-worker
+      description: Cloudflare Replace Worker
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: workers-workers.replaceworker
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-edit-worker
+      description: Cloudflare Edit Worker
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: workers-workers.editworker
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-delete-worker
+      description: Cloudflare Delete Worker
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: workers-workers.deleteworker
+      outputParameters:
+      - type: object
+        mapping: $.

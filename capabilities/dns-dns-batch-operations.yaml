@@ -1,0 +1,80 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare DNS API — DNS Batch Operations
+  description: 'Cloudflare DNS API — DNS Batch Operations. 1 operations. Lead operation: Cloudflare Batch Dns Record Operations.
+    Self-contained Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - DNS Batch Operations
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: dns-dns-batch-operations
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare DNS API — DNS Batch Operations business capability. Self-contained, no shared references.
+    resources:
+    - name: zones-zone_id-dns_records-batch
+      path: /zones/{zone_id}/dns_records/batch
+      operations:
+      - name: batchdnsrecords
+        method: POST
+        description: Cloudflare Batch Dns Record Operations
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: dns-dns-batch-operations-rest
+    port: 8080
+    description: REST adapter for Cloudflare DNS API — DNS Batch Operations. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/zones/{zone-id}/dns-records/batch
+      name: zones-zone-id-dns-records-batch
+      description: REST surface for zones-zone_id-dns_records-batch.
+      operations:
+      - method: POST
+        name: batchdnsrecords
+        description: Cloudflare Batch Dns Record Operations
+        call: dns-dns-batch-operations.batchdnsrecords
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: dns-dns-batch-operations-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare DNS API — DNS Batch Operations. One tool per consumed operation, routed inline
+      through this capability's consumes block.
+    tools:
+    - name: cloudflare-batch-dns-record-operations
+      description: Cloudflare Batch Dns Record Operations
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: dns-dns-batch-operations.batchdnsrecords
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

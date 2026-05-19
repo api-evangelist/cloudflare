@@ -1,0 +1,130 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare Stream API — Webhooks
+  description: 'Cloudflare Stream API — Webhooks. 3 operations. Lead operation: Cloudflare Get Webhook Configuration. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Webhooks
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: stream-webhooks
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Stream API — Webhooks business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-stream-webhook
+      path: /accounts/{account_id}/stream/webhook
+      operations:
+      - name: getstreamwebhook
+        method: GET
+        description: Cloudflare Get Webhook Configuration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatestreamwebhook
+        method: PUT
+        description: Cloudflare Update Webhook Configuration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: deletestreamwebhook
+        method: DELETE
+        description: Cloudflare Delete Webhook Configuration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: stream-webhooks-rest
+    port: 8080
+    description: REST adapter for Cloudflare Stream API — Webhooks. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/stream/webhook
+      name: accounts-account-id-stream-webhook
+      description: REST surface for accounts-account_id-stream-webhook.
+      operations:
+      - method: GET
+        name: getstreamwebhook
+        description: Cloudflare Get Webhook Configuration
+        call: stream-webhooks.getstreamwebhook
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: updatestreamwebhook
+        description: Cloudflare Update Webhook Configuration
+        call: stream-webhooks.updatestreamwebhook
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deletestreamwebhook
+        description: Cloudflare Delete Webhook Configuration
+        call: stream-webhooks.deletestreamwebhook
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: stream-webhooks-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare Stream API — Webhooks. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: cloudflare-get-webhook-configuration
+      description: Cloudflare Get Webhook Configuration
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: stream-webhooks.getstreamwebhook
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-update-webhook-configuration
+      description: Cloudflare Update Webhook Configuration
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: stream-webhooks.updatestreamwebhook
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-delete-webhook-configuration
+      description: Cloudflare Delete Webhook Configuration
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: stream-webhooks.deletestreamwebhook
+      outputParameters:
+      - type: object
+        mapping: $.

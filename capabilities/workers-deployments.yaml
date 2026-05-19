@@ -1,0 +1,95 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare Workers API — Deployments
+  description: 'Cloudflare Workers API — Deployments. 2 operations. Lead operation: Cloudflare List Deployments. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Deployments
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: workers-deployments
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Workers API — Deployments business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-workers-scripts-script_name-deployments
+      path: /accounts/{account_id}/workers/scripts/{script_name}/deployments
+      operations:
+      - name: listdeployments
+        method: GET
+        description: Cloudflare List Deployments
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createdeployment
+        method: POST
+        description: Cloudflare Create Deployment
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: workers-deployments-rest
+    port: 8080
+    description: REST adapter for Cloudflare Workers API — Deployments. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/workers/scripts/{script-name}/deployments
+      name: accounts-account-id-workers-scripts-script-name-deployments
+      description: REST surface for accounts-account_id-workers-scripts-script_name-deployments.
+      operations:
+      - method: GET
+        name: listdeployments
+        description: Cloudflare List Deployments
+        call: workers-deployments.listdeployments
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createdeployment
+        description: Cloudflare Create Deployment
+        call: workers-deployments.createdeployment
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: workers-deployments-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare Workers API — Deployments. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: cloudflare-list-deployments
+      description: Cloudflare List Deployments
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: workers-deployments.listdeployments
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-create-deployment
+      description: Cloudflare Create Deployment
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: workers-deployments.createdeployment
+      outputParameters:
+      - type: object
+        mapping: $.

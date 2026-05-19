@@ -1,0 +1,189 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare R2 API — Buckets
+  description: 'Cloudflare R2 API — Buckets. 4 operations. Lead operation: Cloudflare List R2 Buckets. Self-contained Naftiko
+    capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Buckets
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: r2-buckets
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare R2 API — Buckets business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-r2-buckets
+      path: /accounts/{account_id}/r2/buckets
+      operations:
+      - name: listr2buckets
+        method: GET
+        description: Cloudflare List R2 Buckets
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: name_contains
+          in: query
+          type: string
+          description: Filter buckets by name substring.
+        - name: start_after
+          in: query
+          type: string
+          description: Bucket name to start listing after for pagination.
+        - name: per_page
+          in: query
+          type: integer
+          description: Number of buckets per page.
+        - name: cursor
+          in: query
+          type: string
+          description: Cursor for pagination.
+      - name: creater2bucket
+        method: POST
+        description: Cloudflare Create R2 Bucket
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: accounts-account_id-r2-buckets-bucket_name
+      path: /accounts/{account_id}/r2/buckets/{bucket_name}
+      operations:
+      - name: getr2bucket
+        method: GET
+        description: Cloudflare Get R2 Bucket
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: deleter2bucket
+        method: DELETE
+        description: Cloudflare Delete R2 Bucket
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: r2-buckets-rest
+    port: 8080
+    description: REST adapter for Cloudflare R2 API — Buckets. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/r2/buckets
+      name: accounts-account-id-r2-buckets
+      description: REST surface for accounts-account_id-r2-buckets.
+      operations:
+      - method: GET
+        name: listr2buckets
+        description: Cloudflare List R2 Buckets
+        call: r2-buckets.listr2buckets
+        with:
+          name_contains: rest.name_contains
+          start_after: rest.start_after
+          per_page: rest.per_page
+          cursor: rest.cursor
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: creater2bucket
+        description: Cloudflare Create R2 Bucket
+        call: r2-buckets.creater2bucket
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{account-id}/r2/buckets/{bucket-name}
+      name: accounts-account-id-r2-buckets-bucket-name
+      description: REST surface for accounts-account_id-r2-buckets-bucket_name.
+      operations:
+      - method: GET
+        name: getr2bucket
+        description: Cloudflare Get R2 Bucket
+        call: r2-buckets.getr2bucket
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deleter2bucket
+        description: Cloudflare Delete R2 Bucket
+        call: r2-buckets.deleter2bucket
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: r2-buckets-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare R2 API — Buckets. One tool per consumed operation, routed inline through this
+      capability's consumes block.
+    tools:
+    - name: cloudflare-list-r2-buckets
+      description: Cloudflare List R2 Buckets
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: r2-buckets.listr2buckets
+      with:
+        name_contains: tools.name_contains
+        start_after: tools.start_after
+        per_page: tools.per_page
+        cursor: tools.cursor
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-create-r2-bucket
+      description: Cloudflare Create R2 Bucket
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: r2-buckets.creater2bucket
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-get-r2-bucket
+      description: Cloudflare Get R2 Bucket
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: r2-buckets.getr2bucket
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-delete-r2-bucket
+      description: Cloudflare Delete R2 Bucket
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: r2-buckets.deleter2bucket
+      outputParameters:
+      - type: object
+        mapping: $.

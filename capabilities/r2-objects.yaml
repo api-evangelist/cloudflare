@@ -1,0 +1,97 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare R2 API — Objects
+  description: 'Cloudflare R2 API — Objects. 1 operations. Lead operation: Cloudflare List Objects in Bucket. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Objects
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: r2-objects
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare R2 API — Objects business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-r2-buckets-bucket_name-objects
+      path: /accounts/{account_id}/r2/buckets/{bucket_name}/objects
+      operations:
+      - name: listr2objects
+        method: GET
+        description: Cloudflare List Objects in Bucket
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: prefix
+          in: query
+          type: string
+          description: Filter objects by key prefix.
+        - name: delimiter
+          in: query
+          type: string
+          description: Delimiter for grouping object keys.
+        - name: cursor
+          in: query
+          type: string
+          description: Cursor for pagination.
+        - name: per_page
+          in: query
+          type: integer
+          description: Number of objects per page.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: r2-objects-rest
+    port: 8080
+    description: REST adapter for Cloudflare R2 API — Objects. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/r2/buckets/{bucket-name}/objects
+      name: accounts-account-id-r2-buckets-bucket-name-objects
+      description: REST surface for accounts-account_id-r2-buckets-bucket_name-objects.
+      operations:
+      - method: GET
+        name: listr2objects
+        description: Cloudflare List Objects in Bucket
+        call: r2-objects.listr2objects
+        with:
+          prefix: rest.prefix
+          delimiter: rest.delimiter
+          cursor: rest.cursor
+          per_page: rest.per_page
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: r2-objects-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare R2 API — Objects. One tool per consumed operation, routed inline through this
+      capability's consumes block.
+    tools:
+    - name: cloudflare-list-objects-bucket
+      description: Cloudflare List Objects in Bucket
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: r2-objects.listr2objects
+      with:
+        prefix: tools.prefix
+        delimiter: tools.delimiter
+        cursor: tools.cursor
+        per_page: tools.per_page
+      outputParameters:
+      - type: object
+        mapping: $.

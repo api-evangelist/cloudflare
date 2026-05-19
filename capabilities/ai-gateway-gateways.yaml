@@ -1,0 +1,197 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare AI Gateway API — Gateways
+  description: 'Cloudflare AI Gateway API — Gateways. 5 operations. Lead operation: Cloudflare List Ai Gateways. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Gateways
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: ai-gateway-gateways
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare AI Gateway API — Gateways business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-ai-gateway-gateways
+      path: /accounts/{account_id}/ai-gateway/gateways
+      operations:
+      - name: listaigateways
+        method: GET
+        description: Cloudflare List Ai Gateways
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createaigateway
+        method: POST
+        description: Cloudflare Create Ai Gateway
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: accounts-account_id-ai-gateway-gateways-gateway_id
+      path: /accounts/{account_id}/ai-gateway/gateways/{gateway_id}
+      operations:
+      - name: getaigateway
+        method: GET
+        description: Cloudflare Get Ai Gateway
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updateaigateway
+        method: PUT
+        description: Cloudflare Update Ai Gateway
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: deleteaigateway
+        method: DELETE
+        description: Cloudflare Delete Ai Gateway
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: ai-gateway-gateways-rest
+    port: 8080
+    description: REST adapter for Cloudflare AI Gateway API — Gateways. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/ai-gateway/gateways
+      name: accounts-account-id-ai-gateway-gateways
+      description: REST surface for accounts-account_id-ai-gateway-gateways.
+      operations:
+      - method: GET
+        name: listaigateways
+        description: Cloudflare List Ai Gateways
+        call: ai-gateway-gateways.listaigateways
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createaigateway
+        description: Cloudflare Create Ai Gateway
+        call: ai-gateway-gateways.createaigateway
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{account-id}/ai-gateway/gateways/{gateway-id}
+      name: accounts-account-id-ai-gateway-gateways-gateway-id
+      description: REST surface for accounts-account_id-ai-gateway-gateways-gateway_id.
+      operations:
+      - method: GET
+        name: getaigateway
+        description: Cloudflare Get Ai Gateway
+        call: ai-gateway-gateways.getaigateway
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: updateaigateway
+        description: Cloudflare Update Ai Gateway
+        call: ai-gateway-gateways.updateaigateway
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deleteaigateway
+        description: Cloudflare Delete Ai Gateway
+        call: ai-gateway-gateways.deleteaigateway
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: ai-gateway-gateways-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare AI Gateway API — Gateways. One tool per consumed operation, routed inline through
+      this capability's consumes block.
+    tools:
+    - name: cloudflare-list-ai-gateways
+      description: Cloudflare List Ai Gateways
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: ai-gateway-gateways.listaigateways
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-create-ai-gateway
+      description: Cloudflare Create Ai Gateway
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: ai-gateway-gateways.createaigateway
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-get-ai-gateway
+      description: Cloudflare Get Ai Gateway
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: ai-gateway-gateways.getaigateway
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-update-ai-gateway
+      description: Cloudflare Update Ai Gateway
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: ai-gateway-gateways.updateaigateway
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-delete-ai-gateway
+      description: Cloudflare Delete Ai Gateway
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: ai-gateway-gateways.deleteaigateway
+      outputParameters:
+      - type: object
+        mapping: $.

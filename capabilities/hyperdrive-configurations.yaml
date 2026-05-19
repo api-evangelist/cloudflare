@@ -1,0 +1,197 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare Hyperdrive API — Configurations
+  description: 'Cloudflare Hyperdrive API — Configurations. 5 operations. Lead operation: Cloudflare List Hyperdrive Configurations.
+    Self-contained Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Configurations
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: hyperdrive-configurations
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare Hyperdrive API — Configurations business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-hyperdrive-configs
+      path: /accounts/{account_id}/hyperdrive/configs
+      operations:
+      - name: listhyperdriveconfigs
+        method: GET
+        description: Cloudflare List Hyperdrive Configurations
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: createhyperdriveconfig
+        method: POST
+        description: Cloudflare Create Hyperdrive Configuration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: accounts-account_id-hyperdrive-configs-config_id
+      path: /accounts/{account_id}/hyperdrive/configs/{config_id}
+      operations:
+      - name: gethyperdriveconfig
+        method: GET
+        description: Cloudflare Get Hyperdrive Configuration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatehyperdriveconfig
+        method: PUT
+        description: Cloudflare Update Hyperdrive Configuration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: deletehyperdriveconfig
+        method: DELETE
+        description: Cloudflare Delete Hyperdrive Configuration
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: hyperdrive-configurations-rest
+    port: 8080
+    description: REST adapter for Cloudflare Hyperdrive API — Configurations. One Spectral-compliant resource per consumed
+      operation, prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/hyperdrive/configs
+      name: accounts-account-id-hyperdrive-configs
+      description: REST surface for accounts-account_id-hyperdrive-configs.
+      operations:
+      - method: GET
+        name: listhyperdriveconfigs
+        description: Cloudflare List Hyperdrive Configurations
+        call: hyperdrive-configurations.listhyperdriveconfigs
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createhyperdriveconfig
+        description: Cloudflare Create Hyperdrive Configuration
+        call: hyperdrive-configurations.createhyperdriveconfig
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{account-id}/hyperdrive/configs/{config-id}
+      name: accounts-account-id-hyperdrive-configs-config-id
+      description: REST surface for accounts-account_id-hyperdrive-configs-config_id.
+      operations:
+      - method: GET
+        name: gethyperdriveconfig
+        description: Cloudflare Get Hyperdrive Configuration
+        call: hyperdrive-configurations.gethyperdriveconfig
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: updatehyperdriveconfig
+        description: Cloudflare Update Hyperdrive Configuration
+        call: hyperdrive-configurations.updatehyperdriveconfig
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deletehyperdriveconfig
+        description: Cloudflare Delete Hyperdrive Configuration
+        call: hyperdrive-configurations.deletehyperdriveconfig
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: hyperdrive-configurations-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare Hyperdrive API — Configurations. One tool per consumed operation, routed inline
+      through this capability's consumes block.
+    tools:
+    - name: cloudflare-list-hyperdrive-configurations
+      description: Cloudflare List Hyperdrive Configurations
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: hyperdrive-configurations.listhyperdriveconfigs
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-create-hyperdrive-configuration
+      description: Cloudflare Create Hyperdrive Configuration
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: hyperdrive-configurations.createhyperdriveconfig
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-get-hyperdrive-configuration
+      description: Cloudflare Get Hyperdrive Configuration
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: hyperdrive-configurations.gethyperdriveconfig
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-update-hyperdrive-configuration
+      description: Cloudflare Update Hyperdrive Configuration
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: hyperdrive-configurations.updatehyperdriveconfig
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-delete-hyperdrive-configuration
+      description: Cloudflare Delete Hyperdrive Configuration
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: hyperdrive-configurations.deletehyperdriveconfig
+      outputParameters:
+      - type: object
+        mapping: $.

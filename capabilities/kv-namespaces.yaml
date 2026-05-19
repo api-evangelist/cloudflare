@@ -1,0 +1,212 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare KV API — Namespaces
+  description: 'Cloudflare KV API — Namespaces. 5 operations. Lead operation: Cloudflare List Kv Namespaces. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - Namespaces
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: kv-namespaces
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare KV API — Namespaces business capability. Self-contained, no shared references.
+    resources:
+    - name: accounts-account_id-storage-kv-namespaces
+      path: /accounts/{account_id}/storage/kv/namespaces
+      operations:
+      - name: listkvnamespaces
+        method: GET
+        description: Cloudflare List Kv Namespaces
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: page
+          in: query
+          type: integer
+          description: Page number of results.
+        - name: per_page
+          in: query
+          type: integer
+          description: Number of results per page.
+      - name: createkvnamespace
+        method: POST
+        description: Cloudflare Create Kv Namespace
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: accounts-account_id-storage-kv-namespaces-namespace_id
+      path: /accounts/{account_id}/storage/kv/namespaces/{namespace_id}
+      operations:
+      - name: getkvnamespace
+        method: GET
+        description: Cloudflare Get Kv Namespace
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: renamekvnamespace
+        method: PUT
+        description: Cloudflare Rename Kv Namespace
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: deletekvnamespace
+        method: DELETE
+        description: Cloudflare Delete Kv Namespace
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: kv-namespaces-rest
+    port: 8080
+    description: REST adapter for Cloudflare KV API — Namespaces. One Spectral-compliant resource per consumed operation,
+      prefixed with /v1.
+    resources:
+    - path: /v1/accounts/{account-id}/storage/kv/namespaces
+      name: accounts-account-id-storage-kv-namespaces
+      description: REST surface for accounts-account_id-storage-kv-namespaces.
+      operations:
+      - method: GET
+        name: listkvnamespaces
+        description: Cloudflare List Kv Namespaces
+        call: kv-namespaces.listkvnamespaces
+        with:
+          page: rest.page
+          per_page: rest.per_page
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createkvnamespace
+        description: Cloudflare Create Kv Namespace
+        call: kv-namespaces.createkvnamespace
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/accounts/{account-id}/storage/kv/namespaces/{namespace-id}
+      name: accounts-account-id-storage-kv-namespaces-namespace-id
+      description: REST surface for accounts-account_id-storage-kv-namespaces-namespace_id.
+      operations:
+      - method: GET
+        name: getkvnamespace
+        description: Cloudflare Get Kv Namespace
+        call: kv-namespaces.getkvnamespace
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PUT
+        name: renamekvnamespace
+        description: Cloudflare Rename Kv Namespace
+        call: kv-namespaces.renamekvnamespace
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deletekvnamespace
+        description: Cloudflare Delete Kv Namespace
+        call: kv-namespaces.deletekvnamespace
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: kv-namespaces-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare KV API — Namespaces. One tool per consumed operation, routed inline through this
+      capability's consumes block.
+    tools:
+    - name: cloudflare-list-kv-namespaces
+      description: Cloudflare List Kv Namespaces
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: kv-namespaces.listkvnamespaces
+      with:
+        page: tools.page
+        per_page: tools.per_page
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-create-kv-namespace
+      description: Cloudflare Create Kv Namespace
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: kv-namespaces.createkvnamespace
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-get-kv-namespace
+      description: Cloudflare Get Kv Namespace
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: kv-namespaces.getkvnamespace
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-rename-kv-namespace
+      description: Cloudflare Rename Kv Namespace
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: kv-namespaces.renamekvnamespace
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-delete-kv-namespace
+      description: Cloudflare Delete Kv Namespace
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: kv-namespaces.deletekvnamespace
+      outputParameters:
+      - type: object
+        mapping: $.

@@ -1,0 +1,130 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare DNS API — DNSSEC
+  description: 'Cloudflare DNS API — DNSSEC. 3 operations. Lead operation: Cloudflare Get Dnssec Settings. Self-contained
+    Naftiko capability covering one Cloudflare business surface.'
+  tags:
+  - Cloudflare
+  - DNSSEC
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_API_KEY: CLOUDFLARE_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: dns-dnssec
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare DNS API — DNSSEC business capability. Self-contained, no shared references.
+    resources:
+    - name: zones-zone_id-dnssec
+      path: /zones/{zone_id}/dnssec
+      operations:
+      - name: getdnssecsettings
+        method: GET
+        description: Cloudflare Get Dnssec Settings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+      - name: updatednssecsettings
+        method: PATCH
+        description: Cloudflare Update Dnssec Settings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: deletednssecsettings
+        method: DELETE
+        description: Cloudflare Delete Dnssec Settings
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: dns-dnssec-rest
+    port: 8080
+    description: REST adapter for Cloudflare DNS API — DNSSEC. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/zones/{zone-id}/dnssec
+      name: zones-zone-id-dnssec
+      description: REST surface for zones-zone_id-dnssec.
+      operations:
+      - method: GET
+        name: getdnssecsettings
+        description: Cloudflare Get Dnssec Settings
+        call: dns-dnssec.getdnssecsettings
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updatednssecsettings
+        description: Cloudflare Update Dnssec Settings
+        call: dns-dnssec.updatednssecsettings
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deletednssecsettings
+        description: Cloudflare Delete Dnssec Settings
+        call: dns-dnssec.deletednssecsettings
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: dns-dnssec-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Cloudflare DNS API — DNSSEC. One tool per consumed operation, routed inline through this
+      capability's consumes block.
+    tools:
+    - name: cloudflare-get-dnssec-settings
+      description: Cloudflare Get Dnssec Settings
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: dns-dnssec.getdnssecsettings
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-update-dnssec-settings
+      description: Cloudflare Update Dnssec Settings
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: dns-dnssec.updatednssecsettings
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: cloudflare-delete-dnssec-settings
+      description: Cloudflare Delete Dnssec Settings
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: dns-dnssec.deletednssecsettings
+      outputParameters:
+      - type: object
+        mapping: $.
