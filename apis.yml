@@ -257,9 +257,16 @@ apis:
     url: capabilities/workers-ai-ai-inference.yaml
   - type: NaftikoCapability
     url: capabilities/workers-ai-openai-compatible.yaml
+  - url: https://developers.cloudflare.com/workers-ai/models/
+    type: APIReference
+    name: Model Catalog
+  - url: https://developers.cloudflare.com/workers-ai/platform/pricing/
+    type: Pricing
   description: The Cloudflare Workers AI API enables developers to run machine learning models on Cloudflare's global network
-    via a REST API. It supports text generation, embeddings, image classification, speech recognition, and other AI tasks
-    with OpenAI-compatible endpoints.
+    via a REST API. The catalog offers 78+ open-source models spanning text generation (Llama 3.1, Mistral, Qwen3, Kimi K2.6),
+    embeddings (BGE, EmbeddingGemma), text-to-image (Flux 2, Stable Diffusion XL), automatic speech recognition (Whisper, Deepgram
+    Nova 3, Flux), text-to-speech (Aura 2, MeloTTS), image-to-text (LLaVA), translation (Indic Trans2, M2M100), classification,
+    object detection (DETR), and voice activity detection. OpenAI-compatible endpoints are available.
 - aid: cloudflare:cloudflare-ai-gateway-api
   name: Cloudflare AI Gateway API
   tags:
@@ -273,6 +280,8 @@ apis:
     type: OpenAPI
   - url: https://developers.cloudflare.com/ai-gateway/
     type: Documentation
+  - url: https://developers.cloudflare.com/ai-gateway/usage/providers/
+    type: APIReference
   - url: https://developers.cloudflare.com/ai-gateway/get-started/
     type: GettingStarted
   - type: NaftikoCapability
@@ -280,8 +289,10 @@ apis:
   - type: NaftikoCapability
     url: capabilities/ai-gateway-logs.yaml
   description: Cloudflare AI Gateway provides visibility and control over AI applications with analytics, logging, caching,
-    rate limiting, request retries, and model fallback. It supports multiple AI providers including OpenAI, Anthropic, and
-    Google Gemini through a unified interface.
+    rate limiting, request retries, model fallback, guardrails, and evaluations. It supports 23+ AI providers including OpenAI,
+    Anthropic, Google AI Studio, Google Vertex AI, Mistral, Cohere, Groq, DeepSeek, Cerebras, xAI, Perplexity, Replicate,
+    HuggingFace, Amazon Bedrock, Azure OpenAI, ElevenLabs, Deepgram, and Workers AI through a unified interface. A new unified
+    REST API launched May 21, 2026 allowing developers to call any model through a single endpoint.
 - aid: cloudflare:cloudflare-r2-api
   name: Cloudflare R2 API
   tags:
@@ -1033,9 +1044,57 @@ apis:
   properties:
   - url: https://developers.cloudflare.com/r2-sql/
     type: Documentation
-  description: The Cloudflare R2 SQL API enables developers to query data stored in R2 using standard SQL syntax. It provides
-    a serverless query engine for analyzing Iceberg tables and structured data in R2 buckets without requiring separate data
-    warehouse infrastructure.
+  description: The Cloudflare R2 SQL API enables developers to query data stored in R2 using standard SQL syntax including
+    JOINs, subqueries, and multi-table queries (added May 2026). It provides a serverless query engine for analyzing Iceberg
+    tables and structured data in R2 buckets without requiring separate data warehouse infrastructure.
+- aid: cloudflare:cloudflare-workers-vpc-api
+  name: Cloudflare Workers VPC API
+  tags:
+  - Networking
+  - Private Connectivity
+  - VPC
+  humanURL: https://developers.cloudflare.com/workers-vpc/
+  baseURL: https://api.cloudflare.com
+  properties:
+  - url: https://developers.cloudflare.com/workers-vpc/
+    type: Documentation
+  - url: https://developers.cloudflare.com/workers-vpc/get-started/
+    type: GettingStarted
+  description: Cloudflare Workers VPC allows Workers to connect to private APIs, services, and databases in external clouds
+    (AWS, Azure, GCP, on-premise) that are not accessible from the public Internet. As of May 2026 Workers can also reach
+    destinations connected through Cloudflare WAN on-ramps (GRE, IPsec, CNI), Cloudflare Mesh, and routes announced through
+    Cloudflare Tunnel. Bindings are configured via wrangler.jsonc rather than a separate REST surface.
+- aid: cloudflare:cloudflare-artifacts-api
+  name: Cloudflare Artifacts API
+  tags:
+  - Git
+  - Storage
+  - Version Control
+  humanURL: https://developers.cloudflare.com/artifacts/
+  baseURL: https://api.cloudflare.com
+  properties:
+  - url: https://developers.cloudflare.com/artifacts/
+    type: Documentation
+  - url: https://developers.cloudflare.com/artifacts/api/
+    type: APIReference
+  description: Cloudflare Artifacts is a versioned file storage system that speaks Git, enabling programmatic repository creation
+    and access via Workers, REST API, and Git clients. Recent additions (May 2026) include event subscriptions for repository
+    lifecycle events and Wrangler CLI management commands. Currently in closed beta.
+- aid: cloudflare:cloudflare-agents-managed-api
+  name: Claude Managed Agents on Cloudflare API
+  tags:
+  - Agents
+  - Anthropic
+  - Artificial Intelligence
+  - Managed Agents
+  humanURL: https://blog.cloudflare.com/announcing-claude-managed-agents-on-cloudflare/
+  baseURL: https://api.cloudflare.com
+  properties:
+  - url: https://blog.cloudflare.com/announcing-claude-managed-agents-on-cloudflare/
+    type: Documentation
+  description: Claude Managed Agents on Cloudflare is a partnership offering announced May 19, 2026 that exposes Anthropic-managed
+    Claude agents running on Cloudflare's Agents SDK / Durable Objects substrate. It integrates with Workers AI, AI Gateway,
+    and Cloudflare CASB's Claude Compliance API support announced the same week.
 name: Cloudflare
 tags:
 - AI Gateway
@@ -1057,7 +1116,7 @@ tags:
 kind: contract
 access: 3rd-Party
 created: 2024/04/14
-modified: '2026-05-19'
+modified: '2026-05-22'
 position: Consuming
 segments:
 - Gateways
@@ -1152,13 +1211,40 @@ common:
   name: Go SDK
 - url: https://github.com/cloudflare/cloudflare-typescript
   type: SDK
-  name: TypeScript SDK
+  name: TypeScript SDK (Stainless-generated)
 - url: https://www.npmjs.com/package/cloudflare
   type: SDK
   name: Node.js SDK (npm)
 - url: https://pypi.org/project/cloudflare/
   type: SDK
   name: Python SDK (PyPI)
+- url: https://github.com/cloudflare/agents
+  type: SDK
+  name: Agents SDK (npm:agents)
+- url: https://www.npmjs.com/package/agents
+  type: SDK
+  name: Agents SDK (npm)
+- url: https://github.com/cloudflare/workers-sdk
+  type: GitHubRepository
+  name: workers-sdk (Wrangler CLI monorepo)
+- url: https://github.com/cloudflare/workerd
+  type: GitHubRepository
+  name: workerd (Workers runtime)
+- url: https://github.com/cloudflare/workers-rs
+  type: GitHubRepository
+  name: workers-rs (Rust on Workers)
+- url: https://github.com/cloudflare/quiche
+  type: GitHubRepository
+  name: quiche (QUIC / HTTP3)
+- url: https://github.com/cloudflare/cloudflared
+  type: GitHubRepository
+  name: cloudflared (Tunnel client)
+- url: https://blog.cloudflare.com/rss/
+  type: RSS
+  name: Cloudflare Blog RSS
+- url: https://developers.cloudflare.com/changelog/rss/index.xml
+  type: RSS
+  name: Developer Changelog RSS
 - url: https://developers.cloudflare.com/learning-paths/
   type: KnowledgeCenter
 - url: https://developers.cloudflare.com/products/
@@ -1167,24 +1253,40 @@ common:
   data:
   - REST API at api.cloudflare.com/client/v4 (1,200 req/5min global cap)
   - GraphQL Analytics API for traffic, security, Workers analytics
-  - Workers serverless edge compute (100k req/day Free, 10M+ Paid)
+  - Workers serverless edge compute (100k req/day Free, 10M+ Paid at $5/mo, +$0.30/M requests, +$0.02/M CPU ms)
   - Workers KV low-latency key-value storage
-  - R2 object storage with zero egress fees
-  - D1 serverless SQLite database
-  - Durable Objects for stateful coordination
+  - R2 object storage with zero egress fees (S3-compatible)
+  - R2 SQL serverless analytic query engine with JOINs over Iceberg tables (May 2026)
+  - D1 serverless SQLite with global read replication and 30-day Time Travel
+  - Durable Objects for stateful coordination and per-instance SQL
   - Cloudflare Images for storage and on-the-fly resizing
   - Cloudflare Stream for VOD and live video
+  - Realtime SFU, TURN, and RealtimeKit for WebRTC media
   - Pages for static site / JAMstack hosting
   - 'Free plan: unlimited bandwidth, DDoS, Universal SSL'
   - Pro at $25/zone/mo with WAF and image optimization
   - Business at $200/zone/mo with custom SSL, 100% SLA
-  - Enterprise from ~$5k/zone/mo with Bot Management, Argo
-  - AI Gateway for LLM proxying and observability
-  - Vectorize for vector search; Hyperdrive for connection pooling
+  - Enterprise from ~$5k/zone/mo with Bot Management, Argo, API Shield
+  - Workers AI catalog of 78+ open-source models with OpenAI-compatible endpoints
+  - AI Gateway with 23+ providers and a unified REST endpoint (launched May 21 2026)
+  - Vectorize vector database; Hyperdrive for connection pooling
+  - Workflows for durable multi-step execution (Dynamic Workflows added May 2026)
+  - Agents SDK on Durable Objects with WebSockets, scheduling, MCP support
+  - Containers serverless container runtime co-located with Workers (SSH via Wrangler)
+  - Browser Run (formerly Browser Rendering) with /screenshot, /pdf, /markdown, /scrape, /crawl Quick Actions
+  - Workers VPC for private connectivity into AWS / Azure / GCP / on-prem and Cloudflare WAN
+  - Artifacts versioned Git-compatible file storage (closed beta)
+  - Cloudflare One SASE platform (Access, Tunnel, Gateway, Browser Isolation, CASB, DLP)
+  - Magic WAN, Magic Transit, Magic Firewall for network-as-a-service
+  - 14+ remote MCP servers at *.mcp.cloudflare.com for AI agent access to Cloudflare APIs
+  - Pingora reverse proxy and quiche QUIC/HTTP3 open-source reference implementations
   sources:
   - https://www.cloudflare.com/plans/
   - https://developers.cloudflare.com/workers/platform/pricing/
-  updated: '2026-05-04'
+  - https://developers.cloudflare.com/changelog/
+  - https://developers.cloudflare.com/ai-gateway/usage/providers/
+  - https://developers.cloudflare.com/workers-ai/models/
+  updated: '2026-05-22'
 - type: UseCases
   data:
   - Accelerate and protect websites and web applications
@@ -1204,12 +1306,56 @@ common:
   - GitHub Actions for CI/CD deployments
   - S3-compatible API for R2 storage
   - OpenAI-compatible API for Workers AI
-  - Wrangler CLI for Workers development
-  - Puppeteer and Playwright for browser rendering
+  - Iceberg table format for R2 SQL analytic queries
+  - Wrangler CLI for Workers, Containers, Artifacts development
+  - Puppeteer, Playwright, Stagehand, and Chrome DevTools Protocol for Browser Run
   - SIEM and log management integrations via Logpush
-  - MCP server support for AI agents
+  - 14+ remote MCP servers for AI agent access to Cloudflare control plane
+  - Claude Managed Agents partnership with Anthropic (May 2026)
+  - Claude Compliance API support in Cloudflare CASB (May 2026)
+  - Deepgram speech-to-text models hosted on Workers AI
+  - Stainless-generated SDKs (TypeScript v6.x, Go v7.x, Python)
 - type: Integrations
   url: https://developers.cloudflare.com/fundamentals/reference/partners/
-- name: MCP Server
+- name: MCP Server (monorepo)
   url: https://github.com/cloudflare/mcp-server-cloudflare
+  type: MCPServer
+- name: Observability MCP
+  url: https://observability.mcp.cloudflare.com/mcp
+  type: MCPServer
+- name: Workers Bindings MCP
+  url: https://bindings.mcp.cloudflare.com/mcp
+  type: MCPServer
+- name: Workers Builds MCP
+  url: https://builds.mcp.cloudflare.com/mcp
+  type: MCPServer
+- name: Radar MCP
+  url: https://radar.mcp.cloudflare.com/mcp
+  type: MCPServer
+- name: DNS Analytics MCP
+  url: https://dns-analytics.mcp.cloudflare.com/mcp
+  type: MCPServer
+- name: AI Gateway MCP
+  url: https://ai-gateway.mcp.cloudflare.com/mcp
+  type: MCPServer
+- name: Browser Rendering MCP
+  url: https://browser.mcp.cloudflare.com/mcp
+  type: MCPServer
+- name: Logpush MCP
+  url: https://logpush.mcp.cloudflare.com/mcp
+  type: MCPServer
+- name: GraphQL MCP
+  url: https://graphql.mcp.cloudflare.com/mcp
+  type: MCPServer
+- name: CASB MCP
+  url: https://casb.mcp.cloudflare.com/mcp
+  type: MCPServer
+- name: Container Sandbox MCP
+  url: https://containers.mcp.cloudflare.com/mcp
+  type: MCPServer
+- name: Audit Logs MCP
+  url: https://auditlogs.mcp.cloudflare.com/mcp
+  type: MCPServer
+- name: DEM MCP
+  url: https://dex.mcp.cloudflare.com/mcp
   type: MCPServer
