@@ -5,7 +5,7 @@ info:
     other adapter in this series which sits behind a Cloudflare Worker, the Cloudflare adapter
     IS the Worker. Mints scoped Cloudflare API Tokens at the edge with no origin round-trip;
     uses Workers KV for the operator key-directory cache; emits audit via Logpush for delivery
-    into the customer''s existing log pipeline (Datadog, Splunk, S3, etc.).'
+    into the customer''s existing log pipeline (Datadog, Splunk, S3, etc.). Runtime policy enforcement (signature verify, consent check, scope classify, audit emit) lives in the orchestration.steps below — each step that gates issuance carries on_failure: deny. Lint-time validation of this capability shape lives in the companion Polychro ruleset at https://github.com/api-evangelist/posts/blob/main/polychro/agent-onboarding-rules.yaml — Polychro is Naftiko''s governance layer, separate from the capability spec, and is the correct home for cross-object consistency rules that apply across every agent-onboarding capability.'
   tags:
   - Cloudflare
   - Cloudflare Workers
@@ -236,10 +236,3 @@ capability:
     skill:
       name: onboard-agent
       file: skills/onboard-agent.md
-  governance:
-  - { id: require-web-bot-auth, severity: blocking, description: 'All onboard calls must carry a valid RFC 9421 signature.', enforce_at: [runtime] }
-  - { id: require-consent-hash-match, severity: blocking, description: 'Submitted consent_hash must match AGENT_CONSENT_HASH.', enforce_at: [runtime] }
-  - { id: forbidden-scopes-deny, severity: blocking, description: 'Forbidden scopes return 403.', enforce_at: [runtime] }
-  - { id: approval-required-defer, severity: advisory, description: 'Approval-required scopes return 202 + status URL.', enforce_at: [runtime] }
-  - { id: token-bound-conditions, severity: advisory, description: 'Cloudflare API Tokens support condition blocks (IP ranges, time windows, request signing). Provider policy SHOULD constrain by source-IP if the operator publishes their egress ranges.', enforce_at: [runtime] }
-  - { id: kv-trust-cache-ttl, severity: advisory, description: 'Operator key cache TTL caps how quickly a revoked trusted-issuer propagates. Provider policy SHOULD set TTL <= 3600s for typical agent ecosystems.', enforce_at: [runtime] }
