@@ -1,0 +1,245 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Cloudflare Agent Onboarding (Edge-Native)
+  description: 'Cloudflare Agent Onboarding — the edge-is-the-gateway pattern. Unlike every
+    other adapter in this series which sits behind a Cloudflare Worker, the Cloudflare adapter
+    IS the Worker. Mints scoped Cloudflare API Tokens at the edge with no origin round-trip;
+    uses Workers KV for the operator key-directory cache; emits audit via Logpush for delivery
+    into the customer''s existing log pipeline (Datadog, Splunk, S3, etc.).'
+  tags:
+  - Cloudflare
+  - Cloudflare Workers
+  - Cloudflare API Tokens
+  - Cloudflare AI Gateway
+  - Workers KV
+  - Logpush
+  - R2
+  - Agent Onboarding
+  - Edge Compute
+  - Naftiko Capability
+  created: '2026-05-28'
+  modified: '2026-05-28'
+  related:
+  - https://apievangelist.com/2026/05/27/automated-agent-onboarding-is-a-naftiko-capability-not-a-gateway-feature/
+  - https://github.com/api-evangelist/cloudflare
+binds:
+- namespace: env
+  keys:
+    CLOUDFLARE_ACCOUNT_ID: CLOUDFLARE_ACCOUNT_ID
+    CLOUDFLARE_API_TOKEN: CLOUDFLARE_API_TOKEN
+    CLOUDFLARE_AUDIT_BUCKET: CLOUDFLARE_AUDIT_BUCKET
+    CLOUDFLARE_KV_NAMESPACE: CLOUDFLARE_KV_NAMESPACE
+    AGENT_TRUSTED_ISSUERS: AGENT_TRUSTED_ISSUERS
+    AGENT_CONSENT_HASH: AGENT_CONSENT_HASH
+capability:
+  consumes:
+  - type: http
+    namespace: cloudflare-api
+    baseUri: https://api.cloudflare.com/client/v4
+    description: Cloudflare API — Token issuance + revocation + AI Gateway access + R2 audit
+      writes. All operations targeted by the Worker; no separate origin.
+    resources:
+    - name: account-tokens
+      path: /accounts/{account_id}/tokens
+      operations:
+      - name: createtoken
+        method: POST
+        description: Create a scoped Cloudflare API Token. The token's permissions specify
+          which Cloudflare resources the agent can call; quota and rate-limit hit Workers
+          rate-limiting bindings, not the token itself.
+        outputRawFormat: json
+        outputParameters:
+        - { name: result, type: object, value: $. }
+        inputParameters:
+        - { name: account_id, in: path, type: string, required: true }
+        - { name: body, in: body, type: object, required: true }
+      - name: deletetoken
+        method: DELETE
+        description: Revoke a previously-issued token.
+        outputRawFormat: json
+        outputParameters:
+        - { name: result, type: object, value: $. }
+    - name: ai-gateway-logs
+      path: /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/logs
+      operations:
+      - name: queryaigatewaylogs
+        method: GET
+        description: For agents calling LLMs through Cloudflare's AI Gateway — the
+          observability surface that captures originating request signatures alongside
+          model usage.
+        outputRawFormat: json
+        outputParameters:
+        - { name: result, type: object, value: $. }
+    - name: r2-audit-objects
+      path: /accounts/{account_id}/r2/buckets/{bucket_name}/objects/{object_key}
+      operations:
+      - name: putauditobject
+        method: PUT
+        description: Write a structured agent-onboarding audit event to R2. The customer's
+          Logpush destinations pick this up via R2 event notifications.
+        outputRawFormat: json
+        outputParameters:
+        - { name: result, type: object, value: $. }
+        inputParameters:
+        - { name: bucket_name, in: path, type: string, required: true }
+        - { name: object_key, in: path, type: string, required: true }
+        - { name: body, in: body, type: object, required: true }
+    authentication:
+      type: bearer
+      token: '{{env.CLOUDFLARE_API_TOKEN}}'
+  - type: workers-kv
+    namespace: cloudflare-kv
+    description: Workers KV namespace caching operator key directories (e.g.
+      anthropic.com/.well-known/web-bot-keys/) with TTL. Revoking a trusted issuer is one
+      KV write; propagates globally in ~60s.
+    binding: AGENT_TRUST_CACHE
+    operations:
+    - name: getkey
+      description: Read cached operator key bundle.
+    - name: putkey
+      description: Write/update operator key bundle.
+  orchestration:
+  - name: onboard-agent
+    description: All steps execute at the edge in one Worker invocation — no round-trip
+      to an origin gateway. Verify Web Bot Auth signature against KV-cached operator keys,
+      classify scopes against the Worker-bound policy, mint a Cloudflare API Token with
+      precise permission scope, write audit to R2, return credential.
+    inputs:
+    - { name: signature, type: object, required: true }
+    - { name: signature_agent, type: string, required: true }
+    - { name: skill_id, type: string, required: true }
+    - { name: requested_scopes, type: array, required: true }
+    - { name: consent_hash, type: string, required: true }
+    - { name: contact, type: object, required: true }
+    steps:
+    - id: load_operator_keys
+      type: builtin.kv.get
+      description: Fetch the operator's key directory from Workers KV; if missing or
+        expired, fetch upstream and cache.
+      with:
+        binding: AGENT_TRUST_CACHE
+        key: 'keys:${input.signature_agent}'
+        fallback_fetch: 'https://${input.signature_agent}/.well-known/web-bot-keys/'
+        ttl_seconds: 3600
+    - id: verify_signature
+      type: builtin.web-bot-auth.verify
+      with:
+        signature: '${input.signature}'
+        agent: '${input.signature_agent}'
+        keys: '${steps.load_operator_keys.keys}'
+        trusted_issuers: '{{env.AGENT_TRUSTED_ISSUERS}}'
+      on_failure: deny
+    - id: verify_consent
+      type: builtin.policy.assert
+      with:
+        assert: '${input.consent_hash} == {{env.AGENT_CONSENT_HASH}}'
+      on_failure: deny
+    - id: classify_scopes
+      type: builtin.policy.scope-classify
+      with:
+        requested: '${input.requested_scopes}'
+    - id: mint_token
+      call: cloudflare-api.createtoken
+      description: Mint a Cloudflare API Token with permission groups derived from
+        the scope tier. The token value is returned to the agent exactly once.
+      with:
+        account_id: '{{env.CLOUDFLARE_ACCOUNT_ID}}'
+        body:
+          name: 'agent-${steps.verify_signature.agent_id}'
+          policies:
+          - effect: allow
+            permission_groups: '${steps.classify_scopes.cloudflare_permission_groups}'
+            resources:
+              'com.cloudflare.api.account.${env.CLOUDFLARE_ACCOUNT_ID}': '*'
+          not_before: '${now.iso}'
+          expires_on: '${now.plus_days(30).iso}'
+          condition:
+            request.ip:
+              in: '${input.contact.allowed_ip_ranges}'
+              not_in: []
+    - id: emit_audit
+      call: cloudflare-api.putauditobject
+      description: Write the structured audit event to the R2 audit bucket. Customer
+        Logpush destinations (Datadog/Splunk/S3/GCS/Sumo/Mezmo/New Relic) receive it
+        automatically through their standard pipelines.
+      with:
+        account_id: '{{env.CLOUDFLARE_ACCOUNT_ID}}'
+        bucket_name: '{{env.CLOUDFLARE_AUDIT_BUCKET}}'
+        object_key: 'agent-onboarded/${now.year}/${now.month}/${now.day}/${steps.verify_signature.agent_id}-${now.epoch_ms}.json'
+        body:
+          event_type: agent.onboarded
+          agent_id: '${steps.verify_signature.agent_id}'
+          operator: '${input.contact.operator}'
+          support_url: '${input.contact.support_url}'
+          purpose: '${input.contact.purpose}'
+          skill_id: '${input.skill_id}'
+          scope_tier: '${steps.classify_scopes.target}'
+          permission_groups: '${steps.classify_scopes.cloudflare_permission_groups}'
+          consent_hash: '${input.consent_hash}'
+          signature_keyid: '${steps.verify_signature.keyid}'
+          token_id: '${steps.mint_token.id}'
+          token_expires_on: '${steps.mint_token.expires_on}'
+    output:
+      agent_id: '${steps.verify_signature.agent_id}'
+      token_id: '${steps.mint_token.id}'
+      credential:
+        type: Bearer
+        header: Authorization
+        value: '${steps.mint_token.value}'
+        expires_on: '${steps.mint_token.expires_on}'
+        revocation_url: '/v1/agents/${steps.verify_signature.agent_id}/revoke'
+      scope_tier: '${steps.classify_scopes.target}'
+      permission_groups: '${steps.classify_scopes.cloudflare_permission_groups}'
+  - name: revoke-agent
+    description: Delete the API Token; propagates globally within Cloudflare's edge in seconds.
+    inputs:
+    - { name: token_id, type: string, required: true }
+    steps:
+    - id: delete_token
+      call: cloudflare-api.deletetoken
+      with:
+        account_id: '{{env.CLOUDFLARE_ACCOUNT_ID}}'
+        body:
+          token_id: '${input.token_id}'
+    output:
+      revoked: true
+  exposes:
+  - type: rest
+    namespace: cloudflare-agent-onboarding-rest
+    port: 8080
+    description: REST surface — but in the Cloudflare adapter the REST surface IS the
+      Worker route, not an origin endpoint. Deployment is wrangler-driven.
+    resources:
+    - path: /v1/agents/onboard
+      operations:
+      - { method: POST, name: onboardagent, call: orchestration.onboard-agent }
+    - path: /v1/agents/{agent_id}/revoke
+      operations:
+      - { method: POST, name: revokeagent, call: orchestration.revoke-agent }
+  - type: mcp
+    namespace: cloudflare-agent-onboarding-mcp
+    port: 9090
+    transport: http
+    tools:
+    - name: agent-register
+      hints: { readOnly: false, destructive: false, idempotent: false }
+      call: orchestration.onboard-agent
+    - name: agent-revoke
+      hints: { readOnly: false, destructive: true, idempotent: true }
+      call: orchestration.revoke-agent
+  - type: agent-skill
+    namespace: cloudflare-agent-onboarding-skill
+    description: 'Agent skill at /skills/onboard-agent.md. Cloudflare-specific addendum:
+      the credential issued is a Cloudflare API Token with precisely-scoped permission
+      groups; the agent can call any Cloudflare API surface (Workers, R2, KV, AI Gateway,
+      D1, etc.) within those permissions, gated by the token''s condition block.'
+    skill:
+      name: onboard-agent
+      file: skills/onboard-agent.md
+  governance:
+  - { id: require-web-bot-auth, severity: blocking, description: 'All onboard calls must carry a valid RFC 9421 signature.', enforce_at: [runtime] }
+  - { id: require-consent-hash-match, severity: blocking, description: 'Submitted consent_hash must match AGENT_CONSENT_HASH.', enforce_at: [runtime] }
+  - { id: forbidden-scopes-deny, severity: blocking, description: 'Forbidden scopes return 403.', enforce_at: [runtime] }
+  - { id: approval-required-defer, severity: advisory, description: 'Approval-required scopes return 202 + status URL.', enforce_at: [runtime] }
+  - { id: token-bound-conditions, severity: advisory, description: 'Cloudflare API Tokens support condition blocks (IP ranges, time windows, request signing). Provider policy SHOULD constrain by source-IP if the operator publishes their egress ranges.', enforce_at: [runtime] }
+  - { id: kv-trust-cache-ttl, severity: advisory, description: 'Operator key cache TTL caps how quickly a revoked trusted-issuer propagates. Provider policy SHOULD set TTL <= 3600s for typical agent ecosystems.', enforce_at: [runtime] }
