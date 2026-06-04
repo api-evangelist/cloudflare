@@ -1,0 +1,115 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Rotate Page Rule
+  summary: Create a page rule, edit its action, then delete it.
+  description: >-
+    A full lifecycle for a single page rule. The workflow creates a page rule,
+    edits it to apply a different action value, and then deletes it once the
+    change has been verified, threading the page rule identifier from step to
+    step. Each step inlines its request and asserts both the documented HTTP 200
+    status and the Cloudflare {success, result} envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareZonesApi
+  url: ../openapi/cloudflare-zones--openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: rotate-page-rule
+  summary: Create, edit, and delete a page rule in a single lifecycle.
+  description: >-
+    Provisions a page rule, edits its action to a new value, and then deletes it
+    once the edit is applied.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - urlPattern
+    - actionId
+    - actionValue
+    - newActionValue
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      urlPattern:
+        type: string
+        description: The URL match pattern (e.g. *example.com/images/*).
+      actionId:
+        type: string
+        description: The page rule action setting id (e.g. cache_level).
+      actionValue:
+        type: string
+        description: The initial value applied by the action.
+      newActionValue:
+        type: string
+        description: The replacement value applied during the edit.
+  steps:
+  - stepId: createRule
+    description: Create a page rule with its initial action.
+    operationId: page-rules-create-a-page-rule
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        targets:
+        - target: url
+          constraint:
+            operator: matches
+            value: $inputs.urlPattern
+        actions:
+        - id: $inputs.actionId
+          value: $inputs.actionValue
+        status: active
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      ruleId: $response.body#/result/id
+  - stepId: editRule
+    description: Edit the page rule to apply the replacement action value.
+    operationId: page-rules-edit-a-page-rule
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: pagerule_id
+      in: path
+      value: $steps.createRule.outputs.ruleId
+    requestBody:
+      contentType: application/json
+      payload:
+        actions:
+        - id: $inputs.actionId
+          value: $inputs.newActionValue
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      ruleId: $response.body#/result/id
+  - stepId: deleteRule
+    description: Delete the page rule now that the edit is complete.
+    operationId: page-rules-delete-a-page-rule
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: pagerule_id
+      in: path
+      value: $steps.createRule.outputs.ruleId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      deletedId: $response.body#/result/id
+  outputs:
+    ruleId: $steps.createRule.outputs.ruleId
+    deletedId: $steps.deleteRule.outputs.deletedId

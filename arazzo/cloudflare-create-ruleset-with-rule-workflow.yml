@@ -1,0 +1,116 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Create Ruleset with Rule
+  summary: Create a custom zone ruleset, append a rule, then read it back.
+  description: >-
+    Rulesets are the modern engine behind Cloudflare's WAF, transform rules, and
+    redirects. The workflow creates a custom zone ruleset in a phase, appends a
+    rule (an action plus a matching expression) to it, and reads the ruleset
+    back to confirm the rule landed. Each step inlines its request and asserts
+    both the documented HTTP 200 status and the Cloudflare {success, result}
+    envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareZonesApi
+  url: ../openapi/cloudflare-zones--openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: create-ruleset-with-rule
+  summary: Create a ruleset, append a rule, and read the ruleset back.
+  description: >-
+    Creates a custom zone ruleset for a phase, adds a rule that applies an
+    action when its expression matches, and reads the ruleset back to confirm
+    the rule was appended.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - name
+    - phase
+    - ruleAction
+    - ruleExpression
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      name:
+        type: string
+        description: A human-readable name for the ruleset.
+      phase:
+        type: string
+        description: >-
+          The phase the ruleset runs in (e.g. http_request_firewall_custom).
+      ruleAction:
+        type: string
+        description: The action the rule applies (e.g. block, challenge, skip).
+      ruleExpression:
+        type: string
+        description: The Cloudflare expression that triggers the rule.
+      ruleDescription:
+        type: string
+        description: A human-readable description for the rule.
+  steps:
+  - stepId: createRuleset
+    description: Create an empty custom ruleset in the supplied phase.
+    operationId: createZoneRuleset
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        name: $inputs.name
+        kind: zone
+        phase: $inputs.phase
+        rules: []
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      rulesetId: $response.body#/result/id
+  - stepId: addRule
+    description: Append a rule to the ruleset that applies an action on a match.
+    operationId: createZoneRulesetRule
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: ruleset_id
+      in: path
+      value: $steps.createRuleset.outputs.rulesetId
+    requestBody:
+      contentType: application/json
+      payload:
+        action: $inputs.ruleAction
+        expression: $inputs.ruleExpression
+        description: $inputs.ruleDescription
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      rulesetId: $response.body#/result/id
+  - stepId: getRuleset
+    description: Read the ruleset back to confirm the rule was appended.
+    operationId: getZoneRuleset
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: ruleset_id
+      in: path
+      value: $steps.createRuleset.outputs.rulesetId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      rules: $response.body#/result/rules
+  outputs:
+    rulesetId: $steps.createRuleset.outputs.rulesetId
+    rules: $steps.getRuleset.outputs.rules

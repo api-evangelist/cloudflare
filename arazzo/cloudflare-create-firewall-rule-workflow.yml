@@ -1,0 +1,104 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Create Firewall Rule
+  summary: Create a filter expression, attach a firewall rule to it, then list the rules.
+  description: >-
+    Legacy firewall rules pair a reusable filter (a match expression) with an
+    action such as block or challenge. The workflow first creates a filter from
+    a match expression, then creates a firewall rule that references that filter
+    id with an action, and finally lists the firewall rules in the zone to
+    confirm the new rule is present. Each step inlines its request and asserts
+    both the documented HTTP 200 status and the Cloudflare {success, result}
+    envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareZonesApi
+  url: ../openapi/cloudflare-zones--openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: create-firewall-rule
+  summary: Create a filter, attach a firewall rule action, and list the rules.
+  description: >-
+    Creates a filter from a match expression, attaches a firewall rule that
+    applies an action when the filter matches, and lists the zone's firewall
+    rules to confirm the result.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - expression
+    - action
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      expression:
+        type: string
+        description: >-
+          The Cloudflare filter expression (e.g. (ip.src eq 203.0.113.1)).
+      action:
+        type: string
+        description: The firewall action to apply (e.g. block, challenge, allow).
+      description:
+        type: string
+        description: A human-readable description for the firewall rule.
+  steps:
+  - stepId: createFilter
+    description: Create a reusable filter from the supplied match expression.
+    operationId: filters-create-filters
+    parameters:
+    - name: zone_identifier
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+      - expression: $inputs.expression
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      filterId: $response.body#/result/0/id
+  - stepId: createFirewallRule
+    description: >-
+      Create a firewall rule that applies the supplied action when the new
+      filter matches.
+    operationId: firewall-rules-create-firewall-rules
+    parameters:
+    - name: zone_identifier
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+      - filter:
+          id: $steps.createFilter.outputs.filterId
+        action: $inputs.action
+        description: $inputs.description
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      ruleId: $response.body#/result/0/id
+  - stepId: listFirewallRules
+    description: List the zone's firewall rules to confirm the new rule is present.
+    operationId: firewall-rules-list-firewall-rules
+    parameters:
+    - name: zone_identifier
+      in: path
+      value: $inputs.zoneId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      rules: $response.body#/result
+  outputs:
+    filterId: $steps.createFilter.outputs.filterId
+    ruleId: $steps.createFirewallRule.outputs.ruleId
+    rules: $steps.listFirewallRules.outputs.rules

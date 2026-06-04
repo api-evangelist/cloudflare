@@ -1,0 +1,129 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Upsert DNS Record
+  summary: Find a DNS record by name and update it if present, otherwise create it.
+  description: >-
+    An idempotent DNS provisioning pattern. The workflow lists records in the
+    zone filtered by name, then branches: when a matching record already exists
+    it patches that record with the supplied content, and when none is found it
+    creates a new record. Every step inlines its request and asserts both the
+    documented HTTP 200 status and the Cloudflare {success, result} envelope
+    flag so the flow can be read and executed on its own.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareDnsApi
+  url: ../openapi/cloudflare-dns-openapi.yml
+  type: openapi
+workflows:
+- workflowId: upsert-dns-record
+  summary: Upsert a DNS record in a zone, matching on the record name.
+  description: >-
+    Searches the zone for a record with the supplied name and either updates the
+    matched record or creates a new one.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - type
+    - name
+    - content
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      type:
+        type: string
+        description: The DNS record type (e.g. A, AAAA, CNAME, TXT).
+      name:
+        type: string
+        description: The DNS record name to match on and write (e.g. www.example.com).
+      content:
+        type: string
+        description: The DNS record content value to write.
+  steps:
+  - stepId: findRecord
+    description: >-
+      List records in the zone filtered by the supplied name, returning at most
+      one match for the decision.
+    operationId: listDnsRecords
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: name
+      in: query
+      value: $inputs.name
+    - name: per_page
+      in: query
+      value: 1
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      matchedRecordId: $response.body#/result/0/id
+    onSuccess:
+    - name: recordExists
+      type: goto
+      stepId: updateExisting
+      criteria:
+      - context: $response.body
+        condition: $.result.length > 0
+        type: jsonpath
+    - name: recordMissing
+      type: goto
+      stepId: createNew
+      criteria:
+      - context: $response.body
+        condition: $.result.length == 0
+        type: jsonpath
+  - stepId: updateExisting
+    description: Patch the matched record with the supplied content.
+    operationId: updateDnsRecord
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: dns_record_id
+      in: path
+      value: $steps.findRecord.outputs.matchedRecordId
+    requestBody:
+      contentType: application/json
+      payload:
+        type: $inputs.type
+        name: $inputs.name
+        content: $inputs.content
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      recordId: $response.body#/result/id
+    onSuccess:
+    - name: done
+      type: end
+  - stepId: createNew
+    description: Create a new record when no existing record matched the name.
+    operationId: createDnsRecord
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        type: $inputs.type
+        name: $inputs.name
+        content: $inputs.content
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      recordId: $response.body#/result/id
+  outputs:
+    updatedRecordId: $steps.updateExisting.outputs.recordId
+    createdRecordId: $steps.createNew.outputs.recordId

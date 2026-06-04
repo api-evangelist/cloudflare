@@ -1,0 +1,110 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Purge Cache
+  summary: Confirm a zone is active, then purge its cache by files or entirely.
+  description: >-
+    A safe cache invalidation flow. The workflow first reads the zone details to
+    confirm it is the intended target, then branches on whether a list of file
+    URLs was supplied: when files are provided it purges only those URLs, and
+    otherwise it purges everything in the zone. Each step inlines its request
+    and asserts both the documented HTTP 200 status and the Cloudflare
+    {success, result} envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareZonesApi
+  url: ../openapi/cloudflare-zones--openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: purge-cache
+  summary: Verify the zone, then purge cache by files or purge everything.
+  description: >-
+    Reads the zone details and branches: when a list of file URLs is supplied it
+    purges those specific files, otherwise it purges the entire cache.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone whose cache will be purged.
+      files:
+        type: array
+        items:
+          type: string
+        description: >-
+          Optional list of absolute file URLs to purge. When omitted, the entire
+          cache is purged.
+  steps:
+  - stepId: getZone
+    description: Read the zone details to confirm the purge targets the intended zone.
+    operationId: zones-0-get
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      zoneName: $response.body#/result/name
+    onSuccess:
+    - name: hasFiles
+      type: goto
+      stepId: purgeFiles
+      criteria:
+      - context: $inputs
+        condition: $.files.length > 0
+        type: jsonpath
+    - name: noFiles
+      type: goto
+      stepId: purgeEverything
+      criteria:
+      - context: $inputs
+        condition: $.files.length == 0
+        type: jsonpath
+  - stepId: purgeFiles
+    description: Purge only the supplied list of file URLs from the cache.
+    operationId: zone-purge
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        files: $inputs.files
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      purgeId: $response.body#/result/id
+    onSuccess:
+    - name: done
+      type: end
+  - stepId: purgeEverything
+    description: Purge the entire cache for the zone when no files were supplied.
+    operationId: zone-purge
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        purge_everything: true
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      purgeId: $response.body#/result/id
+  outputs:
+    zoneName: $steps.getZone.outputs.zoneName
+    filesPurgeId: $steps.purgeFiles.outputs.purgeId
+    everythingPurgeId: $steps.purgeEverything.outputs.purgeId

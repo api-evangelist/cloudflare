@@ -1,0 +1,97 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Rotate Worker Route
+  summary: Create a Worker route, update its pattern, then delete it.
+  description: >-
+    A full lifecycle for a single Worker route binding. The workflow creates a
+    route mapping a URL pattern to a Worker script, updates the route to a new
+    pattern, and deletes it once the change is applied, threading the route
+    identifier from step to step. Each step inlines its request and asserts the
+    documented HTTP 200 status, and the Cloudflare {success, result} envelope
+    flag where the response carries one.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareWorkersApi
+  url: ../openapi/cloudflare-workers-openapi.yml
+  type: openapi
+workflows:
+- workflowId: rotate-worker-route
+  summary: Create, update, and delete a Worker route in a single lifecycle.
+  description: >-
+    Provisions a Worker route, updates its URL pattern, and then deletes it.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - routePattern
+    - script
+    - newRoutePattern
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      routePattern:
+        type: string
+        description: The initial URL pattern that should invoke the Worker.
+      script:
+        type: string
+        description: The name of the Worker script the route maps to.
+      newRoutePattern:
+        type: string
+        description: The replacement URL pattern applied during the update.
+  steps:
+  - stepId: createRoute
+    description: Create a route mapping the initial pattern to the Worker script.
+    operationId: createRoute
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        pattern: $inputs.routePattern
+        script: $inputs.script
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      routeId: $response.body#/result/id
+  - stepId: updateRoute
+    description: Update the route to use the replacement URL pattern.
+    operationId: updateRoute
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: route_id
+      in: path
+      value: $steps.createRoute.outputs.routeId
+    requestBody:
+      contentType: application/json
+      payload:
+        pattern: $inputs.newRoutePattern
+        script: $inputs.script
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      routeId: $response.body#/result/id
+  - stepId: deleteRoute
+    description: Delete the route now that the update is complete.
+    operationId: deleteRoute
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: route_id
+      in: path
+      value: $steps.createRoute.outputs.routeId
+    successCriteria:
+    - condition: $statusCode == 200
+  outputs:
+    routeId: $steps.createRoute.outputs.routeId

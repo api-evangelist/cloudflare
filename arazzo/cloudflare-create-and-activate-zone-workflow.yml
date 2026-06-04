@@ -1,0 +1,96 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Create and Activate Zone
+  summary: Create a zone, trigger an activation check, and poll its status.
+  description: >-
+    Brings a new domain onto Cloudflare and drives it toward activation. The
+    workflow creates a zone, requests an activation check so Cloudflare
+    re-validates the domain's name servers, and then polls the zone details
+    until it reports an active status. Each step inlines its request and asserts
+    both the documented HTTP 200 status and the Cloudflare {success, result}
+    envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareApi
+  url: ../openapi/cloudflare-openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: create-and-activate-zone
+  summary: Create a zone, request activation, and poll until it is active.
+  description: >-
+    Provisions a new zone, triggers an activation check, and repeatedly reads
+    the zone details until the activation status becomes active.
+  inputs:
+    type: object
+    required:
+    - accountId
+    - zoneName
+    properties:
+      accountId:
+        type: string
+        description: The account identifier that will own the new zone.
+      zoneName:
+        type: string
+        description: The domain name for the new zone (e.g. example.com).
+  steps:
+  - stepId: createZone
+    description: Create a new full zone for the domain under the supplied account.
+    operationId: zones-post
+    requestBody:
+      contentType: application/json
+      payload:
+        name: $inputs.zoneName
+        account:
+          id: $inputs.accountId
+        type: full
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      zoneId: $response.body#/result/id
+  - stepId: triggerActivationCheck
+    description: >-
+      Request an activation check so Cloudflare re-validates the zone's name
+      server delegation.
+    operationId: put-zones-zone_id-activation_check
+    parameters:
+    - name: zone_id
+      in: path
+      value: $steps.createZone.outputs.zoneId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      checkedZoneId: $response.body#/result/id
+  - stepId: pollZoneStatus
+    description: >-
+      Read the zone details and confirm the activation status has become active,
+      retrying while it is still pending.
+    operationId: zones-0-get
+    parameters:
+    - name: zone_id
+      in: path
+      value: $steps.createZone.outputs.zoneId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    - context: $response.body
+      condition: $.result.status == "active"
+      type: jsonpath
+    onFailure:
+    - name: retryStatus
+      type: retry
+      retryAfter: 30
+      retryLimit: 10
+      stepId: pollZoneStatus
+    outputs:
+      status: $response.body#/result/status
+  outputs:
+    zoneId: $steps.createZone.outputs.zoneId
+    status: $steps.pollZoneStatus.outputs.status

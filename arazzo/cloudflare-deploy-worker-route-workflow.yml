@@ -1,0 +1,103 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Deploy Worker Route
+  summary: Create a Worker, bind a zone route to it, then list the zone routes.
+  description: >-
+    Deploys a Cloudflare Worker and wires it to incoming traffic. The workflow
+    creates a Worker in the account, maps a URL pattern in the zone to that
+    Worker via a route, and lists the zone's routes to confirm the binding. Each
+    step inlines its request and asserts both the documented HTTP 200 status and
+    the Cloudflare {success, result} envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareWorkersApi
+  url: ../openapi/cloudflare-workers-openapi.yml
+  type: openapi
+workflows:
+- workflowId: deploy-worker-route
+  summary: Create a Worker, attach a route in a zone, and list the routes.
+  description: >-
+    Creates a Worker in the account, binds a URL pattern in the zone to the
+    Worker through a route, and lists the zone's routes to confirm the binding.
+  inputs:
+    type: object
+    required:
+    - accountId
+    - zoneId
+    - workerName
+    - mainModule
+    - routePattern
+    properties:
+      accountId:
+        type: string
+        description: The unique identifier of the Cloudflare account.
+      zoneId:
+        type: string
+        description: The unique identifier of the zone the route belongs to.
+      workerName:
+        type: string
+        description: The name of the Worker to create.
+      mainModule:
+        type: string
+        description: The entry point module for the Worker.
+      routePattern:
+        type: string
+        description: The URL pattern that should invoke the Worker (e.g. example.com/api/*).
+  steps:
+  - stepId: createWorker
+    description: Create a Worker in the account with the supplied name and entry module.
+    operationId: createWorker
+    parameters:
+    - name: account_id
+      in: path
+      value: $inputs.accountId
+    requestBody:
+      contentType: application/json
+      payload:
+        name: $inputs.workerName
+        main_module: $inputs.mainModule
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      workerId: $response.body#/result/id
+      workerName: $response.body#/result/name
+  - stepId: createRoute
+    description: Map the supplied URL pattern in the zone to the new Worker.
+    operationId: createRoute
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        pattern: $inputs.routePattern
+        script: $steps.createWorker.outputs.workerName
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      routeId: $response.body#/result/id
+  - stepId: listRoutes
+    description: List the zone's Worker routes to confirm the new binding is present.
+    operationId: listRoutes
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      routes: $response.body#/result
+  outputs:
+    workerId: $steps.createWorker.outputs.workerId
+    routeId: $steps.createRoute.outputs.routeId
+    routes: $steps.listRoutes.outputs.routes

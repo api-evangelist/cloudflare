@@ -1,0 +1,100 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Create DNS Record and Verify
+  summary: Create a DNS record in a zone and read it back to confirm it was stored.
+  description: >-
+    A foundational DNS provisioning flow. The workflow creates a new DNS record
+    in the target zone, captures the returned record identifier, and then reads
+    that record back by id to confirm the values Cloudflare persisted match what
+    was submitted. Every step inlines its request so the flow can be read and
+    executed without opening the underlying OpenAPI description. Cloudflare wraps
+    responses in a {success, result} envelope, so each step asserts both the
+    documented HTTP 200 status and that the envelope reports success.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareDnsApi
+  url: ../openapi/cloudflare-dns-openapi.yml
+  type: openapi
+workflows:
+- workflowId: create-dns-record-and-verify
+  summary: Create a DNS record then fetch it by id to verify it persisted.
+  description: >-
+    Creates a DNS record in the zone from the supplied type, name, and content,
+    then retrieves the newly created record by its identifier to confirm the
+    stored values.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - type
+    - name
+    - content
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone (e.g. 023e105f4ecef8ad9ca31a8372d0c353).
+      type:
+        type: string
+        description: The DNS record type (e.g. A, AAAA, CNAME, TXT, MX).
+      name:
+        type: string
+        description: The DNS record name (e.g. www.example.com).
+      content:
+        type: string
+        description: The DNS record content value (e.g. an IP address or target hostname).
+      ttl:
+        type: integer
+        description: Time to live in seconds. A value of 1 indicates automatic TTL.
+      proxied:
+        type: boolean
+        description: Whether the record is receiving Cloudflare proxy services.
+  steps:
+  - stepId: createRecord
+    description: >-
+      Create a new DNS record in the zone using the supplied type, name, and
+      content.
+    operationId: createDnsRecord
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        type: $inputs.type
+        name: $inputs.name
+        content: $inputs.content
+        ttl: $inputs.ttl
+        proxied: $inputs.proxied
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      recordId: $response.body#/result/id
+  - stepId: verifyRecord
+    description: >-
+      Fetch the newly created DNS record by its identifier to confirm the values
+      Cloudflare persisted.
+    operationId: getDnsRecord
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: dns_record_id
+      in: path
+      value: $steps.createRecord.outputs.recordId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      recordId: $response.body#/result/id
+      recordName: $response.body#/result/name
+      recordContent: $response.body#/result/content
+  outputs:
+    recordId: $steps.verifyRecord.outputs.recordId
+    recordName: $steps.verifyRecord.outputs.recordName
+    recordContent: $steps.verifyRecord.outputs.recordContent

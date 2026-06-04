@@ -1,0 +1,104 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Block IP Access Rule
+  summary: Create a zone IP access rule, list the rules, then remove it.
+  description: >-
+    IP access rules apply a coarse allow, block, or challenge decision to an IP,
+    range, ASN, or country at the zone level. The workflow creates an IP access
+    rule, lists the zone's rules to confirm it is present, and then deletes it,
+    threading the rule identifier from step to step. Each step inlines its
+    request and asserts both the documented HTTP 200 status and the Cloudflare
+    {success, result} envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareZonesApi
+  url: ../openapi/cloudflare-zones--openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: block-ip-access-rule
+  summary: Create an IP access rule, list the rules, then delete it.
+  description: >-
+    Creates an IP access rule with the supplied mode and target, lists the
+    zone's IP access rules to confirm it, and then deletes the rule.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - mode
+    - target
+    - value
+    - notes
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      mode:
+        type: string
+        description: The action to apply (block, challenge, whitelist, or js_challenge).
+      target:
+        type: string
+        description: The kind of target (ip, ip_range, asn, or country).
+      value:
+        type: string
+        description: The target value (e.g. an IP address, CIDR range, ASN, or country code).
+      notes:
+        type: string
+        description: A human-readable note explaining the rule.
+  steps:
+  - stepId: createRule
+    description: Create an IP access rule with the supplied mode and target.
+    operationId: ip-access-rules-for-a-zone-create-an-ip-access-rule
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        mode: $inputs.mode
+        configuration:
+          target: $inputs.target
+          value: $inputs.value
+        notes: $inputs.notes
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      ruleId: $response.body#/result/id
+  - stepId: listRules
+    description: List the zone's IP access rules to confirm the new rule is present.
+    operationId: ip-access-rules-for-a-zone-list-ip-access-rules
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      rules: $response.body#/result
+  - stepId: deleteRule
+    description: Delete the IP access rule now that it has been confirmed.
+    operationId: ip-access-rules-for-a-zone-delete-an-ip-access-rule
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: identifier
+      in: path
+      value: $steps.createRule.outputs.ruleId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      deletedId: $response.body#/result/id
+  outputs:
+    ruleId: $steps.createRule.outputs.ruleId
+    rules: $steps.listRules.outputs.rules
+    deletedId: $steps.deleteRule.outputs.deletedId

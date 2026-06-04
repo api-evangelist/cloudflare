@@ -1,0 +1,114 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Rotate Load Balancer
+  summary: Create a load balancer, update its pools, then delete it.
+  description: >-
+    A full lifecycle for a single load balancer. The workflow creates a load
+    balancer over an initial set of pools, updates it to use a new default pool
+    set, and deletes it once the change is applied, threading the load balancer
+    identifier from step to step. Each step inlines its request and asserts both
+    the documented HTTP 200 status and the Cloudflare {success, result} envelope
+    flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareZonesApi
+  url: ../openapi/cloudflare-zones--openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: rotate-load-balancer
+  summary: Create, update, and delete a load balancer in a single lifecycle.
+  description: >-
+    Provisions a load balancer, updates its default pools to a new set, and then
+    deletes it.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - name
+    - defaultPools
+    - fallbackPool
+    - newDefaultPools
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      name:
+        type: string
+        description: The DNS hostname the load balancer answers for.
+      defaultPools:
+        type: array
+        items:
+          type: string
+        description: Ordered list of pool ids used as the initial default pools.
+      fallbackPool:
+        type: string
+        description: The pool id used when all other pools are unhealthy.
+      newDefaultPools:
+        type: array
+        items:
+          type: string
+        description: The replacement ordered list of default pool ids.
+  steps:
+  - stepId: createLoadBalancer
+    description: Create the load balancer with its initial pool configuration.
+    operationId: load-balancers-create-load-balancer
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        name: $inputs.name
+        default_pools: $inputs.defaultPools
+        fallback_pool: $inputs.fallbackPool
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      loadBalancerId: $response.body#/result/id
+  - stepId: updateLoadBalancer
+    description: Update the load balancer to use the replacement default pools.
+    operationId: load-balancers-update-load-balancer
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: load_balancer_id
+      in: path
+      value: $steps.createLoadBalancer.outputs.loadBalancerId
+    requestBody:
+      contentType: application/json
+      payload:
+        name: $inputs.name
+        default_pools: $inputs.newDefaultPools
+        fallback_pool: $inputs.fallbackPool
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      loadBalancerId: $response.body#/result/id
+  - stepId: deleteLoadBalancer
+    description: Delete the load balancer now that the update is complete.
+    operationId: load-balancers-delete-load-balancer
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: load_balancer_id
+      in: path
+      value: $steps.createLoadBalancer.outputs.loadBalancerId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      deletedId: $response.body#/result/id
+  outputs:
+    loadBalancerId: $steps.createLoadBalancer.outputs.loadBalancerId
+    deletedId: $steps.deleteLoadBalancer.outputs.deletedId

@@ -1,0 +1,111 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Rotate DNS Record
+  summary: Create a DNS record, update its content, then delete it.
+  description: >-
+    A full create-update-delete lifecycle for a single DNS record, useful for
+    short-lived verification records or rotating a value to a new target. The
+    workflow creates a record, patches it with new content, and finally removes
+    it, threading the record identifier from step to step. Each step inlines its
+    request and asserts the documented HTTP 200 status together with the
+    Cloudflare {success, result} envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareDnsApi
+  url: ../openapi/cloudflare-dns-openapi.yml
+  type: openapi
+workflows:
+- workflowId: rotate-dns-record
+  summary: Create, update, and delete a DNS record in a single lifecycle.
+  description: >-
+    Provisions a DNS record, rotates its content with a partial update, and then
+    deletes it once the rotation is complete.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - type
+    - name
+    - content
+    - newContent
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      type:
+        type: string
+        description: The DNS record type (e.g. A, AAAA, CNAME, TXT).
+      name:
+        type: string
+        description: The DNS record name (e.g. www.example.com).
+      content:
+        type: string
+        description: The initial DNS record content value.
+      newContent:
+        type: string
+        description: The replacement DNS record content value applied during the update.
+  steps:
+  - stepId: createRecord
+    description: Create the DNS record with its initial content.
+    operationId: createDnsRecord
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        type: $inputs.type
+        name: $inputs.name
+        content: $inputs.content
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      recordId: $response.body#/result/id
+  - stepId: updateRecord
+    description: Patch the record with the replacement content value.
+    operationId: updateDnsRecord
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: dns_record_id
+      in: path
+      value: $steps.createRecord.outputs.recordId
+    requestBody:
+      contentType: application/json
+      payload:
+        type: $inputs.type
+        name: $inputs.name
+        content: $inputs.newContent
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      updatedContent: $response.body#/result/content
+  - stepId: deleteRecord
+    description: Delete the record now that the rotation is complete.
+    operationId: deleteDnsRecord
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: dns_record_id
+      in: path
+      value: $steps.createRecord.outputs.recordId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      deletedId: $response.body#/result/id
+  outputs:
+    recordId: $steps.createRecord.outputs.recordId
+    updatedContent: $steps.updateRecord.outputs.updatedContent
+    deletedId: $steps.deleteRecord.outputs.deletedId

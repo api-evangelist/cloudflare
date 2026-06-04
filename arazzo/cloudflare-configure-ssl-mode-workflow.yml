@@ -1,0 +1,86 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Configure SSL Mode
+  summary: Read the current SSL mode, change it, then read it back to confirm.
+  description: >-
+    The zone SSL setting controls how Cloudflare connects to the origin (off,
+    flexible, full, or strict). The workflow reads the current SSL mode, changes
+    it to the requested value, and reads it back to confirm the new mode was
+    applied. Each step inlines its request and asserts both the documented HTTP
+    200 status and the Cloudflare {success, result} envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareZonesApi
+  url: ../openapi/cloudflare-zones--openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: configure-ssl-mode
+  summary: Read, change, and re-read the zone SSL mode.
+  description: >-
+    Reads the current SSL setting, changes it to the supplied value, and reads
+    it back to confirm the change took effect.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - sslValue
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      sslValue:
+        type: string
+        description: The desired SSL mode (off, flexible, full, or strict).
+  steps:
+  - stepId: getCurrentMode
+    description: Read the current SSL mode for the zone before changing it.
+    operationId: zone-settings-get-ssl-setting
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      previousValue: $response.body#/result/value
+  - stepId: changeMode
+    description: Change the SSL mode to the requested value.
+    operationId: zone-settings-change-ssl-setting
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        value: $inputs.sslValue
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      newValue: $response.body#/result/value
+  - stepId: verifyMode
+    description: Read the SSL mode back to confirm the change was applied.
+    operationId: zone-settings-get-ssl-setting
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    - context: $response.body
+      condition: $.result.value == $inputs.sslValue
+      type: jsonpath
+    outputs:
+      confirmedValue: $response.body#/result/value
+  outputs:
+    previousValue: $steps.getCurrentMode.outputs.previousValue
+    confirmedValue: $steps.verifyMode.outputs.confirmedValue

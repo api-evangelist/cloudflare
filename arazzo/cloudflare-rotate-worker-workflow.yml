@@ -1,0 +1,90 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Rotate Worker
+  summary: Create a Worker, read it back, then delete it.
+  description: >-
+    A full lifecycle for a single Worker, useful for ephemeral or test
+    deployments. The workflow creates a Worker, reads it back by id to confirm
+    its configuration, and deletes it once verified, threading the Worker
+    identifier from step to step. Each step inlines its request and asserts both
+    the documented HTTP 200 status and, where the response carries one, the
+    Cloudflare {success, result} envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareWorkersApi
+  url: ../openapi/cloudflare-workers-openapi.yml
+  type: openapi
+workflows:
+- workflowId: rotate-worker
+  summary: Create, verify, and delete a Worker in a single lifecycle.
+  description: >-
+    Provisions a Worker, reads it back by id to confirm it persisted, and then
+    deletes it.
+  inputs:
+    type: object
+    required:
+    - accountId
+    - workerName
+    - mainModule
+    properties:
+      accountId:
+        type: string
+        description: The unique identifier of the Cloudflare account.
+      workerName:
+        type: string
+        description: The name of the Worker to create.
+      mainModule:
+        type: string
+        description: The entry point module for the Worker.
+  steps:
+  - stepId: createWorker
+    description: Create a Worker in the account.
+    operationId: createWorker
+    parameters:
+    - name: account_id
+      in: path
+      value: $inputs.accountId
+    requestBody:
+      contentType: application/json
+      payload:
+        name: $inputs.workerName
+        main_module: $inputs.mainModule
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      workerId: $response.body#/result/id
+  - stepId: getWorker
+    description: Read the Worker back by id to confirm it persisted.
+    operationId: getWorker
+    parameters:
+    - name: account_id
+      in: path
+      value: $inputs.accountId
+    - name: worker_id
+      in: path
+      value: $steps.createWorker.outputs.workerId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      workerName: $response.body#/result/name
+  - stepId: deleteWorker
+    description: Delete the Worker now that it has been verified.
+    operationId: deleteWorker
+    parameters:
+    - name: account_id
+      in: path
+      value: $inputs.accountId
+    - name: worker_id
+      in: path
+      value: $steps.createWorker.outputs.workerId
+    successCriteria:
+    - condition: $statusCode == 200
+  outputs:
+    workerId: $steps.createWorker.outputs.workerId
+    workerName: $steps.getWorker.outputs.workerName

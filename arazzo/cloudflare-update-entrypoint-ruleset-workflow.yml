@@ -1,0 +1,92 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Update Entrypoint Ruleset
+  summary: Read a phase entrypoint ruleset, then replace its rules in one update.
+  description: >-
+    Each ruleset phase has a single entrypoint ruleset that Cloudflare evaluates
+    for that phase. The workflow reads the current entrypoint ruleset for a
+    phase to capture its version, then replaces its rule list with a new rule in
+    one update, creating a new version. Each step inlines its request and
+    asserts both the documented HTTP 200 status and the Cloudflare
+    {success, result} envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareZonesApi
+  url: ../openapi/cloudflare-zones--openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: update-entrypoint-ruleset
+  summary: Read a phase entrypoint ruleset and replace its rules.
+  description: >-
+    Fetches the entrypoint ruleset for a phase, then updates it to contain a
+    single rule applying the supplied action on a matching expression.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - phase
+    - ruleAction
+    - ruleExpression
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      phase:
+        type: string
+        description: >-
+          The ruleset phase whose entrypoint will be updated (e.g.
+          http_request_firewall_custom).
+      ruleAction:
+        type: string
+        description: The action the replacement rule applies (e.g. block, challenge).
+      ruleExpression:
+        type: string
+        description: The Cloudflare expression that triggers the replacement rule.
+  steps:
+  - stepId: getEntrypoint
+    description: Read the current entrypoint ruleset for the phase to capture its version.
+    operationId: getZoneEntrypointRuleset
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: ruleset_phase
+      in: path
+      value: $inputs.phase
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      version: $response.body#/result/version
+  - stepId: updateEntrypoint
+    description: >-
+      Replace the entrypoint ruleset rules with a single rule, creating a new
+      version.
+    operationId: updateZoneEntrypointRuleset
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: ruleset_phase
+      in: path
+      value: $inputs.phase
+    requestBody:
+      contentType: application/json
+      payload:
+        rules:
+        - action: $inputs.ruleAction
+          expression: $inputs.ruleExpression
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      rulesetId: $response.body#/result/id
+      version: $response.body#/result/version
+  outputs:
+    previousVersion: $steps.getEntrypoint.outputs.version
+    rulesetId: $steps.updateEntrypoint.outputs.rulesetId
+    newVersion: $steps.updateEntrypoint.outputs.version

@@ -1,0 +1,104 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Provision Zone with DNS
+  summary: Create a zone, add a root DNS record, then read the zone details back.
+  description: >-
+    An onboarding flow for bringing a new domain onto Cloudflare. The workflow
+    creates a zone under an account, adds an initial DNS record to that zone,
+    and reads the zone details back to capture the assigned name servers and
+    status. Each step inlines its request and asserts both the documented HTTP
+    200 status and the Cloudflare {success, result} envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareApi
+  url: ../openapi/cloudflare-openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: provision-zone-with-dns
+  summary: Create a zone, seed it with a DNS record, and read the zone back.
+  description: >-
+    Provisions a new zone for a domain under the supplied account, adds an
+    initial DNS record, and then fetches the zone details to retrieve its name
+    servers and activation status.
+  inputs:
+    type: object
+    required:
+    - accountId
+    - zoneName
+    - recordType
+    - recordName
+    - recordContent
+    properties:
+      accountId:
+        type: string
+        description: The account identifier that will own the new zone.
+      zoneName:
+        type: string
+        description: The domain name for the new zone (e.g. example.com).
+      recordType:
+        type: string
+        description: The DNS record type to seed (e.g. A, CNAME).
+      recordName:
+        type: string
+        description: The DNS record name to seed (e.g. example.com or www.example.com).
+      recordContent:
+        type: string
+        description: The DNS record content value (e.g. an IP address or target).
+  steps:
+  - stepId: createZone
+    description: Create a new full zone for the domain under the supplied account.
+    operationId: zones-post
+    requestBody:
+      contentType: application/json
+      payload:
+        name: $inputs.zoneName
+        account:
+          id: $inputs.accountId
+        type: full
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      zoneId: $response.body#/result/id
+  - stepId: addDnsRecord
+    description: Add an initial DNS record to the newly created zone.
+    operationId: dns-records-for-a-zone-create-dns-record
+    parameters:
+    - name: zone_id
+      in: path
+      value: $steps.createZone.outputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        type: $inputs.recordType
+        name: $inputs.recordName
+        content: $inputs.recordContent
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      recordId: $response.body#/result/id
+  - stepId: getZone
+    description: Read the zone details back to capture name servers and status.
+    operationId: zones-0-get
+    parameters:
+    - name: zone_id
+      in: path
+      value: $steps.createZone.outputs.zoneId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      status: $response.body#/result/status
+      nameServers: $response.body#/result/name_servers
+  outputs:
+    zoneId: $steps.createZone.outputs.zoneId
+    recordId: $steps.addDnsRecord.outputs.recordId
+    status: $steps.getZone.outputs.status
+    nameServers: $steps.getZone.outputs.nameServers

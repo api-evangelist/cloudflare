@@ -1,0 +1,93 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Create WAF Override
+  summary: Create a URI-based WAF override, read it back, then list the overrides.
+  description: >-
+    A WAF override scopes managed-rule behavior to specific URLs. The workflow
+    creates a URI-based WAF override for a list of URLs, reads it back by id to
+    confirm it persisted, and lists the zone's overrides. This targets the
+    previous version of WAF managed rules, which is what the override endpoints
+    operate on. Each step inlines its request and asserts both the documented
+    HTTP 200 status and the Cloudflare {success, result} envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareZonesApi
+  url: ../openapi/cloudflare-zones--openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: create-waf-override
+  summary: Create a WAF override, fetch it by id, and list the overrides.
+  description: >-
+    Creates a URI-based WAF override for the supplied URLs, retrieves it by id to
+    confirm it persisted, and lists the zone's WAF overrides.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - urls
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      urls:
+        type: array
+        items:
+          type: string
+        description: The list of URL patterns the override applies to.
+      description:
+        type: string
+        description: A human-readable description for the override.
+  steps:
+  - stepId: createOverride
+    description: Create a URI-based WAF override for the supplied URLs.
+    operationId: waf-overrides-create-a-waf-override
+    parameters:
+    - name: zone_identifier
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        urls: $inputs.urls
+        description: $inputs.description
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      overrideId: $response.body#/result/id
+  - stepId: getOverride
+    description: Fetch the WAF override by id to confirm it persisted.
+    operationId: waf-overrides-get-a-waf-override
+    parameters:
+    - name: zone_identifier
+      in: path
+      value: $inputs.zoneId
+    - name: id
+      in: path
+      value: $steps.createOverride.outputs.overrideId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      overrideId: $response.body#/result/id
+  - stepId: listOverrides
+    description: List the zone's WAF overrides to confirm the new override is present.
+    operationId: waf-overrides-list-waf-overrides
+    parameters:
+    - name: zone_identifier
+      in: path
+      value: $inputs.zoneId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      overrides: $response.body#/result
+  outputs:
+    overrideId: $steps.getOverride.outputs.overrideId
+    overrides: $steps.listOverrides.outputs.overrides

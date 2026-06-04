@@ -1,0 +1,128 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Replace Page Rule
+  summary: Create a page rule, fully replace its configuration, then read it back.
+  description: >-
+    Where editing a page rule patches selected fields, replacing it overwrites
+    the entire configuration. The workflow creates a page rule, replaces it so
+    its configuration exactly matches a new target and action set, and reads it
+    back to confirm the replacement. Each step inlines its request and asserts
+    both the documented HTTP 200 status and the Cloudflare {success, result}
+    envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareZonesApi
+  url: ../openapi/cloudflare-zones--openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: replace-page-rule
+  summary: Create a page rule, replace its full configuration, and read it back.
+  description: >-
+    Creates a page rule, fully replaces its targets and actions with a new
+    configuration, and reads the rule back to confirm the replacement.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - urlPattern
+    - actionId
+    - actionValue
+    - newUrlPattern
+    - newActionValue
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      urlPattern:
+        type: string
+        description: The initial URL match pattern.
+      actionId:
+        type: string
+        description: The page rule action setting id (e.g. cache_level).
+      actionValue:
+        type: string
+        description: The initial value applied by the action.
+      newUrlPattern:
+        type: string
+        description: The replacement URL match pattern.
+      newActionValue:
+        type: string
+        description: The replacement value applied by the action.
+  steps:
+  - stepId: createRule
+    description: Create a page rule with its initial target and action.
+    operationId: page-rules-create-a-page-rule
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        targets:
+        - target: url
+          constraint:
+            operator: matches
+            value: $inputs.urlPattern
+        actions:
+        - id: $inputs.actionId
+          value: $inputs.actionValue
+        status: active
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      ruleId: $response.body#/result/id
+  - stepId: replaceRule
+    description: >-
+      Replace the page rule so its configuration exactly matches the new target
+      and action.
+    operationId: page-rules-update-a-page-rule
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: pagerule_id
+      in: path
+      value: $steps.createRule.outputs.ruleId
+    requestBody:
+      contentType: application/json
+      payload:
+        targets:
+        - target: url
+          constraint:
+            operator: matches
+            value: $inputs.newUrlPattern
+        actions:
+        - id: $inputs.actionId
+          value: $inputs.newActionValue
+        status: active
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      ruleId: $response.body#/result/id
+  - stepId: getRule
+    description: Read the page rule back to confirm the replacement.
+    operationId: page-rules-get-a-page-rule
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: pagerule_id
+      in: path
+      value: $steps.createRule.outputs.ruleId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      ruleStatus: $response.body#/result/status
+  outputs:
+    ruleId: $steps.createRule.outputs.ruleId
+    ruleStatus: $steps.getRule.outputs.ruleStatus

@@ -1,0 +1,92 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Create Load Balancer
+  summary: Create a zone load balancer over existing pools and read it back.
+  description: >-
+    A load balancer distributes traffic for a hostname across origin pools. The
+    workflow creates a load balancer in the zone using a set of default pools
+    and a fallback pool, then reads it back by id to confirm its configuration.
+    Pools are assumed to already exist and are referenced by id. Each step
+    inlines its request and asserts both the documented HTTP 200 status and the
+    Cloudflare {success, result} envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareZonesApi
+  url: ../openapi/cloudflare-zones--openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: create-load-balancer
+  summary: Create a load balancer then fetch it by id to verify it persisted.
+  description: >-
+    Creates a load balancer for a hostname over the supplied default pools and
+    fallback pool, then retrieves it by id to confirm the stored configuration.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - name
+    - defaultPools
+    - fallbackPool
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      name:
+        type: string
+        description: The DNS hostname the load balancer answers for (e.g. www.example.com).
+      defaultPools:
+        type: array
+        items:
+          type: string
+        description: Ordered list of pool ids used as the default pools.
+      fallbackPool:
+        type: string
+        description: The pool id used when all other pools are unhealthy.
+      proxied:
+        type: boolean
+        description: Whether the hostname should be proxied through Cloudflare.
+  steps:
+  - stepId: createLoadBalancer
+    description: >-
+      Create a load balancer for the hostname over the supplied default and
+      fallback pools.
+    operationId: load-balancers-create-load-balancer
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        name: $inputs.name
+        default_pools: $inputs.defaultPools
+        fallback_pool: $inputs.fallbackPool
+        proxied: $inputs.proxied
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      loadBalancerId: $response.body#/result/id
+  - stepId: getLoadBalancer
+    description: Fetch the load balancer by id to confirm its stored configuration.
+    operationId: load-balancers-load-balancer-details
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: load_balancer_id
+      in: path
+      value: $steps.createLoadBalancer.outputs.loadBalancerId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      loadBalancerId: $response.body#/result/id
+      name: $response.body#/result/name
+  outputs:
+    loadBalancerId: $steps.getLoadBalancer.outputs.loadBalancerId
+    name: $steps.getLoadBalancer.outputs.name

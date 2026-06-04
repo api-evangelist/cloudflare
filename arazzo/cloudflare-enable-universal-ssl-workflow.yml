@@ -1,0 +1,84 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Enable Universal SSL
+  summary: Toggle Universal SSL for a zone, read the setting, then check verification.
+  description: >-
+    Universal SSL provisions a free Cloudflare-managed certificate for a zone.
+    The workflow edits the Universal SSL setting to the requested enabled state,
+    reads the setting back to confirm it, and then fetches the SSL verification
+    details so the certificate validation status can be observed. Each step
+    inlines its request and asserts both the documented HTTP 200 status and the
+    Cloudflare {success, result} envelope flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareZonesApi
+  url: ../openapi/cloudflare-zones--openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: enable-universal-ssl
+  summary: Edit Universal SSL, confirm the setting, then read verification status.
+  description: >-
+    Sets the Universal SSL enabled flag, reads the setting back to confirm it,
+    and retrieves the SSL verification details for the zone.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - enabled
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      enabled:
+        type: boolean
+        description: Whether Universal SSL should be enabled for the zone.
+  steps:
+  - stepId: editUniversalSsl
+    description: Edit the Universal SSL setting to the requested enabled state.
+    operationId: universal-ssl-settings-for-a-zone-edit-universal-ssl-settings
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        enabled: $inputs.enabled
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      enabled: $response.body#/result/enabled
+  - stepId: getUniversalSsl
+    description: Read the Universal SSL setting back to confirm the new state.
+    operationId: universal-ssl-settings-for-a-zone-universal-ssl-settings-details
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      enabled: $response.body#/result/enabled
+  - stepId: getVerification
+    description: Fetch the SSL verification details to observe certificate validation.
+    operationId: ssl-verification-ssl-verification-details
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      verification: $response.body#/result
+  outputs:
+    enabled: $steps.getUniversalSsl.outputs.enabled
+    verification: $steps.getVerification.outputs.verification

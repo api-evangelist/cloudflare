@@ -1,0 +1,102 @@
+arazzo: 1.0.1
+info:
+  title: Cloudflare Upload Custom SSL Certificate
+  summary: Upload a custom SSL certificate, read it back, then remove it.
+  description: >-
+    Enterprise zones can serve their own custom SSL certificates. The workflow
+    uploads a certificate and private key as a custom SSL configuration, reads
+    the configuration back by id to confirm it persisted, and deletes it to
+    complete a clean rotation cycle. The certificate and private key are
+    supplied as PEM strings. Each step inlines its request and asserts both the
+    documented HTTP 200 status and the Cloudflare {success, result} envelope
+    flag.
+  version: 1.0.0
+sourceDescriptions:
+- name: cloudflareZonesApi
+  url: ../openapi/cloudflare-zones--openapi-original.yml
+  type: openapi
+workflows:
+- workflowId: upload-custom-ssl-certificate
+  summary: Upload a custom SSL certificate, fetch it by id, then delete it.
+  description: >-
+    Creates a custom SSL configuration from a certificate and private key,
+    retrieves it by id to confirm it persisted, and then deletes it.
+  inputs:
+    type: object
+    required:
+    - zoneId
+    - certificate
+    - privateKey
+    properties:
+      zoneId:
+        type: string
+        description: The unique identifier of the zone.
+      certificate:
+        type: string
+        description: The PEM-encoded certificate (and any intermediate chain).
+      privateKey:
+        type: string
+        description: The PEM-encoded private key for the certificate.
+      bundleMethod:
+        type: string
+        description: The bundling method (ubiquitous, optimal, or force).
+  steps:
+  - stepId: uploadCertificate
+    description: Upload the certificate and private key as a custom SSL configuration.
+    operationId: custom-ssl-for-a-zone-create-ssl-configuration
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    requestBody:
+      contentType: application/json
+      payload:
+        certificate: $inputs.certificate
+        private_key: $inputs.privateKey
+        bundle_method: $inputs.bundleMethod
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      certificateId: $response.body#/result/id
+  - stepId: getCertificate
+    description: Read the custom SSL configuration back by id to confirm it persisted.
+    operationId: custom-ssl-for-a-zone-ssl-configuration-details
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: custom_certificate_id
+      in: path
+      value: $steps.uploadCertificate.outputs.certificateId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      certificateId: $response.body#/result/id
+      status: $response.body#/result/status
+  - stepId: deleteCertificate
+    description: Delete the custom SSL configuration to complete the rotation cycle.
+    operationId: custom-ssl-for-a-zone-delete-ssl-configuration
+    parameters:
+    - name: zone_id
+      in: path
+      value: $inputs.zoneId
+    - name: custom_certificate_id
+      in: path
+      value: $steps.uploadCertificate.outputs.certificateId
+    successCriteria:
+    - condition: $statusCode == 200
+    - context: $response.body
+      condition: $.success == true
+      type: jsonpath
+    outputs:
+      deletedId: $response.body#/result/id
+  outputs:
+    certificateId: $steps.uploadCertificate.outputs.certificateId
+    status: $steps.getCertificate.outputs.status
+    deletedId: $steps.deleteCertificate.outputs.deletedId
