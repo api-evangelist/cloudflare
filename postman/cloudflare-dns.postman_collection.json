@@ -1,0 +1,3364 @@
+{
+  "info": {
+    "_postman_id": "6348fb2c-ae66-49df-8fd4-47185d107272",
+    "name": "Cloudflare DNS API",
+    "description": "The Cloudflare DNS API allows developers to programmatically manage DNS records for their zones, including creating, listing, updating, and deleting records. It also supports batch operations, DNS record scanning, BIND config import and export, DNSSEC configuration, and DNS analytics.\n\nContact Support:\n Name: Cloudflare Support",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-06-05T13:17:00.000Z",
+    "updatedAt": "2026-06-05T13:17:01.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-6348fb2c-ae66-49df-8fd4-47185d107272"
+  },
+  "item": [
+    {
+      "name": "zones",
+      "item": [
+        {
+          "name": "{zone_id}",
+          "item": [
+            {
+              "name": "dns_records",
+              "item": [
+                {
+                  "name": "{dns_record_id}",
+                  "item": [
+                    {
+                      "name": "Cloudflare Get Dns Record Details",
+                      "id": "04101538-876e-4633-9e7b-c33b54141415",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_records",
+                            ":dns_record_id"
+                          ],
+                          "variable": [
+                            {
+                              "id": "2e29fecc-047d-497f-8338-20f7f1429c37",
+                              "key": "zone_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the zone."
+                            },
+                            {
+                              "id": "8a5f5d27-3ede-4e08-92f0-c949959e1811",
+                              "key": "dns_record_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the DNS record."
+                            }
+                          ]
+                        },
+                        "description": "Retrieve the details of a specific DNS record by its identifier."
+                      },
+                      "response": [
+                        {
+                          "id": "f467cdae-b13c-49d5-9acd-3e7a1725f318",
+                          "name": "Successful response with DNS record details.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                ":dns_record_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                },
+                                {
+                                  "key": "dns_record_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"result\": {\n    \"id\": \"<string>\",\n    \"zone_id\": \"<string>\",\n    \"zone_name\": \"<string>\",\n    \"type\": \"MX\",\n    \"name\": \"<string>\",\n    \"content\": \"<string>\",\n    \"ttl\": \"<integer>\",\n    \"proxied\": \"<boolean>\",\n    \"proxiable\": \"<boolean>\",\n    \"locked\": \"<boolean>\",\n    \"comment\": \"<string>\",\n    \"tags\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"created_on\": \"<dateTime>\",\n    \"modified_on\": \"<dateTime>\"\n  },\n  \"success\": \"<boolean>\"\n}",
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-f467cdae-b13c-49d5-9acd-3e7a1725f318"
+                        },
+                        {
+                          "id": "c80971e0-e803-4517-a436-ab7ecd8dff12",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                ":dns_record_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                },
+                                {
+                                  "key": "dns_record_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-c80971e0-e803-4517-a436-ab7ecd8dff12"
+                        },
+                        {
+                          "id": "ea9e8a53-d6fc-41bb-a377-bd46f9cf2334",
+                          "name": "DNS record not found.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                ":dns_record_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                },
+                                {
+                                  "key": "dns_record_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Not Found",
+                          "code": 404,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-ea9e8a53-d6fc-41bb-a377-bd46f9cf2334"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-04101538-876e-4633-9e7b-c33b54141415"
+                    },
+                    {
+                      "name": "Cloudflare Update Dns Record",
+                      "id": "d686315a-d57a-4d03-8d2b-74d1a6e579aa",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "PATCH",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"type\": \"AAAA\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_records",
+                            ":dns_record_id"
+                          ],
+                          "variable": [
+                            {
+                              "id": "d6e9b77d-0e28-4594-99a3-3aeb9e71383d",
+                              "key": "zone_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the zone."
+                            },
+                            {
+                              "id": "58a2f4ef-ec22-4a7f-bfe3-c26bd29f447e",
+                              "key": "dns_record_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the DNS record."
+                            }
+                          ]
+                        },
+                        "description": "Partially update a DNS record. Only the fields provided in the request body will be updated."
+                      },
+                      "response": [
+                        {
+                          "id": "74e6810b-1696-4378-bc66-d57f86a6efd8",
+                          "name": "DNS record updated successfully.",
+                          "originalRequest": {
+                            "method": "PATCH",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"type\": \"AAAA\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                ":dns_record_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                },
+                                {
+                                  "key": "dns_record_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"result\": {\n    \"id\": \"<string>\",\n    \"zone_id\": \"<string>\",\n    \"zone_name\": \"<string>\",\n    \"type\": \"MX\",\n    \"name\": \"<string>\",\n    \"content\": \"<string>\",\n    \"ttl\": \"<integer>\",\n    \"proxied\": \"<boolean>\",\n    \"proxiable\": \"<boolean>\",\n    \"locked\": \"<boolean>\",\n    \"comment\": \"<string>\",\n    \"tags\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"created_on\": \"<dateTime>\",\n    \"modified_on\": \"<dateTime>\"\n  },\n  \"success\": \"<boolean>\"\n}",
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-74e6810b-1696-4378-bc66-d57f86a6efd8"
+                        },
+                        {
+                          "id": "489c1fa9-9cdb-4b75-a125-f9ff3d5ae83a",
+                          "name": "Bad request.",
+                          "originalRequest": {
+                            "method": "PATCH",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"type\": \"AAAA\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                ":dns_record_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                },
+                                {
+                                  "key": "dns_record_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-489c1fa9-9cdb-4b75-a125-f9ff3d5ae83a"
+                        },
+                        {
+                          "id": "64eee3ac-85f5-4d64-aa9d-fe0d023ea096",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "PATCH",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"type\": \"AAAA\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                ":dns_record_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                },
+                                {
+                                  "key": "dns_record_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-64eee3ac-85f5-4d64-aa9d-fe0d023ea096"
+                        },
+                        {
+                          "id": "5c6a9228-f59b-4f26-9ff8-bbc754e853f7",
+                          "name": "DNS record not found.",
+                          "originalRequest": {
+                            "method": "PATCH",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"type\": \"AAAA\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                ":dns_record_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                },
+                                {
+                                  "key": "dns_record_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Not Found",
+                          "code": 404,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-5c6a9228-f59b-4f26-9ff8-bbc754e853f7"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-d686315a-d57a-4d03-8d2b-74d1a6e579aa"
+                    },
+                    {
+                      "name": "Cloudflare Overwrite Dns Record",
+                      "id": "eba39197-b0a0-466e-993a-1d01003419e8",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "PUT",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"type\": \"AAAA\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_records",
+                            ":dns_record_id"
+                          ],
+                          "variable": [
+                            {
+                              "id": "ef0ca76c-cfd6-4dc7-903c-d4e353dd6d0f",
+                              "key": "zone_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the zone."
+                            },
+                            {
+                              "id": "2cf57300-ae03-4c97-80a7-92a7505a230b",
+                              "key": "dns_record_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the DNS record."
+                            }
+                          ]
+                        },
+                        "description": "Completely replace a DNS record with the provided data. All fields must be provided."
+                      },
+                      "response": [
+                        {
+                          "id": "942c5721-4c30-4b8b-8430-20ae782eb331",
+                          "name": "DNS record overwritten successfully.",
+                          "originalRequest": {
+                            "method": "PUT",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"type\": \"AAAA\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                ":dns_record_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                },
+                                {
+                                  "key": "dns_record_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"result\": {\n    \"id\": \"<string>\",\n    \"zone_id\": \"<string>\",\n    \"zone_name\": \"<string>\",\n    \"type\": \"MX\",\n    \"name\": \"<string>\",\n    \"content\": \"<string>\",\n    \"ttl\": \"<integer>\",\n    \"proxied\": \"<boolean>\",\n    \"proxiable\": \"<boolean>\",\n    \"locked\": \"<boolean>\",\n    \"comment\": \"<string>\",\n    \"tags\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"created_on\": \"<dateTime>\",\n    \"modified_on\": \"<dateTime>\"\n  },\n  \"success\": \"<boolean>\"\n}",
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-942c5721-4c30-4b8b-8430-20ae782eb331"
+                        },
+                        {
+                          "id": "982a8f02-5de2-465b-8ac7-ae6b66e52f6f",
+                          "name": "Bad request.",
+                          "originalRequest": {
+                            "method": "PUT",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"type\": \"AAAA\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                ":dns_record_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                },
+                                {
+                                  "key": "dns_record_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-982a8f02-5de2-465b-8ac7-ae6b66e52f6f"
+                        },
+                        {
+                          "id": "7f0bbe14-aa4f-4688-a5c4-5b5b3160dc56",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "PUT",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"type\": \"AAAA\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                ":dns_record_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                },
+                                {
+                                  "key": "dns_record_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-7f0bbe14-aa4f-4688-a5c4-5b5b3160dc56"
+                        },
+                        {
+                          "id": "a6c4b2ed-9a6b-41c6-80be-4a64b41e6833",
+                          "name": "DNS record not found.",
+                          "originalRequest": {
+                            "method": "PUT",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"type\": \"AAAA\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                ":dns_record_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                },
+                                {
+                                  "key": "dns_record_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Not Found",
+                          "code": 404,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-a6c4b2ed-9a6b-41c6-80be-4a64b41e6833"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-eba39197-b0a0-466e-993a-1d01003419e8"
+                    },
+                    {
+                      "name": "Cloudflare Delete Dns Record",
+                      "id": "b5f3da2b-f99b-48e3-af4f-08f3a77ff4b2",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_records",
+                            ":dns_record_id"
+                          ],
+                          "variable": [
+                            {
+                              "id": "51075532-51f8-45fe-869e-cafcec6e1913",
+                              "key": "zone_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the zone."
+                            },
+                            {
+                              "id": "10ae7904-9ec0-4d37-a836-ade9fc0dbc71",
+                              "key": "dns_record_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the DNS record."
+                            }
+                          ]
+                        },
+                        "description": "Delete a specific DNS record from the zone."
+                      },
+                      "response": [
+                        {
+                          "id": "44d5c146-4dac-4e0f-bdd9-b7b9273f6550",
+                          "name": "DNS record deleted successfully.",
+                          "originalRequest": {
+                            "method": "DELETE",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                ":dns_record_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                },
+                                {
+                                  "key": "dns_record_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"result\": {\n    \"id\": \"<string>\"\n  },\n  \"success\": \"<boolean>\"\n}",
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-44d5c146-4dac-4e0f-bdd9-b7b9273f6550"
+                        },
+                        {
+                          "id": "82562d34-332a-4286-9929-5f404f023db5",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "DELETE",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                ":dns_record_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                },
+                                {
+                                  "key": "dns_record_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-82562d34-332a-4286-9929-5f404f023db5"
+                        },
+                        {
+                          "id": "8466defd-3806-4a54-aa05-7ed0fe2e4625",
+                          "name": "DNS record not found.",
+                          "originalRequest": {
+                            "method": "DELETE",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/:dns_record_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                ":dns_record_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                },
+                                {
+                                  "key": "dns_record_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Not Found",
+                          "code": 404,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-8466defd-3806-4a54-aa05-7ed0fe2e4625"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-b5f3da2b-f99b-48e3-af4f-08f3a77ff4b2"
+                    }
+                  ],
+                  "id": "f0f4ccd7-3e85-45e3-b28d-c2e8c586d583",
+                  "createdAt": "2026-06-05T13:17:01.000Z",
+                  "updatedAt": "2026-06-05T13:17:01.000Z",
+                  "uid": "35240-f0f4ccd7-3e85-45e3-b28d-c2e8c586d583"
+                },
+                {
+                  "name": "batch",
+                  "item": [
+                    {
+                      "name": "Cloudflare Batch Dns Record Operations",
+                      "id": "7bc22030-89cb-40cd-be85-91f26e9105a4",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"deletes\": [\n    {\n      \"id\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\"\n    }\n  ],\n  \"patches\": [\n    {\n      \"type\": \"SRV\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"type\": \"PTR\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"puts\": [\n    {\n      \"type\": \"DNSKEY\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"type\": \"MX\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"posts\": [\n    {\n      \"type\": \"LOC\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"type\": \"AAAA\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ]\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_records/batch",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_records",
+                            "batch"
+                          ],
+                          "variable": [
+                            {
+                              "id": "3295a521-a78b-4020-9cf9-9708795d7f32",
+                              "key": "zone_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the zone."
+                            }
+                          ]
+                        },
+                        "description": "Send a batch of DNS record API calls to be executed together. Supports deletes, patches, puts, and posts executed in order."
+                      },
+                      "response": [
+                        {
+                          "id": "922c07be-5aa8-47dc-aa32-1767a5bc4912",
+                          "name": "Batch operation completed successfully.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"deletes\": [\n    {\n      \"id\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\"\n    }\n  ],\n  \"patches\": [\n    {\n      \"type\": \"SRV\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"type\": \"PTR\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"puts\": [\n    {\n      \"type\": \"DNSKEY\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"type\": \"MX\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"posts\": [\n    {\n      \"type\": \"LOC\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"type\": \"AAAA\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ]\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/batch",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                "batch"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-922c07be-5aa8-47dc-aa32-1767a5bc4912"
+                        },
+                        {
+                          "id": "a52277f5-7e74-48ae-94fe-5819afbaef00",
+                          "name": "Bad request.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"deletes\": [\n    {\n      \"id\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\"\n    }\n  ],\n  \"patches\": [\n    {\n      \"type\": \"SRV\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"type\": \"PTR\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"puts\": [\n    {\n      \"type\": \"DNSKEY\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"type\": \"MX\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"posts\": [\n    {\n      \"type\": \"LOC\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"type\": \"AAAA\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ]\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/batch",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                "batch"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-a52277f5-7e74-48ae-94fe-5819afbaef00"
+                        },
+                        {
+                          "id": "c1714d2b-0cc5-4e1c-9a65-97a523965c2d",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"deletes\": [\n    {\n      \"id\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\"\n    }\n  ],\n  \"patches\": [\n    {\n      \"type\": \"SRV\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"type\": \"PTR\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"puts\": [\n    {\n      \"type\": \"DNSKEY\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"type\": \"MX\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"posts\": [\n    {\n      \"type\": \"LOC\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"type\": \"AAAA\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"priority\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ]\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/batch",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                "batch"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-c1714d2b-0cc5-4e1c-9a65-97a523965c2d"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-7bc22030-89cb-40cd-be85-91f26e9105a4"
+                    }
+                  ],
+                  "id": "b80119f2-975a-4647-b4ca-b660d222f2ae",
+                  "createdAt": "2026-06-05T13:17:01.000Z",
+                  "updatedAt": "2026-06-05T13:17:01.000Z",
+                  "uid": "35240-b80119f2-975a-4647-b4ca-b660d222f2ae"
+                },
+                {
+                  "name": "export",
+                  "item": [
+                    {
+                      "name": "Cloudflare Export Dns Records",
+                      "id": "40ba1599-6531-462b-83d8-b6788506454e",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "text/plain"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_records/export",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_records",
+                            "export"
+                          ],
+                          "variable": [
+                            {
+                              "id": "106396c1-72ce-45a2-ac86-3679c347eb9f",
+                              "key": "zone_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the zone."
+                            }
+                          ]
+                        },
+                        "description": "Export all DNS records for a zone in BIND zone file format."
+                      },
+                      "response": [
+                        {
+                          "id": "879a03f5-a60b-451d-bfed-ffbadccb2079",
+                          "name": "BIND zone file content.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "text/plain"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/export",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                "export"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "text/plain"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "<string>",
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-879a03f5-a60b-451d-bfed-ffbadccb2079"
+                        },
+                        {
+                          "id": "212db885-6a6b-434d-83dd-bad35f34993a",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/export",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                "export"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-212db885-6a6b-434d-83dd-bad35f34993a"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-40ba1599-6531-462b-83d8-b6788506454e"
+                    }
+                  ],
+                  "id": "9aa4703f-b679-44aa-808b-8b0bb330566a",
+                  "createdAt": "2026-06-05T13:17:01.000Z",
+                  "updatedAt": "2026-06-05T13:17:01.000Z",
+                  "uid": "35240-9aa4703f-b679-44aa-808b-8b0bb330566a"
+                },
+                {
+                  "name": "import",
+                  "item": [
+                    {
+                      "name": "Cloudflare Import Dns Records",
+                      "id": "db276ff7-1d56-40f1-a48d-517f801791d4",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "multipart/form-data"
+                          }
+                        ],
+                        "body": {
+                          "mode": "formdata",
+                          "formdata": [
+                            {
+                              "description": "BIND zone file to import.",
+                              "key": "file",
+                              "type": "file",
+                              "value": null
+                            }
+                          ]
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_records/import",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_records",
+                            "import"
+                          ],
+                          "variable": [
+                            {
+                              "id": "29767e84-66e3-4281-95bb-fcfa9ee2f785",
+                              "key": "zone_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the zone."
+                            }
+                          ]
+                        },
+                        "description": "Import DNS records from a BIND zone file. Upload the BIND config to create DNS records in the zone."
+                      },
+                      "response": [
+                        {
+                          "id": "5ea2f619-ce8b-402e-b5d1-b6748f16cafa",
+                          "name": "Import completed successfully.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "multipart/form-data"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "formdata",
+                              "formdata": [
+                                {
+                                  "description": "BIND zone file to import.",
+                                  "key": "file",
+                                  "type": "file"
+                                }
+                              ]
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/import",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                "import"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-5ea2f619-ce8b-402e-b5d1-b6748f16cafa"
+                        },
+                        {
+                          "id": "41ed4732-2e1e-4f0f-ac50-3769ad9e6942",
+                          "name": "Bad request due to invalid BIND config.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "multipart/form-data"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "formdata",
+                              "formdata": [
+                                {
+                                  "description": "BIND zone file to import.",
+                                  "key": "file",
+                                  "type": "file"
+                                }
+                              ]
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/import",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                "import"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-41ed4732-2e1e-4f0f-ac50-3769ad9e6942"
+                        },
+                        {
+                          "id": "70adffb5-706b-404a-a08c-6c42fbd6549e",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "multipart/form-data"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "formdata",
+                              "formdata": [
+                                {
+                                  "description": "BIND zone file to import.",
+                                  "key": "file",
+                                  "type": "file"
+                                }
+                              ]
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/import",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                "import"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-70adffb5-706b-404a-a08c-6c42fbd6549e"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-db276ff7-1d56-40f1-a48d-517f801791d4"
+                    }
+                  ],
+                  "id": "0974ba9f-fce4-4fe2-b681-8ede64a08930",
+                  "createdAt": "2026-06-05T13:17:01.000Z",
+                  "updatedAt": "2026-06-05T13:17:01.000Z",
+                  "uid": "35240-0974ba9f-fce4-4fe2-b681-8ede64a08930"
+                },
+                {
+                  "name": "scan",
+                  "item": [
+                    {
+                      "name": "trigger",
+                      "item": [
+                        {
+                          "name": "Cloudflare Trigger Dns Record Scan",
+                          "id": "7b33af9d-2b8f-4620-9622-8dc71fe1a2b1",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "POST",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/scan/trigger",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                "scan",
+                                "trigger"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "38fd7f3e-46c2-4670-81da-30c50e06a0d4",
+                                  "key": "zone_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the zone."
+                                }
+                              ]
+                            },
+                            "description": "Initiate an asynchronous scan for common DNS records on the domain. The scan runs in the background and results can be reviewed using the scan review endpoints."
+                          },
+                          "response": [
+                            {
+                              "id": "5614bddc-e530-482a-9d59-c6eccd61ebb6",
+                              "name": "Scan triggered successfully.",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/zones/:zone_id/dns_records/scan/trigger",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "zones",
+                                    ":zone_id",
+                                    "dns_records",
+                                    "scan",
+                                    "trigger"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "zone_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:01.000Z",
+                              "updatedAt": "2026-06-05T13:17:01.000Z",
+                              "uid": "35240-5614bddc-e530-482a-9d59-c6eccd61ebb6"
+                            },
+                            {
+                              "id": "10d63b95-a7fd-47c0-909f-78cc1450fdab",
+                              "name": "Unauthorized.",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/zones/:zone_id/dns_records/scan/trigger",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "zones",
+                                    ":zone_id",
+                                    "dns_records",
+                                    "scan",
+                                    "trigger"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "zone_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:01.000Z",
+                              "updatedAt": "2026-06-05T13:17:01.000Z",
+                              "uid": "35240-10d63b95-a7fd-47c0-909f-78cc1450fdab"
+                            }
+                          ],
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-7b33af9d-2b8f-4620-9622-8dc71fe1a2b1"
+                        }
+                      ],
+                      "id": "a57abf4f-31b2-4691-acd6-f3aaf4035be3",
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-a57abf4f-31b2-4691-acd6-f3aaf4035be3"
+                    },
+                    {
+                      "name": "review",
+                      "item": [
+                        {
+                          "name": "Cloudflare List Scanned Dns Records",
+                          "id": "caf8a4cd-ccca-4bf9-ae51-31325cefbb66",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "GET",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/scan/review",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                "scan",
+                                "review"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "3c8bdd45-d428-4984-950c-bae642a7e0b3",
+                                  "key": "zone_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the zone."
+                                }
+                              ]
+                            },
+                            "description": "Retrieve the DNS records discovered by the most recent scan for review before adding them to the zone."
+                          },
+                          "response": [
+                            {
+                              "id": "4f71c606-736f-4205-af3c-a40bc06287b6",
+                              "name": "List of scanned DNS records.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/zones/:zone_id/dns_records/scan/review",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "zones",
+                                    ":zone_id",
+                                    "dns_records",
+                                    "scan",
+                                    "review"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "zone_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:01.000Z",
+                              "updatedAt": "2026-06-05T13:17:01.000Z",
+                              "uid": "35240-4f71c606-736f-4205-af3c-a40bc06287b6"
+                            },
+                            {
+                              "id": "4dbbb920-8473-491d-8305-a3458e9a1b61",
+                              "name": "Unauthorized.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/zones/:zone_id/dns_records/scan/review",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "zones",
+                                    ":zone_id",
+                                    "dns_records",
+                                    "scan",
+                                    "review"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "zone_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:01.000Z",
+                              "updatedAt": "2026-06-05T13:17:01.000Z",
+                              "uid": "35240-4dbbb920-8473-491d-8305-a3458e9a1b61"
+                            }
+                          ],
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-caf8a4cd-ccca-4bf9-ae51-31325cefbb66"
+                        },
+                        {
+                          "name": "Cloudflare Accept Scanned Dns Records",
+                          "id": "02eee5ef-5567-4d5b-bb4c-817019c78916",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "POST",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_records/scan/review",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_records",
+                                "scan",
+                                "review"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "c8e56091-b5ca-4a09-9fa8-19f570f3dc8d",
+                                  "key": "zone_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the zone."
+                                }
+                              ]
+                            },
+                            "description": "Review and accept scanned DNS records to add them to the zone."
+                          },
+                          "response": [
+                            {
+                              "id": "1272653e-d515-4ce6-bb27-eeec204ab5fa",
+                              "name": "Scanned records accepted.",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/zones/:zone_id/dns_records/scan/review",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "zones",
+                                    ":zone_id",
+                                    "dns_records",
+                                    "scan",
+                                    "review"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "zone_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:01.000Z",
+                              "updatedAt": "2026-06-05T13:17:01.000Z",
+                              "uid": "35240-1272653e-d515-4ce6-bb27-eeec204ab5fa"
+                            },
+                            {
+                              "id": "3d18f00e-f681-4ce0-b8e7-1b870779b592",
+                              "name": "Unauthorized.",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/zones/:zone_id/dns_records/scan/review",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "zones",
+                                    ":zone_id",
+                                    "dns_records",
+                                    "scan",
+                                    "review"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "zone_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:01.000Z",
+                              "updatedAt": "2026-06-05T13:17:01.000Z",
+                              "uid": "35240-3d18f00e-f681-4ce0-b8e7-1b870779b592"
+                            }
+                          ],
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-02eee5ef-5567-4d5b-bb4c-817019c78916"
+                        }
+                      ],
+                      "id": "d7a4d9d1-6a6a-4823-9c96-4b837d3060a3",
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-d7a4d9d1-6a6a-4823-9c96-4b837d3060a3"
+                    }
+                  ],
+                  "id": "60286c14-0564-494a-9bc4-4295a22bdfd4",
+                  "createdAt": "2026-06-05T13:17:01.000Z",
+                  "updatedAt": "2026-06-05T13:17:01.000Z",
+                  "uid": "35240-60286c14-0564-494a-9bc4-4295a22bdfd4"
+                },
+                {
+                  "name": "Cloudflare List Dns Records",
+                  "id": "e63e3bb2-bcef-4059-99c8-96881285f3eb",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/zones/:zone_id/dns_records?type=DNSKEY&name=<string>&content=<string>&page=1&per_page=100",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "zones",
+                        ":zone_id",
+                        "dns_records"
+                      ],
+                      "query": [
+                        {
+                          "description": "DNS record type to filter by.",
+                          "key": "type",
+                          "value": "DNSKEY"
+                        },
+                        {
+                          "description": "DNS record name to filter by.",
+                          "key": "name",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "DNS record content to filter by.",
+                          "key": "content",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Page number of paginated results.",
+                          "key": "page",
+                          "value": "1"
+                        },
+                        {
+                          "description": "Number of records per page.",
+                          "key": "per_page",
+                          "value": "100"
+                        }
+                      ],
+                      "variable": [
+                        {
+                          "id": "e102174c-4181-43a7-9201-d40da7581868",
+                          "key": "zone_id",
+                          "value": "<string>",
+                          "description": "(Required) The unique identifier of the zone."
+                        }
+                      ]
+                    },
+                    "description": "List, search, sort, and filter a zone's DNS records. Returns a paginated list of DNS records for the specified zone."
+                  },
+                  "response": [
+                    {
+                      "id": "f578de8a-955b-46ae-8bd6-7636d513202c",
+                      "name": "Successful response with a list of DNS records.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_records?type=DNSKEY&name=<string>&content=<string>&page=1&per_page=100",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_records"
+                          ],
+                          "query": [
+                            {
+                              "description": "DNS record type to filter by.",
+                              "key": "type",
+                              "value": "DNSKEY"
+                            },
+                            {
+                              "description": "DNS record name to filter by.",
+                              "key": "name",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "DNS record content to filter by.",
+                              "key": "content",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Page number of paginated results.",
+                              "key": "page",
+                              "value": "1"
+                            },
+                            {
+                              "description": "Number of records per page.",
+                              "key": "per_page",
+                              "value": "100"
+                            }
+                          ],
+                          "variable": [
+                            {
+                              "key": "zone_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"result\": [\n    {\n      \"id\": \"<string>\",\n      \"zone_id\": \"<string>\",\n      \"zone_name\": \"<string>\",\n      \"type\": \"NS\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"proxiable\": \"<boolean>\",\n      \"locked\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"created_on\": \"<dateTime>\",\n      \"modified_on\": \"<dateTime>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"zone_id\": \"<string>\",\n      \"zone_name\": \"<string>\",\n      \"type\": \"SRV\",\n      \"name\": \"<string>\",\n      \"content\": \"<string>\",\n      \"ttl\": \"<integer>\",\n      \"proxied\": \"<boolean>\",\n      \"proxiable\": \"<boolean>\",\n      \"locked\": \"<boolean>\",\n      \"comment\": \"<string>\",\n      \"tags\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"created_on\": \"<dateTime>\",\n      \"modified_on\": \"<dateTime>\"\n    }\n  ],\n  \"success\": \"<boolean>\",\n  \"result_info\": {\n    \"page\": \"<integer>\",\n    \"per_page\": \"<integer>\",\n    \"count\": \"<integer>\",\n    \"total_count\": \"<integer>\",\n    \"total_pages\": \"<integer>\"\n  }\n}",
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-f578de8a-955b-46ae-8bd6-7636d513202c"
+                    },
+                    {
+                      "id": "05fa6156-4308-438b-82b2-a2277623995a",
+                      "name": "Bad request due to invalid parameters.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_records?type=DNSKEY&name=<string>&content=<string>&page=1&per_page=100",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_records"
+                          ],
+                          "query": [
+                            {
+                              "description": "DNS record type to filter by.",
+                              "key": "type",
+                              "value": "DNSKEY"
+                            },
+                            {
+                              "description": "DNS record name to filter by.",
+                              "key": "name",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "DNS record content to filter by.",
+                              "key": "content",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Page number of paginated results.",
+                              "key": "page",
+                              "value": "1"
+                            },
+                            {
+                              "description": "Number of records per page.",
+                              "key": "per_page",
+                              "value": "100"
+                            }
+                          ],
+                          "variable": [
+                            {
+                              "key": "zone_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-05fa6156-4308-438b-82b2-a2277623995a"
+                    },
+                    {
+                      "id": "3d6d7149-2e35-419a-a6c0-f3309105be09",
+                      "name": "Unauthorized due to missing or invalid authentication.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_records?type=DNSKEY&name=<string>&content=<string>&page=1&per_page=100",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_records"
+                          ],
+                          "query": [
+                            {
+                              "description": "DNS record type to filter by.",
+                              "key": "type",
+                              "value": "DNSKEY"
+                            },
+                            {
+                              "description": "DNS record name to filter by.",
+                              "key": "name",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "DNS record content to filter by.",
+                              "key": "content",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Page number of paginated results.",
+                              "key": "page",
+                              "value": "1"
+                            },
+                            {
+                              "description": "Number of records per page.",
+                              "key": "per_page",
+                              "value": "100"
+                            }
+                          ],
+                          "variable": [
+                            {
+                              "key": "zone_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-3d6d7149-2e35-419a-a6c0-f3309105be09"
+                    },
+                    {
+                      "id": "1a0e5872-2b93-4546-ac7b-aa2afa39b399",
+                      "name": "Forbidden due to insufficient permissions.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_records?type=DNSKEY&name=<string>&content=<string>&page=1&per_page=100",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_records"
+                          ],
+                          "query": [
+                            {
+                              "description": "DNS record type to filter by.",
+                              "key": "type",
+                              "value": "DNSKEY"
+                            },
+                            {
+                              "description": "DNS record name to filter by.",
+                              "key": "name",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "DNS record content to filter by.",
+                              "key": "content",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Page number of paginated results.",
+                              "key": "page",
+                              "value": "1"
+                            },
+                            {
+                              "description": "Number of records per page.",
+                              "key": "per_page",
+                              "value": "100"
+                            }
+                          ],
+                          "variable": [
+                            {
+                              "key": "zone_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Forbidden",
+                      "code": 403,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-1a0e5872-2b93-4546-ac7b-aa2afa39b399"
+                    }
+                  ],
+                  "createdAt": "2026-06-05T13:17:01.000Z",
+                  "updatedAt": "2026-06-05T13:17:01.000Z",
+                  "uid": "35240-e63e3bb2-bcef-4059-99c8-96881285f3eb"
+                },
+                {
+                  "name": "Cloudflare Create Dns Record",
+                  "id": "1b200fd8-0608-4746-9a84-4b576b68809f",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"type\": \"AAAA\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/zones/:zone_id/dns_records",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "zones",
+                        ":zone_id",
+                        "dns_records"
+                      ],
+                      "variable": [
+                        {
+                          "id": "45186e8e-6d27-4a35-96ae-419871e04a83",
+                          "key": "zone_id",
+                          "value": "<string>",
+                          "description": "(Required) The unique identifier of the zone."
+                        }
+                      ]
+                    },
+                    "description": "Create a new DNS record for a zone. A/AAAA records cannot coexist with CNAME records on the same name, and NS records cannot share names with other record types."
+                  },
+                  "response": [
+                    {
+                      "id": "2ba58361-942e-481f-a713-3b6ef146a1f3",
+                      "name": "DNS record created successfully.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"type\": \"AAAA\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_records",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_records"
+                          ],
+                          "variable": [
+                            {
+                              "key": "zone_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"result\": {\n    \"id\": \"<string>\",\n    \"zone_id\": \"<string>\",\n    \"zone_name\": \"<string>\",\n    \"type\": \"MX\",\n    \"name\": \"<string>\",\n    \"content\": \"<string>\",\n    \"ttl\": \"<integer>\",\n    \"proxied\": \"<boolean>\",\n    \"proxiable\": \"<boolean>\",\n    \"locked\": \"<boolean>\",\n    \"comment\": \"<string>\",\n    \"tags\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"created_on\": \"<dateTime>\",\n    \"modified_on\": \"<dateTime>\"\n  },\n  \"success\": \"<boolean>\"\n}",
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-2ba58361-942e-481f-a713-3b6ef146a1f3"
+                    },
+                    {
+                      "id": "ed340fde-fd44-4907-b9cd-700f12ac93a8",
+                      "name": "Bad request due to invalid record data.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"type\": \"AAAA\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_records",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_records"
+                          ],
+                          "variable": [
+                            {
+                              "key": "zone_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-ed340fde-fd44-4907-b9cd-700f12ac93a8"
+                    },
+                    {
+                      "id": "e913357c-4640-410e-9abb-af81b03ffb33",
+                      "name": "Unauthorized.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"type\": \"AAAA\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_records",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_records"
+                          ],
+                          "variable": [
+                            {
+                              "key": "zone_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-e913357c-4640-410e-9abb-af81b03ffb33"
+                    }
+                  ],
+                  "createdAt": "2026-06-05T13:17:01.000Z",
+                  "updatedAt": "2026-06-05T13:17:01.000Z",
+                  "uid": "35240-1b200fd8-0608-4746-9a84-4b576b68809f"
+                }
+              ],
+              "id": "145071a6-6cc8-4ba0-b317-f77e371493dc",
+              "createdAt": "2026-06-05T13:17:01.000Z",
+              "updatedAt": "2026-06-05T13:17:01.000Z",
+              "uid": "35240-145071a6-6cc8-4ba0-b317-f77e371493dc"
+            },
+            {
+              "name": "dns_analytics",
+              "item": [
+                {
+                  "name": "report",
+                  "item": [
+                    {
+                      "name": "bytime",
+                      "item": [
+                        {
+                          "name": "Cloudflare Get Dns Analytics by Time",
+                          "id": "d6e21c7f-23a9-4dfe-805e-ae1717f612af",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "GET",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_analytics/report/bytime?since=<dateTime>&until=<dateTime>&time_delta=auto",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_analytics",
+                                "report",
+                                "bytime"
+                              ],
+                              "query": [
+                                {
+                                  "description": "Start date in ISO 8601 format.",
+                                  "key": "since",
+                                  "value": "<dateTime>"
+                                },
+                                {
+                                  "description": "End date in ISO 8601 format.",
+                                  "key": "until",
+                                  "value": "<dateTime>"
+                                },
+                                {
+                                  "description": "Time interval for grouping results.",
+                                  "key": "time_delta",
+                                  "value": "auto"
+                                }
+                              ],
+                              "variable": [
+                                {
+                                  "id": "dd5e1f6e-c8b8-4f88-ba84-d88d969cff06",
+                                  "key": "zone_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the zone."
+                                }
+                              ]
+                            },
+                            "description": "Retrieve time-grouped DNS analytics metrics for the zone."
+                          },
+                          "response": [
+                            {
+                              "id": "94253614-565c-4421-81f1-8c1dc109a5b2",
+                              "name": "Time-grouped DNS analytics report.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/zones/:zone_id/dns_analytics/report/bytime?since=<dateTime>&until=<dateTime>&time_delta=auto",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "zones",
+                                    ":zone_id",
+                                    "dns_analytics",
+                                    "report",
+                                    "bytime"
+                                  ],
+                                  "query": [
+                                    {
+                                      "description": "Start date in ISO 8601 format.",
+                                      "key": "since",
+                                      "value": "<dateTime>"
+                                    },
+                                    {
+                                      "description": "End date in ISO 8601 format.",
+                                      "key": "until",
+                                      "value": "<dateTime>"
+                                    },
+                                    {
+                                      "description": "Time interval for grouping results.",
+                                      "key": "time_delta",
+                                      "value": "auto"
+                                    }
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "zone_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:01.000Z",
+                              "updatedAt": "2026-06-05T13:17:01.000Z",
+                              "uid": "35240-94253614-565c-4421-81f1-8c1dc109a5b2"
+                            },
+                            {
+                              "id": "067aca88-06af-43b0-9262-4f0121c02077",
+                              "name": "Unauthorized.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/zones/:zone_id/dns_analytics/report/bytime?since=<dateTime>&until=<dateTime>&time_delta=auto",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "zones",
+                                    ":zone_id",
+                                    "dns_analytics",
+                                    "report",
+                                    "bytime"
+                                  ],
+                                  "query": [
+                                    {
+                                      "description": "Start date in ISO 8601 format.",
+                                      "key": "since",
+                                      "value": "<dateTime>"
+                                    },
+                                    {
+                                      "description": "End date in ISO 8601 format.",
+                                      "key": "until",
+                                      "value": "<dateTime>"
+                                    },
+                                    {
+                                      "description": "Time interval for grouping results.",
+                                      "key": "time_delta",
+                                      "value": "auto"
+                                    }
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "zone_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:01.000Z",
+                              "updatedAt": "2026-06-05T13:17:01.000Z",
+                              "uid": "35240-067aca88-06af-43b0-9262-4f0121c02077"
+                            }
+                          ],
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-d6e21c7f-23a9-4dfe-805e-ae1717f612af"
+                        }
+                      ],
+                      "id": "00be7f78-cd5b-4aeb-a225-e761d9ae3ca3",
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-00be7f78-cd5b-4aeb-a225-e761d9ae3ca3"
+                    },
+                    {
+                      "name": "Cloudflare Get Dns Analytics Report",
+                      "id": "116603f2-0944-4102-9cd2-eae740cca353",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dns_analytics/report?since=<dateTime>&until=<dateTime>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dns_analytics",
+                            "report"
+                          ],
+                          "query": [
+                            {
+                              "description": "Start date of the analytics query in ISO 8601 format.",
+                              "key": "since",
+                              "value": "<dateTime>"
+                            },
+                            {
+                              "description": "End date of the analytics query in ISO 8601 format.",
+                              "key": "until",
+                              "value": "<dateTime>"
+                            }
+                          ],
+                          "variable": [
+                            {
+                              "id": "c77c6ca8-2b30-4b30-a340-e1d81cee23a2",
+                              "key": "zone_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the zone."
+                            }
+                          ]
+                        },
+                        "description": "Retrieve aggregated DNS analytics metrics for the zone including query counts, response codes, and record types."
+                      },
+                      "response": [
+                        {
+                          "id": "646b79a2-e827-45c1-b322-81778cebd83f",
+                          "name": "Aggregated DNS analytics report.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_analytics/report?since=<dateTime>&until=<dateTime>",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_analytics",
+                                "report"
+                              ],
+                              "query": [
+                                {
+                                  "description": "Start date of the analytics query in ISO 8601 format.",
+                                  "key": "since",
+                                  "value": "<dateTime>"
+                                },
+                                {
+                                  "description": "End date of the analytics query in ISO 8601 format.",
+                                  "key": "until",
+                                  "value": "<dateTime>"
+                                }
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-646b79a2-e827-45c1-b322-81778cebd83f"
+                        },
+                        {
+                          "id": "6318da99-d961-408e-8d54-e364859ad328",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/zones/:zone_id/dns_analytics/report?since=<dateTime>&until=<dateTime>",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "zones",
+                                ":zone_id",
+                                "dns_analytics",
+                                "report"
+                              ],
+                              "query": [
+                                {
+                                  "description": "Start date of the analytics query in ISO 8601 format.",
+                                  "key": "since",
+                                  "value": "<dateTime>"
+                                },
+                                {
+                                  "description": "End date of the analytics query in ISO 8601 format.",
+                                  "key": "until",
+                                  "value": "<dateTime>"
+                                }
+                              ],
+                              "variable": [
+                                {
+                                  "key": "zone_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:01.000Z",
+                          "updatedAt": "2026-06-05T13:17:01.000Z",
+                          "uid": "35240-6318da99-d961-408e-8d54-e364859ad328"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-116603f2-0944-4102-9cd2-eae740cca353"
+                    }
+                  ],
+                  "id": "07fbcb14-726c-4472-8609-009e34720c2e",
+                  "createdAt": "2026-06-05T13:17:01.000Z",
+                  "updatedAt": "2026-06-05T13:17:01.000Z",
+                  "uid": "35240-07fbcb14-726c-4472-8609-009e34720c2e"
+                }
+              ],
+              "id": "a38ecde6-a5ed-4cbb-8462-80c813c1bda1",
+              "createdAt": "2026-06-05T13:17:01.000Z",
+              "updatedAt": "2026-06-05T13:17:01.000Z",
+              "uid": "35240-a38ecde6-a5ed-4cbb-8462-80c813c1bda1"
+            },
+            {
+              "name": "dnssec",
+              "item": [
+                {
+                  "name": "Cloudflare Get Dnssec Settings",
+                  "id": "484d7358-a691-4e9d-88b7-0f367ac81ea6",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/zones/:zone_id/dnssec",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "zones",
+                        ":zone_id",
+                        "dnssec"
+                      ],
+                      "variable": [
+                        {
+                          "id": "29d0fba1-c192-42cf-897e-677e37df2ca0",
+                          "key": "zone_id",
+                          "value": "<string>",
+                          "description": "(Required) The unique identifier of the zone."
+                        }
+                      ]
+                    },
+                    "description": "Retrieve the current DNSSEC settings for the zone including status, algorithm, digest, and DS record details."
+                  },
+                  "response": [
+                    {
+                      "id": "f57a59aa-fb69-4045-a4a4-8562745711aa",
+                      "name": "DNSSEC settings retrieved successfully.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dnssec",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dnssec"
+                          ],
+                          "variable": [
+                            {
+                              "key": "zone_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-f57a59aa-fb69-4045-a4a4-8562745711aa"
+                    },
+                    {
+                      "id": "e2118736-2404-40b7-859f-dfe3fa6ab712",
+                      "name": "Unauthorized.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dnssec",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dnssec"
+                          ],
+                          "variable": [
+                            {
+                              "key": "zone_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-e2118736-2404-40b7-859f-dfe3fa6ab712"
+                    }
+                  ],
+                  "createdAt": "2026-06-05T13:17:01.000Z",
+                  "updatedAt": "2026-06-05T13:17:01.000Z",
+                  "uid": "35240-484d7358-a691-4e9d-88b7-0f367ac81ea6"
+                },
+                {
+                  "name": "Cloudflare Update Dnssec Settings",
+                  "id": "2b282a0e-1602-4145-af9c-aaf53434b4f0",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"status\": \"active\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/zones/:zone_id/dnssec",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "zones",
+                        ":zone_id",
+                        "dnssec"
+                      ],
+                      "variable": [
+                        {
+                          "id": "80253429-00bc-4cca-9772-01e6abbdd229",
+                          "key": "zone_id",
+                          "value": "<string>",
+                          "description": "(Required) The unique identifier of the zone."
+                        }
+                      ]
+                    },
+                    "description": "Update DNSSEC configuration for the zone such as enabling or disabling DNSSEC."
+                  },
+                  "response": [
+                    {
+                      "id": "a09c2200-735a-41be-9ed2-4b06afe031d5",
+                      "name": "DNSSEC settings updated successfully.",
+                      "originalRequest": {
+                        "method": "PATCH",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"status\": \"active\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dnssec",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dnssec"
+                          ],
+                          "variable": [
+                            {
+                              "key": "zone_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-a09c2200-735a-41be-9ed2-4b06afe031d5"
+                    },
+                    {
+                      "id": "2aabb530-293c-465d-b71c-d8febe747455",
+                      "name": "Unauthorized.",
+                      "originalRequest": {
+                        "method": "PATCH",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"status\": \"active\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dnssec",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dnssec"
+                          ],
+                          "variable": [
+                            {
+                              "key": "zone_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-2aabb530-293c-465d-b71c-d8febe747455"
+                    }
+                  ],
+                  "createdAt": "2026-06-05T13:17:01.000Z",
+                  "updatedAt": "2026-06-05T13:17:01.000Z",
+                  "uid": "35240-2b282a0e-1602-4145-af9c-aaf53434b4f0"
+                },
+                {
+                  "name": "Cloudflare Delete Dnssec Settings",
+                  "id": "dbf39b2b-e114-45b2-97fd-5e3fbb704e30",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "DELETE",
+                    "header": [],
+                    "url": {
+                      "raw": "{{baseUrl}}/zones/:zone_id/dnssec",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "zones",
+                        ":zone_id",
+                        "dnssec"
+                      ],
+                      "variable": [
+                        {
+                          "id": "9c1de028-b41d-4f93-b72e-5c833e91a76e",
+                          "key": "zone_id",
+                          "value": "<string>",
+                          "description": "(Required) The unique identifier of the zone."
+                        }
+                      ]
+                    },
+                    "description": "Remove DNSSEC configuration from the zone."
+                  },
+                  "response": [
+                    {
+                      "id": "60642eb5-2567-4d1f-96c6-75b36d85fe0d",
+                      "name": "DNSSEC settings deleted successfully.",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dnssec",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dnssec"
+                          ],
+                          "variable": [
+                            {
+                              "key": "zone_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-60642eb5-2567-4d1f-96c6-75b36d85fe0d"
+                    },
+                    {
+                      "id": "8664d329-9ad2-484d-be8c-68cbb5c9b8ab",
+                      "name": "Unauthorized.",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/zones/:zone_id/dnssec",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "zones",
+                            ":zone_id",
+                            "dnssec"
+                          ],
+                          "variable": [
+                            {
+                              "key": "zone_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-06-05T13:17:01.000Z",
+                      "updatedAt": "2026-06-05T13:17:01.000Z",
+                      "uid": "35240-8664d329-9ad2-484d-be8c-68cbb5c9b8ab"
+                    }
+                  ],
+                  "createdAt": "2026-06-05T13:17:01.000Z",
+                  "updatedAt": "2026-06-05T13:17:01.000Z",
+                  "uid": "35240-dbf39b2b-e114-45b2-97fd-5e3fbb704e30"
+                }
+              ],
+              "id": "5c8ea308-a35c-4562-9da3-759d07218414",
+              "createdAt": "2026-06-05T13:17:01.000Z",
+              "updatedAt": "2026-06-05T13:17:01.000Z",
+              "uid": "35240-5c8ea308-a35c-4562-9da3-759d07218414"
+            }
+          ],
+          "id": "dd1daa14-540f-459f-93e6-d079befe0848",
+          "createdAt": "2026-06-05T13:17:01.000Z",
+          "updatedAt": "2026-06-05T13:17:01.000Z",
+          "uid": "35240-dd1daa14-540f-459f-93e6-d079befe0848"
+        }
+      ],
+      "id": "c265969c-2ef8-48fc-ab58-b155361aad18",
+      "createdAt": "2026-06-05T13:17:01.000Z",
+      "updatedAt": "2026-06-05T13:17:01.000Z",
+      "uid": "35240-c265969c-2ef8-48fc-ab58-b155361aad18"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.cloudflare.com/client/v4"
+    }
+  ]
+}

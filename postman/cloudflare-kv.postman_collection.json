@@ -1,0 +1,2838 @@
+{
+  "info": {
+    "_postman_id": "0ac8eae4-8917-4e48-9db8-4789def6c2e7",
+    "name": "Cloudflare KV API",
+    "description": "Cloudflare Workers KV is a global, low-latency key-value data store. The KV API allows developers to create namespaces, write and read key-value pairs, list keys, perform bulk operations with support for up to 10,000 key-value pairs per request, and manage key metadata.\n\nContact Support:\n Name: Cloudflare Support",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-06-05T13:17:32.000Z",
+    "updatedAt": "2026-06-05T13:17:32.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-0ac8eae4-8917-4e48-9db8-4789def6c2e7"
+  },
+  "item": [
+    {
+      "name": "accounts",
+      "item": [
+        {
+          "name": "{account_id}",
+          "item": [
+            {
+              "name": "storage",
+              "item": [
+                {
+                  "name": "kv",
+                  "item": [
+                    {
+                      "name": "namespaces",
+                      "item": [
+                        {
+                          "name": "{namespace_id}",
+                          "item": [
+                            {
+                              "name": "keys",
+                              "item": [
+                                {
+                                  "name": "Cloudflare List Keys",
+                                  "id": "f879b3f4-d30e-43d6-8f20-6b8fe1843cf2",
+                                  "protocolProfileBehavior": {
+                                    "disableBodyPruning": true
+                                  },
+                                  "request": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/keys?cursor=<string>&limit=<integer>&prefix=<string>",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "storage",
+                                        "kv",
+                                        "namespaces",
+                                        ":namespace_id",
+                                        "keys"
+                                      ],
+                                      "query": [
+                                        {
+                                          "description": "Cursor for pagination.",
+                                          "key": "cursor",
+                                          "value": "<string>"
+                                        },
+                                        {
+                                          "description": "Maximum number of keys to return.",
+                                          "key": "limit",
+                                          "value": "<integer>"
+                                        },
+                                        {
+                                          "description": "Filter keys by prefix.",
+                                          "key": "prefix",
+                                          "value": "<string>"
+                                        }
+                                      ],
+                                      "variable": [
+                                        {
+                                          "id": "b9f49f07-eb8d-406d-872b-32b80dac611d",
+                                          "key": "account_id",
+                                          "value": "<string>",
+                                          "description": "(Required) The unique identifier of the Cloudflare account."
+                                        },
+                                        {
+                                          "id": "71afa5b3-9645-4c8b-9ca2-450a1ce2b943",
+                                          "key": "namespace_id",
+                                          "value": "<string>",
+                                          "description": "(Required) The unique identifier of the KV namespace."
+                                        }
+                                      ]
+                                    },
+                                    "description": "List keys stored in a KV namespace with cursor-based pagination."
+                                  },
+                                  "response": [
+                                    {
+                                      "id": "e170ee44-5374-4c55-a085-b9018f698425",
+                                      "name": "List of keys.",
+                                      "originalRequest": {
+                                        "method": "GET",
+                                        "header": [
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "description": "Added as a part of security scheme: bearer",
+                                            "key": "Authorization",
+                                            "value": "Bearer <token>"
+                                          }
+                                        ],
+                                        "url": {
+                                          "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/keys?cursor=<string>&limit=<integer>&prefix=<string>",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "accounts",
+                                            ":account_id",
+                                            "storage",
+                                            "kv",
+                                            "namespaces",
+                                            ":namespace_id",
+                                            "keys"
+                                          ],
+                                          "query": [
+                                            {
+                                              "description": "Cursor for pagination.",
+                                              "key": "cursor",
+                                              "value": "<string>"
+                                            },
+                                            {
+                                              "description": "Maximum number of keys to return.",
+                                              "key": "limit",
+                                              "value": "<integer>"
+                                            },
+                                            {
+                                              "description": "Filter keys by prefix.",
+                                              "key": "prefix",
+                                              "value": "<string>"
+                                            }
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "account_id"
+                                            },
+                                            {
+                                              "key": "namespace_id"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "OK",
+                                      "code": 200,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": "{\n  \"result\": [\n    {\n      \"name\": \"<string>\",\n      \"expiration\": \"<integer>\",\n      \"metadata\": {}\n    },\n    {\n      \"name\": \"<string>\",\n      \"expiration\": \"<integer>\",\n      \"metadata\": {}\n    }\n  ],\n  \"success\": \"<boolean>\",\n  \"result_info\": {\n    \"cursor\": \"<string>\",\n    \"count\": \"<integer>\"\n  }\n}",
+                                      "createdAt": "2026-06-05T13:17:33.000Z",
+                                      "updatedAt": "2026-06-05T13:17:33.000Z",
+                                      "uid": "35240-e170ee44-5374-4c55-a085-b9018f698425"
+                                    },
+                                    {
+                                      "id": "48451268-836d-4672-9a10-9eead4624364",
+                                      "name": "Unauthorized.",
+                                      "originalRequest": {
+                                        "method": "GET",
+                                        "header": [
+                                          {
+                                            "description": "Added as a part of security scheme: bearer",
+                                            "key": "Authorization",
+                                            "value": "Bearer <token>"
+                                          }
+                                        ],
+                                        "url": {
+                                          "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/keys?cursor=<string>&limit=<integer>&prefix=<string>",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "accounts",
+                                            ":account_id",
+                                            "storage",
+                                            "kv",
+                                            "namespaces",
+                                            ":namespace_id",
+                                            "keys"
+                                          ],
+                                          "query": [
+                                            {
+                                              "description": "Cursor for pagination.",
+                                              "key": "cursor",
+                                              "value": "<string>"
+                                            },
+                                            {
+                                              "description": "Maximum number of keys to return.",
+                                              "key": "limit",
+                                              "value": "<integer>"
+                                            },
+                                            {
+                                              "description": "Filter keys by prefix.",
+                                              "key": "prefix",
+                                              "value": "<string>"
+                                            }
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "account_id"
+                                            },
+                                            {
+                                              "key": "namespace_id"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "Unauthorized",
+                                      "code": 401,
+                                      "_postman_previewlanguage": "text",
+                                      "header": [],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": null,
+                                      "createdAt": "2026-06-05T13:17:33.000Z",
+                                      "updatedAt": "2026-06-05T13:17:33.000Z",
+                                      "uid": "35240-48451268-836d-4672-9a10-9eead4624364"
+                                    }
+                                  ],
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-f879b3f4-d30e-43d6-8f20-6b8fe1843cf2"
+                                }
+                              ],
+                              "id": "aee1c41d-bba9-4506-a7dd-55bb04820876",
+                              "createdAt": "2026-06-05T13:17:33.000Z",
+                              "updatedAt": "2026-06-05T13:17:33.000Z",
+                              "uid": "35240-aee1c41d-bba9-4506-a7dd-55bb04820876"
+                            },
+                            {
+                              "name": "values",
+                              "item": [
+                                {
+                                  "name": "{key_name}",
+                                  "item": [
+                                    {
+                                      "name": "Cloudflare Read Key-value Pair",
+                                      "id": "e56de586-f925-446e-a3c2-b1cb10e00c9a",
+                                      "protocolProfileBehavior": {
+                                        "disableBodyPruning": true
+                                      },
+                                      "request": {
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                          "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/values/:key_name",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "accounts",
+                                            ":account_id",
+                                            "storage",
+                                            "kv",
+                                            "namespaces",
+                                            ":namespace_id",
+                                            "values",
+                                            ":key_name"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "id": "dbdbbcd8-ce65-40af-a554-4d3a0f0e42ba",
+                                              "key": "account_id",
+                                              "value": "<string>",
+                                              "description": "(Required) The unique identifier of the Cloudflare account."
+                                            },
+                                            {
+                                              "id": "002beb60-06e4-4d5d-ae4c-cfef4f8643dd",
+                                              "key": "namespace_id",
+                                              "value": "<string>",
+                                              "description": "(Required) The unique identifier of the KV namespace."
+                                            },
+                                            {
+                                              "id": "9f85b1b4-e172-4f4d-be94-3ea07b68ce31",
+                                              "key": "key_name",
+                                              "value": "<string>",
+                                              "description": "(Required) The key name. Use URL-encoding for special characters such as colon, exclamation mark, and percent."
+                                            }
+                                          ]
+                                        },
+                                        "description": "Read the value of a specific key from the namespace."
+                                      },
+                                      "response": [
+                                        {
+                                          "id": "b82a2ea5-61a0-4b7e-afe1-ec6743cf4f3d",
+                                          "name": "The value associated with the key.",
+                                          "originalRequest": {
+                                            "method": "GET",
+                                            "header": [
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/values/:key_name",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "values",
+                                                ":key_name"
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                },
+                                                {
+                                                  "key": "key_name"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "OK",
+                                          "code": 200,
+                                          "_postman_previewlanguage": "text",
+                                          "header": [],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": null,
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-b82a2ea5-61a0-4b7e-afe1-ec6743cf4f3d"
+                                        },
+                                        {
+                                          "id": "f0646c65-cf0c-4a90-a47c-8b6a3091444b",
+                                          "name": "Unauthorized.",
+                                          "originalRequest": {
+                                            "method": "GET",
+                                            "header": [
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/values/:key_name",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "values",
+                                                ":key_name"
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                },
+                                                {
+                                                  "key": "key_name"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "Unauthorized",
+                                          "code": 401,
+                                          "_postman_previewlanguage": "text",
+                                          "header": [],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": null,
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-f0646c65-cf0c-4a90-a47c-8b6a3091444b"
+                                        },
+                                        {
+                                          "id": "2fe894f4-0aff-4976-8ee1-4c83fac43023",
+                                          "name": "Key not found.",
+                                          "originalRequest": {
+                                            "method": "GET",
+                                            "header": [
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/values/:key_name",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "values",
+                                                ":key_name"
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                },
+                                                {
+                                                  "key": "key_name"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "Not Found",
+                                          "code": 404,
+                                          "_postman_previewlanguage": "text",
+                                          "header": [],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": null,
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-2fe894f4-0aff-4976-8ee1-4c83fac43023"
+                                        }
+                                      ],
+                                      "createdAt": "2026-06-05T13:17:33.000Z",
+                                      "updatedAt": "2026-06-05T13:17:33.000Z",
+                                      "uid": "35240-e56de586-f925-446e-a3c2-b1cb10e00c9a"
+                                    },
+                                    {
+                                      "name": "Cloudflare Write Key-value Pair",
+                                      "id": "c07fc0e8-8c63-436c-8f23-38c84802b42e",
+                                      "protocolProfileBehavior": {
+                                        "disableBodyPruning": true
+                                      },
+                                      "request": {
+                                        "method": "PUT",
+                                        "header": [],
+                                        "url": {
+                                          "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/values/:key_name?expiration=<integer>&expiration_ttl=<integer>",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "accounts",
+                                            ":account_id",
+                                            "storage",
+                                            "kv",
+                                            "namespaces",
+                                            ":namespace_id",
+                                            "values",
+                                            ":key_name"
+                                          ],
+                                          "query": [
+                                            {
+                                              "description": "Unix timestamp for when the key should expire.",
+                                              "key": "expiration",
+                                              "value": "<integer>"
+                                            },
+                                            {
+                                              "description": "Seconds until the key expires.",
+                                              "key": "expiration_ttl",
+                                              "value": "<integer>"
+                                            }
+                                          ],
+                                          "variable": [
+                                            {
+                                              "id": "3bf294b7-ac1d-40b6-b65d-88095d09f5c7",
+                                              "key": "account_id",
+                                              "value": "<string>",
+                                              "description": "(Required) The unique identifier of the Cloudflare account."
+                                            },
+                                            {
+                                              "id": "e77b52a9-5cb9-4117-b12a-d6bc73238fef",
+                                              "key": "namespace_id",
+                                              "value": "<string>",
+                                              "description": "(Required) The unique identifier of the KV namespace."
+                                            },
+                                            {
+                                              "id": "ff14f38c-6899-4650-b150-66ac192b2c57",
+                                              "key": "key_name",
+                                              "value": "<string>",
+                                              "description": "(Required) The key name. Use URL-encoding for special characters such as colon, exclamation mark, and percent."
+                                            }
+                                          ]
+                                        },
+                                        "description": "Write a value for a specific key in the namespace. Optionally set expiration and metadata."
+                                      },
+                                      "response": [
+                                        {
+                                          "id": "8635bcbc-335d-4504-9388-233f00ff55ec",
+                                          "name": "Value written successfully.",
+                                          "originalRequest": {
+                                            "method": "PUT",
+                                            "header": [
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/values/:key_name?expiration=<integer>&expiration_ttl=<integer>",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "values",
+                                                ":key_name"
+                                              ],
+                                              "query": [
+                                                {
+                                                  "description": "Unix timestamp for when the key should expire.",
+                                                  "key": "expiration",
+                                                  "value": "<integer>"
+                                                },
+                                                {
+                                                  "description": "Seconds until the key expires.",
+                                                  "key": "expiration_ttl",
+                                                  "value": "<integer>"
+                                                }
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                },
+                                                {
+                                                  "key": "key_name"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "OK",
+                                          "code": 200,
+                                          "_postman_previewlanguage": "text",
+                                          "header": [],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": null,
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-8635bcbc-335d-4504-9388-233f00ff55ec"
+                                        },
+                                        {
+                                          "id": "d69171e0-5963-40fc-a48d-594e51178c6a",
+                                          "name": "Unauthorized.",
+                                          "originalRequest": {
+                                            "method": "PUT",
+                                            "header": [
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/values/:key_name?expiration=<integer>&expiration_ttl=<integer>",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "values",
+                                                ":key_name"
+                                              ],
+                                              "query": [
+                                                {
+                                                  "description": "Unix timestamp for when the key should expire.",
+                                                  "key": "expiration",
+                                                  "value": "<integer>"
+                                                },
+                                                {
+                                                  "description": "Seconds until the key expires.",
+                                                  "key": "expiration_ttl",
+                                                  "value": "<integer>"
+                                                }
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                },
+                                                {
+                                                  "key": "key_name"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "Unauthorized",
+                                          "code": 401,
+                                          "_postman_previewlanguage": "text",
+                                          "header": [],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": null,
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-d69171e0-5963-40fc-a48d-594e51178c6a"
+                                        }
+                                      ],
+                                      "createdAt": "2026-06-05T13:17:33.000Z",
+                                      "updatedAt": "2026-06-05T13:17:33.000Z",
+                                      "uid": "35240-c07fc0e8-8c63-436c-8f23-38c84802b42e"
+                                    },
+                                    {
+                                      "name": "Cloudflare Delete Key-value Pair",
+                                      "id": "cdb31066-af0b-4534-8e2e-60af93ecf613",
+                                      "protocolProfileBehavior": {
+                                        "disableBodyPruning": true
+                                      },
+                                      "request": {
+                                        "method": "DELETE",
+                                        "header": [],
+                                        "url": {
+                                          "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/values/:key_name",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "accounts",
+                                            ":account_id",
+                                            "storage",
+                                            "kv",
+                                            "namespaces",
+                                            ":namespace_id",
+                                            "values",
+                                            ":key_name"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "id": "16e9dfb0-4f22-412b-9642-6c265a786655",
+                                              "key": "account_id",
+                                              "value": "<string>",
+                                              "description": "(Required) The unique identifier of the Cloudflare account."
+                                            },
+                                            {
+                                              "id": "0cd74c61-a78a-4a01-b0b1-35497de6f469",
+                                              "key": "namespace_id",
+                                              "value": "<string>",
+                                              "description": "(Required) The unique identifier of the KV namespace."
+                                            },
+                                            {
+                                              "id": "9040959b-6b96-4325-9029-e29a7ff7235a",
+                                              "key": "key_name",
+                                              "value": "<string>",
+                                              "description": "(Required) The key name. Use URL-encoding for special characters such as colon, exclamation mark, and percent."
+                                            }
+                                          ]
+                                        },
+                                        "description": "Delete a key-value pair from the namespace."
+                                      },
+                                      "response": [
+                                        {
+                                          "id": "a21a7fc9-02ba-42f3-a7d5-b4ba8ae86553",
+                                          "name": "Key-value pair deleted.",
+                                          "originalRequest": {
+                                            "method": "DELETE",
+                                            "header": [
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/values/:key_name",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "values",
+                                                ":key_name"
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                },
+                                                {
+                                                  "key": "key_name"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "OK",
+                                          "code": 200,
+                                          "_postman_previewlanguage": "text",
+                                          "header": [],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": null,
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-a21a7fc9-02ba-42f3-a7d5-b4ba8ae86553"
+                                        },
+                                        {
+                                          "id": "fb17b354-6247-439f-9832-52866497dd56",
+                                          "name": "Unauthorized.",
+                                          "originalRequest": {
+                                            "method": "DELETE",
+                                            "header": [
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/values/:key_name",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "values",
+                                                ":key_name"
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                },
+                                                {
+                                                  "key": "key_name"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "Unauthorized",
+                                          "code": 401,
+                                          "_postman_previewlanguage": "text",
+                                          "header": [],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": null,
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-fb17b354-6247-439f-9832-52866497dd56"
+                                        },
+                                        {
+                                          "id": "36c02d15-018e-49de-9c1c-08beb5548874",
+                                          "name": "Key not found.",
+                                          "originalRequest": {
+                                            "method": "DELETE",
+                                            "header": [
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/values/:key_name",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "values",
+                                                ":key_name"
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                },
+                                                {
+                                                  "key": "key_name"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "Not Found",
+                                          "code": 404,
+                                          "_postman_previewlanguage": "text",
+                                          "header": [],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": null,
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-36c02d15-018e-49de-9c1c-08beb5548874"
+                                        }
+                                      ],
+                                      "createdAt": "2026-06-05T13:17:33.000Z",
+                                      "updatedAt": "2026-06-05T13:17:33.000Z",
+                                      "uid": "35240-cdb31066-af0b-4534-8e2e-60af93ecf613"
+                                    }
+                                  ],
+                                  "id": "a3a12796-1f67-4f2b-b062-63a857ef00f1",
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-a3a12796-1f67-4f2b-b062-63a857ef00f1"
+                                }
+                              ],
+                              "id": "83ea0b36-9b1e-487f-8cb2-ea77f3e59100",
+                              "createdAt": "2026-06-05T13:17:33.000Z",
+                              "updatedAt": "2026-06-05T13:17:33.000Z",
+                              "uid": "35240-83ea0b36-9b1e-487f-8cb2-ea77f3e59100"
+                            },
+                            {
+                              "name": "metadata",
+                              "item": [
+                                {
+                                  "name": "{key_name}",
+                                  "item": [
+                                    {
+                                      "name": "Cloudflare Read Key Metadata",
+                                      "id": "0f7d300c-b43f-4aa1-9202-82e9d044cc7a",
+                                      "protocolProfileBehavior": {
+                                        "disableBodyPruning": true
+                                      },
+                                      "request": {
+                                        "method": "GET",
+                                        "header": [],
+                                        "url": {
+                                          "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/metadata/:key_name",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "accounts",
+                                            ":account_id",
+                                            "storage",
+                                            "kv",
+                                            "namespaces",
+                                            ":namespace_id",
+                                            "metadata",
+                                            ":key_name"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "id": "c8b5783d-9798-4280-a899-2e3e25e4cb92",
+                                              "key": "account_id",
+                                              "value": "<string>",
+                                              "description": "(Required) The unique identifier of the Cloudflare account."
+                                            },
+                                            {
+                                              "id": "3c50db1d-8add-411d-b32f-21872419397b",
+                                              "key": "namespace_id",
+                                              "value": "<string>",
+                                              "description": "(Required) The unique identifier of the KV namespace."
+                                            },
+                                            {
+                                              "id": "09629af2-7960-4c26-a284-9977fdb9abe9",
+                                              "key": "key_name",
+                                              "value": "<string>",
+                                              "description": "(Required) The key name. Use URL-encoding for special characters such as colon, exclamation mark, and percent."
+                                            }
+                                          ]
+                                        },
+                                        "description": "Retrieve metadata associated with a specific key."
+                                      },
+                                      "response": [
+                                        {
+                                          "id": "9b2fb83a-73a9-4920-afe8-6936737f67a0",
+                                          "name": "Key metadata.",
+                                          "originalRequest": {
+                                            "method": "GET",
+                                            "header": [
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/metadata/:key_name",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "metadata",
+                                                ":key_name"
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                },
+                                                {
+                                                  "key": "key_name"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "OK",
+                                          "code": 200,
+                                          "_postman_previewlanguage": "text",
+                                          "header": [],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": null,
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-9b2fb83a-73a9-4920-afe8-6936737f67a0"
+                                        },
+                                        {
+                                          "id": "27b185d2-836a-4b43-bac7-d78d2bc815cd",
+                                          "name": "Unauthorized.",
+                                          "originalRequest": {
+                                            "method": "GET",
+                                            "header": [
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/metadata/:key_name",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "metadata",
+                                                ":key_name"
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                },
+                                                {
+                                                  "key": "key_name"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "Unauthorized",
+                                          "code": 401,
+                                          "_postman_previewlanguage": "text",
+                                          "header": [],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": null,
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-27b185d2-836a-4b43-bac7-d78d2bc815cd"
+                                        },
+                                        {
+                                          "id": "5a4f752e-b10a-4179-8226-cdf5b6ab13a6",
+                                          "name": "Key not found.",
+                                          "originalRequest": {
+                                            "method": "GET",
+                                            "header": [
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/metadata/:key_name",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "metadata",
+                                                ":key_name"
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                },
+                                                {
+                                                  "key": "key_name"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "Not Found",
+                                          "code": 404,
+                                          "_postman_previewlanguage": "text",
+                                          "header": [],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": null,
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-5a4f752e-b10a-4179-8226-cdf5b6ab13a6"
+                                        }
+                                      ],
+                                      "createdAt": "2026-06-05T13:17:33.000Z",
+                                      "updatedAt": "2026-06-05T13:17:33.000Z",
+                                      "uid": "35240-0f7d300c-b43f-4aa1-9202-82e9d044cc7a"
+                                    }
+                                  ],
+                                  "id": "4d4e7753-4d2e-4d26-b472-df9dc0d9723c",
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-4d4e7753-4d2e-4d26-b472-df9dc0d9723c"
+                                }
+                              ],
+                              "id": "41758709-3e96-42c8-87b4-12c4cc9eee5d",
+                              "createdAt": "2026-06-05T13:17:33.000Z",
+                              "updatedAt": "2026-06-05T13:17:33.000Z",
+                              "uid": "35240-41758709-3e96-42c8-87b4-12c4cc9eee5d"
+                            },
+                            {
+                              "name": "bulk",
+                              "item": [
+                                {
+                                  "name": "delete",
+                                  "item": [
+                                    {
+                                      "name": "Cloudflare Delete Multiple Key-value Pairs",
+                                      "id": "b979a61e-b60a-43e6-a716-5b4a03edb546",
+                                      "protocolProfileBehavior": {
+                                        "disableBodyPruning": true
+                                      },
+                                      "request": {
+                                        "method": "POST",
+                                        "header": [
+                                          {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          }
+                                        ],
+                                        "body": {
+                                          "mode": "raw",
+                                          "raw": "[\n  \"<string>\",\n  \"<string>\"\n]",
+                                          "options": {
+                                            "raw": {
+                                              "headerFamily": "json",
+                                              "language": "json"
+                                            }
+                                          }
+                                        },
+                                        "url": {
+                                          "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/bulk/delete",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "accounts",
+                                            ":account_id",
+                                            "storage",
+                                            "kv",
+                                            "namespaces",
+                                            ":namespace_id",
+                                            "bulk",
+                                            "delete"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "id": "b281b45b-a2c4-4982-8ea0-583ae1c0342d",
+                                              "key": "account_id",
+                                              "value": "<string>",
+                                              "description": "(Required) The unique identifier of the Cloudflare account."
+                                            },
+                                            {
+                                              "id": "e05e1285-6480-41c1-8dfc-90d799968a86",
+                                              "key": "namespace_id",
+                                              "value": "<string>",
+                                              "description": "(Required) The unique identifier of the KV namespace."
+                                            }
+                                          ]
+                                        },
+                                        "description": "Delete multiple key-value pairs in a single request."
+                                      },
+                                      "response": [
+                                        {
+                                          "id": "2c9b9ab0-5584-46b9-be12-1117c71eafee",
+                                          "name": "Bulk delete completed.",
+                                          "originalRequest": {
+                                            "method": "POST",
+                                            "header": [
+                                              {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                              },
+                                              {
+                                                "key": "Accept",
+                                                "value": "application/json"
+                                              },
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "body": {
+                                              "mode": "raw",
+                                              "raw": "[\n  \"<string>\",\n  \"<string>\"\n]",
+                                              "options": {
+                                                "raw": {
+                                                  "headerFamily": "json",
+                                                  "language": "json"
+                                                }
+                                              }
+                                            },
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/bulk/delete",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "bulk",
+                                                "delete"
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "OK",
+                                          "code": 200,
+                                          "_postman_previewlanguage": "json",
+                                          "header": [
+                                            {
+                                              "key": "Content-Type",
+                                              "value": "application/json"
+                                            }
+                                          ],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": "{\n  \"result\": {\n    \"successful_key_count\": \"<integer>\",\n    \"unsuccessful_keys\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"success\": \"<boolean>\"\n}",
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-2c9b9ab0-5584-46b9-be12-1117c71eafee"
+                                        },
+                                        {
+                                          "id": "997ee1c9-0e6b-4b44-af8d-c782d0094745",
+                                          "name": "Unauthorized.",
+                                          "originalRequest": {
+                                            "method": "POST",
+                                            "header": [
+                                              {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                              },
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "body": {
+                                              "mode": "raw",
+                                              "raw": "[\n  \"<string>\",\n  \"<string>\"\n]",
+                                              "options": {
+                                                "raw": {
+                                                  "headerFamily": "json",
+                                                  "language": "json"
+                                                }
+                                              }
+                                            },
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/bulk/delete",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "bulk",
+                                                "delete"
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "Unauthorized",
+                                          "code": 401,
+                                          "_postman_previewlanguage": "text",
+                                          "header": [],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": null,
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-997ee1c9-0e6b-4b44-af8d-c782d0094745"
+                                        }
+                                      ],
+                                      "createdAt": "2026-06-05T13:17:33.000Z",
+                                      "updatedAt": "2026-06-05T13:17:33.000Z",
+                                      "uid": "35240-b979a61e-b60a-43e6-a716-5b4a03edb546"
+                                    }
+                                  ],
+                                  "id": "81a61905-8369-41a2-9f04-f17d88fd6ead",
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-81a61905-8369-41a2-9f04-f17d88fd6ead"
+                                },
+                                {
+                                  "name": "get",
+                                  "item": [
+                                    {
+                                      "name": "Cloudflare Get Multiple Key-value Pairs",
+                                      "id": "5ab7cc0b-c5dd-405c-b9e8-7dbcdec1f4b6",
+                                      "protocolProfileBehavior": {
+                                        "disableBodyPruning": true
+                                      },
+                                      "request": {
+                                        "method": "POST",
+                                        "header": [
+                                          {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                          }
+                                        ],
+                                        "body": {
+                                          "mode": "raw",
+                                          "raw": "[\n  \"<string>\",\n  \"<string>\"\n]",
+                                          "options": {
+                                            "raw": {
+                                              "headerFamily": "json",
+                                              "language": "json"
+                                            }
+                                          }
+                                        },
+                                        "url": {
+                                          "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/bulk/get",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "accounts",
+                                            ":account_id",
+                                            "storage",
+                                            "kv",
+                                            "namespaces",
+                                            ":namespace_id",
+                                            "bulk",
+                                            "get"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "id": "07d024f2-c7da-4ac2-96c1-62f4a9baef6b",
+                                              "key": "account_id",
+                                              "value": "<string>",
+                                              "description": "(Required) The unique identifier of the Cloudflare account."
+                                            },
+                                            {
+                                              "id": "ef98d827-3228-43a8-bcfe-d5d3f8614063",
+                                              "key": "namespace_id",
+                                              "value": "<string>",
+                                              "description": "(Required) The unique identifier of the KV namespace."
+                                            }
+                                          ]
+                                        },
+                                        "description": "Retrieve multiple key-value pairs in a single request."
+                                      },
+                                      "response": [
+                                        {
+                                          "id": "28115f9b-d12d-4f4b-a506-4741cbe282cb",
+                                          "name": "Bulk get completed.",
+                                          "originalRequest": {
+                                            "method": "POST",
+                                            "header": [
+                                              {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                              },
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "body": {
+                                              "mode": "raw",
+                                              "raw": "[\n  \"<string>\",\n  \"<string>\"\n]",
+                                              "options": {
+                                                "raw": {
+                                                  "headerFamily": "json",
+                                                  "language": "json"
+                                                }
+                                              }
+                                            },
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/bulk/get",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "bulk",
+                                                "get"
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "OK",
+                                          "code": 200,
+                                          "_postman_previewlanguage": "text",
+                                          "header": [],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": null,
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-28115f9b-d12d-4f4b-a506-4741cbe282cb"
+                                        },
+                                        {
+                                          "id": "c10dafa6-0ae9-449e-956a-7479e5f2d9b4",
+                                          "name": "Unauthorized.",
+                                          "originalRequest": {
+                                            "method": "POST",
+                                            "header": [
+                                              {
+                                                "key": "Content-Type",
+                                                "value": "application/json"
+                                              },
+                                              {
+                                                "description": "Added as a part of security scheme: bearer",
+                                                "key": "Authorization",
+                                                "value": "Bearer <token>"
+                                              }
+                                            ],
+                                            "body": {
+                                              "mode": "raw",
+                                              "raw": "[\n  \"<string>\",\n  \"<string>\"\n]",
+                                              "options": {
+                                                "raw": {
+                                                  "headerFamily": "json",
+                                                  "language": "json"
+                                                }
+                                              }
+                                            },
+                                            "url": {
+                                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/bulk/get",
+                                              "host": [
+                                                "{{baseUrl}}"
+                                              ],
+                                              "path": [
+                                                "accounts",
+                                                ":account_id",
+                                                "storage",
+                                                "kv",
+                                                "namespaces",
+                                                ":namespace_id",
+                                                "bulk",
+                                                "get"
+                                              ],
+                                              "variable": [
+                                                {
+                                                  "key": "account_id"
+                                                },
+                                                {
+                                                  "key": "namespace_id"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "status": "Unauthorized",
+                                          "code": 401,
+                                          "_postman_previewlanguage": "text",
+                                          "header": [],
+                                          "cookie": [],
+                                          "responseTime": null,
+                                          "body": null,
+                                          "createdAt": "2026-06-05T13:17:33.000Z",
+                                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                                          "uid": "35240-c10dafa6-0ae9-449e-956a-7479e5f2d9b4"
+                                        }
+                                      ],
+                                      "createdAt": "2026-06-05T13:17:33.000Z",
+                                      "updatedAt": "2026-06-05T13:17:33.000Z",
+                                      "uid": "35240-5ab7cc0b-c5dd-405c-b9e8-7dbcdec1f4b6"
+                                    }
+                                  ],
+                                  "id": "0ba7e947-13ac-4be3-b91e-3f00a9149292",
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-0ba7e947-13ac-4be3-b91e-3f00a9149292"
+                                },
+                                {
+                                  "name": "Cloudflare Write Multiple Key-value Pairs",
+                                  "id": "881642c8-85ce-42f7-be2c-cf5bd0d2ce3c",
+                                  "protocolProfileBehavior": {
+                                    "disableBodyPruning": true
+                                  },
+                                  "request": {
+                                    "method": "PUT",
+                                    "header": [
+                                      {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                      },
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      }
+                                    ],
+                                    "body": {
+                                      "mode": "raw",
+                                      "raw": "[\n  {\n    \"key\": \"<string>\",\n    \"value\": \"<string>\",\n    \"expiration\": \"<integer>\",\n    \"expiration_ttl\": \"<integer>\",\n    \"metadata\": {},\n    \"base64\": \"<boolean>\"\n  },\n  {\n    \"key\": \"<string>\",\n    \"value\": \"<string>\",\n    \"expiration\": \"<integer>\",\n    \"expiration_ttl\": \"<integer>\",\n    \"metadata\": {},\n    \"base64\": \"<boolean>\"\n  }\n]",
+                                      "options": {
+                                        "raw": {
+                                          "headerFamily": "json",
+                                          "language": "json"
+                                        }
+                                      }
+                                    },
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/bulk",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "storage",
+                                        "kv",
+                                        "namespaces",
+                                        ":namespace_id",
+                                        "bulk"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "id": "92b014fe-0559-4297-bc8b-efadfcc0eceb",
+                                          "key": "account_id",
+                                          "value": "<string>",
+                                          "description": "(Required) The unique identifier of the Cloudflare account."
+                                        },
+                                        {
+                                          "id": "5509540d-65f9-4bfa-aa4d-26c41c730ce0",
+                                          "key": "namespace_id",
+                                          "value": "<string>",
+                                          "description": "(Required) The unique identifier of the KV namespace."
+                                        }
+                                      ]
+                                    },
+                                    "description": "Write multiple key-value pairs in a single request. Supports up to 10,000 pairs per request."
+                                  },
+                                  "response": [
+                                    {
+                                      "id": "280a1f0d-14c7-4c23-9b21-ea60d52a8da6",
+                                      "name": "Bulk write completed.",
+                                      "originalRequest": {
+                                        "method": "PUT",
+                                        "header": [
+                                          {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "description": "Added as a part of security scheme: bearer",
+                                            "key": "Authorization",
+                                            "value": "Bearer <token>"
+                                          }
+                                        ],
+                                        "body": {
+                                          "mode": "raw",
+                                          "raw": "[\n  {\n    \"key\": \"<string>\",\n    \"value\": \"<string>\",\n    \"expiration\": \"<integer>\",\n    \"expiration_ttl\": \"<integer>\",\n    \"metadata\": {},\n    \"base64\": \"<boolean>\"\n  },\n  {\n    \"key\": \"<string>\",\n    \"value\": \"<string>\",\n    \"expiration\": \"<integer>\",\n    \"expiration_ttl\": \"<integer>\",\n    \"metadata\": {},\n    \"base64\": \"<boolean>\"\n  }\n]",
+                                          "options": {
+                                            "raw": {
+                                              "headerFamily": "json",
+                                              "language": "json"
+                                            }
+                                          }
+                                        },
+                                        "url": {
+                                          "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/bulk",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "accounts",
+                                            ":account_id",
+                                            "storage",
+                                            "kv",
+                                            "namespaces",
+                                            ":namespace_id",
+                                            "bulk"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "account_id"
+                                            },
+                                            {
+                                              "key": "namespace_id"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "OK",
+                                      "code": 200,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": "{\n  \"result\": {\n    \"successful_key_count\": \"<integer>\",\n    \"unsuccessful_keys\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"success\": \"<boolean>\"\n}",
+                                      "createdAt": "2026-06-05T13:17:33.000Z",
+                                      "updatedAt": "2026-06-05T13:17:33.000Z",
+                                      "uid": "35240-280a1f0d-14c7-4c23-9b21-ea60d52a8da6"
+                                    },
+                                    {
+                                      "id": "dff24e16-b337-46d5-80d8-5df607fa74e8",
+                                      "name": "Bad request.",
+                                      "originalRequest": {
+                                        "method": "PUT",
+                                        "header": [
+                                          {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "description": "Added as a part of security scheme: bearer",
+                                            "key": "Authorization",
+                                            "value": "Bearer <token>"
+                                          }
+                                        ],
+                                        "body": {
+                                          "mode": "raw",
+                                          "raw": "[\n  {\n    \"key\": \"<string>\",\n    \"value\": \"<string>\",\n    \"expiration\": \"<integer>\",\n    \"expiration_ttl\": \"<integer>\",\n    \"metadata\": {},\n    \"base64\": \"<boolean>\"\n  },\n  {\n    \"key\": \"<string>\",\n    \"value\": \"<string>\",\n    \"expiration\": \"<integer>\",\n    \"expiration_ttl\": \"<integer>\",\n    \"metadata\": {},\n    \"base64\": \"<boolean>\"\n  }\n]",
+                                          "options": {
+                                            "raw": {
+                                              "headerFamily": "json",
+                                              "language": "json"
+                                            }
+                                          }
+                                        },
+                                        "url": {
+                                          "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/bulk",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "accounts",
+                                            ":account_id",
+                                            "storage",
+                                            "kv",
+                                            "namespaces",
+                                            ":namespace_id",
+                                            "bulk"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "account_id"
+                                            },
+                                            {
+                                              "key": "namespace_id"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "Bad Request",
+                                      "code": 400,
+                                      "_postman_previewlanguage": "text",
+                                      "header": [],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": null,
+                                      "createdAt": "2026-06-05T13:17:33.000Z",
+                                      "updatedAt": "2026-06-05T13:17:33.000Z",
+                                      "uid": "35240-dff24e16-b337-46d5-80d8-5df607fa74e8"
+                                    },
+                                    {
+                                      "id": "dedef104-9ca5-4e50-943c-940b056bfa3c",
+                                      "name": "Unauthorized.",
+                                      "originalRequest": {
+                                        "method": "PUT",
+                                        "header": [
+                                          {
+                                            "key": "Content-Type",
+                                            "value": "application/json"
+                                          },
+                                          {
+                                            "description": "Added as a part of security scheme: bearer",
+                                            "key": "Authorization",
+                                            "value": "Bearer <token>"
+                                          }
+                                        ],
+                                        "body": {
+                                          "mode": "raw",
+                                          "raw": "[\n  {\n    \"key\": \"<string>\",\n    \"value\": \"<string>\",\n    \"expiration\": \"<integer>\",\n    \"expiration_ttl\": \"<integer>\",\n    \"metadata\": {},\n    \"base64\": \"<boolean>\"\n  },\n  {\n    \"key\": \"<string>\",\n    \"value\": \"<string>\",\n    \"expiration\": \"<integer>\",\n    \"expiration_ttl\": \"<integer>\",\n    \"metadata\": {},\n    \"base64\": \"<boolean>\"\n  }\n]",
+                                          "options": {
+                                            "raw": {
+                                              "headerFamily": "json",
+                                              "language": "json"
+                                            }
+                                          }
+                                        },
+                                        "url": {
+                                          "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id/bulk",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "accounts",
+                                            ":account_id",
+                                            "storage",
+                                            "kv",
+                                            "namespaces",
+                                            ":namespace_id",
+                                            "bulk"
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "account_id"
+                                            },
+                                            {
+                                              "key": "namespace_id"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "Unauthorized",
+                                      "code": 401,
+                                      "_postman_previewlanguage": "text",
+                                      "header": [],
+                                      "cookie": [],
+                                      "responseTime": null,
+                                      "body": null,
+                                      "createdAt": "2026-06-05T13:17:33.000Z",
+                                      "updatedAt": "2026-06-05T13:17:33.000Z",
+                                      "uid": "35240-dedef104-9ca5-4e50-943c-940b056bfa3c"
+                                    }
+                                  ],
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-881642c8-85ce-42f7-be2c-cf5bd0d2ce3c"
+                                }
+                              ],
+                              "id": "530a9668-fb71-43a7-a2c5-e8c91ac9bc4a",
+                              "createdAt": "2026-06-05T13:17:33.000Z",
+                              "updatedAt": "2026-06-05T13:17:33.000Z",
+                              "uid": "35240-530a9668-fb71-43a7-a2c5-e8c91ac9bc4a"
+                            },
+                            {
+                              "name": "Cloudflare Get Kv Namespace",
+                              "id": "059fd474-8894-4b47-a4e3-c7a112701480",
+                              "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                              },
+                              "request": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "storage",
+                                    "kv",
+                                    "namespaces",
+                                    ":namespace_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "id": "70b11877-da90-4b9c-a562-69f53369f0b0",
+                                      "key": "account_id",
+                                      "value": "<string>",
+                                      "description": "(Required) The unique identifier of the Cloudflare account."
+                                    },
+                                    {
+                                      "id": "8c960e00-a923-4420-aa8f-e49ca45f2134",
+                                      "key": "namespace_id",
+                                      "value": "<string>",
+                                      "description": "(Required) The unique identifier of the KV namespace."
+                                    }
+                                  ]
+                                },
+                                "description": "Retrieve details of a specific KV namespace."
+                              },
+                              "response": [
+                                {
+                                  "id": "268b8dbe-1ea4-423e-b47e-ea7ba0a33d4d",
+                                  "name": "Namespace details.",
+                                  "originalRequest": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      },
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "storage",
+                                        "kv",
+                                        "namespaces",
+                                        ":namespace_id"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "namespace_id"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "OK",
+                                  "code": 200,
+                                  "_postman_previewlanguage": "json",
+                                  "header": [
+                                    {
+                                      "key": "Content-Type",
+                                      "value": "application/json"
+                                    }
+                                  ],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": "{\n  \"result\": {\n    \"id\": \"<string>\",\n    \"title\": \"<string>\",\n    \"supports_url_encoding\": \"<boolean>\"\n  },\n  \"success\": \"<boolean>\"\n}",
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-268b8dbe-1ea4-423e-b47e-ea7ba0a33d4d"
+                                },
+                                {
+                                  "id": "6de0199b-0f1c-4bec-ae5d-43911dacb610",
+                                  "name": "Unauthorized.",
+                                  "originalRequest": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "storage",
+                                        "kv",
+                                        "namespaces",
+                                        ":namespace_id"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "namespace_id"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "Unauthorized",
+                                  "code": 401,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-6de0199b-0f1c-4bec-ae5d-43911dacb610"
+                                },
+                                {
+                                  "id": "429adaa7-bbfa-482f-9111-a3280b483d59",
+                                  "name": "Namespace not found.",
+                                  "originalRequest": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "storage",
+                                        "kv",
+                                        "namespaces",
+                                        ":namespace_id"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "namespace_id"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "Not Found",
+                                  "code": 404,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-429adaa7-bbfa-482f-9111-a3280b483d59"
+                                }
+                              ],
+                              "createdAt": "2026-06-05T13:17:33.000Z",
+                              "updatedAt": "2026-06-05T13:17:33.000Z",
+                              "uid": "35240-059fd474-8894-4b47-a4e3-c7a112701480"
+                            },
+                            {
+                              "name": "Cloudflare Rename Kv Namespace",
+                              "id": "b95aa179-151b-455a-a280-008f425c33b5",
+                              "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                              },
+                              "request": {
+                                "method": "PUT",
+                                "header": [
+                                  {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                  }
+                                ],
+                                "body": {
+                                  "mode": "raw",
+                                  "raw": "{\n  \"title\": \"<string>\"\n}",
+                                  "options": {
+                                    "raw": {
+                                      "headerFamily": "json",
+                                      "language": "json"
+                                    }
+                                  }
+                                },
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "storage",
+                                    "kv",
+                                    "namespaces",
+                                    ":namespace_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "id": "b4159ce4-b0a2-4960-a5e8-7cb4c6ed68bc",
+                                      "key": "account_id",
+                                      "value": "<string>",
+                                      "description": "(Required) The unique identifier of the Cloudflare account."
+                                    },
+                                    {
+                                      "id": "8f1bceed-943e-4d67-8878-e11cf66ad154",
+                                      "key": "namespace_id",
+                                      "value": "<string>",
+                                      "description": "(Required) The unique identifier of the KV namespace."
+                                    }
+                                  ]
+                                },
+                                "description": "Rename a KV namespace."
+                              },
+                              "response": [
+                                {
+                                  "id": "87ec4b16-9ff1-44bc-ad84-6505bf2cc829",
+                                  "name": "Namespace renamed successfully.",
+                                  "originalRequest": {
+                                    "method": "PUT",
+                                    "header": [
+                                      {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                      },
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "body": {
+                                      "mode": "raw",
+                                      "raw": "{\n  \"title\": \"<string>\"\n}",
+                                      "options": {
+                                        "raw": {
+                                          "headerFamily": "json",
+                                          "language": "json"
+                                        }
+                                      }
+                                    },
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "storage",
+                                        "kv",
+                                        "namespaces",
+                                        ":namespace_id"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "namespace_id"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "OK",
+                                  "code": 200,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-87ec4b16-9ff1-44bc-ad84-6505bf2cc829"
+                                },
+                                {
+                                  "id": "db139da6-8e1b-4e74-a71c-9051bb6da0ef",
+                                  "name": "Unauthorized.",
+                                  "originalRequest": {
+                                    "method": "PUT",
+                                    "header": [
+                                      {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                      },
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "body": {
+                                      "mode": "raw",
+                                      "raw": "{\n  \"title\": \"<string>\"\n}",
+                                      "options": {
+                                        "raw": {
+                                          "headerFamily": "json",
+                                          "language": "json"
+                                        }
+                                      }
+                                    },
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "storage",
+                                        "kv",
+                                        "namespaces",
+                                        ":namespace_id"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "namespace_id"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "Unauthorized",
+                                  "code": 401,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-db139da6-8e1b-4e74-a71c-9051bb6da0ef"
+                                },
+                                {
+                                  "id": "876d4767-f3ef-4c89-82b6-96cbbc34240c",
+                                  "name": "Namespace not found.",
+                                  "originalRequest": {
+                                    "method": "PUT",
+                                    "header": [
+                                      {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                      },
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "body": {
+                                      "mode": "raw",
+                                      "raw": "{\n  \"title\": \"<string>\"\n}",
+                                      "options": {
+                                        "raw": {
+                                          "headerFamily": "json",
+                                          "language": "json"
+                                        }
+                                      }
+                                    },
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "storage",
+                                        "kv",
+                                        "namespaces",
+                                        ":namespace_id"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "namespace_id"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "Not Found",
+                                  "code": 404,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-876d4767-f3ef-4c89-82b6-96cbbc34240c"
+                                }
+                              ],
+                              "createdAt": "2026-06-05T13:17:33.000Z",
+                              "updatedAt": "2026-06-05T13:17:33.000Z",
+                              "uid": "35240-b95aa179-151b-455a-a280-008f425c33b5"
+                            },
+                            {
+                              "name": "Cloudflare Delete Kv Namespace",
+                              "id": "6dae4e24-1c1b-4658-bfd9-7795e1f05abb",
+                              "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                              },
+                              "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "storage",
+                                    "kv",
+                                    "namespaces",
+                                    ":namespace_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "id": "6974b18e-bde8-4ea3-b4c8-eb999471c5c1",
+                                      "key": "account_id",
+                                      "value": "<string>",
+                                      "description": "(Required) The unique identifier of the Cloudflare account."
+                                    },
+                                    {
+                                      "id": "9a792623-b511-4e37-a9c9-29a35e741b33",
+                                      "key": "namespace_id",
+                                      "value": "<string>",
+                                      "description": "(Required) The unique identifier of the KV namespace."
+                                    }
+                                  ]
+                                },
+                                "description": "Delete a KV namespace and all its key-value pairs."
+                              },
+                              "response": [
+                                {
+                                  "id": "2c7691b7-696d-407d-889a-e4152b5263fd",
+                                  "name": "Namespace deleted successfully.",
+                                  "originalRequest": {
+                                    "method": "DELETE",
+                                    "header": [
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "storage",
+                                        "kv",
+                                        "namespaces",
+                                        ":namespace_id"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "namespace_id"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "OK",
+                                  "code": 200,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-2c7691b7-696d-407d-889a-e4152b5263fd"
+                                },
+                                {
+                                  "id": "4937e49c-92e9-4af1-985d-8580a0160d64",
+                                  "name": "Unauthorized.",
+                                  "originalRequest": {
+                                    "method": "DELETE",
+                                    "header": [
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "storage",
+                                        "kv",
+                                        "namespaces",
+                                        ":namespace_id"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "namespace_id"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "Unauthorized",
+                                  "code": 401,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-4937e49c-92e9-4af1-985d-8580a0160d64"
+                                },
+                                {
+                                  "id": "f47ecf86-ed2d-4a9b-bbf7-088a87b72a34",
+                                  "name": "Namespace not found.",
+                                  "originalRequest": {
+                                    "method": "DELETE",
+                                    "header": [
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces/:namespace_id",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "storage",
+                                        "kv",
+                                        "namespaces",
+                                        ":namespace_id"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "namespace_id"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "Not Found",
+                                  "code": 404,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:33.000Z",
+                                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                                  "uid": "35240-f47ecf86-ed2d-4a9b-bbf7-088a87b72a34"
+                                }
+                              ],
+                              "createdAt": "2026-06-05T13:17:33.000Z",
+                              "updatedAt": "2026-06-05T13:17:33.000Z",
+                              "uid": "35240-6dae4e24-1c1b-4658-bfd9-7795e1f05abb"
+                            }
+                          ],
+                          "id": "d74cd468-fc7f-428c-917e-1acc24a4d7ac",
+                          "createdAt": "2026-06-05T13:17:33.000Z",
+                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                          "uid": "35240-d74cd468-fc7f-428c-917e-1acc24a4d7ac"
+                        },
+                        {
+                          "name": "Cloudflare List Kv Namespaces",
+                          "id": "5a2e40ac-f341-4568-b1b9-8b9ec954034d",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces?page=<integer>&per_page=<integer>",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "storage",
+                                "kv",
+                                "namespaces"
+                              ],
+                              "query": [
+                                {
+                                  "description": "Page number of results.",
+                                  "key": "page",
+                                  "value": "<integer>"
+                                },
+                                {
+                                  "description": "Number of results per page.",
+                                  "key": "per_page",
+                                  "value": "<integer>"
+                                }
+                              ],
+                              "variable": [
+                                {
+                                  "id": "01cf74b7-2843-4185-925e-315af5a38f40",
+                                  "key": "account_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the Cloudflare account."
+                                }
+                              ]
+                            },
+                            "description": "Returns a paginated list of all KV namespaces for the account."
+                          },
+                          "response": [
+                            {
+                              "id": "3933f8b1-41a8-450e-b4db-6e8fe2de915c",
+                              "name": "List of KV namespaces.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces?page=<integer>&per_page=<integer>",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "storage",
+                                    "kv",
+                                    "namespaces"
+                                  ],
+                                  "query": [
+                                    {
+                                      "description": "Page number of results.",
+                                      "key": "page",
+                                      "value": "<integer>"
+                                    },
+                                    {
+                                      "description": "Number of results per page.",
+                                      "key": "per_page",
+                                      "value": "<integer>"
+                                    }
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"result\": [\n    {\n      \"id\": \"<string>\",\n      \"title\": \"<string>\",\n      \"supports_url_encoding\": \"<boolean>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"title\": \"<string>\",\n      \"supports_url_encoding\": \"<boolean>\"\n    }\n  ],\n  \"success\": \"<boolean>\",\n  \"result_info\": {\n    \"page\": \"<integer>\",\n    \"per_page\": \"<integer>\",\n    \"count\": \"<integer>\",\n    \"total_count\": \"<integer>\"\n  }\n}",
+                              "createdAt": "2026-06-05T13:17:33.000Z",
+                              "updatedAt": "2026-06-05T13:17:33.000Z",
+                              "uid": "35240-3933f8b1-41a8-450e-b4db-6e8fe2de915c"
+                            },
+                            {
+                              "id": "cb4ce8bf-4aef-41a6-9ac5-58bfb8d45609",
+                              "name": "Unauthorized.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces?page=<integer>&per_page=<integer>",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "storage",
+                                    "kv",
+                                    "namespaces"
+                                  ],
+                                  "query": [
+                                    {
+                                      "description": "Page number of results.",
+                                      "key": "page",
+                                      "value": "<integer>"
+                                    },
+                                    {
+                                      "description": "Number of results per page.",
+                                      "key": "per_page",
+                                      "value": "<integer>"
+                                    }
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:33.000Z",
+                              "updatedAt": "2026-06-05T13:17:33.000Z",
+                              "uid": "35240-cb4ce8bf-4aef-41a6-9ac5-58bfb8d45609"
+                            }
+                          ],
+                          "createdAt": "2026-06-05T13:17:33.000Z",
+                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                          "uid": "35240-5a2e40ac-f341-4568-b1b9-8b9ec954034d"
+                        },
+                        {
+                          "name": "Cloudflare Create Kv Namespace",
+                          "id": "e436bb50-1b16-44ed-8cdd-ba2829a2b4a3",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"title\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "storage",
+                                "kv",
+                                "namespaces"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "b956ee2c-7b0d-4048-b369-43b7f37a789b",
+                                  "key": "account_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the Cloudflare account."
+                                }
+                              ]
+                            },
+                            "description": "Create a new KV namespace for the account."
+                          },
+                          "response": [
+                            {
+                              "id": "2d9f1d73-d7d1-4fb5-91ff-7ac6b4847e98",
+                              "name": "Namespace created successfully.",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "body": {
+                                  "mode": "raw",
+                                  "raw": "{\n  \"title\": \"<string>\"\n}",
+                                  "options": {
+                                    "raw": {
+                                      "headerFamily": "json",
+                                      "language": "json"
+                                    }
+                                  }
+                                },
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "storage",
+                                    "kv",
+                                    "namespaces"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"result\": {\n    \"id\": \"<string>\",\n    \"title\": \"<string>\",\n    \"supports_url_encoding\": \"<boolean>\"\n  },\n  \"success\": \"<boolean>\"\n}",
+                              "createdAt": "2026-06-05T13:17:33.000Z",
+                              "updatedAt": "2026-06-05T13:17:33.000Z",
+                              "uid": "35240-2d9f1d73-d7d1-4fb5-91ff-7ac6b4847e98"
+                            },
+                            {
+                              "id": "f1584f3f-2319-489b-b144-24491c112734",
+                              "name": "Bad request.",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "body": {
+                                  "mode": "raw",
+                                  "raw": "{\n  \"title\": \"<string>\"\n}",
+                                  "options": {
+                                    "raw": {
+                                      "headerFamily": "json",
+                                      "language": "json"
+                                    }
+                                  }
+                                },
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "storage",
+                                    "kv",
+                                    "namespaces"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Bad Request",
+                              "code": 400,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:33.000Z",
+                              "updatedAt": "2026-06-05T13:17:33.000Z",
+                              "uid": "35240-f1584f3f-2319-489b-b144-24491c112734"
+                            },
+                            {
+                              "id": "32753f6c-2f1a-44a1-9a91-fa7442974172",
+                              "name": "Unauthorized.",
+                              "originalRequest": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "body": {
+                                  "mode": "raw",
+                                  "raw": "{\n  \"title\": \"<string>\"\n}",
+                                  "options": {
+                                    "raw": {
+                                      "headerFamily": "json",
+                                      "language": "json"
+                                    }
+                                  }
+                                },
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/storage/kv/namespaces",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "storage",
+                                    "kv",
+                                    "namespaces"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:33.000Z",
+                              "updatedAt": "2026-06-05T13:17:33.000Z",
+                              "uid": "35240-32753f6c-2f1a-44a1-9a91-fa7442974172"
+                            }
+                          ],
+                          "createdAt": "2026-06-05T13:17:33.000Z",
+                          "updatedAt": "2026-06-05T13:17:33.000Z",
+                          "uid": "35240-e436bb50-1b16-44ed-8cdd-ba2829a2b4a3"
+                        }
+                      ],
+                      "id": "09dc12c5-f185-4dee-a998-a8260c7a442a",
+                      "createdAt": "2026-06-05T13:17:33.000Z",
+                      "updatedAt": "2026-06-05T13:17:33.000Z",
+                      "uid": "35240-09dc12c5-f185-4dee-a998-a8260c7a442a"
+                    }
+                  ],
+                  "id": "add8b857-2a38-4dfc-9dd3-411d9647bb03",
+                  "createdAt": "2026-06-05T13:17:33.000Z",
+                  "updatedAt": "2026-06-05T13:17:33.000Z",
+                  "uid": "35240-add8b857-2a38-4dfc-9dd3-411d9647bb03"
+                }
+              ],
+              "id": "38eb1f7e-898a-4e15-bdd1-3de805f9c5e6",
+              "createdAt": "2026-06-05T13:17:33.000Z",
+              "updatedAt": "2026-06-05T13:17:33.000Z",
+              "uid": "35240-38eb1f7e-898a-4e15-bdd1-3de805f9c5e6"
+            }
+          ],
+          "id": "348000bf-85b8-4947-97e7-8843244ac58b",
+          "createdAt": "2026-06-05T13:17:33.000Z",
+          "updatedAt": "2026-06-05T13:17:33.000Z",
+          "uid": "35240-348000bf-85b8-4947-97e7-8843244ac58b"
+        }
+      ],
+      "id": "75a8ad5f-9038-4608-b1cc-29bf2481e06d",
+      "createdAt": "2026-06-05T13:17:33.000Z",
+      "updatedAt": "2026-06-05T13:17:33.000Z",
+      "uid": "35240-75a8ad5f-9038-4608-b1cc-29bf2481e06d"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.cloudflare.com/client/v4"
+    }
+  ]
+}

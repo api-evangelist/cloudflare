@@ -1,0 +1,88 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cloudflare Durable Objects API",
+    "version": "4.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Namespaces",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Durable Object Namespaces",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/durable_objects/namespaces",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ]
+          },
+          "docs": "Returns all Durable Object namespaces for the account."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Objects",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Durable Objects",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/durable_objects/namespaces/:namespace_id/objects",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "namespace_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Durable Object namespace."
+              },
+              {
+                "name": "cursor",
+                "value": "example_value",
+                "type": "query",
+                "description": "Cursor for pagination."
+              },
+              {
+                "name": "limit",
+                "value": "10",
+                "type": "query",
+                "description": "Maximum number of objects to return."
+              }
+            ]
+          },
+          "docs": "Returns a list of Durable Objects within a namespace with cursor-based pagination."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

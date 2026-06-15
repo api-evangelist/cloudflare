@@ -1,0 +1,942 @@
+{
+  "info": {
+    "_postman_id": "575c4994-f20d-488a-9392-3fc908c706bc",
+    "name": "Cloudflare Hyperdrive API",
+    "description": "Cloudflare Hyperdrive accelerates access to existing databases from Cloudflare Workers by providing connection pooling and query caching at the edge. The API allows developers to create and manage Hyperdrive configurations that connect to PostgreSQL and other databases.\n\nContact Support:\n Name: Cloudflare Support",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-06-05T13:17:46.000Z",
+    "updatedAt": "2026-06-05T13:17:46.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-575c4994-f20d-488a-9392-3fc908c706bc"
+  },
+  "item": [
+    {
+      "name": "accounts",
+      "item": [
+        {
+          "name": "{account_id}",
+          "item": [
+            {
+              "name": "hyperdrive",
+              "item": [
+                {
+                  "name": "configs",
+                  "item": [
+                    {
+                      "name": "{config_id}",
+                      "item": [
+                        {
+                          "name": "Cloudflare Get Hyperdrive Configuration",
+                          "id": "734da15f-bccf-4604-b394-b7101b3bc1cd",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs/:config_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "hyperdrive",
+                                "configs",
+                                ":config_id"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "455431e7-9fa4-4612-b370-adc02ecc2560",
+                                  "key": "account_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the Cloudflare account."
+                                },
+                                {
+                                  "id": "db7bf517-1dd3-43f9-b2ab-6a5fc99da6c5",
+                                  "key": "config_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the Hyperdrive configuration."
+                                }
+                              ]
+                            },
+                            "description": "Retrieve details of a specific Hyperdrive configuration."
+                          },
+                          "response": [
+                            {
+                              "id": "b4ae6f4f-cb7e-4236-881a-608ecdabf0c6",
+                              "name": "Configuration details.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs/:config_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "hyperdrive",
+                                    "configs",
+                                    ":config_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "config_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"result\": {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"origin\": {\n      \"scheme\": \"<string>\",\n      \"host\": \"<string>\",\n      \"port\": \"<integer>\",\n      \"database\": \"<string>\",\n      \"user\": \"<string>\"\n    },\n    \"caching\": {\n      \"disabled\": \"<boolean>\",\n      \"max_age\": \"<integer>\",\n      \"stale_while_revalidate\": \"<integer>\"\n    }\n  },\n  \"success\": \"<boolean>\"\n}",
+                              "createdAt": "2026-06-05T13:17:46.000Z",
+                              "updatedAt": "2026-06-05T13:17:46.000Z",
+                              "uid": "35240-b4ae6f4f-cb7e-4236-881a-608ecdabf0c6"
+                            },
+                            {
+                              "id": "4b177eb7-76b1-4ccc-add6-8271bbb0de72",
+                              "name": "Unauthorized.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs/:config_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "hyperdrive",
+                                    "configs",
+                                    ":config_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "config_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:46.000Z",
+                              "updatedAt": "2026-06-05T13:17:46.000Z",
+                              "uid": "35240-4b177eb7-76b1-4ccc-add6-8271bbb0de72"
+                            },
+                            {
+                              "id": "5307e7f2-f217-4a31-9d1d-a8b42c5384f2",
+                              "name": "Configuration not found.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs/:config_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "hyperdrive",
+                                    "configs",
+                                    ":config_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "config_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:46.000Z",
+                              "updatedAt": "2026-06-05T13:17:46.000Z",
+                              "uid": "35240-5307e7f2-f217-4a31-9d1d-a8b42c5384f2"
+                            }
+                          ],
+                          "createdAt": "2026-06-05T13:17:46.000Z",
+                          "updatedAt": "2026-06-05T13:17:46.000Z",
+                          "uid": "35240-734da15f-bccf-4604-b394-b7101b3bc1cd"
+                        },
+                        {
+                          "name": "Cloudflare Update Hyperdrive Configuration",
+                          "id": "23f1ef77-e460-4f6b-85a4-e73695d118a6",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "PUT",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"name\": \"<string>\",\n  \"origin\": {\n    \"scheme\": \"<string>\",\n    \"host\": \"<string>\",\n    \"port\": \"<integer>\",\n    \"database\": \"<string>\",\n    \"user\": \"<string>\",\n    \"password\": \"<string>\"\n  },\n  \"caching\": {\n    \"disabled\": \"<boolean>\",\n    \"max_age\": \"<integer>\",\n    \"stale_while_revalidate\": \"<integer>\"\n  }\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs/:config_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "hyperdrive",
+                                "configs",
+                                ":config_id"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "fd16075d-8bc2-45f8-9b3f-547c07f08c11",
+                                  "key": "account_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the Cloudflare account."
+                                },
+                                {
+                                  "id": "335961f4-96bc-48ec-bd18-2380a24921c6",
+                                  "key": "config_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the Hyperdrive configuration."
+                                }
+                              ]
+                            },
+                            "description": "Update a Hyperdrive configuration's connection details and settings."
+                          },
+                          "response": [
+                            {
+                              "id": "e4f98348-dbcc-4ba7-9b30-debfd6c1502a",
+                              "name": "Configuration updated.",
+                              "originalRequest": {
+                                "method": "PUT",
+                                "header": [
+                                  {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "body": {
+                                  "mode": "raw",
+                                  "raw": "{\n  \"name\": \"<string>\",\n  \"origin\": {\n    \"scheme\": \"<string>\",\n    \"host\": \"<string>\",\n    \"port\": \"<integer>\",\n    \"database\": \"<string>\",\n    \"user\": \"<string>\",\n    \"password\": \"<string>\"\n  },\n  \"caching\": {\n    \"disabled\": \"<boolean>\",\n    \"max_age\": \"<integer>\",\n    \"stale_while_revalidate\": \"<integer>\"\n  }\n}",
+                                  "options": {
+                                    "raw": {
+                                      "headerFamily": "json",
+                                      "language": "json"
+                                    }
+                                  }
+                                },
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs/:config_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "hyperdrive",
+                                    "configs",
+                                    ":config_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "config_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:46.000Z",
+                              "updatedAt": "2026-06-05T13:17:46.000Z",
+                              "uid": "35240-e4f98348-dbcc-4ba7-9b30-debfd6c1502a"
+                            },
+                            {
+                              "id": "8effac6e-bf51-463c-b650-b5ce72b576a8",
+                              "name": "Unauthorized.",
+                              "originalRequest": {
+                                "method": "PUT",
+                                "header": [
+                                  {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "body": {
+                                  "mode": "raw",
+                                  "raw": "{\n  \"name\": \"<string>\",\n  \"origin\": {\n    \"scheme\": \"<string>\",\n    \"host\": \"<string>\",\n    \"port\": \"<integer>\",\n    \"database\": \"<string>\",\n    \"user\": \"<string>\",\n    \"password\": \"<string>\"\n  },\n  \"caching\": {\n    \"disabled\": \"<boolean>\",\n    \"max_age\": \"<integer>\",\n    \"stale_while_revalidate\": \"<integer>\"\n  }\n}",
+                                  "options": {
+                                    "raw": {
+                                      "headerFamily": "json",
+                                      "language": "json"
+                                    }
+                                  }
+                                },
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs/:config_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "hyperdrive",
+                                    "configs",
+                                    ":config_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "config_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:46.000Z",
+                              "updatedAt": "2026-06-05T13:17:46.000Z",
+                              "uid": "35240-8effac6e-bf51-463c-b650-b5ce72b576a8"
+                            }
+                          ],
+                          "createdAt": "2026-06-05T13:17:46.000Z",
+                          "updatedAt": "2026-06-05T13:17:46.000Z",
+                          "uid": "35240-23f1ef77-e460-4f6b-85a4-e73695d118a6"
+                        },
+                        {
+                          "name": "Cloudflare Delete Hyperdrive Configuration",
+                          "id": "95125ddb-861d-4207-8bd1-2d55f63f33ca",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "DELETE",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs/:config_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "hyperdrive",
+                                "configs",
+                                ":config_id"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "ef7232f9-1570-4a8b-a760-1f8469eb60db",
+                                  "key": "account_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the Cloudflare account."
+                                },
+                                {
+                                  "id": "17d1f18f-d8d0-41dd-b03c-46699aaa78ff",
+                                  "key": "config_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the Hyperdrive configuration."
+                                }
+                              ]
+                            },
+                            "description": "Delete a Hyperdrive configuration."
+                          },
+                          "response": [
+                            {
+                              "id": "2d930f23-e3c2-47a2-8c7e-c219033707e8",
+                              "name": "Configuration deleted.",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs/:config_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "hyperdrive",
+                                    "configs",
+                                    ":config_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "config_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:46.000Z",
+                              "updatedAt": "2026-06-05T13:17:46.000Z",
+                              "uid": "35240-2d930f23-e3c2-47a2-8c7e-c219033707e8"
+                            },
+                            {
+                              "id": "df11cb4b-e502-48fb-b0bf-218e0efe0088",
+                              "name": "Unauthorized.",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs/:config_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "hyperdrive",
+                                    "configs",
+                                    ":config_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "config_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:46.000Z",
+                              "updatedAt": "2026-06-05T13:17:46.000Z",
+                              "uid": "35240-df11cb4b-e502-48fb-b0bf-218e0efe0088"
+                            }
+                          ],
+                          "createdAt": "2026-06-05T13:17:46.000Z",
+                          "updatedAt": "2026-06-05T13:17:46.000Z",
+                          "uid": "35240-95125ddb-861d-4207-8bd1-2d55f63f33ca"
+                        }
+                      ],
+                      "id": "13e9a75c-80e4-4a76-9627-97b773e4f7cf",
+                      "createdAt": "2026-06-05T13:17:46.000Z",
+                      "updatedAt": "2026-06-05T13:17:46.000Z",
+                      "uid": "35240-13e9a75c-80e4-4a76-9627-97b773e4f7cf"
+                    },
+                    {
+                      "name": "Cloudflare List Hyperdrive Configurations",
+                      "id": "0b745b7a-af57-43d4-8c6f-f6a3fedb9268",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "hyperdrive",
+                            "configs"
+                          ],
+                          "variable": [
+                            {
+                              "id": "c0d49b39-71c1-4a0e-9e8c-970e17027e76",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            }
+                          ]
+                        },
+                        "description": "Returns all Hyperdrive configurations for the account."
+                      },
+                      "response": [
+                        {
+                          "id": "e0052915-2ffe-43e9-a4f8-35341811102d",
+                          "name": "List of Hyperdrive configurations.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "hyperdrive",
+                                "configs"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"result\": [\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"origin\": {\n        \"scheme\": \"<string>\",\n        \"host\": \"<string>\",\n        \"port\": \"<integer>\",\n        \"database\": \"<string>\",\n        \"user\": \"<string>\"\n      },\n      \"caching\": {\n        \"disabled\": \"<boolean>\",\n        \"max_age\": \"<integer>\",\n        \"stale_while_revalidate\": \"<integer>\"\n      }\n    },\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"origin\": {\n        \"scheme\": \"<string>\",\n        \"host\": \"<string>\",\n        \"port\": \"<integer>\",\n        \"database\": \"<string>\",\n        \"user\": \"<string>\"\n      },\n      \"caching\": {\n        \"disabled\": \"<boolean>\",\n        \"max_age\": \"<integer>\",\n        \"stale_while_revalidate\": \"<integer>\"\n      }\n    }\n  ],\n  \"success\": \"<boolean>\"\n}",
+                          "createdAt": "2026-06-05T13:17:46.000Z",
+                          "updatedAt": "2026-06-05T13:17:46.000Z",
+                          "uid": "35240-e0052915-2ffe-43e9-a4f8-35341811102d"
+                        },
+                        {
+                          "id": "8edad03f-ef7f-4892-8c98-3f2f566d8dca",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "hyperdrive",
+                                "configs"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:46.000Z",
+                          "updatedAt": "2026-06-05T13:17:46.000Z",
+                          "uid": "35240-8edad03f-ef7f-4892-8c98-3f2f566d8dca"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:46.000Z",
+                      "updatedAt": "2026-06-05T13:17:46.000Z",
+                      "uid": "35240-0b745b7a-af57-43d4-8c6f-f6a3fedb9268"
+                    },
+                    {
+                      "name": "Cloudflare Create Hyperdrive Configuration",
+                      "id": "3b718209-39e1-4be4-9f23-df2640eb6027",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"name\": \"<string>\",\n  \"origin\": {\n    \"scheme\": \"<string>\",\n    \"host\": \"<string>\",\n    \"port\": \"<integer>\",\n    \"database\": \"<string>\",\n    \"user\": \"<string>\",\n    \"password\": \"<string>\"\n  },\n  \"caching\": {\n    \"disabled\": \"<boolean>\",\n    \"max_age\": \"<integer>\",\n    \"stale_while_revalidate\": \"<integer>\"\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "hyperdrive",
+                            "configs"
+                          ],
+                          "variable": [
+                            {
+                              "id": "4ac40788-63de-4fc4-8e87-b25c1e9760c0",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            }
+                          ]
+                        },
+                        "description": "Create a new Hyperdrive configuration with database origin connection details and caching settings."
+                      },
+                      "response": [
+                        {
+                          "id": "f397e098-989a-42b3-8a87-8fb89818299d",
+                          "name": "Configuration created successfully.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"name\": \"<string>\",\n  \"origin\": {\n    \"scheme\": \"<string>\",\n    \"host\": \"<string>\",\n    \"port\": \"<integer>\",\n    \"database\": \"<string>\",\n    \"user\": \"<string>\",\n    \"password\": \"<string>\"\n  },\n  \"caching\": {\n    \"disabled\": \"<boolean>\",\n    \"max_age\": \"<integer>\",\n    \"stale_while_revalidate\": \"<integer>\"\n  }\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "hyperdrive",
+                                "configs"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"result\": {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"origin\": {\n      \"scheme\": \"<string>\",\n      \"host\": \"<string>\",\n      \"port\": \"<integer>\",\n      \"database\": \"<string>\",\n      \"user\": \"<string>\"\n    },\n    \"caching\": {\n      \"disabled\": \"<boolean>\",\n      \"max_age\": \"<integer>\",\n      \"stale_while_revalidate\": \"<integer>\"\n    }\n  },\n  \"success\": \"<boolean>\"\n}",
+                          "createdAt": "2026-06-05T13:17:46.000Z",
+                          "updatedAt": "2026-06-05T13:17:46.000Z",
+                          "uid": "35240-f397e098-989a-42b3-8a87-8fb89818299d"
+                        },
+                        {
+                          "id": "e13b5804-9ead-4e1b-bd7b-ee058955b193",
+                          "name": "Bad request.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"name\": \"<string>\",\n  \"origin\": {\n    \"scheme\": \"<string>\",\n    \"host\": \"<string>\",\n    \"port\": \"<integer>\",\n    \"database\": \"<string>\",\n    \"user\": \"<string>\",\n    \"password\": \"<string>\"\n  },\n  \"caching\": {\n    \"disabled\": \"<boolean>\",\n    \"max_age\": \"<integer>\",\n    \"stale_while_revalidate\": \"<integer>\"\n  }\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "hyperdrive",
+                                "configs"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:46.000Z",
+                          "updatedAt": "2026-06-05T13:17:46.000Z",
+                          "uid": "35240-e13b5804-9ead-4e1b-bd7b-ee058955b193"
+                        },
+                        {
+                          "id": "cf079cfe-b37d-4aaf-9511-36d6552f020a",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"name\": \"<string>\",\n  \"origin\": {\n    \"scheme\": \"<string>\",\n    \"host\": \"<string>\",\n    \"port\": \"<integer>\",\n    \"database\": \"<string>\",\n    \"user\": \"<string>\",\n    \"password\": \"<string>\"\n  },\n  \"caching\": {\n    \"disabled\": \"<boolean>\",\n    \"max_age\": \"<integer>\",\n    \"stale_while_revalidate\": \"<integer>\"\n  }\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/hyperdrive/configs",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "hyperdrive",
+                                "configs"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:46.000Z",
+                          "updatedAt": "2026-06-05T13:17:46.000Z",
+                          "uid": "35240-cf079cfe-b37d-4aaf-9511-36d6552f020a"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:46.000Z",
+                      "updatedAt": "2026-06-05T13:17:46.000Z",
+                      "uid": "35240-3b718209-39e1-4be4-9f23-df2640eb6027"
+                    }
+                  ],
+                  "id": "98b98d79-0927-4206-ad83-5753d2186f50",
+                  "createdAt": "2026-06-05T13:17:46.000Z",
+                  "updatedAt": "2026-06-05T13:17:46.000Z",
+                  "uid": "35240-98b98d79-0927-4206-ad83-5753d2186f50"
+                }
+              ],
+              "id": "3ac20f68-8ec6-41c2-af74-502e5c27079e",
+              "createdAt": "2026-06-05T13:17:46.000Z",
+              "updatedAt": "2026-06-05T13:17:46.000Z",
+              "uid": "35240-3ac20f68-8ec6-41c2-af74-502e5c27079e"
+            }
+          ],
+          "id": "47e2d0cc-8ab0-440b-a1e0-3af7f498fcea",
+          "createdAt": "2026-06-05T13:17:46.000Z",
+          "updatedAt": "2026-06-05T13:17:46.000Z",
+          "uid": "35240-47e2d0cc-8ab0-440b-a1e0-3af7f498fcea"
+        }
+      ],
+      "id": "9cf48fc0-5861-429e-be6d-ea882f4b65cf",
+      "createdAt": "2026-06-05T13:17:46.000Z",
+      "updatedAt": "2026-06-05T13:17:46.000Z",
+      "uid": "35240-9cf48fc0-5861-429e-be6d-ea882f4b65cf"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.cloudflare.com/client/v4"
+    }
+  ]
+}

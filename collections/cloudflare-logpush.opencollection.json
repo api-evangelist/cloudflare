@@ -1,0 +1,232 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cloudflare Logpush API",
+    "version": "4.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Logpush Jobs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Logpush Jobs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/logpush/jobs",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ]
+          },
+          "docs": "Returns all Logpush jobs for the zone."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Logpush Job",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/logpush/jobs",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new Logpush job to push logs to an external destination."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get Logpush Job",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/logpush/jobs/:job_id",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              },
+              {
+                "name": "job_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Logpush job."
+              }
+            ]
+          },
+          "docs": "Retrieve details of a specific Logpush job."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update Logpush Job",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/logpush/jobs/:job_id",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              },
+              {
+                "name": "job_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Logpush job."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update the configuration of a Logpush job."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Logpush Job",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/logpush/jobs/:job_id",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              },
+              {
+                "name": "job_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Logpush job."
+              }
+            ]
+          },
+          "docs": "Delete a Logpush job."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Datasets",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Dataset Fields",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/logpush/datasets/:dataset_id/fields",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              },
+              {
+                "name": "dataset_id",
+                "value": "500123",
+                "type": "path",
+                "description": "The dataset identifier such as http_requests, firewall_events, dns_logs, or spectrum_events."
+              }
+            ]
+          },
+          "docs": "Returns the available fields for a specific log dataset."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Ownership",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Validate Ownership",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/logpush/ownership",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Validate ownership of a destination for Logpush by providing the ownership challenge token."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Confirm Ownership",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/logpush/ownership/validate",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Confirm ownership of the destination using the ownership token."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

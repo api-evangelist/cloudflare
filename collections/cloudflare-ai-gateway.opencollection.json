@@ -1,0 +1,196 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cloudflare AI Gateway API",
+    "version": "4.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Gateways",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Ai Gateways",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/ai-gateway/gateways",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ]
+          },
+          "docs": "Returns all AI Gateway instances for the account."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Ai Gateway",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/ai-gateway/gateways",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new AI Gateway instance with the specified configuration for caching, rate limiting, and provider settings."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get Ai Gateway",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "gateway_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the AI Gateway."
+              }
+            ]
+          },
+          "docs": "Retrieve details of a specific AI Gateway instance."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update Ai Gateway",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "gateway_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the AI Gateway."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update the configuration of an AI Gateway instance."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Ai Gateway",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "gateway_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the AI Gateway."
+              }
+            ]
+          },
+          "docs": "Delete an AI Gateway instance."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Logs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Ai Gateway Logs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/ai-gateway/gateways/:gateway_id/logs",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "gateway_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the AI Gateway."
+              },
+              {
+                "name": "page",
+                "value": "10",
+                "type": "query",
+                "description": "Page number for pagination."
+              },
+              {
+                "name": "per_page",
+                "value": "10",
+                "type": "query",
+                "description": "Number of log entries per page."
+              },
+              {
+                "name": "search",
+                "value": "example_value",
+                "type": "query",
+                "description": "Search query to filter logs."
+              }
+            ]
+          },
+          "docs": "Retrieve request logs for an AI Gateway instance with filtering and pagination support."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

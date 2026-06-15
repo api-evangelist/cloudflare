@@ -1,0 +1,1471 @@
+{
+  "info": {
+    "_postman_id": "374ab0ca-ce7b-4c1c-8bfb-89f61c49c622",
+    "name": "Cloudflare R2 API",
+    "description": "Cloudflare R2 is S3-compatible object storage with zero egress fees. The R2 API allows developers to create and manage buckets, upload and retrieve objects, and configure access controls. R2 supports the S3 API for compatibility with existing tools and SDKs. This specification covers the Cloudflare management API for R2 bucket administration.\n\nContact Support:\n Name: Cloudflare Support",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-06-05T13:17:28.000Z",
+    "updatedAt": "2026-06-05T13:17:28.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-374ab0ca-ce7b-4c1c-8bfb-89f61c49c622"
+  },
+  "item": [
+    {
+      "name": "accounts",
+      "item": [
+        {
+          "name": "{account_id}",
+          "item": [
+            {
+              "name": "r2",
+              "item": [
+                {
+                  "name": "buckets",
+                  "item": [
+                    {
+                      "name": "{bucket_name}",
+                      "item": [
+                        {
+                          "name": "objects",
+                          "item": [
+                            {
+                              "name": "Cloudflare List Objects in Bucket",
+                              "id": "9afafb79-2da7-4177-ad9d-49e8db39c2b5",
+                              "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                              },
+                              "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name/objects?prefix=<string>&delimiter=<string>&cursor=<string>&per_page=<integer>",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "r2",
+                                    "buckets",
+                                    ":bucket_name",
+                                    "objects"
+                                  ],
+                                  "query": [
+                                    {
+                                      "description": "Filter objects by key prefix.",
+                                      "key": "prefix",
+                                      "value": "<string>"
+                                    },
+                                    {
+                                      "description": "Delimiter for grouping object keys.",
+                                      "key": "delimiter",
+                                      "value": "<string>"
+                                    },
+                                    {
+                                      "description": "Cursor for pagination.",
+                                      "key": "cursor",
+                                      "value": "<string>"
+                                    },
+                                    {
+                                      "description": "Number of objects per page.",
+                                      "key": "per_page",
+                                      "value": "<integer>"
+                                    }
+                                  ],
+                                  "variable": [
+                                    {
+                                      "id": "9e677855-4472-4e48-b1d4-a42b0bcb6944",
+                                      "key": "account_id",
+                                      "value": "<string>",
+                                      "description": "(Required) The unique identifier of the Cloudflare account."
+                                    },
+                                    {
+                                      "id": "889d7d23-1c26-4078-8b12-716633f2d900",
+                                      "key": "bucket_name",
+                                      "value": "<string>",
+                                      "description": "(Required) The name of the R2 bucket."
+                                    }
+                                  ]
+                                },
+                                "description": "List objects stored in an R2 bucket with optional prefix filtering and pagination."
+                              },
+                              "response": [
+                                {
+                                  "id": "93d807aa-f12f-4da5-a129-3df577930b71",
+                                  "name": "List of objects.",
+                                  "originalRequest": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name/objects?prefix=<string>&delimiter=<string>&cursor=<string>&per_page=<integer>",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "r2",
+                                        "buckets",
+                                        ":bucket_name",
+                                        "objects"
+                                      ],
+                                      "query": [
+                                        {
+                                          "description": "Filter objects by key prefix.",
+                                          "key": "prefix",
+                                          "value": "<string>"
+                                        },
+                                        {
+                                          "description": "Delimiter for grouping object keys.",
+                                          "key": "delimiter",
+                                          "value": "<string>"
+                                        },
+                                        {
+                                          "description": "Cursor for pagination.",
+                                          "key": "cursor",
+                                          "value": "<string>"
+                                        },
+                                        {
+                                          "description": "Number of objects per page.",
+                                          "key": "per_page",
+                                          "value": "<integer>"
+                                        }
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "bucket_name"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "OK",
+                                  "code": 200,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:28.000Z",
+                                  "updatedAt": "2026-06-05T13:17:28.000Z",
+                                  "uid": "35240-93d807aa-f12f-4da5-a129-3df577930b71"
+                                },
+                                {
+                                  "id": "3f734597-db88-4195-9741-7c94c1ad53d3",
+                                  "name": "Unauthorized.",
+                                  "originalRequest": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name/objects?prefix=<string>&delimiter=<string>&cursor=<string>&per_page=<integer>",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "r2",
+                                        "buckets",
+                                        ":bucket_name",
+                                        "objects"
+                                      ],
+                                      "query": [
+                                        {
+                                          "description": "Filter objects by key prefix.",
+                                          "key": "prefix",
+                                          "value": "<string>"
+                                        },
+                                        {
+                                          "description": "Delimiter for grouping object keys.",
+                                          "key": "delimiter",
+                                          "value": "<string>"
+                                        },
+                                        {
+                                          "description": "Cursor for pagination.",
+                                          "key": "cursor",
+                                          "value": "<string>"
+                                        },
+                                        {
+                                          "description": "Number of objects per page.",
+                                          "key": "per_page",
+                                          "value": "<integer>"
+                                        }
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "bucket_name"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "Unauthorized",
+                                  "code": 401,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:28.000Z",
+                                  "updatedAt": "2026-06-05T13:17:28.000Z",
+                                  "uid": "35240-3f734597-db88-4195-9741-7c94c1ad53d3"
+                                }
+                              ],
+                              "createdAt": "2026-06-05T13:17:28.000Z",
+                              "updatedAt": "2026-06-05T13:17:28.000Z",
+                              "uid": "35240-9afafb79-2da7-4177-ad9d-49e8db39c2b5"
+                            }
+                          ],
+                          "id": "d4bfe717-9414-4152-a916-8a782caa6e75",
+                          "createdAt": "2026-06-05T13:17:28.000Z",
+                          "updatedAt": "2026-06-05T13:17:28.000Z",
+                          "uid": "35240-d4bfe717-9414-4152-a916-8a782caa6e75"
+                        },
+                        {
+                          "name": "configuration",
+                          "item": [
+                            {
+                              "name": "Cloudflare Get Bucket Configuration",
+                              "id": "425e7129-7517-4f98-9dcf-9b4e11a38e65",
+                              "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                              },
+                              "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name/configuration",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "r2",
+                                    "buckets",
+                                    ":bucket_name",
+                                    "configuration"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "id": "d2624afa-0509-4643-8b52-340014f8e859",
+                                      "key": "account_id",
+                                      "value": "<string>",
+                                      "description": "(Required) The unique identifier of the Cloudflare account."
+                                    },
+                                    {
+                                      "id": "7396b75c-1f10-46e2-bb6f-1f6cdb89f6a5",
+                                      "key": "bucket_name",
+                                      "value": "<string>",
+                                      "description": "(Required) The name of the R2 bucket."
+                                    }
+                                  ]
+                                },
+                                "description": "Retrieve the configuration settings for an R2 bucket including CORS and lifecycle rules."
+                              },
+                              "response": [
+                                {
+                                  "id": "712fcbe0-c90f-4ed2-8466-7446ce51089e",
+                                  "name": "Bucket configuration.",
+                                  "originalRequest": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name/configuration",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "r2",
+                                        "buckets",
+                                        ":bucket_name",
+                                        "configuration"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "bucket_name"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "OK",
+                                  "code": 200,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:28.000Z",
+                                  "updatedAt": "2026-06-05T13:17:28.000Z",
+                                  "uid": "35240-712fcbe0-c90f-4ed2-8466-7446ce51089e"
+                                },
+                                {
+                                  "id": "b86ff87d-6e57-434b-bedb-a58702c4c301",
+                                  "name": "Unauthorized.",
+                                  "originalRequest": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name/configuration",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "r2",
+                                        "buckets",
+                                        ":bucket_name",
+                                        "configuration"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "bucket_name"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "Unauthorized",
+                                  "code": 401,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:28.000Z",
+                                  "updatedAt": "2026-06-05T13:17:28.000Z",
+                                  "uid": "35240-b86ff87d-6e57-434b-bedb-a58702c4c301"
+                                }
+                              ],
+                              "createdAt": "2026-06-05T13:17:28.000Z",
+                              "updatedAt": "2026-06-05T13:17:28.000Z",
+                              "uid": "35240-425e7129-7517-4f98-9dcf-9b4e11a38e65"
+                            },
+                            {
+                              "name": "Cloudflare Update Bucket Configuration",
+                              "id": "ff41d25e-02bf-4fc2-ab3e-58da562382e0",
+                              "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                              },
+                              "request": {
+                                "method": "PUT",
+                                "header": [],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name/configuration",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "r2",
+                                    "buckets",
+                                    ":bucket_name",
+                                    "configuration"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "id": "a69c221c-4224-4f4e-ae09-6b24652373d9",
+                                      "key": "account_id",
+                                      "value": "<string>",
+                                      "description": "(Required) The unique identifier of the Cloudflare account."
+                                    },
+                                    {
+                                      "id": "ba4f51c3-30ea-4c79-911f-d331a8053aca",
+                                      "key": "bucket_name",
+                                      "value": "<string>",
+                                      "description": "(Required) The name of the R2 bucket."
+                                    }
+                                  ]
+                                },
+                                "description": "Update configuration settings for an R2 bucket."
+                              },
+                              "response": [
+                                {
+                                  "id": "0a9f22db-467b-4ba4-8c65-39add5b67601",
+                                  "name": "Configuration updated.",
+                                  "originalRequest": {
+                                    "method": "PUT",
+                                    "header": [
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name/configuration",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "r2",
+                                        "buckets",
+                                        ":bucket_name",
+                                        "configuration"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "bucket_name"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "OK",
+                                  "code": 200,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:28.000Z",
+                                  "updatedAt": "2026-06-05T13:17:28.000Z",
+                                  "uid": "35240-0a9f22db-467b-4ba4-8c65-39add5b67601"
+                                },
+                                {
+                                  "id": "06b23307-c740-42e6-b746-d6e6cf5627f1",
+                                  "name": "Unauthorized.",
+                                  "originalRequest": {
+                                    "method": "PUT",
+                                    "header": [
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name/configuration",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "r2",
+                                        "buckets",
+                                        ":bucket_name",
+                                        "configuration"
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "bucket_name"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "Unauthorized",
+                                  "code": 401,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:28.000Z",
+                                  "updatedAt": "2026-06-05T13:17:28.000Z",
+                                  "uid": "35240-06b23307-c740-42e6-b746-d6e6cf5627f1"
+                                }
+                              ],
+                              "createdAt": "2026-06-05T13:17:28.000Z",
+                              "updatedAt": "2026-06-05T13:17:28.000Z",
+                              "uid": "35240-ff41d25e-02bf-4fc2-ab3e-58da562382e0"
+                            }
+                          ],
+                          "id": "7fa89495-c5c0-472f-9ab8-a11b1afbd1fd",
+                          "createdAt": "2026-06-05T13:17:28.000Z",
+                          "updatedAt": "2026-06-05T13:17:28.000Z",
+                          "uid": "35240-7fa89495-c5c0-472f-9ab8-a11b1afbd1fd"
+                        },
+                        {
+                          "name": "Cloudflare Get R2 Bucket",
+                          "id": "ddee8ff1-b250-487e-9ca6-20666a28964e",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "r2",
+                                "buckets",
+                                ":bucket_name"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "0769796e-94bf-4a5e-8e6e-3b4a9111b204",
+                                  "key": "account_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the Cloudflare account."
+                                },
+                                {
+                                  "id": "4e85a7c1-4cc2-47a8-a8aa-2f075a0c93ec",
+                                  "key": "bucket_name",
+                                  "value": "<string>",
+                                  "description": "(Required) The name of the R2 bucket."
+                                }
+                              ]
+                            },
+                            "description": "Retrieve details of a specific R2 bucket."
+                          },
+                          "response": [
+                            {
+                              "id": "47ea8940-ed52-487e-9ffb-8a44e8c70e95",
+                              "name": "Bucket details.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "r2",
+                                    "buckets",
+                                    ":bucket_name"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "bucket_name"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"result\": {\n    \"name\": \"<string>\",\n    \"creation_date\": \"<dateTime>\",\n    \"location\": \"<string>\",\n    \"storage_class\": \"<string>\"\n  },\n  \"success\": \"<boolean>\"\n}",
+                              "createdAt": "2026-06-05T13:17:28.000Z",
+                              "updatedAt": "2026-06-05T13:17:28.000Z",
+                              "uid": "35240-47ea8940-ed52-487e-9ffb-8a44e8c70e95"
+                            },
+                            {
+                              "id": "b4e6a3b5-211a-401f-9830-f6611e11d770",
+                              "name": "Unauthorized.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "r2",
+                                    "buckets",
+                                    ":bucket_name"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "bucket_name"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:28.000Z",
+                              "updatedAt": "2026-06-05T13:17:28.000Z",
+                              "uid": "35240-b4e6a3b5-211a-401f-9830-f6611e11d770"
+                            },
+                            {
+                              "id": "f5ffefb1-1092-4ada-85db-4ffd46d5c049",
+                              "name": "Bucket not found.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "r2",
+                                    "buckets",
+                                    ":bucket_name"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "bucket_name"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:28.000Z",
+                              "updatedAt": "2026-06-05T13:17:28.000Z",
+                              "uid": "35240-f5ffefb1-1092-4ada-85db-4ffd46d5c049"
+                            }
+                          ],
+                          "createdAt": "2026-06-05T13:17:28.000Z",
+                          "updatedAt": "2026-06-05T13:17:28.000Z",
+                          "uid": "35240-ddee8ff1-b250-487e-9ca6-20666a28964e"
+                        },
+                        {
+                          "name": "Cloudflare Delete R2 Bucket",
+                          "id": "5ede5289-46a1-4feb-9894-7119116c3949",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "DELETE",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "r2",
+                                "buckets",
+                                ":bucket_name"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "21e4c6e8-f582-45d1-a5a4-8e0afee63808",
+                                  "key": "account_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the Cloudflare account."
+                                },
+                                {
+                                  "id": "b4925eb5-117d-40f0-b8fc-0d0cae20f133",
+                                  "key": "bucket_name",
+                                  "value": "<string>",
+                                  "description": "(Required) The name of the R2 bucket."
+                                }
+                              ]
+                            },
+                            "description": "Delete an R2 bucket. The bucket must be empty before it can be deleted."
+                          },
+                          "response": [
+                            {
+                              "id": "fe1e7f9f-997e-4430-9389-44e414536583",
+                              "name": "Bucket deleted successfully.",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "r2",
+                                    "buckets",
+                                    ":bucket_name"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "bucket_name"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:28.000Z",
+                              "updatedAt": "2026-06-05T13:17:28.000Z",
+                              "uid": "35240-fe1e7f9f-997e-4430-9389-44e414536583"
+                            },
+                            {
+                              "id": "0cdecfee-1e86-48e8-a8c4-4bb2eb40ddb5",
+                              "name": "Unauthorized.",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "r2",
+                                    "buckets",
+                                    ":bucket_name"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "bucket_name"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:28.000Z",
+                              "updatedAt": "2026-06-05T13:17:28.000Z",
+                              "uid": "35240-0cdecfee-1e86-48e8-a8c4-4bb2eb40ddb5"
+                            },
+                            {
+                              "id": "1abef350-f309-42c2-99ce-0ee2ce83e512",
+                              "name": "Bucket not found.",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "r2",
+                                    "buckets",
+                                    ":bucket_name"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "bucket_name"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:28.000Z",
+                              "updatedAt": "2026-06-05T13:17:28.000Z",
+                              "uid": "35240-1abef350-f309-42c2-99ce-0ee2ce83e512"
+                            },
+                            {
+                              "id": "b68a0630-21f2-4211-ba4f-be1712ae3fdc",
+                              "name": "Bucket is not empty.",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets/:bucket_name",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "r2",
+                                    "buckets",
+                                    ":bucket_name"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "bucket_name"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Conflict",
+                              "code": 409,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:28.000Z",
+                              "updatedAt": "2026-06-05T13:17:28.000Z",
+                              "uid": "35240-b68a0630-21f2-4211-ba4f-be1712ae3fdc"
+                            }
+                          ],
+                          "createdAt": "2026-06-05T13:17:28.000Z",
+                          "updatedAt": "2026-06-05T13:17:28.000Z",
+                          "uid": "35240-5ede5289-46a1-4feb-9894-7119116c3949"
+                        }
+                      ],
+                      "id": "2eeee9eb-213d-42d2-987c-e52f29929674",
+                      "createdAt": "2026-06-05T13:17:28.000Z",
+                      "updatedAt": "2026-06-05T13:17:28.000Z",
+                      "uid": "35240-2eeee9eb-213d-42d2-987c-e52f29929674"
+                    },
+                    {
+                      "name": "Cloudflare List R2 Buckets",
+                      "id": "cc956ba6-5ef5-44d8-aa36-2f2c73437939",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets?name_contains=<string>&start_after=<string>&per_page=<integer>&cursor=<string>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "r2",
+                            "buckets"
+                          ],
+                          "query": [
+                            {
+                              "description": "Filter buckets by name substring.",
+                              "key": "name_contains",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Bucket name to start listing after for pagination.",
+                              "key": "start_after",
+                              "value": "<string>"
+                            },
+                            {
+                              "description": "Number of buckets per page.",
+                              "key": "per_page",
+                              "value": "<integer>"
+                            },
+                            {
+                              "description": "Cursor for pagination.",
+                              "key": "cursor",
+                              "value": "<string>"
+                            }
+                          ],
+                          "variable": [
+                            {
+                              "id": "e9d97ff3-5b32-4338-bb68-1552709ed228",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            }
+                          ]
+                        },
+                        "description": "Returns a list of all R2 buckets for the account."
+                      },
+                      "response": [
+                        {
+                          "id": "20a469ab-d64f-4828-ba76-22cc5f004f05",
+                          "name": "List of R2 buckets.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets?name_contains=<string>&start_after=<string>&per_page=<integer>&cursor=<string>",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "r2",
+                                "buckets"
+                              ],
+                              "query": [
+                                {
+                                  "description": "Filter buckets by name substring.",
+                                  "key": "name_contains",
+                                  "value": "<string>"
+                                },
+                                {
+                                  "description": "Bucket name to start listing after for pagination.",
+                                  "key": "start_after",
+                                  "value": "<string>"
+                                },
+                                {
+                                  "description": "Number of buckets per page.",
+                                  "key": "per_page",
+                                  "value": "<integer>"
+                                },
+                                {
+                                  "description": "Cursor for pagination.",
+                                  "key": "cursor",
+                                  "value": "<string>"
+                                }
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"result\": {\n    \"buckets\": [\n      {\n        \"name\": \"<string>\",\n        \"creation_date\": \"<dateTime>\",\n        \"location\": \"<string>\",\n        \"storage_class\": \"<string>\"\n      },\n      {\n        \"name\": \"<string>\",\n        \"creation_date\": \"<dateTime>\",\n        \"location\": \"<string>\",\n        \"storage_class\": \"<string>\"\n      }\n    ]\n  },\n  \"success\": \"<boolean>\"\n}",
+                          "createdAt": "2026-06-05T13:17:28.000Z",
+                          "updatedAt": "2026-06-05T13:17:28.000Z",
+                          "uid": "35240-20a469ab-d64f-4828-ba76-22cc5f004f05"
+                        },
+                        {
+                          "id": "f8028855-657f-40b0-b983-6387b569f31c",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets?name_contains=<string>&start_after=<string>&per_page=<integer>&cursor=<string>",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "r2",
+                                "buckets"
+                              ],
+                              "query": [
+                                {
+                                  "description": "Filter buckets by name substring.",
+                                  "key": "name_contains",
+                                  "value": "<string>"
+                                },
+                                {
+                                  "description": "Bucket name to start listing after for pagination.",
+                                  "key": "start_after",
+                                  "value": "<string>"
+                                },
+                                {
+                                  "description": "Number of buckets per page.",
+                                  "key": "per_page",
+                                  "value": "<integer>"
+                                },
+                                {
+                                  "description": "Cursor for pagination.",
+                                  "key": "cursor",
+                                  "value": "<string>"
+                                }
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:28.000Z",
+                          "updatedAt": "2026-06-05T13:17:28.000Z",
+                          "uid": "35240-f8028855-657f-40b0-b983-6387b569f31c"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:28.000Z",
+                      "updatedAt": "2026-06-05T13:17:28.000Z",
+                      "uid": "35240-cc956ba6-5ef5-44d8-aa36-2f2c73437939"
+                    },
+                    {
+                      "name": "Cloudflare Create R2 Bucket",
+                      "id": "c2b2fccc-5889-4ed0-8ca8-da7c3b594cb1",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"name\": \"<string>\",\n  \"locationHint\": \"<string>\",\n  \"storageClass\": \"InfrequentAccess\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "r2",
+                            "buckets"
+                          ],
+                          "variable": [
+                            {
+                              "id": "3965af91-8608-460a-8ad5-a551a55035ba",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            }
+                          ]
+                        },
+                        "description": "Create a new R2 storage bucket. Bucket names must be globally unique and between 3 and 63 characters."
+                      },
+                      "response": [
+                        {
+                          "id": "8a2750b7-2db1-4007-9229-5901521af62b",
+                          "name": "Bucket created successfully.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"name\": \"<string>\",\n  \"locationHint\": \"<string>\",\n  \"storageClass\": \"InfrequentAccess\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "r2",
+                                "buckets"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"result\": {\n    \"name\": \"<string>\",\n    \"creation_date\": \"<dateTime>\",\n    \"location\": \"<string>\",\n    \"storage_class\": \"<string>\"\n  },\n  \"success\": \"<boolean>\"\n}",
+                          "createdAt": "2026-06-05T13:17:28.000Z",
+                          "updatedAt": "2026-06-05T13:17:28.000Z",
+                          "uid": "35240-8a2750b7-2db1-4007-9229-5901521af62b"
+                        },
+                        {
+                          "id": "439b3cf5-8b24-42ec-8326-f9d0c3aea9d8",
+                          "name": "Bad request.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"name\": \"<string>\",\n  \"locationHint\": \"<string>\",\n  \"storageClass\": \"InfrequentAccess\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "r2",
+                                "buckets"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:28.000Z",
+                          "updatedAt": "2026-06-05T13:17:28.000Z",
+                          "uid": "35240-439b3cf5-8b24-42ec-8326-f9d0c3aea9d8"
+                        },
+                        {
+                          "id": "cba0f177-e9b4-4d80-8936-4e6d65660ae4",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"name\": \"<string>\",\n  \"locationHint\": \"<string>\",\n  \"storageClass\": \"InfrequentAccess\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "r2",
+                                "buckets"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:28.000Z",
+                          "updatedAt": "2026-06-05T13:17:28.000Z",
+                          "uid": "35240-cba0f177-e9b4-4d80-8936-4e6d65660ae4"
+                        },
+                        {
+                          "id": "be5da92a-492b-4596-a31a-49f5bc30e4bf",
+                          "name": "Bucket name already exists.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"name\": \"<string>\",\n  \"locationHint\": \"<string>\",\n  \"storageClass\": \"InfrequentAccess\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/r2/buckets",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "r2",
+                                "buckets"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Conflict",
+                          "code": 409,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:28.000Z",
+                          "updatedAt": "2026-06-05T13:17:28.000Z",
+                          "uid": "35240-be5da92a-492b-4596-a31a-49f5bc30e4bf"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:28.000Z",
+                      "updatedAt": "2026-06-05T13:17:28.000Z",
+                      "uid": "35240-c2b2fccc-5889-4ed0-8ca8-da7c3b594cb1"
+                    }
+                  ],
+                  "id": "75b5119e-2155-4841-872f-bc1d6d912fd5",
+                  "createdAt": "2026-06-05T13:17:28.000Z",
+                  "updatedAt": "2026-06-05T13:17:28.000Z",
+                  "uid": "35240-75b5119e-2155-4841-872f-bc1d6d912fd5"
+                }
+              ],
+              "id": "62d6a063-c94e-48e6-8a95-d8a743d3b27e",
+              "createdAt": "2026-06-05T13:17:28.000Z",
+              "updatedAt": "2026-06-05T13:17:28.000Z",
+              "uid": "35240-62d6a063-c94e-48e6-8a95-d8a743d3b27e"
+            }
+          ],
+          "id": "9c00562d-df9a-402d-bf9a-35e309e4429a",
+          "createdAt": "2026-06-05T13:17:28.000Z",
+          "updatedAt": "2026-06-05T13:17:28.000Z",
+          "uid": "35240-9c00562d-df9a-402d-bf9a-35e309e4429a"
+        }
+      ],
+      "id": "77e716e7-1fee-41d1-b512-98e740fce841",
+      "createdAt": "2026-06-05T13:17:28.000Z",
+      "updatedAt": "2026-06-05T13:17:28.000Z",
+      "uid": "35240-77e716e7-1fee-41d1-b512-98e740fce841"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.cloudflare.com/client/v4"
+    }
+  ]
+}

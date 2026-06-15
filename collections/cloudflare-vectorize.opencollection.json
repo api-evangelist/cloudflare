@@ -1,0 +1,298 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cloudflare Vectorize API",
+    "version": "4.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Indexes",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Vectorize Indexes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/vectorize/v2/indexes",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ]
+          },
+          "docs": "Returns all Vectorize indexes for the account."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Vectorize Index",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/vectorize/v2/indexes",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new vector index with the specified dimensions and distance metric."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get Vectorize Index",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/vectorize/v2/indexes/:index_name",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "index_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Vectorize index."
+              }
+            ]
+          },
+          "docs": "Retrieve details of a specific Vectorize index."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update Vectorize Index",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/vectorize/v2/indexes/:index_name",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "index_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Vectorize index."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update the configuration of a Vectorize index."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Vectorize Index",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/vectorize/v2/indexes/:index_name",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "index_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Vectorize index."
+              }
+            ]
+          },
+          "docs": "Delete a Vectorize index and all its vectors."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Vectors",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Insert Vectors",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/vectorize/v2/indexes/:index_name/insert",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "index_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Vectorize index."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Insert new vectors into the index. If a vector with the same ID already exists, the request will fail."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Upsert Vectors",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/vectorize/v2/indexes/:index_name/upsert",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "index_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Vectorize index."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Insert or update vectors in the index. If a vector with the same ID exists, it will be replaced."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Query Vectors",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/vectorize/v2/indexes/:index_name/query",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "index_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Vectorize index."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Perform a similarity search against the index. Returns the nearest vectors to the provided query vector."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get Vectors by Ids",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/vectorize/v2/indexes/:index_name/get_by_ids",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "index_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Vectorize index."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Retrieve specific vectors by their IDs."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Vectors by Ids",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/vectorize/v2/indexes/:index_name/delete_by_ids",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "index_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Vectorize index."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Delete specific vectors from the index by their IDs."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

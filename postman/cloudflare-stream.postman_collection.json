@@ -1,0 +1,2069 @@
+{
+  "info": {
+    "_postman_id": "adfcb1c5-1c07-4f9a-82e6-fac091599abc",
+    "name": "Cloudflare Stream API",
+    "description": "Cloudflare Stream provides a single API for uploading, storing, encoding, and delivering live and on-demand video. The API supports direct uploads, TUS resumable uploads, live streaming via RTMPS and SRT, video playback with a built-in player, and signed URL access control.\n\nContact Support:\n Name: Cloudflare Support",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-06-05T13:17:40.000Z",
+    "updatedAt": "2026-06-05T13:17:40.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-adfcb1c5-1c07-4f9a-82e6-fac091599abc"
+  },
+  "item": [
+    {
+      "name": "accounts",
+      "item": [
+        {
+          "name": "{account_id}",
+          "item": [
+            {
+              "name": "stream",
+              "item": [
+                {
+                  "name": "{video_id}",
+                  "item": [
+                    {
+                      "name": "Cloudflare Get Video Details",
+                      "id": "10e11f77-76d0-40c7-99d2-91e14bbdfc23",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream/:video_id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream",
+                            ":video_id"
+                          ],
+                          "variable": [
+                            {
+                              "id": "19af39fc-586b-4661-afdf-97ee1943f114",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            },
+                            {
+                              "id": "a4943241-9e04-47e1-a0ef-bd4cb09fcd0a",
+                              "key": "video_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the video."
+                            }
+                          ]
+                        },
+                        "description": "Retrieve details of a specific video including processing status and playback information."
+                      },
+                      "response": [
+                        {
+                          "id": "009f16fa-05c3-41d3-88f7-d2bd839774c8",
+                          "name": "Video details.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/:video_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                ":video_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                },
+                                {
+                                  "key": "video_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"result\": {\n    \"uid\": \"<string>\",\n    \"thumbnail\": \"<uri>\",\n    \"playback\": {\n      \"hls\": \"<uri>\",\n      \"dash\": \"<uri>\"\n    },\n    \"status\": {\n      \"state\": \"inprogress\",\n      \"pctComplete\": \"<string>\"\n    },\n    \"meta\": {},\n    \"created\": \"<dateTime>\",\n    \"modified\": \"<dateTime>\",\n    \"duration\": \"<number>\",\n    \"size\": \"<integer>\",\n    \"requireSignedURLs\": \"<boolean>\",\n    \"allowedOrigins\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"success\": \"<boolean>\"\n}",
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-009f16fa-05c3-41d3-88f7-d2bd839774c8"
+                        },
+                        {
+                          "id": "1d5868be-26eb-4cc8-93e5-e7505e42ee65",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/:video_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                ":video_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                },
+                                {
+                                  "key": "video_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-1d5868be-26eb-4cc8-93e5-e7505e42ee65"
+                        },
+                        {
+                          "id": "d44a6c64-470a-4802-b8c0-15bbafb4149a",
+                          "name": "Video not found.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/:video_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                ":video_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                },
+                                {
+                                  "key": "video_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Not Found",
+                          "code": 404,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-d44a6c64-470a-4802-b8c0-15bbafb4149a"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-10e11f77-76d0-40c7-99d2-91e14bbdfc23"
+                    },
+                    {
+                      "name": "Cloudflare Update Video",
+                      "id": "86eaa80f-9448-4649-b84f-8fd5eb3daac6",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"meta\": {},\n  \"requireSignedURLs\": \"<boolean>\",\n  \"allowedOrigins\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream/:video_id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream",
+                            ":video_id"
+                          ],
+                          "variable": [
+                            {
+                              "id": "05e3da71-d30e-4cf0-891c-4271a95fd015",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            },
+                            {
+                              "id": "9a05a242-8d7f-4f51-8984-3ede7d19c017",
+                              "key": "video_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the video."
+                            }
+                          ]
+                        },
+                        "description": "Update video metadata and settings."
+                      },
+                      "response": [
+                        {
+                          "id": "764e6c7a-84ab-418a-b870-68266cd79ee4",
+                          "name": "Video updated.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"meta\": {},\n  \"requireSignedURLs\": \"<boolean>\",\n  \"allowedOrigins\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/:video_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                ":video_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                },
+                                {
+                                  "key": "video_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-764e6c7a-84ab-418a-b870-68266cd79ee4"
+                        },
+                        {
+                          "id": "89ee54bd-1647-4738-afa8-cda8c41c895c",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"meta\": {},\n  \"requireSignedURLs\": \"<boolean>\",\n  \"allowedOrigins\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/:video_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                ":video_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                },
+                                {
+                                  "key": "video_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-89ee54bd-1647-4738-afa8-cda8c41c895c"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-86eaa80f-9448-4649-b84f-8fd5eb3daac6"
+                    },
+                    {
+                      "name": "Cloudflare Delete Video",
+                      "id": "0e9297c3-8e80-4064-abd7-55a3d78fd3f8",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream/:video_id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream",
+                            ":video_id"
+                          ],
+                          "variable": [
+                            {
+                              "id": "6072f723-e61d-4ced-8690-761ea0b87005",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            },
+                            {
+                              "id": "1b3480cf-6b5e-4249-9d74-54eb57994937",
+                              "key": "video_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the video."
+                            }
+                          ]
+                        },
+                        "description": "Delete a video and all its associated data."
+                      },
+                      "response": [
+                        {
+                          "id": "0f887ced-0c00-4ac9-aff6-c48e3271b55b",
+                          "name": "Video deleted successfully.",
+                          "originalRequest": {
+                            "method": "DELETE",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/:video_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                ":video_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                },
+                                {
+                                  "key": "video_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-0f887ced-0c00-4ac9-aff6-c48e3271b55b"
+                        },
+                        {
+                          "id": "8d37721c-bed8-4892-bed4-c73cbdc6beed",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "DELETE",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/:video_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                ":video_id"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                },
+                                {
+                                  "key": "video_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-8d37721c-bed8-4892-bed4-c73cbdc6beed"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-0e9297c3-8e80-4064-abd7-55a3d78fd3f8"
+                    }
+                  ],
+                  "id": "c886012c-0677-4a5b-af29-52fa40e0fb31",
+                  "createdAt": "2026-06-05T13:17:40.000Z",
+                  "updatedAt": "2026-06-05T13:17:40.000Z",
+                  "uid": "35240-c886012c-0677-4a5b-af29-52fa40e0fb31"
+                },
+                {
+                  "name": "direct_upload",
+                  "item": [
+                    {
+                      "name": "Cloudflare Create Direct Upload Url",
+                      "id": "467f97ad-fc8d-4742-ac84-2b3ee23301f3",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"maxDurationSeconds\": \"<integer>\",\n  \"meta\": {},\n  \"requireSignedURLs\": \"<boolean>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream/direct_upload",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream",
+                            "direct_upload"
+                          ],
+                          "variable": [
+                            {
+                              "id": "908e4f0e-90dc-4279-a763-0d3be60cc129",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            }
+                          ]
+                        },
+                        "description": "Create a unique one-time upload URL for direct video uploads from client-side applications."
+                      },
+                      "response": [
+                        {
+                          "id": "314be238-2855-454c-9884-e4e1e8bb4a55",
+                          "name": "Direct upload URL created.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"maxDurationSeconds\": \"<integer>\",\n  \"meta\": {},\n  \"requireSignedURLs\": \"<boolean>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/direct_upload",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "direct_upload"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-314be238-2855-454c-9884-e4e1e8bb4a55"
+                        },
+                        {
+                          "id": "1bf751c9-914c-4c71-b0a6-b95a386608c8",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"maxDurationSeconds\": \"<integer>\",\n  \"meta\": {},\n  \"requireSignedURLs\": \"<boolean>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/direct_upload",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "direct_upload"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-1bf751c9-914c-4c71-b0a6-b95a386608c8"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-467f97ad-fc8d-4742-ac84-2b3ee23301f3"
+                    }
+                  ],
+                  "id": "7d7d2400-b175-4d9a-bd49-ee9f64e59ce9",
+                  "createdAt": "2026-06-05T13:17:40.000Z",
+                  "updatedAt": "2026-06-05T13:17:40.000Z",
+                  "uid": "35240-7d7d2400-b175-4d9a-bd49-ee9f64e59ce9"
+                },
+                {
+                  "name": "live_inputs",
+                  "item": [
+                    {
+                      "name": "Cloudflare List Live Inputs",
+                      "id": "dc5f0bd7-1484-44db-b95a-12fd655058f9",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream/live_inputs",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream",
+                            "live_inputs"
+                          ],
+                          "variable": [
+                            {
+                              "id": "0c29a1b7-2fbf-4585-a591-a9c6467fdaf4",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            }
+                          ]
+                        },
+                        "description": "Returns all live inputs configured for the account."
+                      },
+                      "response": [
+                        {
+                          "id": "eb0e7c29-a2c9-4257-b98f-417e55987003",
+                          "name": "List of live inputs.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/live_inputs",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "live_inputs"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-eb0e7c29-a2c9-4257-b98f-417e55987003"
+                        },
+                        {
+                          "id": "e004174e-5b11-4659-9260-444143de9921",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/live_inputs",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "live_inputs"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-e004174e-5b11-4659-9260-444143de9921"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-dc5f0bd7-1484-44db-b95a-12fd655058f9"
+                    },
+                    {
+                      "name": "Cloudflare Create Live Input",
+                      "id": "1ac348e6-01d0-43f8-8500-83e5c8e5149c",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"meta\": {},\n  \"recording\": {\n    \"mode\": \"automatic\",\n    \"requireSignedURLs\": \"<boolean>\",\n    \"timeoutSeconds\": \"<integer>\"\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream/live_inputs",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream",
+                            "live_inputs"
+                          ],
+                          "variable": [
+                            {
+                              "id": "bfd78bc3-9ac9-48e0-8560-c55fff7ae368",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            }
+                          ]
+                        },
+                        "description": "Create a new live input for RTMPS or SRT ingestion."
+                      },
+                      "response": [
+                        {
+                          "id": "7e7ba944-0a9a-4abb-bf90-00bdb33e8171",
+                          "name": "Live input created.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"meta\": {},\n  \"recording\": {\n    \"mode\": \"automatic\",\n    \"requireSignedURLs\": \"<boolean>\",\n    \"timeoutSeconds\": \"<integer>\"\n  }\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/live_inputs",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "live_inputs"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-7e7ba944-0a9a-4abb-bf90-00bdb33e8171"
+                        },
+                        {
+                          "id": "2be93fdf-7695-4716-b660-1454365a8565",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"meta\": {},\n  \"recording\": {\n    \"mode\": \"automatic\",\n    \"requireSignedURLs\": \"<boolean>\",\n    \"timeoutSeconds\": \"<integer>\"\n  }\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/live_inputs",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "live_inputs"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-2be93fdf-7695-4716-b660-1454365a8565"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-1ac348e6-01d0-43f8-8500-83e5c8e5149c"
+                    }
+                  ],
+                  "id": "1b5316cf-bd70-43a9-a7ce-64b6d5c9c368",
+                  "createdAt": "2026-06-05T13:17:40.000Z",
+                  "updatedAt": "2026-06-05T13:17:40.000Z",
+                  "uid": "35240-1b5316cf-bd70-43a9-a7ce-64b6d5c9c368"
+                },
+                {
+                  "name": "keys",
+                  "item": [
+                    {
+                      "name": "Cloudflare List Signing Keys",
+                      "id": "cb86085a-d51a-4173-aef6-de54c9df9be9",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream/keys",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream",
+                            "keys"
+                          ],
+                          "variable": [
+                            {
+                              "id": "6dc33b90-fe5b-4e04-807f-3bf8670d3a51",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            }
+                          ]
+                        },
+                        "description": "Returns all signing keys for creating signed video URLs."
+                      },
+                      "response": [
+                        {
+                          "id": "dd422b9f-db8b-4002-8075-ad33018523b7",
+                          "name": "List of signing keys.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/keys",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "keys"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-dd422b9f-db8b-4002-8075-ad33018523b7"
+                        },
+                        {
+                          "id": "a8b525d6-147d-4686-b7b7-aea330e7ffa2",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/keys",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "keys"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-a8b525d6-147d-4686-b7b7-aea330e7ffa2"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-cb86085a-d51a-4173-aef6-de54c9df9be9"
+                    },
+                    {
+                      "name": "Cloudflare Create Signing Key",
+                      "id": "a3477882-4a3d-425c-93ab-0de259ea4a41",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream/keys",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream",
+                            "keys"
+                          ],
+                          "variable": [
+                            {
+                              "id": "8947de8b-990f-4011-bb4b-2fae13781449",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            }
+                          ]
+                        },
+                        "description": "Create a new signing key for generating signed video URLs."
+                      },
+                      "response": [
+                        {
+                          "id": "d108c3ff-668c-4c4d-8a2f-3906b3620dad",
+                          "name": "Signing key created.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/keys",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "keys"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-d108c3ff-668c-4c4d-8a2f-3906b3620dad"
+                        },
+                        {
+                          "id": "8482e058-3476-4224-bf0c-54b4b3ac738b",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/keys",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "keys"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-8482e058-3476-4224-bf0c-54b4b3ac738b"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-a3477882-4a3d-425c-93ab-0de259ea4a41"
+                    }
+                  ],
+                  "id": "0e46fd9a-8d16-4114-aedc-1bf2492e3223",
+                  "createdAt": "2026-06-05T13:17:40.000Z",
+                  "updatedAt": "2026-06-05T13:17:40.000Z",
+                  "uid": "35240-0e46fd9a-8d16-4114-aedc-1bf2492e3223"
+                },
+                {
+                  "name": "webhook",
+                  "item": [
+                    {
+                      "name": "Cloudflare Get Webhook Configuration",
+                      "id": "d06b9f46-0159-41d2-bfc9-75566b8867c5",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream/webhook",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream",
+                            "webhook"
+                          ],
+                          "variable": [
+                            {
+                              "id": "1dfe4d87-62ed-460a-b755-f367cc0b6a87",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            }
+                          ]
+                        },
+                        "description": "Retrieve the configured webhook URL for video processing notifications."
+                      },
+                      "response": [
+                        {
+                          "id": "4e7aa698-64fa-4161-a521-0e282080c4b1",
+                          "name": "Webhook configuration.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/webhook",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "webhook"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-4e7aa698-64fa-4161-a521-0e282080c4b1"
+                        },
+                        {
+                          "id": "d6c2cc70-7cc3-4848-8fa1-9d1b86abb34b",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/webhook",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "webhook"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-d6c2cc70-7cc3-4848-8fa1-9d1b86abb34b"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-d06b9f46-0159-41d2-bfc9-75566b8867c5"
+                    },
+                    {
+                      "name": "Cloudflare Update Webhook Configuration",
+                      "id": "c3b530c1-19b9-4ae0-b8b3-35c2b053c7cd",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "PUT",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"notificationUrl\": \"<uri>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream/webhook",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream",
+                            "webhook"
+                          ],
+                          "variable": [
+                            {
+                              "id": "ec5348bb-ba5e-456f-a994-3ddce94b07d6",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            }
+                          ]
+                        },
+                        "description": "Set or update the webhook URL for video processing notifications."
+                      },
+                      "response": [
+                        {
+                          "id": "92175c79-9152-4676-a9dd-31a7d0e93ef8",
+                          "name": "Webhook updated.",
+                          "originalRequest": {
+                            "method": "PUT",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"notificationUrl\": \"<uri>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/webhook",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "webhook"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-92175c79-9152-4676-a9dd-31a7d0e93ef8"
+                        },
+                        {
+                          "id": "822a9a87-e65c-4bff-a4f0-1c747c1dc19b",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "PUT",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"notificationUrl\": \"<uri>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/webhook",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "webhook"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-822a9a87-e65c-4bff-a4f0-1c747c1dc19b"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-c3b530c1-19b9-4ae0-b8b3-35c2b053c7cd"
+                    },
+                    {
+                      "name": "Cloudflare Delete Webhook Configuration",
+                      "id": "79eca1fa-6cd9-4c88-a50d-a160d871b7d8",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream/webhook",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream",
+                            "webhook"
+                          ],
+                          "variable": [
+                            {
+                              "id": "dd0be4f1-4b8d-473b-ab25-b286aaa8cec3",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            }
+                          ]
+                        },
+                        "description": "Remove the webhook configuration."
+                      },
+                      "response": [
+                        {
+                          "id": "7a4cfee9-3462-4324-9a8c-97b4be5e4934",
+                          "name": "Webhook deleted.",
+                          "originalRequest": {
+                            "method": "DELETE",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/webhook",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "webhook"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-7a4cfee9-3462-4324-9a8c-97b4be5e4934"
+                        },
+                        {
+                          "id": "405552c2-205d-4c45-8d52-34054d2dca0a",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "DELETE",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/stream/webhook",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "stream",
+                                "webhook"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:40.000Z",
+                          "updatedAt": "2026-06-05T13:17:40.000Z",
+                          "uid": "35240-405552c2-205d-4c45-8d52-34054d2dca0a"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-79eca1fa-6cd9-4c88-a50d-a160d871b7d8"
+                    }
+                  ],
+                  "id": "f1fa9874-2090-484f-8c9e-9b133fdaffe0",
+                  "createdAt": "2026-06-05T13:17:40.000Z",
+                  "updatedAt": "2026-06-05T13:17:40.000Z",
+                  "uid": "35240-f1fa9874-2090-484f-8c9e-9b133fdaffe0"
+                },
+                {
+                  "name": "Cloudflare List Videos",
+                  "id": "44eaefb8-0021-48f6-a3c4-a6d3628988c3",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/accounts/:account_id/stream?status=inprogress&search=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "accounts",
+                        ":account_id",
+                        "stream"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by video status.",
+                          "key": "status",
+                          "value": "inprogress"
+                        },
+                        {
+                          "description": "Search videos by name.",
+                          "key": "search",
+                          "value": "<string>"
+                        }
+                      ],
+                      "variable": [
+                        {
+                          "id": "dcef61fc-35aa-481c-8056-8fa5677b20b9",
+                          "key": "account_id",
+                          "value": "<string>",
+                          "description": "(Required) The unique identifier of the Cloudflare account."
+                        }
+                      ]
+                    },
+                    "description": "Returns a list of all videos in the account with pagination and filtering support."
+                  },
+                  "response": [
+                    {
+                      "id": "a8748dfd-1095-407e-bc29-5ad55de02c68",
+                      "name": "List of videos.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream?status=inprogress&search=<string>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream"
+                          ],
+                          "query": [
+                            {
+                              "description": "Filter by video status.",
+                              "key": "status",
+                              "value": "inprogress"
+                            },
+                            {
+                              "description": "Search videos by name.",
+                              "key": "search",
+                              "value": "<string>"
+                            }
+                          ],
+                          "variable": [
+                            {
+                              "key": "account_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"result\": [\n    {\n      \"uid\": \"<string>\",\n      \"thumbnail\": \"<uri>\",\n      \"playback\": {\n        \"hls\": \"<uri>\",\n        \"dash\": \"<uri>\"\n      },\n      \"status\": {\n        \"state\": \"ready\",\n        \"pctComplete\": \"<string>\"\n      },\n      \"meta\": {},\n      \"created\": \"<dateTime>\",\n      \"modified\": \"<dateTime>\",\n      \"duration\": \"<number>\",\n      \"size\": \"<integer>\",\n      \"requireSignedURLs\": \"<boolean>\",\n      \"allowedOrigins\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"uid\": \"<string>\",\n      \"thumbnail\": \"<uri>\",\n      \"playback\": {\n        \"hls\": \"<uri>\",\n        \"dash\": \"<uri>\"\n      },\n      \"status\": {\n        \"state\": \"pendingupload\",\n        \"pctComplete\": \"<string>\"\n      },\n      \"meta\": {},\n      \"created\": \"<dateTime>\",\n      \"modified\": \"<dateTime>\",\n      \"duration\": \"<number>\",\n      \"size\": \"<integer>\",\n      \"requireSignedURLs\": \"<boolean>\",\n      \"allowedOrigins\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"success\": \"<boolean>\"\n}",
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-a8748dfd-1095-407e-bc29-5ad55de02c68"
+                    },
+                    {
+                      "id": "7ce8f030-ea64-41ba-b165-03fe9ded67f6",
+                      "name": "Unauthorized.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream?status=inprogress&search=<string>",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream"
+                          ],
+                          "query": [
+                            {
+                              "description": "Filter by video status.",
+                              "key": "status",
+                              "value": "inprogress"
+                            },
+                            {
+                              "description": "Search videos by name.",
+                              "key": "search",
+                              "value": "<string>"
+                            }
+                          ],
+                          "variable": [
+                            {
+                              "key": "account_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-7ce8f030-ea64-41ba-b165-03fe9ded67f6"
+                    }
+                  ],
+                  "createdAt": "2026-06-05T13:17:40.000Z",
+                  "updatedAt": "2026-06-05T13:17:40.000Z",
+                  "uid": "35240-44eaefb8-0021-48f6-a3c4-a6d3628988c3"
+                },
+                {
+                  "name": "Cloudflare Upload Video From Url",
+                  "id": "41a477ea-d360-4fb7-ada3-e817f01c748c",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"url\": \"<uri>\",\n  \"meta\": {},\n  \"requireSignedURLs\": \"<boolean>\",\n  \"allowedOrigins\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/accounts/:account_id/stream",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "accounts",
+                        ":account_id",
+                        "stream"
+                      ],
+                      "variable": [
+                        {
+                          "id": "2d454af2-5512-4239-8791-5e924c16677a",
+                          "key": "account_id",
+                          "value": "<string>",
+                          "description": "(Required) The unique identifier of the Cloudflare account."
+                        }
+                      ]
+                    },
+                    "description": "Upload a video by providing a URL to fetch the video from."
+                  },
+                  "response": [
+                    {
+                      "id": "a8306c73-d142-4fe2-863d-452826985144",
+                      "name": "Video upload initiated.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"url\": \"<uri>\",\n  \"meta\": {},\n  \"requireSignedURLs\": \"<boolean>\",\n  \"allowedOrigins\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream"
+                          ],
+                          "variable": [
+                            {
+                              "key": "account_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"result\": {\n    \"uid\": \"<string>\",\n    \"thumbnail\": \"<uri>\",\n    \"playback\": {\n      \"hls\": \"<uri>\",\n      \"dash\": \"<uri>\"\n    },\n    \"status\": {\n      \"state\": \"inprogress\",\n      \"pctComplete\": \"<string>\"\n    },\n    \"meta\": {},\n    \"created\": \"<dateTime>\",\n    \"modified\": \"<dateTime>\",\n    \"duration\": \"<number>\",\n    \"size\": \"<integer>\",\n    \"requireSignedURLs\": \"<boolean>\",\n    \"allowedOrigins\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  },\n  \"success\": \"<boolean>\"\n}",
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-a8306c73-d142-4fe2-863d-452826985144"
+                    },
+                    {
+                      "id": "f76502c9-c735-47ab-8adc-5d7f093de5d4",
+                      "name": "Bad request.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"url\": \"<uri>\",\n  \"meta\": {},\n  \"requireSignedURLs\": \"<boolean>\",\n  \"allowedOrigins\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream"
+                          ],
+                          "variable": [
+                            {
+                              "key": "account_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-f76502c9-c735-47ab-8adc-5d7f093de5d4"
+                    },
+                    {
+                      "id": "36637394-ad12-4a7c-a6d0-622265b328d5",
+                      "name": "Unauthorized.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: bearer",
+                            "key": "Authorization",
+                            "value": "Bearer <token>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"url\": \"<uri>\",\n  \"meta\": {},\n  \"requireSignedURLs\": \"<boolean>\",\n  \"allowedOrigins\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/stream",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "stream"
+                          ],
+                          "variable": [
+                            {
+                              "key": "account_id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-06-05T13:17:40.000Z",
+                      "updatedAt": "2026-06-05T13:17:40.000Z",
+                      "uid": "35240-36637394-ad12-4a7c-a6d0-622265b328d5"
+                    }
+                  ],
+                  "createdAt": "2026-06-05T13:17:40.000Z",
+                  "updatedAt": "2026-06-05T13:17:40.000Z",
+                  "uid": "35240-41a477ea-d360-4fb7-ada3-e817f01c748c"
+                }
+              ],
+              "id": "9fab4aa8-70fe-43d1-9ff2-472104e531e1",
+              "createdAt": "2026-06-05T13:17:40.000Z",
+              "updatedAt": "2026-06-05T13:17:40.000Z",
+              "uid": "35240-9fab4aa8-70fe-43d1-9ff2-472104e531e1"
+            }
+          ],
+          "id": "9f4e306c-2317-4671-88d9-de92484cfe7c",
+          "createdAt": "2026-06-05T13:17:40.000Z",
+          "updatedAt": "2026-06-05T13:17:40.000Z",
+          "uid": "35240-9f4e306c-2317-4671-88d9-de92484cfe7c"
+        }
+      ],
+      "id": "e0869f5b-d9a8-4ede-95aa-dbfc75b7e23f",
+      "createdAt": "2026-06-05T13:17:40.000Z",
+      "updatedAt": "2026-06-05T13:17:40.000Z",
+      "uid": "35240-e0869f5b-d9a8-4ede-95aa-dbfc75b7e23f"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.cloudflare.com/client/v4"
+    }
+  ]
+}

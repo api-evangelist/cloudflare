@@ -1,0 +1,349 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cloudflare D1 API",
+    "version": "4.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Databases",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List D1 Databases",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/d1/database",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "page",
+                "value": "10",
+                "type": "query",
+                "description": "Page number of results."
+              },
+              {
+                "name": "per_page",
+                "value": "10",
+                "type": "query",
+                "description": "Number of results per page."
+              },
+              {
+                "name": "name",
+                "value": "Example Title",
+                "type": "query",
+                "description": "Filter databases by name."
+              }
+            ]
+          },
+          "docs": "Returns a paginated list of all D1 databases for the account."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create D1 Database",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/d1/database",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new D1 serverless SQL database."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get D1 Database",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/d1/database/:database_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "database_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the D1 database."
+              }
+            ]
+          },
+          "docs": "Retrieve details of a specific D1 database."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update D1 Database",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/d1/database/:database_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "database_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the D1 database."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update a D1 database configuration."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete D1 Database",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/d1/database/:database_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "database_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the D1 database."
+              }
+            ]
+          },
+          "docs": "Delete a D1 database and all its contents."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Queries",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Query D1 Database",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/d1/database/:database_id/query",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "database_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the D1 database."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Execute a SQL query against the D1 database. Returns results with metadata about the execution."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Raw Query D1 Database",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/d1/database/:database_id/raw",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "database_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the D1 database."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Execute a raw SQL query optimized for performance. Returns results as arrays instead of objects."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Import/Export",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Export D1 Database",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/d1/database/:database_id/export",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "database_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the D1 database."
+              }
+            ]
+          },
+          "docs": "Export the database contents as SQL. Returns a URL for downloading the SQL dump."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Import Sql Into D1 Database",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/d1/database/:database_id/import",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "database_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the D1 database."
+              }
+            ]
+          },
+          "docs": "Import SQL into the database. Returns a temporary upload URL and import status."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Time Travel",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Get D1 Database Bookmark",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/d1/database/:database_id/time_travel/bookmark",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "database_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the D1 database."
+              }
+            ]
+          },
+          "docs": "Retrieve the current or a historical bookmark for the database, which represents a point-in-time snapshot."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Restore D1 Database",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/d1/database/:database_id/time_travel/restore",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "database_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the D1 database."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Restore the database to a previous state using a bookmark from time travel."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,345 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cloudflare Stream API",
+    "version": "4.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Videos",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Videos",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "status",
+                "value": "pendingupload",
+                "type": "query",
+                "description": "Filter by video status."
+              },
+              {
+                "name": "search",
+                "value": "example_value",
+                "type": "query",
+                "description": "Search videos by name."
+              }
+            ]
+          },
+          "docs": "Returns a list of all videos in the account with pagination and filtering support."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Upload Video From Url",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Upload a video by providing a URL to fetch the video from."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get Video Details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/:video_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "video_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the video."
+              }
+            ]
+          },
+          "docs": "Retrieve details of a specific video including processing status and playback information."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update Video",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/:video_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "video_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the video."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update video metadata and settings."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Video",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/:video_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "video_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the video."
+              }
+            ]
+          },
+          "docs": "Delete a video and all its associated data."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Direct Upload Url",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/direct_upload",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a unique one-time upload URL for direct video uploads from client-side applications."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Live Inputs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Live Inputs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/live_inputs",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ]
+          },
+          "docs": "Returns all live inputs configured for the account."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Live Input",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/live_inputs",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new live input for RTMPS or SRT ingestion."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Signing Keys",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Signing Keys",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/keys",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ]
+          },
+          "docs": "Returns all signing keys for creating signed video URLs."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Signing Key",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/keys",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ]
+          },
+          "docs": "Create a new signing key for generating signed video URLs."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Webhooks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Get Webhook Configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/webhook",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ]
+          },
+          "docs": "Retrieve the configured webhook URL for video processing notifications."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update Webhook Configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/webhook",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Set or update the webhook URL for video processing notifications."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Webhook Configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/webhook",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ]
+          },
+          "docs": "Remove the webhook configuration."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

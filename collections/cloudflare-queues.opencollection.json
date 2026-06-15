@@ -1,0 +1,515 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cloudflare Queues API",
+    "version": "4.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Queues",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Queues",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ]
+          },
+          "docs": "Returns all queues owned by the account."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Queue",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new message queue for the account."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get Queue",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              }
+            ]
+          },
+          "docs": "Retrieve details of a specific queue."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Replace Queue Configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Overwrite the queue configuration."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update Queue Settings",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Partially update queue settings."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Queue",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              }
+            ]
+          },
+          "docs": "Remove a queue and all its messages."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Consumers",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Queue Consumers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id/consumers",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              }
+            ]
+          },
+          "docs": "Returns the consumers configured for a queue."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Queue Consumer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id/consumers",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Add a new consumer to a queue to process messages."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get Queue Consumer",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id/consumers/:consumer_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              },
+              {
+                "name": "consumer_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the consumer."
+              }
+            ]
+          },
+          "docs": "Retrieve details of a specific queue consumer."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Replace Queue Consumer",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id/consumers/:consumer_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              },
+              {
+                "name": "consumer_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the consumer."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update or create a consumer for the queue."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Queue Consumer",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id/consumers/:consumer_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              },
+              {
+                "name": "consumer_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the consumer."
+              }
+            ]
+          },
+          "docs": "Remove a consumer from the queue."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Messages",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Send Message",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id/messages",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Send a single message to the queue."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Send Message Batch",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id/messages/batch",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Send multiple messages to the queue in a single request."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Pull Messages",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id/messages/pull",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Retrieve a batch of messages from the queue for processing."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Acknowledge Messages",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id/messages/ack",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Acknowledge and optionally retry messages from the queue. Acknowledged messages are permanently removed from the queue."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Purge",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Get Purge Status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id/purge",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              }
+            ]
+          },
+          "docs": "Check the status of a queue purge operation."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Purge Queue",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/queues/:queue_id/purge",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "queue_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the queue."
+              }
+            ]
+          },
+          "docs": "Delete all messages from the queue."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

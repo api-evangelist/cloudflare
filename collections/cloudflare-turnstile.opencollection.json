@@ -1,0 +1,206 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cloudflare Turnstile API",
+    "version": "4.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Widgets",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Turnstile Widgets",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/challenges/widgets",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ]
+          },
+          "docs": "Returns all Turnstile widget configurations for the account."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Turnstile Widget",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/challenges/widgets",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new Turnstile widget with the specified mode and allowed domains."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get Turnstile Widget",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/challenges/widgets/:sitekey",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "sitekey",
+                "value": "",
+                "type": "path",
+                "description": "The site key of the Turnstile widget."
+              }
+            ]
+          },
+          "docs": "Retrieve details of a specific Turnstile widget."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update Turnstile Widget",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/challenges/widgets/:sitekey",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "sitekey",
+                "value": "",
+                "type": "path",
+                "description": "The site key of the Turnstile widget."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update the configuration of a Turnstile widget."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Turnstile Widget",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/challenges/widgets/:sitekey",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "sitekey",
+                "value": "",
+                "type": "path",
+                "description": "The site key of the Turnstile widget."
+              }
+            ]
+          },
+          "docs": "Delete a Turnstile widget configuration."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Rotate Widget Secret",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/challenges/widgets/:sitekey/rotate_secret",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "sitekey",
+                "value": "",
+                "type": "path",
+                "description": "The site key of the Turnstile widget."
+              }
+            ]
+          },
+          "docs": "Rotate the secret key for a Turnstile widget. The previous secret remains valid for a transition period."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Verification",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Verify Turnstile Token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/siteverify",
+            "body": {
+              "type": "form-urlencoded",
+              "data": [
+                {
+                  "name": "secret",
+                  "value": ""
+                },
+                {
+                  "name": "response",
+                  "value": ""
+                },
+                {
+                  "name": "remoteip",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Validate a Turnstile challenge token on the server side. This is the primary endpoint for verifying that a user has passed the Turnstile challenge."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

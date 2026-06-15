@@ -1,0 +1,255 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cloudflare R2 API",
+    "version": "4.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Buckets",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List R2 Buckets",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/r2/buckets",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "name_contains",
+                "value": "example_value",
+                "type": "query",
+                "description": "Filter buckets by name substring."
+              },
+              {
+                "name": "start_after",
+                "value": "example_value",
+                "type": "query",
+                "description": "Bucket name to start listing after for pagination."
+              },
+              {
+                "name": "per_page",
+                "value": "10",
+                "type": "query",
+                "description": "Number of buckets per page."
+              },
+              {
+                "name": "cursor",
+                "value": "example_value",
+                "type": "query",
+                "description": "Cursor for pagination."
+              }
+            ]
+          },
+          "docs": "Returns a list of all R2 buckets for the account."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create R2 Bucket",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/r2/buckets",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new R2 storage bucket. Bucket names must be globally unique and between 3 and 63 characters."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get R2 Bucket",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/r2/buckets/:bucket_name",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "bucket_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the R2 bucket."
+              }
+            ]
+          },
+          "docs": "Retrieve details of a specific R2 bucket."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete R2 Bucket",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/r2/buckets/:bucket_name",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "bucket_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the R2 bucket."
+              }
+            ]
+          },
+          "docs": "Delete an R2 bucket. The bucket must be empty before it can be deleted."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Objects",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Objects in Bucket",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/r2/buckets/:bucket_name/objects",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "bucket_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the R2 bucket."
+              },
+              {
+                "name": "prefix",
+                "value": "example_value",
+                "type": "query",
+                "description": "Filter objects by key prefix."
+              },
+              {
+                "name": "delimiter",
+                "value": "example_value",
+                "type": "query",
+                "description": "Delimiter for grouping object keys."
+              },
+              {
+                "name": "cursor",
+                "value": "example_value",
+                "type": "query",
+                "description": "Cursor for pagination."
+              },
+              {
+                "name": "per_page",
+                "value": "10",
+                "type": "query",
+                "description": "Number of objects per page."
+              }
+            ]
+          },
+          "docs": "List objects stored in an R2 bucket with optional prefix filtering and pagination."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Configuration",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Get Bucket Configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/r2/buckets/:bucket_name/configuration",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "bucket_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the R2 bucket."
+              }
+            ]
+          },
+          "docs": "Retrieve the configuration settings for an R2 bucket including CORS and lifecycle rules."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update Bucket Configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/r2/buckets/:bucket_name/configuration",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "bucket_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the R2 bucket."
+              }
+            ]
+          },
+          "docs": "Update configuration settings for an R2 bucket."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,1243 @@
+{
+  "info": {
+    "_postman_id": "fe244e30-8e66-4a58-ac9c-9fc0eea14105",
+    "name": "Cloudflare AI Gateway API",
+    "description": "Cloudflare AI Gateway provides visibility and control over AI applications with analytics, logging, caching, rate limiting, request retries, and model fallback. It supports multiple AI providers including OpenAI, Anthropic, and Google Gemini through a unified interface. The API allows developers to create and manage gateways, configure providers, and access logs and analytics.\n\nContact Support:\n Name: Cloudflare Support",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-06-05T13:17:26.000Z",
+    "updatedAt": "2026-06-05T13:17:26.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-fe244e30-8e66-4a58-ac9c-9fc0eea14105"
+  },
+  "item": [
+    {
+      "name": "accounts",
+      "item": [
+        {
+          "name": "{account_id}",
+          "item": [
+            {
+              "name": "ai-gateway",
+              "item": [
+                {
+                  "name": "gateways",
+                  "item": [
+                    {
+                      "name": "{gateway_id}",
+                      "item": [
+                        {
+                          "name": "logs",
+                          "item": [
+                            {
+                              "name": "Cloudflare List Ai Gateway Logs",
+                              "id": "a54c2070-ec68-4a03-9f27-3e9eaf2844bb",
+                              "protocolProfileBehavior": {
+                                "disableBodyPruning": true
+                              },
+                              "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id/logs?page=<integer>&per_page=<integer>&search=<string>",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "ai-gateway",
+                                    "gateways",
+                                    ":gateway_id",
+                                    "logs"
+                                  ],
+                                  "query": [
+                                    {
+                                      "description": "Page number for pagination.",
+                                      "key": "page",
+                                      "value": "<integer>"
+                                    },
+                                    {
+                                      "description": "Number of log entries per page.",
+                                      "key": "per_page",
+                                      "value": "<integer>"
+                                    },
+                                    {
+                                      "description": "Search query to filter logs.",
+                                      "key": "search",
+                                      "value": "<string>"
+                                    }
+                                  ],
+                                  "variable": [
+                                    {
+                                      "id": "b61512bb-ef07-4169-9cfb-93dddd4d6f26",
+                                      "key": "account_id",
+                                      "value": "<string>",
+                                      "description": "(Required) The unique identifier of the Cloudflare account."
+                                    },
+                                    {
+                                      "id": "c4f3608d-dd7b-4097-a790-19a0cdb58077",
+                                      "key": "gateway_id",
+                                      "value": "<string>",
+                                      "description": "(Required) The unique identifier of the AI Gateway."
+                                    }
+                                  ]
+                                },
+                                "description": "Retrieve request logs for an AI Gateway instance with filtering and pagination support."
+                              },
+                              "response": [
+                                {
+                                  "id": "eb63270e-1b7b-4e63-a123-967f6feafd39",
+                                  "name": "List of gateway logs.",
+                                  "originalRequest": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id/logs?page=<integer>&per_page=<integer>&search=<string>",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "ai-gateway",
+                                        "gateways",
+                                        ":gateway_id",
+                                        "logs"
+                                      ],
+                                      "query": [
+                                        {
+                                          "description": "Page number for pagination.",
+                                          "key": "page",
+                                          "value": "<integer>"
+                                        },
+                                        {
+                                          "description": "Number of log entries per page.",
+                                          "key": "per_page",
+                                          "value": "<integer>"
+                                        },
+                                        {
+                                          "description": "Search query to filter logs.",
+                                          "key": "search",
+                                          "value": "<string>"
+                                        }
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "gateway_id"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "OK",
+                                  "code": 200,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:27.000Z",
+                                  "updatedAt": "2026-06-05T13:17:27.000Z",
+                                  "uid": "35240-eb63270e-1b7b-4e63-a123-967f6feafd39"
+                                },
+                                {
+                                  "id": "df804d0b-f93c-4405-a649-ff9fa465ad9e",
+                                  "name": "Unauthorized.",
+                                  "originalRequest": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "description": "Added as a part of security scheme: bearer",
+                                        "key": "Authorization",
+                                        "value": "Bearer <token>"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id/logs?page=<integer>&per_page=<integer>&search=<string>",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "accounts",
+                                        ":account_id",
+                                        "ai-gateway",
+                                        "gateways",
+                                        ":gateway_id",
+                                        "logs"
+                                      ],
+                                      "query": [
+                                        {
+                                          "description": "Page number for pagination.",
+                                          "key": "page",
+                                          "value": "<integer>"
+                                        },
+                                        {
+                                          "description": "Number of log entries per page.",
+                                          "key": "per_page",
+                                          "value": "<integer>"
+                                        },
+                                        {
+                                          "description": "Search query to filter logs.",
+                                          "key": "search",
+                                          "value": "<string>"
+                                        }
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "account_id"
+                                        },
+                                        {
+                                          "key": "gateway_id"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "Unauthorized",
+                                  "code": 401,
+                                  "_postman_previewlanguage": "text",
+                                  "header": [],
+                                  "cookie": [],
+                                  "responseTime": null,
+                                  "body": null,
+                                  "createdAt": "2026-06-05T13:17:27.000Z",
+                                  "updatedAt": "2026-06-05T13:17:27.000Z",
+                                  "uid": "35240-df804d0b-f93c-4405-a649-ff9fa465ad9e"
+                                }
+                              ],
+                              "createdAt": "2026-06-05T13:17:27.000Z",
+                              "updatedAt": "2026-06-05T13:17:27.000Z",
+                              "uid": "35240-a54c2070-ec68-4a03-9f27-3e9eaf2844bb"
+                            }
+                          ],
+                          "id": "e5f14774-c143-4367-83d8-2e40f0849597",
+                          "createdAt": "2026-06-05T13:17:27.000Z",
+                          "updatedAt": "2026-06-05T13:17:27.000Z",
+                          "uid": "35240-e5f14774-c143-4367-83d8-2e40f0849597"
+                        },
+                        {
+                          "name": "Cloudflare Get Ai Gateway",
+                          "id": "70624bd4-8df8-439f-a5d8-48ea4cfe6d96",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "ai-gateway",
+                                "gateways",
+                                ":gateway_id"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "aa0145c5-8d21-4b85-839d-bfe652006ef0",
+                                  "key": "account_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the Cloudflare account."
+                                },
+                                {
+                                  "id": "ac7dd165-21f1-4cd7-a707-e402ea828d5a",
+                                  "key": "gateway_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the AI Gateway."
+                                }
+                              ]
+                            },
+                            "description": "Retrieve details of a specific AI Gateway instance."
+                          },
+                          "response": [
+                            {
+                              "id": "0b636005-8972-4c1e-bd13-8a41c7d04fca",
+                              "name": "Gateway details.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "ai-gateway",
+                                    "gateways",
+                                    ":gateway_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "gateway_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"result\": {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"slug\": \"<string>\",\n    \"cache_enabled\": \"<boolean>\",\n    \"cache_ttl\": \"<integer>\",\n    \"rate_limiting_enabled\": \"<boolean>\",\n    \"rate_limiting_limit\": \"<integer>\",\n    \"rate_limiting_interval\": \"<integer>\",\n    \"log_enabled\": \"<boolean>\",\n    \"created_at\": \"<dateTime>\",\n    \"modified_at\": \"<dateTime>\"\n  },\n  \"success\": \"<boolean>\"\n}",
+                              "createdAt": "2026-06-05T13:17:27.000Z",
+                              "updatedAt": "2026-06-05T13:17:27.000Z",
+                              "uid": "35240-0b636005-8972-4c1e-bd13-8a41c7d04fca"
+                            },
+                            {
+                              "id": "18bc71df-4e88-4105-9049-98b574e57a12",
+                              "name": "Unauthorized.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "ai-gateway",
+                                    "gateways",
+                                    ":gateway_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "gateway_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:27.000Z",
+                              "updatedAt": "2026-06-05T13:17:27.000Z",
+                              "uid": "35240-18bc71df-4e88-4105-9049-98b574e57a12"
+                            },
+                            {
+                              "id": "2e2d92e5-3aa3-48c9-bda6-3a2f62a6fe4f",
+                              "name": "Gateway not found.",
+                              "originalRequest": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "ai-gateway",
+                                    "gateways",
+                                    ":gateway_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "gateway_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:27.000Z",
+                              "updatedAt": "2026-06-05T13:17:27.000Z",
+                              "uid": "35240-2e2d92e5-3aa3-48c9-bda6-3a2f62a6fe4f"
+                            }
+                          ],
+                          "createdAt": "2026-06-05T13:17:27.000Z",
+                          "updatedAt": "2026-06-05T13:17:27.000Z",
+                          "uid": "35240-70624bd4-8df8-439f-a5d8-48ea4cfe6d96"
+                        },
+                        {
+                          "name": "Cloudflare Update Ai Gateway",
+                          "id": "e59f76ed-8250-4c82-a1a9-b47975d832a2",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "PUT",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"name\": \"<string>\",\n  \"cache_enabled\": \"<boolean>\",\n  \"cache_ttl\": \"<integer>\",\n  \"rate_limiting_enabled\": \"<boolean>\",\n  \"rate_limiting_limit\": \"<integer>\",\n  \"rate_limiting_interval\": \"<integer>\",\n  \"log_enabled\": \"<boolean>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "ai-gateway",
+                                "gateways",
+                                ":gateway_id"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "4b9f7c19-ae20-43cf-8c70-0ae4ab237928",
+                                  "key": "account_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the Cloudflare account."
+                                },
+                                {
+                                  "id": "1350b953-fee4-40be-84ce-6f02fc2c7d1e",
+                                  "key": "gateway_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the AI Gateway."
+                                }
+                              ]
+                            },
+                            "description": "Update the configuration of an AI Gateway instance."
+                          },
+                          "response": [
+                            {
+                              "id": "c6a59abc-1a6d-44a5-b563-738990ff1c24",
+                              "name": "Gateway updated successfully.",
+                              "originalRequest": {
+                                "method": "PUT",
+                                "header": [
+                                  {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "body": {
+                                  "mode": "raw",
+                                  "raw": "{\n  \"name\": \"<string>\",\n  \"cache_enabled\": \"<boolean>\",\n  \"cache_ttl\": \"<integer>\",\n  \"rate_limiting_enabled\": \"<boolean>\",\n  \"rate_limiting_limit\": \"<integer>\",\n  \"rate_limiting_interval\": \"<integer>\",\n  \"log_enabled\": \"<boolean>\"\n}",
+                                  "options": {
+                                    "raw": {
+                                      "headerFamily": "json",
+                                      "language": "json"
+                                    }
+                                  }
+                                },
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "ai-gateway",
+                                    "gateways",
+                                    ":gateway_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "gateway_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:27.000Z",
+                              "updatedAt": "2026-06-05T13:17:27.000Z",
+                              "uid": "35240-c6a59abc-1a6d-44a5-b563-738990ff1c24"
+                            },
+                            {
+                              "id": "b581b33d-f3e9-4ca3-94b0-27f918bac925",
+                              "name": "Unauthorized.",
+                              "originalRequest": {
+                                "method": "PUT",
+                                "header": [
+                                  {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "body": {
+                                  "mode": "raw",
+                                  "raw": "{\n  \"name\": \"<string>\",\n  \"cache_enabled\": \"<boolean>\",\n  \"cache_ttl\": \"<integer>\",\n  \"rate_limiting_enabled\": \"<boolean>\",\n  \"rate_limiting_limit\": \"<integer>\",\n  \"rate_limiting_interval\": \"<integer>\",\n  \"log_enabled\": \"<boolean>\"\n}",
+                                  "options": {
+                                    "raw": {
+                                      "headerFamily": "json",
+                                      "language": "json"
+                                    }
+                                  }
+                                },
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "ai-gateway",
+                                    "gateways",
+                                    ":gateway_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "gateway_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:27.000Z",
+                              "updatedAt": "2026-06-05T13:17:27.000Z",
+                              "uid": "35240-b581b33d-f3e9-4ca3-94b0-27f918bac925"
+                            },
+                            {
+                              "id": "ae45f9fa-69ca-4774-aeb4-47b7feb10ae6",
+                              "name": "Gateway not found.",
+                              "originalRequest": {
+                                "method": "PUT",
+                                "header": [
+                                  {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "body": {
+                                  "mode": "raw",
+                                  "raw": "{\n  \"name\": \"<string>\",\n  \"cache_enabled\": \"<boolean>\",\n  \"cache_ttl\": \"<integer>\",\n  \"rate_limiting_enabled\": \"<boolean>\",\n  \"rate_limiting_limit\": \"<integer>\",\n  \"rate_limiting_interval\": \"<integer>\",\n  \"log_enabled\": \"<boolean>\"\n}",
+                                  "options": {
+                                    "raw": {
+                                      "headerFamily": "json",
+                                      "language": "json"
+                                    }
+                                  }
+                                },
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "ai-gateway",
+                                    "gateways",
+                                    ":gateway_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "gateway_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:27.000Z",
+                              "updatedAt": "2026-06-05T13:17:27.000Z",
+                              "uid": "35240-ae45f9fa-69ca-4774-aeb4-47b7feb10ae6"
+                            }
+                          ],
+                          "createdAt": "2026-06-05T13:17:27.000Z",
+                          "updatedAt": "2026-06-05T13:17:27.000Z",
+                          "uid": "35240-e59f76ed-8250-4c82-a1a9-b47975d832a2"
+                        },
+                        {
+                          "name": "Cloudflare Delete Ai Gateway",
+                          "id": "d200209a-63b1-43fa-ad23-9a90d7591bbd",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "DELETE",
+                            "header": [],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "ai-gateway",
+                                "gateways",
+                                ":gateway_id"
+                              ],
+                              "variable": [
+                                {
+                                  "id": "13bf2848-14f7-4514-9b6a-c437b212ef1a",
+                                  "key": "account_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the Cloudflare account."
+                                },
+                                {
+                                  "id": "6d3d01f4-ea9b-45f6-adb5-621765a3ca07",
+                                  "key": "gateway_id",
+                                  "value": "<string>",
+                                  "description": "(Required) The unique identifier of the AI Gateway."
+                                }
+                              ]
+                            },
+                            "description": "Delete an AI Gateway instance."
+                          },
+                          "response": [
+                            {
+                              "id": "ddb7e3b5-4095-4190-bbed-d7de0b999f06",
+                              "name": "Gateway deleted successfully.",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "ai-gateway",
+                                    "gateways",
+                                    ":gateway_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "gateway_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:27.000Z",
+                              "updatedAt": "2026-06-05T13:17:27.000Z",
+                              "uid": "35240-ddb7e3b5-4095-4190-bbed-d7de0b999f06"
+                            },
+                            {
+                              "id": "2d36149a-a6b7-44a1-9b58-c7b448625e23",
+                              "name": "Unauthorized.",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "ai-gateway",
+                                    "gateways",
+                                    ":gateway_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "gateway_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:27.000Z",
+                              "updatedAt": "2026-06-05T13:17:27.000Z",
+                              "uid": "35240-2d36149a-a6b7-44a1-9b58-c7b448625e23"
+                            },
+                            {
+                              "id": "aa44c2fd-15cc-48d0-817e-9baa33ce1133",
+                              "name": "Gateway not found.",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "description": "Added as a part of security scheme: bearer",
+                                    "key": "Authorization",
+                                    "value": "Bearer <token>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways/:gateway_id",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "accounts",
+                                    ":account_id",
+                                    "ai-gateway",
+                                    "gateways",
+                                    ":gateway_id"
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "account_id"
+                                    },
+                                    {
+                                      "key": "gateway_id"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Not Found",
+                              "code": 404,
+                              "_postman_previewlanguage": "text",
+                              "header": [],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": null,
+                              "createdAt": "2026-06-05T13:17:27.000Z",
+                              "updatedAt": "2026-06-05T13:17:27.000Z",
+                              "uid": "35240-aa44c2fd-15cc-48d0-817e-9baa33ce1133"
+                            }
+                          ],
+                          "createdAt": "2026-06-05T13:17:27.000Z",
+                          "updatedAt": "2026-06-05T13:17:27.000Z",
+                          "uid": "35240-d200209a-63b1-43fa-ad23-9a90d7591bbd"
+                        }
+                      ],
+                      "id": "9063a661-c655-4905-93f2-cf32d256dddf",
+                      "createdAt": "2026-06-05T13:17:27.000Z",
+                      "updatedAt": "2026-06-05T13:17:27.000Z",
+                      "uid": "35240-9063a661-c655-4905-93f2-cf32d256dddf"
+                    },
+                    {
+                      "name": "Cloudflare List Ai Gateways",
+                      "id": "106fad61-c57c-4fc5-adac-527c337b4300",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "ai-gateway",
+                            "gateways"
+                          ],
+                          "variable": [
+                            {
+                              "id": "22e81487-ff33-4e3f-aaa4-7505876f84fd",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            }
+                          ]
+                        },
+                        "description": "Returns all AI Gateway instances for the account."
+                      },
+                      "response": [
+                        {
+                          "id": "34400bd8-df9a-4de3-9af4-fa13c961fca2",
+                          "name": "List of AI Gateway instances.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "ai-gateway",
+                                "gateways"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"result\": [\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"slug\": \"<string>\",\n      \"cache_enabled\": \"<boolean>\",\n      \"cache_ttl\": \"<integer>\",\n      \"rate_limiting_enabled\": \"<boolean>\",\n      \"rate_limiting_limit\": \"<integer>\",\n      \"rate_limiting_interval\": \"<integer>\",\n      \"log_enabled\": \"<boolean>\",\n      \"created_at\": \"<dateTime>\",\n      \"modified_at\": \"<dateTime>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"slug\": \"<string>\",\n      \"cache_enabled\": \"<boolean>\",\n      \"cache_ttl\": \"<integer>\",\n      \"rate_limiting_enabled\": \"<boolean>\",\n      \"rate_limiting_limit\": \"<integer>\",\n      \"rate_limiting_interval\": \"<integer>\",\n      \"log_enabled\": \"<boolean>\",\n      \"created_at\": \"<dateTime>\",\n      \"modified_at\": \"<dateTime>\"\n    }\n  ],\n  \"success\": \"<boolean>\"\n}",
+                          "createdAt": "2026-06-05T13:17:27.000Z",
+                          "updatedAt": "2026-06-05T13:17:27.000Z",
+                          "uid": "35240-34400bd8-df9a-4de3-9af4-fa13c961fca2"
+                        },
+                        {
+                          "id": "6759b2f2-8ea6-4947-8f5c-6d06e52ed599",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "ai-gateway",
+                                "gateways"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:27.000Z",
+                          "updatedAt": "2026-06-05T13:17:27.000Z",
+                          "uid": "35240-6759b2f2-8ea6-4947-8f5c-6d06e52ed599"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:27.000Z",
+                      "updatedAt": "2026-06-05T13:17:27.000Z",
+                      "uid": "35240-106fad61-c57c-4fc5-adac-527c337b4300"
+                    },
+                    {
+                      "name": "Cloudflare Create Ai Gateway",
+                      "id": "794c44f8-9b9d-4c4d-9666-e0c3cf0be74d",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"name\": \"<string>\",\n  \"cache_enabled\": \"<boolean>\",\n  \"cache_ttl\": \"<integer>\",\n  \"rate_limiting_enabled\": \"<boolean>\",\n  \"rate_limiting_limit\": \"<integer>\",\n  \"rate_limiting_interval\": \"<integer>\",\n  \"log_enabled\": \"<boolean>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "accounts",
+                            ":account_id",
+                            "ai-gateway",
+                            "gateways"
+                          ],
+                          "variable": [
+                            {
+                              "id": "2a770817-bc99-47ee-ae06-b98dae767341",
+                              "key": "account_id",
+                              "value": "<string>",
+                              "description": "(Required) The unique identifier of the Cloudflare account."
+                            }
+                          ]
+                        },
+                        "description": "Create a new AI Gateway instance with the specified configuration for caching, rate limiting, and provider settings."
+                      },
+                      "response": [
+                        {
+                          "id": "a209c820-df40-4ada-bd68-c3d24f85ed29",
+                          "name": "Gateway created successfully.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"name\": \"<string>\",\n  \"cache_enabled\": \"<boolean>\",\n  \"cache_ttl\": \"<integer>\",\n  \"rate_limiting_enabled\": \"<boolean>\",\n  \"rate_limiting_limit\": \"<integer>\",\n  \"rate_limiting_interval\": \"<integer>\",\n  \"log_enabled\": \"<boolean>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "ai-gateway",
+                                "gateways"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"result\": {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"slug\": \"<string>\",\n    \"cache_enabled\": \"<boolean>\",\n    \"cache_ttl\": \"<integer>\",\n    \"rate_limiting_enabled\": \"<boolean>\",\n    \"rate_limiting_limit\": \"<integer>\",\n    \"rate_limiting_interval\": \"<integer>\",\n    \"log_enabled\": \"<boolean>\",\n    \"created_at\": \"<dateTime>\",\n    \"modified_at\": \"<dateTime>\"\n  },\n  \"success\": \"<boolean>\"\n}",
+                          "createdAt": "2026-06-05T13:17:27.000Z",
+                          "updatedAt": "2026-06-05T13:17:27.000Z",
+                          "uid": "35240-a209c820-df40-4ada-bd68-c3d24f85ed29"
+                        },
+                        {
+                          "id": "2a2b2280-26ba-4601-862b-3e6c453ca96d",
+                          "name": "Bad request.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"name\": \"<string>\",\n  \"cache_enabled\": \"<boolean>\",\n  \"cache_ttl\": \"<integer>\",\n  \"rate_limiting_enabled\": \"<boolean>\",\n  \"rate_limiting_limit\": \"<integer>\",\n  \"rate_limiting_interval\": \"<integer>\",\n  \"log_enabled\": \"<boolean>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "ai-gateway",
+                                "gateways"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:27.000Z",
+                          "updatedAt": "2026-06-05T13:17:27.000Z",
+                          "uid": "35240-2a2b2280-26ba-4601-862b-3e6c453ca96d"
+                        },
+                        {
+                          "id": "fc4fbe7b-d8bc-44b4-8946-c4ab2c4af012",
+                          "name": "Unauthorized.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: bearer",
+                                "key": "Authorization",
+                                "value": "Bearer <token>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"name\": \"<string>\",\n  \"cache_enabled\": \"<boolean>\",\n  \"cache_ttl\": \"<integer>\",\n  \"rate_limiting_enabled\": \"<boolean>\",\n  \"rate_limiting_limit\": \"<integer>\",\n  \"rate_limiting_interval\": \"<integer>\",\n  \"log_enabled\": \"<boolean>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/accounts/:account_id/ai-gateway/gateways",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "accounts",
+                                ":account_id",
+                                "ai-gateway",
+                                "gateways"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "account_id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "text",
+                          "header": [],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": null,
+                          "createdAt": "2026-06-05T13:17:27.000Z",
+                          "updatedAt": "2026-06-05T13:17:27.000Z",
+                          "uid": "35240-fc4fbe7b-d8bc-44b4-8946-c4ab2c4af012"
+                        }
+                      ],
+                      "createdAt": "2026-06-05T13:17:27.000Z",
+                      "updatedAt": "2026-06-05T13:17:27.000Z",
+                      "uid": "35240-794c44f8-9b9d-4c4d-9666-e0c3cf0be74d"
+                    }
+                  ],
+                  "id": "7319808a-e8a8-4d4d-9cf6-24b70642a5e1",
+                  "createdAt": "2026-06-05T13:17:27.000Z",
+                  "updatedAt": "2026-06-05T13:17:27.000Z",
+                  "uid": "35240-7319808a-e8a8-4d4d-9cf6-24b70642a5e1"
+                }
+              ],
+              "id": "2f36b7a3-7951-4eb2-b055-80f986672446",
+              "createdAt": "2026-06-05T13:17:27.000Z",
+              "updatedAt": "2026-06-05T13:17:27.000Z",
+              "uid": "35240-2f36b7a3-7951-4eb2-b055-80f986672446"
+            }
+          ],
+          "id": "bde87cbc-cfda-49d8-8b0f-c8cfcf9ca5b4",
+          "createdAt": "2026-06-05T13:17:27.000Z",
+          "updatedAt": "2026-06-05T13:17:27.000Z",
+          "uid": "35240-bde87cbc-cfda-49d8-8b0f-c8cfcf9ca5b4"
+        }
+      ],
+      "id": "fedb893f-6722-4902-94fc-822ce07a26e9",
+      "createdAt": "2026-06-05T13:17:27.000Z",
+      "updatedAt": "2026-06-05T13:17:27.000Z",
+      "uid": "35240-fedb893f-6722-4902-94fc-822ce07a26e9"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.cloudflare.com/client/v4"
+    }
+  ]
+}

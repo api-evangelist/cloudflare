@@ -1,0 +1,501 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cloudflare DNS API",
+    "version": "4.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "DNS Records",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Dns Records",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              },
+              {
+                "name": "type",
+                "value": "example_value",
+                "type": "query",
+                "description": "DNS record type to filter by."
+              },
+              {
+                "name": "name",
+                "value": "Example Title",
+                "type": "query",
+                "description": "DNS record name to filter by."
+              },
+              {
+                "name": "content",
+                "value": "example_value",
+                "type": "query",
+                "description": "DNS record content to filter by."
+              },
+              {
+                "name": "page",
+                "value": "10",
+                "type": "query",
+                "description": "Page number of paginated results."
+              },
+              {
+                "name": "per_page",
+                "value": "10",
+                "type": "query",
+                "description": "Number of records per page."
+              }
+            ]
+          },
+          "docs": "List, search, sort, and filter a zone's DNS records. Returns a paginated list of DNS records for the specified zone."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Dns Record",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new DNS record for a zone. A/AAAA records cannot coexist with CNAME records on the same name, and NS records cannot share names with other record types."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get Dns Record Details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/:dns_record_id",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              },
+              {
+                "name": "dns_record_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the DNS record."
+              }
+            ]
+          },
+          "docs": "Retrieve the details of a specific DNS record by its identifier."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Overwrite Dns Record",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/:dns_record_id",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              },
+              {
+                "name": "dns_record_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the DNS record."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Completely replace a DNS record with the provided data. All fields must be provided."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update Dns Record",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/:dns_record_id",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              },
+              {
+                "name": "dns_record_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the DNS record."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Partially update a DNS record. Only the fields provided in the request body will be updated."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Dns Record",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/:dns_record_id",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              },
+              {
+                "name": "dns_record_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the DNS record."
+              }
+            ]
+          },
+          "docs": "Delete a specific DNS record from the zone."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "DNS Batch Operations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Batch Dns Record Operations",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/batch",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Send a batch of DNS record API calls to be executed together. Supports deletes, patches, puts, and posts executed in order."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "DNS Record Import/Export",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Export Dns Records",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/export",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ]
+          },
+          "docs": "Export all DNS records for a zone in BIND zone file format."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Import Dns Records",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/import",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "file",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Import DNS records from a BIND zone file. Upload the BIND config to create DNS records in the zone."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "DNS Record Scanning",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Trigger Dns Record Scan",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/scan/trigger",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ]
+          },
+          "docs": "Initiate an asynchronous scan for common DNS records on the domain. The scan runs in the background and results can be reviewed using the scan review endpoints."
+        },
+        {
+          "info": {
+            "name": "Cloudflare List Scanned Dns Records",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/scan/review",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ]
+          },
+          "docs": "Retrieve the DNS records discovered by the most recent scan for review before adding them to the zone."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Accept Scanned Dns Records",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/scan/review",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ]
+          },
+          "docs": "Review and accept scanned DNS records to add them to the zone."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "DNS Analytics",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Get Dns Analytics Report",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_analytics/report",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              },
+              {
+                "name": "since",
+                "value": "2026-01-15T10:30:00Z",
+                "type": "query",
+                "description": "Start date of the analytics query in ISO 8601 format."
+              },
+              {
+                "name": "until",
+                "value": "2026-01-15T10:30:00Z",
+                "type": "query",
+                "description": "End date of the analytics query in ISO 8601 format."
+              }
+            ]
+          },
+          "docs": "Retrieve aggregated DNS analytics metrics for the zone including query counts, response codes, and record types."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get Dns Analytics by Time",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_analytics/report/bytime",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              },
+              {
+                "name": "since",
+                "value": "2026-01-15T10:30:00Z",
+                "type": "query",
+                "description": "Start date in ISO 8601 format."
+              },
+              {
+                "name": "until",
+                "value": "2026-01-15T10:30:00Z",
+                "type": "query",
+                "description": "End date in ISO 8601 format."
+              },
+              {
+                "name": "time_delta",
+                "value": "all",
+                "type": "query",
+                "description": "Time interval for grouping results."
+              }
+            ]
+          },
+          "docs": "Retrieve time-grouped DNS analytics metrics for the zone."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "DNSSEC",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Get Dnssec Settings",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dnssec",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ]
+          },
+          "docs": "Retrieve the current DNSSEC settings for the zone including status, algorithm, digest, and DS record details."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update Dnssec Settings",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dnssec",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update DNSSEC configuration for the zone such as enabling or disabling DNSSEC."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Dnssec Settings",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dnssec",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ]
+          },
+          "docs": "Remove DNSSEC configuration from the zone."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

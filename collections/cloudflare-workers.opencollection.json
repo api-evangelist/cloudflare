@@ -1,0 +1,737 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cloudflare Workers API",
+    "version": "4.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Workers",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Workers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/workers",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ]
+          },
+          "docs": "Returns a paginated list of all Workers for an account."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Worker",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/workers",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Establish a new Worker with the provided configuration."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get Worker",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/workers/:worker_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "worker_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Worker."
+              }
+            ]
+          },
+          "docs": "Retrieve details of a specific Worker by its identifier."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Replace Worker",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/workers/:worker_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "worker_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Worker."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Complete replacement of Worker properties."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Edit Worker",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/workers/:worker_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "worker_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Worker."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Partial update preserving unchanged fields."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Worker",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/workers/:worker_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "worker_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Worker."
+              }
+            ]
+          },
+          "docs": "Remove a Worker and all associated resources."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Scripts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Worker Scripts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/scripts",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ]
+          },
+          "docs": "Retrieve a list of all Worker scripts for the account."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Download Worker Script",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/scripts/:script_name",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "script_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Worker script."
+              }
+            ]
+          },
+          "docs": "Download a Worker script by name. Returns the script content."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Upload Worker Script",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/scripts/:script_name",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "script_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Worker script."
+              }
+            ]
+          },
+          "docs": "Upload or update a Worker script by name using multipart form data or JSON with base64-encoded content."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Worker Script",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/scripts/:script_name",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "script_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Worker script."
+              }
+            ]
+          },
+          "docs": "Delete a Worker script by name."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Versions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Worker Versions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/workers/:worker_id/versions",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "worker_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Worker."
+              }
+            ]
+          },
+          "docs": "Retrieve all immutable versions of a Worker's code and configuration."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Worker Version",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/workers/:worker_id/versions",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "worker_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Worker."
+              }
+            ]
+          },
+          "docs": "Create a new immutable snapshot of Worker code and configuration."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Deployments",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Deployments",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/scripts/:script_name/deployments",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "script_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Worker script."
+              }
+            ]
+          },
+          "docs": "List all deployments for a Worker script."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Deployment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/scripts/:script_name/deployments",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "script_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Worker script."
+              }
+            ]
+          },
+          "docs": "Create a new deployment directing traffic to a specific Worker version."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Routes",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Worker Routes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/workers/routes",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ]
+          },
+          "docs": "Retrieve all routes mapping URL patterns to Worker scripts for a zone."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Worker Route",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/workers/routes",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Map a URL pattern to a Worker script within the zone."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get Worker Route",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/workers/routes/:route_id",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              },
+              {
+                "name": "route_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the route."
+              }
+            ]
+          },
+          "docs": "Retrieve details of a specific Worker route."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update Worker Route",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/workers/routes/:route_id",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              },
+              {
+                "name": "route_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the route."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update the pattern or script assignment for a Worker route."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Worker Route",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/workers/routes/:route_id",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              },
+              {
+                "name": "route_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the route."
+              }
+            ]
+          },
+          "docs": "Remove a Worker route from the zone."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Domains",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Worker Domains",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/domains",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ]
+          },
+          "docs": "Retrieve all custom domains attached to Worker scripts."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Attach Custom Domain",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/domains",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ]
+          },
+          "docs": "Attach a custom domain to a Worker script."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Secrets",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Worker Secrets",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/scripts/:script_name/secrets",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "script_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Worker script."
+              }
+            ]
+          },
+          "docs": "List all secrets for a Worker script. Secret values are not returned."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Add Worker Secret",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/scripts/:script_name/secrets",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "script_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Worker script."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Add or update an encrypted secret for a Worker script."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Configuration",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Get Cron Triggers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/scripts/:script_name/schedules",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "script_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Worker script."
+              }
+            ]
+          },
+          "docs": "Retrieve the cron trigger schedules for a Worker script."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update Cron Triggers",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/scripts/:script_name/schedules",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "script_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Worker script."
+              }
+            ]
+          },
+          "docs": "Set the cron trigger schedules for a Worker script."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get Script Settings",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/scripts/:script_name/settings",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "script_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Worker script."
+              }
+            ]
+          },
+          "docs": "Retrieve configuration settings for a Worker script including bindings and compatibility settings."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update Script Settings",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/workers/scripts/:script_name/settings",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "script_name",
+                "value": "",
+                "type": "path",
+                "description": "The name of the Worker script."
+              }
+            ]
+          },
+          "docs": "Update configuration settings for a Worker script."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
