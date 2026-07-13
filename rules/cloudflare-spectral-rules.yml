@@ -1,36 +1,133 @@
+# cloudflare — Spectral ruleset (strengthened)
+# Plain Spectral. Existing hand-authored rules preserved; measured rules added
+# from this provider's own OpenAPI conventions by strengthen_ruleset.py,
+# then self-validated against the spec.
+#
+# Provenance:
+#   - servers-https-only: 100% of servers already https (error)
+#   - servers-expected-domain: 24/24 servers on cloudflare.com
+#   - path-params-casing: snake @ 100% (n=4305)
+#   - query-params-casing: snake @ 62% (n=4665)
+#   - operationid-casing: kebab @ 85% (n=3118)
+#   - schema-properties-casing: snake @ 97% (n=5176)
+#   - security: global (root) — NOT emitting operation-security-required
+#   - error-schema-defined: api-shield_schema_upload_details_errors_critical
+#   - pagination params observed: ['count', 'cursor', 'limit', 'offset', 'page', 'per_page']
+#   - merge: kept 7 existing, added 8 measured, upgraded 0
+#   - added: servers-https-only, servers-expected-domain, path-params-casing, query-params-casing, operationid-casing, schema-properties-casing, security-schemes-defined, error-schema-defined
+extends:
+  - spectral:oas
 rules:
   info-title-required:
     description: Info title must be present
     severity: error
     given: $.info
-    then: {field: title, function: truthy}
+    then:
+      field: title
+      function: truthy
   info-description-required:
     description: Info description must be present
     severity: error
     given: $.info
-    then: {field: description, function: truthy}
+    then:
+      field: description
+      function: truthy
   operation-operationid-required:
     description: Every operation must have an operationId
     severity: error
     given: $.paths[*][get,post,put,patch,delete]
-    then: {field: operationId, function: truthy}
+    then:
+      field: operationId
+      function: truthy
   operation-summary-required:
     description: Every operation must have a summary
     severity: error
     given: $.paths[*][get,post,put,patch,delete]
-    then: {field: summary, function: truthy}
+    then:
+      field: summary
+      function: truthy
   operation-tags-required:
     description: Every operation must have tags
     severity: error
     given: $.paths[*][get,post,put,patch,delete]
-    then: {field: tags, function: truthy}
+    then:
+      field: tags
+      function: truthy
   response-description-required:
     description: Every response must have a description
     severity: error
     given: $.paths[*][get,post,put,patch,delete].responses[*]
-    then: {field: description, function: truthy}
+    then:
+      field: description
+      function: truthy
   no-empty-descriptions:
     description: Descriptions must not be empty
     severity: error
     given: $..description
-    then: {function: truthy}
+    then:
+      function: truthy
+  servers-https-only:
+    description: Server URLs must use HTTPS.
+    severity: error
+    given: $.servers[*].url
+    then:
+      function: pattern
+      functionOptions:
+        match: ^https://
+  servers-expected-domain:
+    description: Server URLs should be on the cloudflare.com domain.
+    severity: warn
+    given: $.servers[*].url
+    then:
+      function: pattern
+      functionOptions:
+        match: cloudflare\.com
+  path-params-casing:
+    description: Path parameters should be snake_case (the dominant convention in this API).
+    severity: warn
+    given: $.paths[*].parameters[?(@.in=='path')].name
+    then:
+      function: casing
+      functionOptions:
+        type: snake
+  query-params-casing:
+    description: Query parameters should be snake_case (the dominant convention in this API).
+    severity: warn
+    given: $.paths[*][get,post,put,patch,delete].parameters[?(@.in=='query')]
+    then:
+      field: name
+      function: casing
+      functionOptions:
+        type: snake
+  operationid-casing:
+    description: Operation IDs should be kebab-case (the dominant convention in this API).
+    severity: warn
+    given: $.paths[*][get,post,put,patch,delete].operationId
+    then:
+      function: casing
+      functionOptions:
+        type: kebab
+  schema-properties-casing:
+    description: Schema properties should be snake_case (the dominant convention in this API).
+    severity: warn
+    given: $.components.schemas[*].properties
+    then:
+      field: '@key'
+      function: casing
+      functionOptions:
+        type: snake
+  security-schemes-defined:
+    description: Security schemes should be defined in components.
+    severity: warn
+    given: $.components
+    then:
+      field: securitySchemes
+      function: truthy
+  error-schema-defined:
+    description: A shared error schema (api-shield_schema_upload_details_errors_critical) should be defined
+      for error payloads.
+    severity: warn
+    given: $.components.schemas
+    then:
+      field: api-shield_schema_upload_details_errors_critical
+      function: truthy
