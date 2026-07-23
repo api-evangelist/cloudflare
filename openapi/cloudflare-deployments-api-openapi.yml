@@ -1,0 +1,244 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Deployments API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Deployments
+  description: Create, list, and manage deployments for Pages projects.
+paths:
+  /accounts/{account_id}/pages/projects/{project_name}/deployments:
+    get:
+      operationId: listPagesDeployments
+      summary: Cloudflare List Deployments
+      description: Returns a list of all deployments for a Pages project.
+      tags:
+      - Deployments
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ProjectName'
+      responses:
+        '200':
+          description: List of deployments.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentListResponse'
+              examples:
+                Listpagesdeployments200Example:
+                  summary: Default listPagesDeployments 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      url: https://www.example.com
+                      environment: production
+                      created_on: '2026-01-15T10:30:00Z'
+                      latest_stage: {}
+                    success: true
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    post:
+      operationId: createPagesDeployment
+      summary: Cloudflare Create Deployment
+      description: Create a new deployment for a Pages project by uploading assets or triggering a build from a connected repository.
+      tags:
+      - Deployments
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ProjectName'
+      responses:
+        '200':
+          description: Deployment created successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}:
+    get:
+      operationId: getPagesDeployment
+      summary: Cloudflare Get Deployment
+      description: Retrieve details of a specific deployment including build status and deployment URL.
+      tags:
+      - Deployments
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ProjectName'
+      - $ref: '#/components/parameters/DeploymentId'
+      responses:
+        '200':
+          description: Deployment details.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Deployment not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    delete:
+      operationId: deletePagesDeployment
+      summary: Cloudflare Delete Deployment
+      description: Delete a specific deployment.
+      tags:
+      - Deployments
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ProjectName'
+      - $ref: '#/components/parameters/DeploymentId'
+      responses:
+        '200':
+          description: Deployment deleted successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}/rollback:
+    post:
+      operationId: rollbackPagesDeployment
+      summary: Cloudflare Rollback Deployment
+      description: Rollback the production deployment to a previous deployment.
+      tags:
+      - Deployments
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ProjectName'
+      - $ref: '#/components/parameters/DeploymentId'
+      responses:
+        '200':
+          description: Rollback initiated successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/workers/scripts/{script_name}/deployments:
+    get:
+      operationId: listDeployments
+      summary: Cloudflare List Deployments
+      description: List all deployments for a Worker script.
+      tags:
+      - Deployments
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: List of deployments.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    post:
+      operationId: createDeployment
+      summary: Cloudflare Create Deployment
+      description: Create a new deployment directing traffic to a specific Worker version.
+      tags:
+      - Deployments
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Deployment created successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    DeploymentId:
+      name: deployment_id
+      in: path
+      required: true
+      description: The unique identifier of the deployment.
+      schema:
+        type: string
+    ProjectName:
+      name: project_name
+      in: path
+      required: true
+      description: The name of the Pages project.
+      schema:
+        type: string
+    ScriptName:
+      name: script_name
+      in: path
+      required: true
+      description: The name of the Worker script.
+      schema:
+        type: string
+  schemas:
+    Deployment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the deployment.
+          example: abc123
+        url:
+          type: string
+          format: uri
+          description: The URL of the deployment.
+          example: https://www.example.com
+        environment:
+          type: string
+          enum:
+          - production
+          - preview
+          description: The deployment environment.
+          example: production
+        created_on:
+          type: string
+          format: date-time
+          description: When the deployment was created.
+          example: '2026-01-15T10:30:00Z'
+        latest_stage:
+          type: object
+          properties:
+            name:
+              type: string
+            status:
+              type: string
+              enum:
+              - idle
+              - active
+              - canceled
+              - success
+              - failure
+          example: example_value
+    DeploymentListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Deployment'
+          example: []
+        success:
+          type: boolean
+          example: true

@@ -1,0 +1,115 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Key-Value Pairs API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Key-Value Pairs
+  description: Read, write, and delete individual key-value pairs.
+paths:
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name}:
+    get:
+      operationId: readKvValue
+      summary: Cloudflare Read Key-value Pair
+      description: Read the value of a specific key from the namespace.
+      tags:
+      - Key-Value Pairs
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
+      - $ref: '#/components/parameters/KeyName'
+      responses:
+        '200':
+          description: The value associated with the key.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Key not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    put:
+      operationId: writeKvValue
+      summary: Cloudflare Write Key-value Pair
+      description: Write a value for a specific key in the namespace. Optionally set expiration and metadata.
+      tags:
+      - Key-Value Pairs
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
+      - $ref: '#/components/parameters/KeyName'
+      - name: expiration
+        in: query
+        description: Unix timestamp for when the key should expire.
+        schema:
+          type: integer
+        example: 10
+      - name: expiration_ttl
+        in: query
+        description: Seconds until the key expires.
+        schema:
+          type: integer
+          minimum: 60
+        example: 10
+      responses:
+        '200':
+          description: Value written successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    delete:
+      operationId: deleteKvValue
+      summary: Cloudflare Delete Key-value Pair
+      description: Delete a key-value pair from the namespace.
+      tags:
+      - Key-Value Pairs
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
+      - $ref: '#/components/parameters/KeyName'
+      responses:
+        '200':
+          description: Key-value pair deleted.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Key not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    NamespaceId:
+      name: namespace_id
+      in: path
+      required: true
+      description: The unique identifier of the KV namespace.
+      schema:
+        type: string
+    KeyName:
+      name: key_name
+      in: path
+      required: true
+      description: The key name. Use URL-encoding for special characters such as colon, exclamation mark, and percent.
+      schema:
+        type: string

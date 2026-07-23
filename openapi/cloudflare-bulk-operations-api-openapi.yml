@@ -1,0 +1,213 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Bulk Operations API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Bulk Operations
+  description: Write, read, and delete multiple key-value pairs in a single request.
+paths:
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk:
+    put:
+      operationId: bulkWriteKvPairs
+      summary: Cloudflare Write Multiple Key-value Pairs
+      description: Write multiple key-value pairs in a single request. Supports up to 10,000 pairs per request.
+      tags:
+      - Bulk Operations
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              maxItems: 10000
+              items:
+                type: object
+                required:
+                - key
+                - value
+                properties:
+                  key:
+                    type: string
+                    description: The key name.
+                    maxLength: 512
+                  value:
+                    type: string
+                    description: The value to store.
+                  expiration:
+                    type: integer
+                    description: Unix timestamp for expiration.
+                  expiration_ttl:
+                    type: integer
+                    description: Seconds until expiration.
+                    minimum: 60
+                  metadata:
+                    type: object
+                    description: Arbitrary metadata to store with the key.
+                  base64:
+                    type: boolean
+                    description: Whether the value is base64-encoded.
+            examples:
+              BulkwritekvpairsRequestExample:
+                summary: Default bulkWriteKvPairs request
+                x-microcks-default: true
+                value:
+                - key: example_value
+                  value: example_value
+                  expiration: 10
+                  expiration_ttl: 10
+                  metadata: example_value
+                  base64: true
+      responses:
+        '200':
+          description: Bulk write completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkOperationResponse'
+              examples:
+                Bulkwritekvpairs200Example:
+                  summary: Default bulkWriteKvPairs 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      successful_key_count: 10
+                      unsuccessful_keys:
+                      - example_value
+                    success: true
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk/delete:
+    post:
+      operationId: bulkDeleteKvPairs
+      summary: Cloudflare Delete Multiple Key-value Pairs
+      description: Delete multiple key-value pairs in a single request.
+      tags:
+      - Bulk Operations
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              description: Array of key names to delete.
+            examples:
+              BulkdeletekvpairsRequestExample:
+                summary: Default bulkDeleteKvPairs request
+                x-microcks-default: true
+                value:
+                - example_value
+      responses:
+        '200':
+          description: Bulk delete completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkOperationResponse'
+              examples:
+                Bulkdeletekvpairs200Example:
+                  summary: Default bulkDeleteKvPairs 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      successful_key_count: 10
+                      unsuccessful_keys:
+                      - example_value
+                    success: true
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk/get:
+    post:
+      operationId: bulkGetKvPairs
+      summary: Cloudflare Get Multiple Key-value Pairs
+      description: Retrieve multiple key-value pairs in a single request.
+      tags:
+      - Bulk Operations
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              description: Array of key names to retrieve.
+            examples:
+              BulkgetkvpairsRequestExample:
+                summary: Default bulkGetKvPairs request
+                x-microcks-default: true
+                value:
+                - example_value
+      responses:
+        '200':
+          description: Bulk get completed.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    NamespaceId:
+      name: namespace_id
+      in: path
+      required: true
+      description: The unique identifier of the KV namespace.
+      schema:
+        type: string
+  schemas:
+    BulkOperationResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            successful_key_count:
+              type: integer
+              description: Number of keys successfully processed.
+            unsuccessful_keys:
+              type: array
+              items:
+                type: string
+              description: Keys that failed to be processed.
+          example: example_value
+        success:
+          type: boolean
+          example: true

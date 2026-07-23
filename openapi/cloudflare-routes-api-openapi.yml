@@ -1,0 +1,201 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Routes API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Routes
+  description: Map URL patterns to Worker scripts within a zone.
+paths:
+  /zones/{zone_id}/workers/routes:
+    get:
+      operationId: listRoutes
+      summary: Cloudflare List Worker Routes
+      description: Retrieve all routes mapping URL patterns to Worker scripts for a zone.
+      tags:
+      - Routes
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      responses:
+        '200':
+          description: List of Worker routes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteListResponse'
+              examples:
+                Listroutes200Example:
+                  summary: Default listRoutes 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      pattern: example_value
+                      script: example_value
+                    success: true
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    post:
+      operationId: createRoute
+      summary: Cloudflare Create Worker Route
+      description: Map a URL pattern to a Worker script within the zone.
+      tags:
+      - Routes
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteInput'
+            examples:
+              CreaterouteRequestExample:
+                summary: Default createRoute request
+                x-microcks-default: true
+                value:
+                  pattern: example_value
+                  script: example_value
+      responses:
+        '200':
+          description: Route created successfully.
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /zones/{zone_id}/workers/routes/{route_id}:
+    get:
+      operationId: getRoute
+      summary: Cloudflare Get Worker Route
+      description: Retrieve details of a specific Worker route.
+      tags:
+      - Routes
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/RouteId'
+      responses:
+        '200':
+          description: Route details.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Route not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    put:
+      operationId: updateRoute
+      summary: Cloudflare Update Worker Route
+      description: Update the pattern or script assignment for a Worker route.
+      tags:
+      - Routes
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/RouteId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteInput'
+            examples:
+              UpdaterouteRequestExample:
+                summary: Default updateRoute request
+                x-microcks-default: true
+                value:
+                  pattern: example_value
+                  script: example_value
+      responses:
+        '200':
+          description: Route updated successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Route not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    delete:
+      operationId: deleteRoute
+      summary: Cloudflare Delete Worker Route
+      description: Remove a Worker route from the zone.
+      tags:
+      - Routes
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      - $ref: '#/components/parameters/RouteId'
+      responses:
+        '200':
+          description: Route deleted successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Route not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    RouteId:
+      name: route_id
+      in: path
+      required: true
+      description: The unique identifier of the route.
+      schema:
+        type: string
+    ZoneId:
+      name: zone_id
+      in: path
+      required: true
+      description: The unique identifier of the zone.
+      schema:
+        type: string
+  schemas:
+    RouteInput:
+      type: object
+      required:
+      - pattern
+      properties:
+        pattern:
+          type: string
+          description: The URL pattern for the route, e.g. example.com/*.
+          example: example_value
+        script:
+          type: string
+          description: The name of the Worker script to invoke.
+          example: example_value
+    RouteListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              pattern:
+                type: string
+              script:
+                type: string
+          example: []
+        success:
+          type: boolean
+          example: true

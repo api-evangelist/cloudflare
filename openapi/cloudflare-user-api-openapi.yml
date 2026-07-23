@@ -1,0 +1,4108 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts User API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: User
+paths:
+  /user:
+    get:
+      tags:
+      - User
+      summary: Cloudflare User Details
+      operationId: user-user-details
+      responses:
+        '200':
+          description: User Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_single_user_response'
+        4XX:
+          description: User Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_single_user_response'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+    patch:
+      tags:
+      - User
+      summary: Cloudflare Edit User
+      description: Edit part of your user details.
+      operationId: user-edit-user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                country:
+                  $ref: '#/components/schemas/iam_country'
+                first_name:
+                  $ref: '#/components/schemas/iam_first_name'
+                last_name:
+                  $ref: '#/components/schemas/iam_last_name'
+                telephone:
+                  $ref: '#/components/schemas/iam_telephone'
+                zipcode:
+                  $ref: '#/components/schemas/iam_zipcode'
+      responses:
+        '200':
+          description: Edit User response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_single_user_response'
+        4XX:
+          description: Edit User response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_single_user_response'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+  /user/audit_logs:
+    get:
+      tags:
+      - User
+      summary: Cloudflare Get user audit logs
+      description: Gets a list of audit logs for a user account. Can be filtered by who made the change, on which zone, and the timeframe of the change.
+      operationId: audit-logs-get-user-audit-logs
+      parameters:
+      - name: id
+        in: query
+        schema:
+          type: string
+          description: Finds a specific log by its ID.
+          example: f174be97-19b1-40d6-954d-70cd5fbd52db
+      - name: export
+        in: query
+        schema:
+          type: boolean
+          description: Indicates that this request is an export of logs in CSV format.
+          example: true
+      - name: action.type
+        in: query
+        schema:
+          type: string
+          description: Filters by the action type.
+          example: add
+      - name: actor.ip
+        in: query
+        schema:
+          type: string
+          description: Filters by the IP address of the request that made the change by specific IP address or valid CIDR Range.
+          example: 17.168.228.63
+      - name: actor.email
+        in: query
+        schema:
+          type: string
+          format: email
+          description: Filters by the email address of the actor that made the change.
+          example: alice@example.com
+      - name: since
+        in: query
+        schema:
+          type: string
+          format: date-time
+          description: Limits the returned results to logs newer than the specified date. This can be a date string `2019-04-30` or an absolute timestamp that conforms to RFC3339.
+          example: '2019-04-30T01:12:20Z'
+      - name: before
+        in: query
+        schema:
+          type: string
+          format: date-time
+          description: Limits the returned results to logs older than the specified date. This can be a date string `2019-04-30` or an absolute timestamp that conforms to RFC3339.
+          example: '2019-04-30T01:12:20Z'
+      - name: zone.name
+        in: query
+        schema:
+          type: string
+          description: Filters by the name of the zone associated to the change.
+          example: example.com
+      - name: direction
+        in: query
+        schema:
+          type: string
+          description: Changes the direction of the chronological sorting.
+          enum:
+          - desc
+          - asc
+          default: desc
+          example: desc
+      - name: per_page
+        in: query
+        schema:
+          type: number
+          description: Sets the number of results to return per page.
+          default: 100
+          example: 25
+          minimum: 1
+          maximum: 1000
+      - name: page
+        in: query
+        schema:
+          type: number
+          description: Defines which page of results to return.
+          default: 1
+          example: 50
+          minimum: 1
+      - name: hide_user_logs
+        in: query
+        schema:
+          type: boolean
+          description: Indicates whether or not to hide user level audit logs.
+          default: false
+      responses:
+        '200':
+          description: Get user audit logs response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/aaa_audit_logs_response_collection'
+        4XX:
+          description: Get user audit logs response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/aaa_audit_logs_response_collection'
+                - $ref: '#/components/schemas/aaa_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+  /user/billing/history:
+    get:
+      tags:
+      - User
+      summary: Cloudflare Billing History Details
+      description: Accesses your billing history object.
+      operationId: user-billing-history-(-deprecated)-billing-history-details
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: number
+          description: Page number of paginated results.
+          default: 1
+          minimum: 1
+      - name: per_page
+        in: query
+        schema:
+          type: number
+          description: Number of items per page.
+          default: 20
+          minimum: 5
+          maximum: 50
+      - name: order
+        in: query
+        schema:
+          type: string
+          description: Field to order billing history by.
+          enum:
+          - type
+          - occured_at
+          - action
+          example: occured_at
+      - name: occured_at
+        in: query
+        schema:
+          $ref: '#/components/schemas/bill-subs-api_occurred_at'
+      - name: occurred_at
+        in: query
+        schema:
+          $ref: '#/components/schemas/bill-subs-api_occurred_at'
+      - name: type
+        in: query
+        schema:
+          type: string
+          description: The billing item type.
+          example: charge
+          readOnly: true
+          maxLength: 30
+      - name: action
+        in: query
+        schema:
+          type: string
+          description: The billing item action.
+          example: subscription
+          readOnly: true
+          maxLength: 30
+      responses:
+        '200':
+          description: Billing History Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bill-subs-api_billing_history_collection'
+        4XX:
+          description: Billing History Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/bill-subs-api_billing_history_collection'
+                - $ref: '#/components/schemas/bill-subs-api_api-response-common-failure'
+      deprecated: true
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/billing/profile:
+    get:
+      tags:
+      - User
+      summary: Cloudflare Billing Profile Details
+      description: Accesses your billing profile object.
+      operationId: user-billing-profile-(-deprecated)-billing-profile-details
+      responses:
+        '200':
+          description: Billing Profile Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bill-subs-api_billing_response_single'
+        4XX:
+          description: Billing Profile Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/bill-subs-api_billing_response_single'
+                - $ref: '#/components/schemas/bill-subs-api_api-response-common-failure'
+      deprecated: true
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/firewall/access_rules/rules:
+    get:
+      tags:
+      - User
+      summary: Cloudflare List IP Access rules
+      description: Fetches IP Access rules of the user. You can filter the results using several optional parameters.
+      operationId: ip-access-rules-for-a-user-list-ip-access-rules
+      parameters:
+      - name: filters
+        in: query
+        schema:
+          $ref: '#/components/schemas/legacy-jhs_schemas-filters'
+      - name: egs-pagination.json
+        in: query
+        schema:
+          $ref: '#/components/schemas/legacy-jhs_egs-pagination'
+      - name: page
+        in: query
+        schema:
+          type: number
+          description: Requested page within paginated list of results.
+          example: 1
+      - name: per_page
+        in: query
+        schema:
+          type: number
+          description: Maximum number of results requested.
+          example: 20
+      - name: order
+        in: query
+        schema:
+          type: string
+          description: The field used to sort returned rules.
+          enum:
+          - configuration.target
+          - configuration.value
+          - mode
+          example: mode
+      - name: direction
+        in: query
+        schema:
+          type: string
+          description: The direction used to sort returned rules.
+          enum:
+          - asc
+          - desc
+          example: desc
+      responses:
+        '200':
+          description: List IP Access rules response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/legacy-jhs_rule_collection_response'
+        4xx:
+          description: List IP Access rules response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/legacy-jhs_rule_collection_response'
+                - $ref: '#/components/schemas/legacy-jhs_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+    post:
+      tags:
+      - User
+      summary: Cloudflare Create an IP Access rule
+      description: 'Creates a new IP Access rule for all zones owned by the current user.
+
+
+        Note: To create an IP Access rule that applies to a specific zone, refer to the [IP Access rules for a zone](#ip-access-rules-for-a-zone) endpoints.'
+      operationId: ip-access-rules-for-a-user-create-an-ip-access-rule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - mode
+              - configuration
+              properties:
+                configuration:
+                  $ref: '#/components/schemas/legacy-jhs_schemas-configuration'
+                mode:
+                  $ref: '#/components/schemas/legacy-jhs_schemas-mode'
+                notes:
+                  $ref: '#/components/schemas/legacy-jhs_notes'
+      responses:
+        '200':
+          description: Create an IP Access rule response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/legacy-jhs_rule_single_response'
+        4xx:
+          description: Create an IP Access rule response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/legacy-jhs_rule_single_response'
+                - $ref: '#/components/schemas/legacy-jhs_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /user/firewall/access_rules/rules/{identifier}:
+    delete:
+      tags:
+      - User
+      summary: Cloudflare Delete an IP Access rule
+      description: 'Deletes an IP Access rule at the user level.
+
+
+        Note: Deleting a user-level rule will affect all zones owned by the user.'
+      operationId: ip-access-rules-for-a-user-delete-an-ip-access-rule
+      parameters:
+      - name: identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/legacy-jhs_rule_components-schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Delete an IP Access rule response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/legacy-jhs_rule_single_id_response'
+        4xx:
+          description: Delete an IP Access rule response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/legacy-jhs_rule_single_id_response'
+                - $ref: '#/components/schemas/legacy-jhs_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+    patch:
+      tags:
+      - User
+      summary: Cloudflare Update an IP Access rule
+      description: Updates an IP Access rule defined at the user level. You can only update the rule action (`mode` parameter) and notes.
+      operationId: ip-access-rules-for-a-user-update-an-ip-access-rule
+      parameters:
+      - name: identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/legacy-jhs_rule_components-schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                mode:
+                  $ref: '#/components/schemas/legacy-jhs_schemas-mode'
+                notes:
+                  $ref: '#/components/schemas/legacy-jhs_notes'
+      responses:
+        '200':
+          description: Update an IP Access rule response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/legacy-jhs_rule_single_response'
+        4xx:
+          description: Update an IP Access rule response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/legacy-jhs_rule_single_response'
+                - $ref: '#/components/schemas/legacy-jhs_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+  /user/invites:
+    get:
+      tags:
+      - User
+      summary: Cloudflare List Invitations
+      description: Lists all invitations associated with my user.
+      operationId: user'-s-invites-list-invitations
+      responses:
+        '200':
+          description: List Invitations response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_schemas-collection_invite_response'
+        4XX:
+          description: List Invitations response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_schemas-collection_invite_response'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+  /user/invites/{invite_id}:
+    get:
+      tags:
+      - User
+      summary: Cloudflare Invitation Details
+      description: Gets the details of an invitation.
+      operationId: user'-s-invites-invitation-details
+      parameters:
+      - name: invite_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/iam_invite_components-schemas-identifier'
+      responses:
+        '200':
+          description: Invitation Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_single_invite_response'
+        4XX:
+          description: Invitation Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_single_invite_response'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+    patch:
+      tags:
+      - User
+      summary: Cloudflare Respond to Invitation
+      description: Responds to an invitation.
+      operationId: user'-s-invites-respond-to-invitation
+      parameters:
+      - name: invite_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/iam_invite_components-schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - status
+              properties:
+                status:
+                  description: Status of your response to the invitation (rejected or accepted).
+                  enum:
+                  - accepted
+                  - rejected
+                  example: accepted
+      responses:
+        '200':
+          description: Respond to Invitation response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_single_invite_response'
+        4XX:
+          description: Respond to Invitation response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_single_invite_response'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+  /user/load_balancers/monitors:
+    get:
+      tags:
+      - User
+      summary: Cloudflare List Monitors
+      description: List configured monitors for a user.
+      operationId: load-balancer-monitors-list-monitors
+      responses:
+        '200':
+          description: List Monitors response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_monitor-response-collection'
+        4XX:
+          description: List Monitors response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_monitor-response-collection'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+    post:
+      tags:
+      - User
+      summary: Cloudflare Create Monitor
+      description: Create a configured monitor.
+      operationId: load-balancer-monitors-create-monitor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/load-balancing_monitor-editable'
+              - required:
+                - expected_codes
+      responses:
+        '200':
+          description: Create Monitor response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_monitor-response-single'
+        4XX:
+          description: Create Monitor response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_monitor-response-single'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/load_balancers/monitors/{monitor_id}:
+    delete:
+      tags:
+      - User
+      summary: Cloudflare Delete Monitor
+      description: Delete a configured monitor.
+      operationId: load-balancer-monitors-delete-monitor
+      parameters:
+      - name: monitor_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/load-balancing_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Delete Monitor response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_id_response'
+        4XX:
+          description: Delete Monitor response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_id_response'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+    get:
+      tags:
+      - User
+      summary: Cloudflare Monitor Details
+      description: List a single configured monitor for a user.
+      operationId: load-balancer-monitors-monitor-details
+      parameters:
+      - name: monitor_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/load-balancing_identifier'
+      responses:
+        '200':
+          description: Monitor Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_monitor-response-single'
+        4XX:
+          description: Monitor Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_monitor-response-single'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+    patch:
+      tags:
+      - User
+      summary: Cloudflare Patch Monitor
+      description: Apply changes to an existing monitor, overwriting the supplied properties.
+      operationId: load-balancer-monitors-patch-monitor
+      parameters:
+      - name: monitor_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/load-balancing_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/load-balancing_monitor-editable'
+              - required:
+                - expected_codes
+      responses:
+        '200':
+          description: Patch Monitor response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_monitor-response-single'
+        4XX:
+          description: Patch Monitor response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_monitor-response-single'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+    put:
+      tags:
+      - User
+      summary: Cloudflare Update Monitor
+      description: Modify a configured monitor.
+      operationId: load-balancer-monitors-update-monitor
+      parameters:
+      - name: monitor_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/load-balancing_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/load-balancing_monitor-editable'
+              - required:
+                - expected_codes
+      responses:
+        '200':
+          description: Update Monitor response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_monitor-response-single'
+        4XX:
+          description: Update Monitor response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_monitor-response-single'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/load_balancers/monitors/{monitor_id}/preview:
+    post:
+      tags:
+      - User
+      summary: Cloudflare Preview Monitor
+      description: Preview pools using the specified monitor with provided monitor details. The returned preview_id can be used in the preview endpoint to retrieve the results.
+      operationId: load-balancer-monitors-preview-monitor
+      parameters:
+      - name: monitor_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/load-balancing_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/load-balancing_monitor-editable'
+              - required:
+                - expected_codes
+      responses:
+        '200':
+          description: Preview Monitor response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_preview_response'
+        4XX:
+          description: Preview Monitor response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_preview_response'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/load_balancers/monitors/{monitor_id}/references:
+    get:
+      tags:
+      - User
+      summary: Cloudflare List Monitor References
+      description: Get the list of resources that reference the provided monitor.
+      operationId: load-balancer-monitors-list-monitor-references
+      parameters:
+      - name: monitor_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/load-balancing_identifier'
+      responses:
+        '200':
+          description: List Monitor References response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_references_response'
+        4XX:
+          description: List Monitor References response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_references_response'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/load_balancers/pools:
+    get:
+      tags:
+      - User
+      summary: Cloudflare List Pools
+      description: List configured pools.
+      operationId: load-balancer-pools-list-pools
+      parameters:
+      - name: monitor
+        in: query
+        schema:
+          description: The ID of the Monitor to use for checking the health of origins within this pool.
+      responses:
+        '200':
+          description: List Pools response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_schemas-response_collection'
+        4XX:
+          description: List Pools response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_schemas-response_collection'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+    patch:
+      tags:
+      - User
+      summary: Cloudflare Patch Pools
+      description: Apply changes to a number of existing pools, overwriting the supplied properties. Pools are ordered by ascending `name`. Returns the list of affected pools. Supports the standard pagination query parameters, either `limit`/`offset` or `per_page`/`page`.
+      operationId: load-balancer-pools-patch-pools
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                notification_email:
+                  $ref: '#/components/schemas/load-balancing_patch_pools_notification_email'
+      responses:
+        '200':
+          description: Patch Pools response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_schemas-response_collection'
+        4XX:
+          description: Patch Pools response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_schemas-response_collection'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+    post:
+      tags:
+      - User
+      summary: Cloudflare Create Pool
+      description: Create a new pool.
+      operationId: load-balancer-pools-create-pool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - origins
+              - name
+              properties:
+                check_regions:
+                  $ref: '#/components/schemas/load-balancing_check_regions'
+                description:
+                  $ref: '#/components/schemas/load-balancing_schemas-description'
+                enabled:
+                  $ref: '#/components/schemas/load-balancing_enabled'
+                latitude:
+                  $ref: '#/components/schemas/load-balancing_latitude'
+                load_shedding:
+                  $ref: '#/components/schemas/load-balancing_load_shedding'
+                longitude:
+                  $ref: '#/components/schemas/load-balancing_longitude'
+                minimum_origins:
+                  $ref: '#/components/schemas/load-balancing_minimum_origins'
+                monitor:
+                  $ref: '#/components/schemas/load-balancing_monitor_id'
+                name:
+                  $ref: '#/components/schemas/load-balancing_name'
+                notification_email:
+                  $ref: '#/components/schemas/load-balancing_notification_email'
+                notification_filter:
+                  $ref: '#/components/schemas/load-balancing_notification_filter'
+                origin_steering:
+                  $ref: '#/components/schemas/load-balancing_origin_steering'
+                origins:
+                  $ref: '#/components/schemas/load-balancing_origins'
+      responses:
+        '200':
+          description: Create Pool response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_schemas-single_response'
+        4XX:
+          description: Create Pool response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_schemas-single_response'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/load_balancers/pools/{pool_id}:
+    delete:
+      tags:
+      - User
+      summary: Cloudflare Delete Pool
+      description: Delete a configured pool.
+      operationId: load-balancer-pools-delete-pool
+      parameters:
+      - name: pool_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Delete Pool response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_schemas-id_response'
+        4XX:
+          description: Delete Pool response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_schemas-id_response'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+    get:
+      tags:
+      - User
+      summary: Cloudflare Pool Details
+      description: Fetch a single configured pool.
+      operationId: load-balancer-pools-pool-details
+      parameters:
+      - name: pool_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      responses:
+        '200':
+          description: Pool Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_schemas-single_response'
+        4XX:
+          description: Pool Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_schemas-single_response'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+    patch:
+      tags:
+      - User
+      summary: Cloudflare Patch Pool
+      description: Apply changes to an existing pool, overwriting the supplied properties.
+      operationId: load-balancer-pools-patch-pool
+      parameters:
+      - name: pool_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                check_regions:
+                  $ref: '#/components/schemas/load-balancing_check_regions'
+                description:
+                  $ref: '#/components/schemas/load-balancing_schemas-description'
+                disabled_at:
+                  $ref: '#/components/schemas/load-balancing_schemas-disabled_at'
+                enabled:
+                  $ref: '#/components/schemas/load-balancing_enabled'
+                latitude:
+                  $ref: '#/components/schemas/load-balancing_latitude'
+                load_shedding:
+                  $ref: '#/components/schemas/load-balancing_load_shedding'
+                longitude:
+                  $ref: '#/components/schemas/load-balancing_longitude'
+                minimum_origins:
+                  $ref: '#/components/schemas/load-balancing_minimum_origins'
+                monitor:
+                  $ref: '#/components/schemas/load-balancing_monitor_id'
+                name:
+                  $ref: '#/components/schemas/load-balancing_name'
+                notification_email:
+                  $ref: '#/components/schemas/load-balancing_notification_email'
+                notification_filter:
+                  $ref: '#/components/schemas/load-balancing_notification_filter'
+                origin_steering:
+                  $ref: '#/components/schemas/load-balancing_origin_steering'
+                origins:
+                  $ref: '#/components/schemas/load-balancing_origins'
+      responses:
+        '200':
+          description: Patch Pool response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_schemas-single_response'
+        4XX:
+          description: Patch Pool response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_schemas-single_response'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+    put:
+      tags:
+      - User
+      summary: Cloudflare Update Pool
+      description: Modify a configured pool.
+      operationId: load-balancer-pools-update-pool
+      parameters:
+      - name: pool_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+              - origins
+              - name
+              properties:
+                check_regions:
+                  $ref: '#/components/schemas/load-balancing_check_regions'
+                description:
+                  $ref: '#/components/schemas/load-balancing_schemas-description'
+                disabled_at:
+                  $ref: '#/components/schemas/load-balancing_schemas-disabled_at'
+                enabled:
+                  $ref: '#/components/schemas/load-balancing_enabled'
+                latitude:
+                  $ref: '#/components/schemas/load-balancing_latitude'
+                load_shedding:
+                  $ref: '#/components/schemas/load-balancing_load_shedding'
+                longitude:
+                  $ref: '#/components/schemas/load-balancing_longitude'
+                minimum_origins:
+                  $ref: '#/components/schemas/load-balancing_minimum_origins'
+                monitor:
+                  $ref: '#/components/schemas/load-balancing_monitor_id'
+                name:
+                  $ref: '#/components/schemas/load-balancing_name'
+                notification_email:
+                  $ref: '#/components/schemas/load-balancing_notification_email'
+                notification_filter:
+                  $ref: '#/components/schemas/load-balancing_notification_filter'
+                origin_steering:
+                  $ref: '#/components/schemas/load-balancing_origin_steering'
+                origins:
+                  $ref: '#/components/schemas/load-balancing_origins'
+      responses:
+        '200':
+          description: Update Pool response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_schemas-single_response'
+        4XX:
+          description: Update Pool response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_schemas-single_response'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/load_balancers/pools/{pool_id}/health:
+    get:
+      tags:
+      - User
+      summary: Cloudflare Pool Health Details
+      description: Fetch the latest pool health status for a single pool.
+      operationId: load-balancer-pools-pool-health-details
+      parameters:
+      - name: pool_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      responses:
+        '200':
+          description: Pool Health Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_health_details'
+        4XX:
+          description: Pool Health Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_health_details'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/load_balancers/pools/{pool_id}/preview:
+    post:
+      tags:
+      - User
+      summary: Cloudflare Preview Pool
+      description: Preview pool health using provided monitor details. The returned preview_id can be used in the preview endpoint to retrieve the results.
+      operationId: load-balancer-pools-preview-pool
+      parameters:
+      - name: pool_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/load-balancing_monitor-editable'
+              - required:
+                - expected_codes
+      responses:
+        '200':
+          description: Preview Pool response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_preview_response'
+        4XX:
+          description: Preview Pool response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_preview_response'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/load_balancers/pools/{pool_id}/references:
+    get:
+      tags:
+      - User
+      summary: Cloudflare List Pool References
+      description: Get the list of resources that reference the provided pool.
+      operationId: load-balancer-pools-list-pool-references
+      parameters:
+      - name: pool_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      responses:
+        '200':
+          description: List Pool References response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_schemas-references_response'
+        4XX:
+          description: List Pool References response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_schemas-references_response'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/load_balancers/preview/{preview_id}:
+    get:
+      tags:
+      - User
+      summary: Cloudflare Preview Result
+      description: Get the result of a previous preview operation using the provided preview_id.
+      operationId: load-balancer-monitors-preview-result
+      parameters:
+      - name: preview_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/load-balancing_preview_id'
+      responses:
+        '200':
+          description: Preview Result response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_preview_result_response'
+        4XX:
+          description: Preview Result response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_preview_result_response'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/load_balancing_analytics/events:
+    get:
+      tags:
+      - User
+      summary: Cloudflare List Healthcheck Events
+      description: List origin health changes.
+      operationId: load-balancer-healthcheck-events-list-healthcheck-events
+      parameters:
+      - name: until
+        in: query
+        schema:
+          $ref: '#/components/schemas/load-balancing_until'
+      - name: pool_name
+        in: query
+        schema:
+          $ref: '#/components/schemas/load-balancing_pool_name'
+      - name: origin_healthy
+        in: query
+        schema:
+          $ref: '#/components/schemas/load-balancing_origin_healthy'
+      - name: pool_id
+        in: query
+        schema:
+          $ref: '#/components/schemas/load-balancing_schemas-identifier'
+      - name: since
+        in: query
+        schema:
+          type: string
+          format: date-time
+          description: Start date and time of requesting data period in the ISO8601 format.
+          example: '2016-11-11T12:00:00Z'
+      - name: origin_name
+        in: query
+        schema:
+          type: string
+          description: The name for the origin to filter.
+          example: primary-dc-1
+      - name: pool_healthy
+        in: query
+        schema:
+          type: boolean
+          description: If true, filter events where the pool status is healthy. If false, filter events where the pool status is unhealthy.
+          default: true
+          example: true
+      responses:
+        '200':
+          description: List Healthcheck Events response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-balancing_components-schemas-response_collection'
+        4XX:
+          description: List Healthcheck Events response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/load-balancing_components-schemas-response_collection'
+                - $ref: '#/components/schemas/load-balancing_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/organizations:
+    get:
+      tags:
+      - User
+      summary: Cloudflare List Organizations
+      description: Lists organizations the user is associated with.
+      operationId: user'-s-organizations-list-organizations
+      parameters:
+      - name: name
+        in: query
+        schema:
+          $ref: '#/components/schemas/iam_schemas-name'
+      - name: page
+        in: query
+        schema:
+          type: number
+          description: Page number of paginated results.
+          default: 1
+          minimum: 1
+      - name: per_page
+        in: query
+        schema:
+          type: number
+          description: Number of organizations per page.
+          default: 20
+          minimum: 5
+          maximum: 50
+      - name: order
+        in: query
+        schema:
+          type: string
+          description: Field to order organizations by.
+          enum:
+          - id
+          - name
+          - status
+          example: status
+      - name: direction
+        in: query
+        schema:
+          type: string
+          description: Direction to order organizations.
+          enum:
+          - asc
+          - desc
+          example: desc
+      - name: match
+        in: query
+        schema:
+          type: string
+          description: Whether to match all search requirements or at least one (any).
+          enum:
+          - any
+          - all
+          default: all
+      - name: status
+        in: query
+        schema:
+          type: string
+          description: Whether the user is a member of the organization or has an inivitation pending.
+          enum:
+          - member
+          - invited
+          example: member
+      responses:
+        '200':
+          description: List Organizations response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_collection_organization_response'
+        4XX:
+          description: List Organizations response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_collection_organization_response'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+  /user/organizations/{organization_id}:
+    delete:
+      tags:
+      - User
+      summary: Cloudflare Leave Organization
+      description: Removes association to an organization.
+      operationId: user'-s-organizations-leave-organization
+      parameters:
+      - name: organization_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/iam_common_components-schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Leave Organization response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    $ref: '#/components/schemas/iam_common_components-schemas-identifier'
+        4XX:
+          description: Leave Organization response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    id:
+                      $ref: '#/components/schemas/iam_common_components-schemas-identifier'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+    get:
+      tags:
+      - User
+      summary: Cloudflare Organization Details
+      description: Gets a specific organization the user is associated with.
+      operationId: user'-s-organizations-organization-details
+      parameters:
+      - name: organization_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/iam_common_components-schemas-identifier'
+      responses:
+        '200':
+          description: Organization Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_single_organization_response'
+        4XX:
+          description: Organization Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_single_organization_response'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+  /user/subscriptions:
+    get:
+      tags:
+      - User
+      summary: Cloudflare Get User Subscriptions
+      description: Lists all of a user's subscriptions.
+      operationId: user-subscription-get-user-subscriptions
+      responses:
+        '200':
+          description: Get User Subscriptions response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bill-subs-api_user_subscription_response_collection'
+        4XX:
+          description: Get User Subscriptions response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/bill-subs-api_user_subscription_response_collection'
+                - $ref: '#/components/schemas/bill-subs-api_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/subscriptions/{identifier}:
+    delete:
+      tags:
+      - User
+      summary: Cloudflare Delete User Subscription
+      description: Deletes a user's subscription.
+      operationId: user-subscription-delete-user-subscription
+      parameters:
+      - name: identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/bill-subs-api_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Delete User Subscription response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subscription_id:
+                    $ref: '#/components/schemas/bill-subs-api_schemas-identifier'
+        4XX:
+          description: Delete User Subscription response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    subscription_id:
+                      $ref: '#/components/schemas/bill-subs-api_schemas-identifier'
+                - $ref: '#/components/schemas/bill-subs-api_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+    put:
+      tags:
+      - User
+      summary: Cloudflare Update User Subscription
+      description: Updates a user's subscriptions.
+      operationId: user-subscription-update-user-subscription
+      parameters:
+      - name: identifier
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/bill-subs-api_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/bill-subs-api_subscription-v2'
+      responses:
+        '200':
+          description: Update User Subscription response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bill-subs-api_user_subscription_response_single'
+        4XX:
+          description: Update User Subscription response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/bill-subs-api_user_subscription_response_single'
+                - $ref: '#/components/schemas/bill-subs-api_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+  /user/tokens:
+    get:
+      tags:
+      - User
+      summary: Cloudflare List Tokens
+      description: List all access tokens you created.
+      operationId: user-api-tokens-list-tokens
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: number
+          description: Page number of paginated results.
+          default: 1
+          minimum: 1
+      - name: per_page
+        in: query
+        schema:
+          type: number
+          description: Maximum number of results per page.
+          default: 20
+          minimum: 5
+          maximum: 50
+      - name: direction
+        in: query
+        schema:
+          type: string
+          description: Direction to order results.
+          enum:
+          - asc
+          - desc
+          example: desc
+      responses:
+        '200':
+          description: List Tokens response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_response_collection'
+        4XX:
+          description: List Tokens response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_response_collection'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_token: []
+    post:
+      tags:
+      - User
+      summary: Cloudflare Create Token
+      description: Create a new access token.
+      operationId: user-api-tokens-create-token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/iam_create_payload'
+      responses:
+        '200':
+          description: Create Token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_response_create'
+        4XX:
+          description: Create Token response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_response_create'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_token: []
+  /user/tokens/{token_id}:
+    delete:
+      tags:
+      - User
+      summary: Cloudflare Delete Token
+      description: Destroy a token.
+      operationId: user-api-tokens-delete-token
+      parameters:
+      - name: token_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/iam_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Delete Token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_api-response-single-id'
+        4XX:
+          description: Delete Token response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_api-response-single-id'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_token: []
+    get:
+      tags:
+      - User
+      summary: Cloudflare Token Details
+      description: Get information about a specific token.
+      operationId: user-api-tokens-token-details
+      parameters:
+      - name: token_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/iam_schemas-identifier'
+      responses:
+        '200':
+          description: Token Details response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_response_single'
+        4XX:
+          description: Token Details response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_response_single'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_token: []
+    put:
+      tags:
+      - User
+      summary: Cloudflare Update Token
+      description: Update an existing token.
+      operationId: user-api-tokens-update-token
+      parameters:
+      - name: token_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/iam_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/iam_schemas-token'
+      responses:
+        '200':
+          description: Update Token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_response_single'
+        4XX:
+          description: Update Token response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_response_single'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_token: []
+  /user/tokens/{token_id}/value:
+    put:
+      tags:
+      - User
+      summary: Cloudflare Roll Token
+      description: Roll the token secret.
+      operationId: user-api-tokens-roll-token
+      parameters:
+      - name: token_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/iam_schemas-identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Roll Token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_response_single_value'
+        4XX:
+          description: Roll Token response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_response_single_value'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_token: []
+  /user/tokens/permission_groups:
+    get:
+      tags:
+      - User
+      summary: Cloudflare List Permission Groups
+      description: Find all available permission groups.
+      operationId: permission-groups-list-permission-groups
+      responses:
+        '200':
+          description: List Permission Groups response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_schemas-response_collection'
+        4XX:
+          description: List Permission Groups response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_schemas-response_collection'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_token: []
+  /user/tokens/verify:
+    get:
+      tags:
+      - User
+      summary: Cloudflare Verify Token
+      description: Test whether a token works.
+      operationId: user-api-tokens-verify-token
+      responses:
+        '200':
+          description: Verify Token response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/iam_response_single_segment'
+        4XX:
+          description: Verify Token response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/iam_response_single_segment'
+                - $ref: '#/components/schemas/iam_api-response-common-failure'
+      security:
+      - api_token: []
+components:
+  schemas:
+    bill-subs-api_current_period_end:
+      type: string
+      format: date-time
+      description: The end of the current period and also when the next billing is due.
+      example: '2014-03-31T12:20:00Z'
+      readOnly: true
+    iam_country:
+      type: string
+      description: The country in which the user lives.
+      example: US
+      nullable: true
+      maxLength: 30
+    load-balancing_monitor-editable:
+      type: object
+      properties:
+        allow_insecure:
+          $ref: '#/components/schemas/load-balancing_allow_insecure'
+        consecutive_down:
+          $ref: '#/components/schemas/load-balancing_consecutive_down'
+        consecutive_up:
+          $ref: '#/components/schemas/load-balancing_consecutive_up'
+        description:
+          $ref: '#/components/schemas/load-balancing_description'
+        expected_body:
+          $ref: '#/components/schemas/load-balancing_expected_body'
+        expected_codes:
+          $ref: '#/components/schemas/load-balancing_expected_codes'
+        follow_redirects:
+          $ref: '#/components/schemas/load-balancing_follow_redirects'
+        header:
+          $ref: '#/components/schemas/load-balancing_header'
+        interval:
+          $ref: '#/components/schemas/load-balancing_interval'
+        method:
+          $ref: '#/components/schemas/load-balancing_method'
+        path:
+          $ref: '#/components/schemas/load-balancing_path'
+        port:
+          $ref: '#/components/schemas/load-balancing_port'
+        probe_zone:
+          $ref: '#/components/schemas/load-balancing_probe_zone'
+        retries:
+          $ref: '#/components/schemas/load-balancing_retries'
+        timeout:
+          $ref: '#/components/schemas/load-balancing_timeout'
+        type:
+          $ref: '#/components/schemas/load-balancing_type'
+    load-balancing_notification_filter:
+      type: object
+      description: Filter pool and origin health notifications by resource type or health status. Use null to reset.
+      example:
+        origin:
+          disable: true
+        pool:
+          healthy: false
+      nullable: true
+      properties:
+        origin:
+          $ref: '#/components/schemas/load-balancing_filter_options'
+        pool:
+          $ref: '#/components/schemas/load-balancing_filter_options'
+    load-balancing_check_regions:
+      type: array
+      description: A list of regions from which to run health checks. Null means every Cloudflare data center.
+      example:
+      - WEU
+      - ENAM
+      nullable: true
+      items:
+        type: string
+        description: 'WNAM: Western North America, ENAM: Eastern North America, WEU: Western Europe, EEU: Eastern Europe, NSAM: Northern South America, SSAM: Southern South America, OC: Oceania, ME: Middle East, NAF: North Africa, SAF: South Africa, SAS: Southern Asia, SEAS: South East Asia, NEAS: North East Asia, ALL_REGIONS: all regions (ENTERPRISE customers only).'
+        enum:
+        - WNAM
+        - ENAM
+        - WEU
+        - EEU
+        - NSAM
+        - SSAM
+        - OC
+        - ME
+        - NAF
+        - SAF
+        - SAS
+        - SEAS
+        - NEAS
+        - ALL_REGIONS
+    iam_permission_group:
+      type: object
+      description: A named group of permissions that map to a group of operations against resources.
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          description: Identifier of the group.
+          example: 6d7f2f5f5b1d4a0e9081fdc98d432fd1
+          readOnly: true
+        name:
+          type: string
+          description: Name of the group.
+          example: Load Balancers Write
+          readOnly: true
+    load-balancing_preview_id:
+      example: f1aba936b94213e5b8dca0c0dbf1f9cc
+    load-balancing_expected_codes:
+      type: string
+      description: The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS monitors.
+      default: '200'
+      example: 2xx
+    bill-subs-api_component_value:
+      type: object
+      description: A component value for a subscription.
+      properties:
+        default:
+          type: number
+          description: The default amount assigned.
+          example: 5
+        name:
+          type: string
+          description: The name of the component value.
+          example: page_rules
+        price:
+          type: number
+          description: The unit price for the component value.
+          example: 5
+        value:
+          type: number
+          description: The amount of the component value assigned.
+          example: 20
+    load-balancing_schemas-response_collection:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_api-response-collection'
+      - properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/load-balancing_pool'
+    load-balancing_schemas-disabled_at:
+      type: string
+      format: date-time
+      description: This field shows up only if the pool is disabled. This field is set with the time the pool was disabled at.
+      readOnly: true
+    iam_invited_by:
+      type: string
+      description: The email address of the user who created the invite.
+      example: user@example.com
+      maxLength: 90
+    iam_request_ip:
+      type: object
+      description: Client IP restrictions.
+      example:
+        in:
+        - 123.123.123.0/24
+        - 2606:4700::/32
+        not_in:
+        - 123.123.123.100/24
+        - 2606:4700:4700::/48
+      properties:
+        in:
+          $ref: '#/components/schemas/iam_cidr_list'
+        not_in:
+          $ref: '#/components/schemas/iam_cidr_list'
+    bill-subs-api_rate_plan:
+      type: object
+      description: The rate plan applied to the subscription.
+      properties:
+        currency:
+          type: string
+          description: The currency applied to the rate plan subscription.
+          example: USD
+        externally_managed:
+          type: boolean
+          description: Whether this rate plan is managed externally from Cloudflare.
+          example: false
+        id:
+          description: The ID of the rate plan.
+          example: free
+        is_contract:
+          type: boolean
+          description: Whether a rate plan is enterprise-based (or newly adopted term contract).
+          example: false
+        public_name:
+          type: string
+          description: The full name of the rate plan.
+          example: Business Plan
+        scope:
+          type: string
+          description: The scope that this rate plan applies to.
+          example: zone
+        sets:
+          type: array
+          description: The list of sets this rate plan applies to.
+          items:
+            type: string
+    legacy-jhs_rule:
+      type: object
+      required:
+      - id
+      - mode
+      - allowed_modes
+      - configuration
+      properties:
+        allowed_modes:
+          type: array
+          description: The available actions that a rule can apply to a matched request.
+          example:
+          - whitelist
+          - block
+          - challenge
+          - js_challenge
+          - managed_challenge
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/legacy-jhs_schemas-mode'
+        configuration:
+          $ref: '#/components/schemas/legacy-jhs_schemas-configuration'
+        created_on:
+          type: string
+          format: date-time
+          description: The timestamp of when the rule was created.
+          example: '2014-01-01T05:20:00.12345Z'
+          readOnly: true
+        id:
+          $ref: '#/components/schemas/legacy-jhs_rule_components-schemas-identifier'
+        mode:
+          $ref: '#/components/schemas/legacy-jhs_schemas-mode'
+        modified_on:
+          type: string
+          format: date-time
+          description: The timestamp of when the rule was last modified.
+          example: '2014-01-01T05:20:00.12345Z'
+          readOnly: true
+        notes:
+          $ref: '#/components/schemas/legacy-jhs_notes'
+    iam_collection_organization_response:
+      allOf:
+      - $ref: '#/components/schemas/iam_api-response-collection'
+      - type: object
+        properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/iam_organization'
+    iam_telephone:
+      type: string
+      description: User's telephone number
+      example: +1 123-123-1234
+      nullable: true
+      maxLength: 20
+    legacy-jhs_rule_collection_response:
+      allOf:
+      - $ref: '#/components/schemas/legacy-jhs_api-response-collection'
+      - properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/legacy-jhs_rule'
+    iam_user_invite:
+      allOf:
+      - $ref: '#/components/schemas/iam_base'
+      - properties:
+          status:
+            description: Current status of the invitation.
+            enum:
+            - pending
+            - accepted
+            - rejected
+            - expired
+            example: accepted
+    iam_response_collection:
+      allOf:
+      - $ref: '#/components/schemas/iam_api-response-collection'
+      - type: object
+        properties:
+          result:
+            type: array
+            items:
+              type: object
+    load-balancing_health_details:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_api-response-single'
+      - properties:
+          result:
+            type: object
+            description: A list of regions from which to run health checks. Null means every Cloudflare data center.
+            example:
+              pool_id: 17b5962d775c646f3f9725cbc7a53df4
+              pop_health:
+                Amsterdam, NL:
+                  healthy: true
+                  origins:
+                  - 2001:DB8::5:
+                      failure_reason: No failures
+                      healthy: true
+                      response_code: 401
+                      rtt: 12.1ms
+    iam_components-schemas-name:
+      type: string
+      description: Role Name.
+      example: Organization Admin
+      readOnly: true
+      maxLength: 120
+    load-balancing_monitor-response-collection:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_api-response-collection'
+      - properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/load-balancing_monitor'
+    iam_api-response-single-id:
+      allOf:
+      - $ref: '#/components/schemas/iam_api-response-common'
+      - properties:
+          result:
+            type: object
+            nullable: true
+            required:
+            - id
+            properties:
+              id:
+                $ref: '#/components/schemas/iam_common_components-schemas-identifier'
+      type: object
+    legacy-jhs_api-response-collection:
+      allOf:
+      - $ref: '#/components/schemas/legacy-jhs_api-response-common'
+      - properties:
+          result:
+            type: array
+            nullable: true
+            items: {}
+          result_info:
+            $ref: '#/components/schemas/legacy-jhs_result_info'
+      type: object
+    iam_modified_on:
+      type: string
+      format: date-time
+      description: Last time the token was modified.
+      example: '2018-07-02T05:20:00Z'
+      readOnly: true
+    load-balancing_address:
+      type: string
+      description: The IP address (IPv4 or IPv6) of the origin, or its publicly addressable hostname. Hostnames entered here should resolve directly to the origin, and not be a hostname proxied by Cloudflare. To set an internal/reserved address, virtual_network_id must also be set.
+      example: 0.0.0.0
+    load-balancing_interval:
+      type: integer
+      description: The interval between each health check. Shorter intervals may improve failover time, but will increase load on the origins as we check from multiple locations.
+      default: 60
+    load-balancing_schemas-enabled:
+      type: boolean
+      description: Whether to enable (the default) this origin within the pool. Disabled origins will not receive traffic and are excluded from health checks. The origin will only be disabled for the current pool.
+      default: true
+      example: true
+    iam_condition:
+      type: object
+      properties:
+        request_ip:
+          $ref: '#/components/schemas/iam_request_ip'
+    load-balancing_expected_body:
+      type: string
+      description: A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors.
+      example: alive
+    load-balancing_monitor-response-single:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_api-response-single'
+      - properties:
+          result:
+            $ref: '#/components/schemas/load-balancing_monitor'
+    iam_invite_components-schemas-identifier:
+      type: string
+      description: Invite identifier tag.
+      example: 4f5f0c14a2a41d5063dd301b2f829f04
+      readOnly: true
+      maxLength: 32
+    iam_schemas-invite:
+      allOf:
+      - $ref: '#/components/schemas/iam_user_invite'
+      type: object
+    legacy-jhs_api-response-common:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          $ref: '#/components/schemas/legacy-jhs_messages'
+        messages:
+          $ref: '#/components/schemas/legacy-jhs_messages'
+        result:
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+          - type: string
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - true
+          example: true
+    iam_common_components-schemas-identifier:
+      type: string
+      description: Identifier
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      readOnly: true
+      maxLength: 32
+    iam_single_user_response:
+      allOf:
+      - $ref: '#/components/schemas/iam_api-response-single'
+      - type: object
+        properties:
+          result:
+            type: object
+    load-balancing_api-response-single:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_api-response-common'
+      - properties:
+          result:
+            anyOf:
+            - type: object
+              nullable: true
+            - type: string
+              nullable: true
+      type: object
+    iam_schemas-response_collection:
+      allOf:
+      - $ref: '#/components/schemas/iam_api-response-collection'
+      - type: object
+        properties:
+          result:
+            type: array
+            example:
+            - id: 7cf72faf220841aabcfdfab81c43c4f6
+              name: Billing Read
+              scopes:
+              - com.cloudflare.api.account
+            - id: 9d24387c6e8544e2bc4024a03991339f
+              name: 'Load Balancing: Monitors and Pools Read'
+              scopes:
+              - com.cloudflare.api.account
+            - id: d2a1802cc9a34e30852f8b33869b2f3c
+              name: 'Load Balancing: Monitors and Pools Write'
+              scopes:
+              - com.cloudflare.api.account
+            - id: 8b47d2786a534c08a1f94ee8f9f599ef
+              name: Workers KV Storage Read
+              scopes:
+              - com.cloudflare.api.account
+            - id: f7f0eda5697f475c90846e879bab8666
+              name: Workers KV Storage Write
+              scopes:
+              - com.cloudflare.api.account
+            - id: 1a71c399035b4950a1bd1466bbe4f420
+              name: Workers Scripts Read
+              scopes:
+              - com.cloudflare.api.account
+            - id: e086da7e2179491d91ee5f35b3ca210a
+              name: Workers Scripts Write
+              scopes:
+              - com.cloudflare.api.account
+            items:
+              type: object
+    load-balancing_description:
+      type: string
+      description: Object description.
+      example: Login page monitor
+    load-balancing_pool:
+      type: object
+      properties:
+        check_regions:
+          $ref: '#/components/schemas/load-balancing_check_regions'
+        created_on:
+          $ref: '#/components/schemas/load-balancing_timestamp'
+        description:
+          $ref: '#/components/schemas/load-balancing_schemas-description'
+        disabled_at:
+          $ref: '#/components/schemas/load-balancing_schemas-disabled_at'
+        enabled:
+          $ref: '#/components/schemas/load-balancing_enabled'
+        id:
+          $ref: '#/components/schemas/load-balancing_schemas-identifier'
+        latitude:
+          $ref: '#/components/schemas/load-balancing_latitude'
+        load_shedding:
+          $ref: '#/components/schemas/load-balancing_load_shedding'
+        longitude:
+          $ref: '#/components/schemas/load-balancing_longitude'
+        minimum_origins:
+          $ref: '#/components/schemas/load-balancing_minimum_origins'
+        modified_on:
+          $ref: '#/components/schemas/load-balancing_timestamp'
+        monitor:
+          $ref: '#/components/schemas/load-balancing_monitor_id'
+        name:
+          $ref: '#/components/schemas/load-balancing_name'
+        notification_email:
+          $ref: '#/components/schemas/load-balancing_notification_email'
+        notification_filter:
+          $ref: '#/components/schemas/load-balancing_notification_filter'
+        origin_steering:
+          $ref: '#/components/schemas/load-balancing_origin_steering'
+        origins:
+          $ref: '#/components/schemas/load-balancing_origins'
+    iam_description:
+      type: string
+      description: Description of role's permissions.
+      example: Administrative access to the entire Organization
+      readOnly: true
+    load-balancing_notification_email:
+      type: string
+      description: This field is now deprecated. It has been moved to Cloudflare's Centralized Notification service https://developers.cloudflare.com/fundamentals/notifications/. The email address to send health status notifications to. This can be an individual mailbox or a mailing list. Multiple emails can be supplied as a comma delimited list.
+      example: someone@example.com,sometwo@example.com
+    iam_schemas-token:
+      allOf:
+      - $ref: '#/components/schemas/iam_token'
+    load-balancing_references_response:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_api-response-collection'
+      - properties:
+          result:
+            type: array
+            description: List of resources that reference a given monitor.
+            example:
+            - reference_type: referrer
+              resource_id: 17b5962d775c646f3f9725cbc7a53df4
+              resource_name: primary-dc-1
+              resource_type: pool
+            items:
+              type: object
+              properties:
+                reference_type:
+                  type: string
+                  enum:
+                  - '*'
+                  - referral
+                  - referrer
+                resource_id:
+                  type: string
+                resource_name:
+                  type: string
+                resource_type:
+                  type: string
+    iam_schemas-name:
+      type: string
+      description: Organization name.
+      example: Cloudflare, Inc.
+      maxLength: 100
+    legacy-jhs_rule_single_id_response:
+      allOf:
+      - $ref: '#/components/schemas/legacy-jhs_api-response-single'
+      - properties:
+          result:
+            type: object
+            properties:
+              id:
+                $ref: '#/components/schemas/legacy-jhs_rule_components-schemas-identifier'
+    load-balancing_path:
+      type: string
+      description: The endpoint path you want to conduct a health check against. This parameter is only valid for HTTP and HTTPS monitors.
+      default: /
+      example: /health
+    iam_single_invite_response:
+      allOf:
+      - $ref: '#/components/schemas/iam_api-response-single'
+      - type: object
+        properties:
+          result:
+            type: object
+    aaa_audit-logs:
+      type: object
+      properties:
+        action:
+          type: object
+          properties:
+            result:
+              type: boolean
+              description: A boolean that indicates if the action attempted was successful.
+              example: true
+            type:
+              type: string
+              description: A short string that describes the action that was performed.
+              example: change_setting
+        actor:
+          type: object
+          properties:
+            email:
+              type: string
+              format: email
+              description: The email of the user that performed the action.
+              example: michelle@example.com
+            id:
+              type: string
+              description: The ID of the actor that performed the action. If a user performed the action, this will be their User ID.
+              example: f6b5de0326bb5182b8a4840ee01ec774
+            ip:
+              type: string
+              description: The IP address of the request that performed the action.
+              example: 198.41.129.166
+            type:
+              type: string
+              description: The type of actor, whether a User, Cloudflare Admin, or an Automated System.
+              enum:
+              - user
+              - admin
+              - Cloudflare
+              example: user
+        id:
+          type: string
+          description: A string that uniquely identifies the audit log.
+          example: d5b0f326-1232-4452-8858-1089bd7168ef
+        interface:
+          type: string
+          description: The source of the event.
+          example: API
+        metadata:
+          type: object
+          description: An object which can lend more context to the action being logged. This is a flexible value and varies between different actions.
+          example:
+            name: security_level
+            type: firewall
+            value: high
+            zone_name: example.com
+        newValue:
+          type: string
+          description: The new value of the resource that was modified.
+          example: low
+        oldValue:
+          type: string
+          description: The value of the resource before it was modified.
+          example: high
+        owner:
+          type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/aaa_identifier'
+        resource:
+          type: object
+          properties:
+            id:
+              type: string
+              description: An identifier for the resource that was affected by the action.
+              example: 023e105f4ecef8ad9ca31a8372d0c353
+            type:
+              type: string
+              description: A short string that describes the resource that was affected by the action.
+              example: zone
+        when:
+          type: string
+          format: date-time
+          description: A UTC RFC3339 timestamp that specifies when the action being logged occured.
+          example: '2017-04-26T17:31:07Z'
+    iam_effect:
+      type: string
+      description: Allow or deny operations against the resources.
+      enum:
+      - allow
+      - deny
+      example: allow
+    legacy-jhs_country_configuration:
+      title: A country configuration.
+      properties:
+        target:
+          description: The configuration target. You must set the target to `country` when specifying a country code in the rule.
+          enum:
+          - country
+          example: country
+        value:
+          type: string
+          description: 'The two-letter ISO-3166-1 alpha-2 code to match. For more information, refer to [IP Access rules: Parameters](https://developers.cloudflare.com/waf/tools/ip-access-rules/parameters/#country).'
+          example: US
+    load-balancing_name:
+      type: string
+      description: A short name (tag) for the pool. Only alphanumeric characters, hyphens, and underscores are allowed.
+      example: primary-dc-1
+    load-balancing_type:
+      type: string
+      description: The protocol to use for the health check. Currently supported protocols are 'HTTP','HTTPS', 'TCP', 'ICMP-PING', 'UDP-ICMP', and 'SMTP'.
+      enum:
+      - http
+      - https
+      - tcp
+      - udp_icmp
+      - icmp_ping
+      - smtp
+      default: http
+      example: https
+    load-balancing_filter_options:
+      type: object
+      description: Filter options for a particular resource type (pool or origin). Use null to reset.
+      nullable: true
+      properties:
+        disable:
+          type: boolean
+          description: If set true, disable notifications for this type of resource (pool or origin).
+          default: false
+        healthy:
+          type: boolean
+          description: If present, send notifications only for this health status (e.g. false for only DOWN events). Use null to reset (all events).
+          nullable: true
+    bill-subs-api_subscription:
+      allOf:
+      - $ref: '#/components/schemas/bill-subs-api_subscription-v2'
+      type: object
+    load-balancing_preview_result:
+      type: object
+      description: Resulting health data from a preview operation.
+      example:
+        abwlnp5jbqn45ecgxd03erbgtxtqai0d:
+          healthy: true
+          origins:
+          - originone.example.com.:
+              failure_reason: No failures
+              healthy: true
+              response_code: 200
+              rtt: 66ms
+    iam_components-schemas-status:
+      type: string
+      description: Whether the user is a member of the organization or has an inivitation pending.
+      enum:
+      - member
+      - invited
+      example: member
+    load-balancing_allow_insecure:
+      type: boolean
+      description: Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS monitors.
+      default: false
+      example: true
+    iam_response_single_segment:
+      allOf:
+      - $ref: '#/components/schemas/iam_api-response-single'
+      - type: object
+        properties:
+          result:
+            required:
+            - id
+            - status
+            properties:
+              expires_on:
+                $ref: '#/components/schemas/iam_expires_on'
+              id:
+                $ref: '#/components/schemas/iam_components-schemas-identifier'
+              not_before:
+                $ref: '#/components/schemas/iam_not_before'
+              status:
+                $ref: '#/components/schemas/iam_status'
+    bill-subs-api_state:
+      type: string
+      description: The state that the subscription is in.
+      enum:
+      - Trial
+      - Provisioned
+      - Paid
+      - AwaitingPayment
+      - Cancelled
+      - Failed
+      - Expired
+      example: Paid
+      readOnly: true
+    legacy-jhs_schemas-filters:
+      type: object
+      properties:
+        configuration.target:
+          type: string
+          description: The target to search in existing rules.
+          enum:
+          - ip
+          - ip_range
+          - asn
+          - country
+          example: ip
+        configuration.value:
+          type: string
+          description: 'The target value to search for in existing rules: an IP address, an IP address range, or a country code, depending on the provided `configuration.target`.
+
+            Notes: You can search for a single IPv4 address, an IP address range with a subnet of ''/16'' or ''/24'', or a two-letter ISO-3166-1 alpha-2 country code.'
+          example: 198.51.100.4
+        match:
+          type: string
+          description: When set to `all`, all the search requirements must match. When set to `any`, only one of the search requirements has to match.
+          enum:
+          - any
+          - all
+          default: all
+        mode:
+          $ref: '#/components/schemas/legacy-jhs_schemas-mode'
+        notes:
+          type: string
+          description: 'The string to search for in the notes of existing IP Access rules.
+
+            Notes: For example, the string ''attack'' would match IP Access rules with notes ''Attack 26/02'' and ''Attack 27/02''. The search is case insensitive.'
+          example: my note
+    load-balancing_until:
+      type: string
+      format: date-time
+      description: End date and time of requesting data period in the ISO8601 format.
+      example: '2016-11-11T13:00:00Z'
+    legacy-jhs_schemas-configuration:
+      oneOf:
+      - $ref: '#/components/schemas/legacy-jhs_ip_configuration'
+      - $ref: '#/components/schemas/legacy-jhs_ipv6_configuration'
+      - $ref: '#/components/schemas/legacy-jhs_cidr_configuration'
+      - $ref: '#/components/schemas/legacy-jhs_asn_configuration'
+      - $ref: '#/components/schemas/legacy-jhs_country_configuration'
+      type: object
+      description: The rule configuration.
+    load-balancing_load_shedding:
+      type: object
+      description: Configures load shedding policies and percentages for the pool.
+      properties:
+        default_percent:
+          type: number
+          description: The percent of traffic to shed from the pool, according to the default policy. Applies to new sessions and traffic without session affinity.
+          default: 0
+          minimum: 0
+          maximum: 100
+        default_policy:
+          type: string
+          description: The default policy to use when load shedding. A random policy randomly sheds a given percent of requests. A hash policy computes a hash over the CF-Connecting-IP address and sheds all requests originating from a percent of IPs.
+          enum:
+          - random
+          - hash
+          default: random
+        session_percent:
+          type: number
+          description: The percent of existing sessions to shed from the pool, according to the session policy.
+          default: 0
+          minimum: 0
+          maximum: 100
+        session_policy:
+          type: string
+          description: Only the hash policy is supported for existing sessions (to avoid exponential decay).
+          enum:
+          - hash
+          default: hash
+    load-balancing_port:
+      type: integer
+      description: 'The port number to connect to for the health check. Required for TCP, UDP, and SMTP checks. HTTP and HTTPS checks should only define the port when using a non-standard port (HTTP: default 80, HTTPS: default 443).'
+      default: 0
+    iam_permission_groups:
+      type: array
+      description: A set of permission groups that are specified to the policy.
+      example:
+      - id: c8fed203ed3043cba015a93ad1616f1f
+        name: Zone Read
+      - id: 82e64a83756745bbbb1c9c2701bf816b
+        name: DNS Read
+      items:
+        $ref: '#/components/schemas/iam_permission_group'
+    load-balancing_latitude:
+      type: number
+      description: The latitude of the data center containing the origins used in this pool in decimal degrees. If this is set, longitude must also be set.
+    load-balancing_retries:
+      type: integer
+      description: The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.
+      default: 2
+    load-balancing_origin_healthy:
+      type: boolean
+      description: If true, filter events where the origin status is healthy. If false, filter events where the origin status is unhealthy.
+      default: true
+      example: true
+    load-balancing_api-response-common:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          $ref: '#/components/schemas/load-balancing_messages'
+        messages:
+          $ref: '#/components/schemas/load-balancing_messages'
+        result:
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+          - type: string
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - true
+          example: true
+    bill-subs-api_amount:
+      type: number
+      description: The amount associated with this billing item.
+      example: 20.99
+      readOnly: true
+    iam_create_payload:
+      type: object
+      required:
+      - name
+      - policies
+      properties:
+        condition:
+          $ref: '#/components/schemas/iam_condition'
+        expires_on:
+          $ref: '#/components/schemas/iam_expires_on'
+        name:
+          $ref: '#/components/schemas/iam_name'
+        not_before:
+          $ref: '#/components/schemas/iam_not_before'
+        policies:
+          $ref: '#/components/schemas/iam_policies'
+    legacy-jhs_messages:
+      type: array
+      example: []
+      items:
+        type: object
+        uniqueItems: true
+        required:
+        - code
+        - message
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          message:
+            type: string
+    load-balancing_schemas-header:
+      type: object
+      description: The request header is used to pass additional information with an HTTP request. Currently supported header is 'Host'.
+      properties:
+        Host:
+          $ref: '#/components/schemas/load-balancing_Host'
+    load-balancing_origin_steering:
+      type: object
+      description: Configures origin steering for the pool. Controls how origins are selected for new sessions and traffic without session affinity.
+      properties:
+        policy:
+          type: string
+          description: 'The type of origin steering policy to use.
+
+            - `"random"`: Select an origin randomly.
+
+            - `"hash"`: Select an origin by computing a hash over the CF-Connecting-IP address.
+
+            - `"least_outstanding_requests"`: Select an origin by taking into consideration origin weights, as well as each origin''s number of outstanding requests. Origins with more pending requests are weighted proportionately less relative to others.
+
+            - `"least_connections"`: Select an origin by taking into consideration origin weights, as well as each origin''s number of open connections. Origins with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.'
+          enum:
+          - random
+          - hash
+          - least_outstanding_requests
+          - least_connections
+          default: random
+    iam_result_info:
+      type: object
+      properties:
+        count:
+          type: number
+          description: Total number of results for the requested service
+          example: 1
+        page:
+          type: number
+          description: Current page within paginated list of results
+          example: 1
+        per_page:
+          type: number
+          description: Number of results per page of results
+          example: 20
+        total_count:
+          type: number
+          description: Total results available without any search parameters
+          example: 2000
+    bill-subs-api_name:
+      type: string
+      description: The domain name
+      example: example.com
+      readOnly: true
+      maxLength: 253
+      pattern: ^([a-zA-Z0-9][\-a-zA-Z0-9]*\.)+[\-a-zA-Z0-9]{2,20}$
+    iam_single_organization_response:
+      allOf:
+      - $ref: '#/components/schemas/iam_api-response-single'
+      - type: object
+        properties:
+          result:
+            type: object
+    iam_identifier:
+      type: string
+      description: Policy identifier.
+      example: f267e341f3dd4697bd3b9f71dd96247f
+      readOnly: true
+    bill-subs-api_currency:
+      type: string
+      description: The monetary unit in which pricing information is displayed.
+      example: USD
+      readOnly: true
+    legacy-jhs_asn_configuration:
+      title: An ASN configuration.
+      properties:
+        target:
+          description: The configuration target. You must set the target to `asn` when specifying an Autonomous System Number (ASN) in the rule.
+          enum:
+          - asn
+          example: asn
+        value:
+          type: string
+          description: The AS number to match.
+          example: AS12345
+    iam_api-response-single:
+      allOf:
+      - $ref: '#/components/schemas/iam_api-response-common'
+      - properties:
+          result:
+            anyOf:
+            - type: object
+              nullable: true
+            - type: string
+              nullable: true
+      type: object
+    bill-subs-api_price:
+      type: number
+      description: The price of the subscription that will be billed, in US dollars.
+      example: 20
+      readOnly: true
+    iam_first_name:
+      type: string
+      description: User's first name
+      example: John
+      nullable: true
+      maxLength: 60
+    legacy-jhs_api-response-single:
+      allOf:
+      - $ref: '#/components/schemas/legacy-jhs_api-response-common'
+      - properties:
+          result:
+            anyOf:
+            - type: object
+            - type: string
+            nullable: true
+      type: object
+    iam_issued_on:
+      type: string
+      format: date-time
+      description: The time on which the token was created.
+      example: '2018-07-01T05:20:00Z'
+      readOnly: true
+    iam_invited_member_email:
+      type: string
+      description: Email address of the user to add to the organization.
+      example: user@example.com
+      maxLength: 90
+    load-balancing_origins:
+      type: array
+      description: The list of origins within this pool. Traffic directed at this pool is balanced across all currently healthy origins, provided the pool itself is healthy.
+      items:
+        $ref: '#/components/schemas/load-balancing_origin'
+    bill-subs-api_current_period_start:
+      type: string
+      format: date-time
+      description: When the current billing period started. May match initial_period_start if this is the first period.
+      example: '2014-05-11T12:20:00Z'
+      readOnly: true
+    iam_response_single_value:
+      allOf:
+      - $ref: '#/components/schemas/iam_api-response-single'
+      - type: object
+        properties:
+          result:
+            $ref: '#/components/schemas/iam_value'
+    load-balancing_api-response-collection:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_api-response-common'
+      - properties:
+          result:
+            type: array
+            nullable: true
+            items: {}
+          result_info:
+            $ref: '#/components/schemas/load-balancing_result_info'
+      type: object
+    bill-subs-api_messages:
+      type: array
+      example: []
+      items:
+        type: object
+        uniqueItems: true
+        required:
+        - code
+        - message
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          message:
+            type: string
+    bill-subs-api_identifier:
+      type: string
+      description: Identifier
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      readOnly: true
+      maxLength: 32
+    iam_not_before:
+      type: string
+      format: date-time
+      description: The time before which the token MUST NOT be accepted for processing.
+      example: '2018-07-01T05:20:00Z'
+    load-balancing_probe_zone:
+      type: string
+      description: Assign this monitor to emulate the specified zone while probing. This parameter is only valid for HTTP and HTTPS monitors.
+      example: example.com
+    load-balancing_analytics:
+      type: object
+      properties:
+        id:
+          type: integer
+          default: 1
+        origins:
+          type: array
+          example:
+          - address: 198.51.100.4
+            changed: true
+            enabled: true
+            failure_reason: No failures
+            healthy: true
+            ip: 198.51.100.4
+            name: some-origin
+          items: {}
+        pool:
+          type: object
+          example:
+            changed: true
+            healthy: true
+            id: 74bc6a8b9b0dda3d651707a2928bad0c
+            minimum_origins: 1
+            name: some-pool
+        timestamp:
+          type: string
+          format: date-time
+          example: '2014-01-01T05:20:00.12345Z'
+    bill-subs-api_api-response-single:
+      allOf:
+      - $ref: '#/components/schemas/bill-subs-api_api-response-common'
+      - properties:
+          result:
+            anyOf:
+            - type: object
+              nullable: true
+            - type: string
+              nullable: true
+      type: object
+    load-balancing_pool_name:
+      type: string
+      description: The name for the pool to filter.
+      example: primary-dc
+    bill-subs-api_frequency:
+      type: string
+      description: How often the subscription is renewed automatically.
+      enum:
+      - weekly
+      - monthly
+      - quarterly
+      - yearly
+      example: monthly
+    iam_token:
+      type: object
+      required:
+      - id
+      - name
+      - status
+      - policies
+      properties:
+        condition:
+          $ref: '#/components/schemas/iam_condition'
+        expires_on:
+          $ref: '#/components/schemas/iam_expires_on'
+        id:
+          $ref: '#/components/schemas/iam_components-schemas-identifier'
+        issued_on:
+          $ref: '#/components/schemas/iam_issued_on'
+        modified_on:
+          $ref: '#/components/schemas/iam_modified_on'
+        name:
+          $ref: '#/components/schemas/iam_name'
+        not_before:
+          $ref: '#/components/schemas/iam_not_before'
+        policies:
+          $ref: '#/components/schemas/iam_policies'
+        status:
+          $ref: '#/components/schemas/iam_status'
+    legacy-jhs_egs-pagination:
+      type: object
+      properties:
+        page:
+          type: number
+          description: The page number of paginated results.
+          default: 1
+          minimum: 1
+        per_page:
+          type: number
+          description: The maximum number of results per page. You can only set the value to `1` or to a multiple of 5 such as `5`, `10`, `15`, or `20`.
+          default: 20
+          minimum: 1
+          maximum: 1000
+    load-balancing_preview_response:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_api-response-single'
+      - properties:
+          result:
+            type: object
+            properties:
+              pools:
+                type: object
+                description: Monitored pool IDs mapped to their respective names.
+                example:
+                  abwlnp5jbqn45ecgxd03erbgtxtqai0d: WNAM Datacenter
+                  ve8h9lrcip5n5bbga9yqmdws28ay5d0l: EEU Datacenter
+              preview_id:
+                $ref: '#/components/schemas/load-balancing_identifier'
+    aaa_audit_logs_response_collection:
+      oneOf:
+      - properties:
+          errors:
+            type: object
+            nullable: true
+          messages:
+            type: array
+            example: []
+            items: {}
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/aaa_audit-logs'
+          success:
+            type: boolean
+            example: true
+      - $ref: '#/components/schemas/aaa_api-response-common'
+    iam_value:
+      type: string
+      description: The token value.
+      example: 8M7wS6hCpXVc-DoRnPPY_UCWPgy8aea4Wy6kCe5T
+      readOnly: true
+      minLength: 40
+      maxLength: 80
+    aaa_api-response-common:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          $ref: '#/components/schemas/aaa_messages'
+        messages:
+          $ref: '#/components/schemas/aaa_messages'
+        result:
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+          - type: string
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - true
+          example: true
+    iam_expires_on:
+      type: string
+      format: date-time
+      description: The expiration time on or after which the JWT MUST NOT be accepted for processing.
+      example: '2020-01-01T00:00:00Z'
+    aaa_messages:
+      type: array
+      example: []
+      items:
+        type: object
+        uniqueItems: true
+        required:
+        - code
+        - message
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          message:
+            type: string
+    iam_organization:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/iam_common_components-schemas-identifier'
+        name:
+          $ref: '#/components/schemas/iam_schemas-name'
+        permissions:
+          $ref: '#/components/schemas/iam_schemas-permissions'
+        roles:
+          type: array
+          description: List of roles that a user has within an organization.
+          readOnly: true
+          items:
+            type: string
+            example: All Privileges - Super Administrator
+            maxLength: 120
+        status:
+          $ref: '#/components/schemas/iam_components-schemas-status'
+    iam_cidr_list:
+      type: array
+      description: List of IPv4/IPv6 CIDR addresses.
+      example:
+      - 199.27.128.0/21
+      - 2400:cb00::/32
+      items:
+        type: string
+        description: IPv4/IPv6 CIDR.
+        example: 199.27.128.0/21
+    bill-subs-api_components-schemas-identifier:
+      type: string
+      description: Billing item identifier tag.
+      example: b69a9f3492637782896352daae219e7d
+      readOnly: true
+      maxLength: 32
+    iam_access-policy:
+      oneOf:
+      - $ref: '#/components/schemas/iam_policy_with_permission_groups'
+      type: object
+    load-balancing_Host:
+      type: array
+      description: The 'Host' header allows to override the hostname set in the HTTP request. Current support is 1 'Host' header override per origin.
+      items:
+        type: string
+        example: example.com
+    bill-subs-api_occurred_at:
+      type: string
+      format: date-time
+      description: When the billing item was created.
+      example: '2014-03-01T12:21:59.3456Z'
+      readOnly: true
+    bill-subs-api_component_values:
+      type: array
+      description: The list of add-ons subscribed to.
+      items:
+        $ref: '#/components/schemas/bill-subs-api_component_value'
+    load-balancing_header:
+      type: object
+      description: The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors.
+      example:
+        Host:
+        - example.com
+        X-App-ID:
+        - abc123
+    load-balancing_api-response-common-failure:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          allOf:
+          - $ref: '#/components/schemas/load-balancing_messages'
+          example:
+          - code: 7003
+            message: No route for the URI
+          minLength: 1
+        messages:
+          allOf:
+          - $ref: '#/components/schemas/load-balancing_messages'
+          example: []
+        result:
+          type: object
+          enum:
+          - null
+          nullable: true
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - false
+          example: false
+    load-balancing_disabled_at:
+      type: string
+      format: date-time
+      description: This field shows up only if the origin is disabled. This field is set with the time the origin was disabled.
+      readOnly: true
+    load-balancing_consecutive_up:
+      type: integer
+      description: To be marked healthy the monitored origin must pass this healthcheck N consecutive times.
+      default: 0
+    iam_last_name:
+      type: string
+      description: User's last name
+      example: Appleseed
+      nullable: true
+      maxLength: 60
+    aaa_identifier:
+      type: string
+      description: Identifier
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      readOnly: true
+      maxLength: 32
+    iam_zipcode:
+      type: string
+      description: The zipcode or postal code where the user lives.
+      example: '12345'
+      nullable: true
+      maxLength: 20
+    iam_name:
+      type: string
+      description: Token name.
+      example: readonly token
+      maxLength: 120
+    bill-subs-api_result_info:
+      type: object
+      properties:
+        count:
+          type: number
+          description: Total number of results for the requested service
+          example: 1
+        page:
+          type: number
+          description: Current page within paginated list of results
+          example: 1
+        per_page:
+          type: number
+          description: Number of results per page of results
+          example: 20
+        total_count:
+          type: number
+          description: Total results available without any search parameters
+          example: 2000
+    bill-subs-api_user_subscription_response_single:
+      allOf:
+      - $ref: '#/components/schemas/bill-subs-api_api-response-single'
+      - type: object
+        properties:
+          result:
+            type: object
+    bill-subs-api_api-response-common-failure:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          allOf:
+          - $ref: '#/components/schemas/bill-subs-api_messages'
+          example:
+          - code: 7003
+            message: No route for the URI
+          minLength: 1
+        messages:
+          allOf:
+          - $ref: '#/components/schemas/bill-subs-api_messages'
+          example: []
+        result:
+          type: object
+          enum:
+          - null
+          nullable: true
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - false
+          example: false
+    legacy-jhs_cidr_configuration:
+      title: An IP address range configuration.
+      properties:
+        target:
+          description: The configuration target. You must set the target to `ip_range` when specifying an IP address range in the rule.
+          enum:
+          - ip_range
+          example: ip_range
+        value:
+          type: string
+          description: The IP address range to match. You can only use prefix lengths `/16` and `/24` for IPv4 ranges, and prefix lengths `/32`, `/48`, and `/64` for IPv6 ranges.
+          example: 198.51.100.4/16
+    load-balancing_patch_pools_notification_email:
+      type: string
+      description: The email address to send health status notifications to. This field is now deprecated in favor of Cloudflare Notifications for Load Balancing, so only resetting this field with an empty string `""` is accepted.
+      enum:
+      - '""'
+      example: '""'
+    legacy-jhs_ipv6_configuration:
+      title: An IPv6 address configuration.
+      properties:
+        target:
+          description: The configuration target. You must set the target to `ip6` when specifying an IPv6 address in the rule.
+          enum:
+          - ip6
+          example: ip6
+        value:
+          type: string
+          description: The IPv6 address to match.
+          example: 2001:DB8:100::CF
+    iam_api-response-common:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          $ref: '#/components/schemas/iam_messages'
+        messages:
+          $ref: '#/components/schemas/iam_messages'
+        result:
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+          - type: string
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - true
+          example: true
+    iam_policies:
+      type: array
+      description: List of access policies assigned to the token.
+      items:
+        $ref: '#/components/schemas/iam_access-policy'
+    bill-subs-api_type:
+      type: string
+      description: The billing item type.
+      example: charge
+      readOnly: true
+      maxLength: 30
+    legacy-jhs_result_info:
+      type: object
+      properties:
+        count:
+          type: number
+          description: Total number of results for the requested service
+          example: 1
+        page:
+          type: number
+          description: Current page within paginated list of results
+          example: 1
+        per_page:
+          type: number
+          description: Number of results per page of results
+          example: 20
+        total_count:
+          type: number
+          description: Total results available without any search parameters
+          example: 2000
+    load-balancing_timestamp:
+      type: string
+      format: date-time
+      example: '2014-01-01T05:20:00.12345Z'
+      readOnly: true
+    load-balancing_follow_redirects:
+      type: boolean
+      description: Follow redirects if returned by the origin. This parameter is only valid for HTTP and HTTPS monitors.
+      default: false
+      example: true
+    bill-subs-api_api-response-collection:
+      allOf:
+      - $ref: '#/components/schemas/bill-subs-api_api-response-common'
+      - properties:
+          result:
+            type: array
+            nullable: true
+            items: {}
+          result_info:
+            $ref: '#/components/schemas/bill-subs-api_result_info'
+      type: object
+    load-balancing_method:
+      type: string
+      description: The method to use for the health check. This defaults to 'GET' for HTTP/HTTPS based checks and 'connection_established' for TCP based health checks.
+      default: GET
+      example: GET
+    legacy-jhs_rule_single_response:
+      allOf:
+      - $ref: '#/components/schemas/legacy-jhs_api-response-single'
+      - properties:
+          result:
+            $ref: '#/components/schemas/legacy-jhs_rule'
+    iam_schemas-permissions:
+      type: array
+      description: Access permissions for this User.
+      readOnly: true
+      items:
+        type: string
+        example: '#zones:read'
+        maxLength: 160
+    load-balancing_monitor:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_monitor-editable'
+      - type: object
+        properties:
+          created_on:
+            $ref: '#/components/schemas/load-balancing_timestamp'
+          id:
+            $ref: '#/components/schemas/load-balancing_identifier'
+          modified_on:
+            $ref: '#/components/schemas/load-balancing_timestamp'
+    bill-subs-api_description:
+      type: string
+      description: The billing item description.
+      example: The billing item description
+      readOnly: true
+      maxLength: 255
+    load-balancing_messages:
+      type: array
+      example: []
+      items:
+        type: object
+        uniqueItems: true
+        required:
+        - code
+        - message
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          message:
+            type: string
+    bill-subs-api_billing_history_collection:
+      allOf:
+      - $ref: '#/components/schemas/bill-subs-api_api-response-collection'
+      - properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/bill-subs-api_billing-history'
+    iam_role_components-schemas-identifier:
+      type: string
+      description: Role identifier tag.
+      example: 3536bcfad5faccb999b47003c79917fb
+      maxLength: 32
+    load-balancing_origin:
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/load-balancing_address'
+        disabled_at:
+          $ref: '#/components/schemas/load-balancing_disabled_at'
+        enabled:
+          $ref: '#/components/schemas/load-balancing_schemas-enabled'
+        header:
+          $ref: '#/components/schemas/load-balancing_schemas-header'
+        name:
+          $ref: '#/components/schemas/load-balancing_schemas-name'
+        virtual_network_id:
+          $ref: '#/components/schemas/load-balancing_virtual_network_id'
+        weight:
+          $ref: '#/components/schemas/load-balancing_weight'
+    legacy-jhs_rule_components-schemas-identifier:
+      type: string
+      description: The unique identifier of the IP Access rule.
+      example: 92f17202ed8bd63d69a66b86a49a8f6b
+      readOnly: true
+      maxLength: 32
+    load-balancing_consecutive_down:
+      type: integer
+      description: To be marked unhealthy the monitored origin must fail this healthcheck N consecutive times.
+      default: 0
+    legacy-jhs_schemas-mode:
+      type: string
+      description: The action to apply to a matched request.
+      enum:
+      - block
+      - challenge
+      - whitelist
+      - js_challenge
+      - managed_challenge
+      example: challenge
+    bill-subs-api_action:
+      type: string
+      description: The billing item action.
+      example: subscription
+      readOnly: true
+      maxLength: 30
+    iam_api-response-collection:
+      allOf:
+      - $ref: '#/components/schemas/iam_api-response-common'
+      - properties:
+          result:
+            type: array
+            nullable: true
+            items: {}
+          result_info:
+            $ref: '#/components/schemas/iam_result_info'
+      type: object
+    iam_schemas-identifier: {}
+    legacy-jhs_ip_configuration:
+      title: An IP address configuration.
+      properties:
+        target:
+          description: The configuration target. You must set the target to `ip` when specifying an IP address in the rule.
+          enum:
+          - ip
+          example: ip
+        value:
+          type: string
+          description: The IP address to match. This address will be compared to the IP address of incoming requests.
+          example: 198.51.100.4
+    load-balancing_components-schemas-response_collection:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_api-response-collection'
+      - properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/load-balancing_analytics'
+    iam_base:
+      type: object
+      required:
+      - invited_member_id
+      - organization_id
+      properties:
+        expires_on:
+          $ref: '#/components/schemas/iam_schemas-expires_on'
+        id:
+          $ref: '#/components/schemas/iam_invite_components-schemas-identifier'
+        invited_by:
+          $ref: '#/components/schemas/iam_invited_by'
+        invited_member_email:
+          $ref: '#/components/schemas/iam_invited_member_email'
+        invited_member_id:
+          type: string
+          description: ID of the user to add to the organization.
+          example: 5a7805061c76ada191ed06f989cc3dac
+          nullable: true
+          readOnly: true
+          maxLength: 32
+        invited_on:
+          $ref: '#/components/schemas/iam_invited_on'
+        organization_id:
+          type: string
+          description: ID of the organization the user will be added to.
+          example: 5a7805061c76ada191ed06f989cc3dac
+          readOnly: true
+          maxLength: 32
+        organization_name:
+          type: string
+          description: Organization name.
+          example: Cloudflare, Inc.
+          readOnly: true
+          maxLength: 100
+        roles:
+          type: array
+          description: Roles to be assigned to this user.
+          items:
+            $ref: '#/components/schemas/iam_schemas-role'
+    load-balancing_id_response:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_api-response-single'
+      - properties:
+          result:
+            type: object
+            properties:
+              id:
+                $ref: '#/components/schemas/load-balancing_identifier'
+    iam_invited_on:
+      type: string
+      format: date-time
+      description: When the invite was sent.
+      example: '2014-01-01T05:20:00Z'
+      readOnly: true
+    legacy-jhs_notes:
+      type: string
+      description: An informative summary of the rule, typically used as a reminder or explanation.
+      example: This rule is enabled because of an event that occurred on date X.
+    load-balancing_schemas-name:
+      type: string
+      description: A human-identifiable name for the origin.
+      example: app-server-1
+    iam_components-schemas-identifier:
+      type: string
+      description: Token identifier tag.
+      example: ed17574386854bf78a67040be0a770b0
+      readOnly: true
+      maxLength: 32
+    bill-subs-api_user_subscription_response_collection:
+      allOf:
+      - $ref: '#/components/schemas/bill-subs-api_api-response-collection'
+      - type: object
+        properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/bill-subs-api_subscription'
+    bill-subs-api_api-response-common:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          $ref: '#/components/schemas/bill-subs-api_messages'
+        messages:
+          $ref: '#/components/schemas/bill-subs-api_messages'
+        result:
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+          - type: string
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - true
+          example: true
+    load-balancing_identifier:
+      type: string
+      example: f1aba936b94213e5b8dca0c0dbf1f9cc
+    legacy-jhs_api-response-common-failure:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          allOf:
+          - $ref: '#/components/schemas/legacy-jhs_messages'
+          example:
+          - code: 7003
+            message: No route for the URI
+          minLength: 1
+        messages:
+          allOf:
+          - $ref: '#/components/schemas/legacy-jhs_messages'
+          example: []
+        result:
+          type: object
+          enum:
+          - null
+          nullable: true
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - false
+          example: false
+    load-balancing_schemas-references_response:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_api-response-collection'
+      - properties:
+          result:
+            type: array
+            description: List of resources that reference a given pool.
+            example:
+            - reference_type: referrer
+              resource_id: 699d98642c564d2e855e9661899b7252
+              resource_name: www.example.com
+              resource_type: load_balancer
+            - reference_type: referral
+              resource_id: f1aba936b94213e5b8dca0c0dbf1f9cc
+              resource_name: Login page monitor
+              resource_type: monitor
+            items:
+              type: object
+              properties:
+                reference_type:
+                  type: string
+                  enum:
+                  - '*'
+                  - referral
+                  - referrer
+                resource_id:
+                  type: string
+                resource_name:
+                  type: string
+                resource_type:
+                  type: string
+    iam_api-response-common-failure:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          allOf:
+          - $ref: '#/components/schemas/iam_messages'
+          example:
+          - code: 7003
+            message: No route for the URI
+          minLength: 1
+        messages:
+          allOf:
+          - $ref: '#/components/schemas/iam_messages'
+          example: []
+        result:
+          type: object
+          enum:
+          - null
+          nullable: true
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - false
+          example: false
+    load-balancing_weight:
+      type: number
+      description: 'The weight of this origin relative to other origins in the pool. Based on the configured weight the total traffic is distributed among origins within the pool.
+
+        - `origin_steering.policy="least_outstanding_requests"`: Use weight to scale the origin''s outstanding requests.
+
+        - `origin_steering.policy="least_connections"`: Use weight to scale the origin''s open connections.'
+      default: 1
+      example: 0.6
+      minimum: 0
+      maximum: 1
+      multipleOf: 0.01
+    load-balancing_preview_result_response:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_api-response-single'
+      - properties:
+          result:
+            $ref: '#/components/schemas/load-balancing_preview_result'
+    load-balancing_schemas-identifier:
+      type: string
+      example: 17b5962d775c646f3f9725cbc7a53df4
+    load-balancing_virtual_network_id:
+      type: string
+      description: The virtual network subnet ID the origin belongs in. Virtual network must also belong to the account.
+      example: a5624d4e-044a-4ff0-b3e1-e2465353d4b4
+    bill-subs-api_billing-history:
+      type: object
+      required:
+      - id
+      - type
+      - action
+      - description
+      - occurred_at
+      - amount
+      - currency
+      - zone
+      properties:
+        action:
+          $ref: '#/components/schemas/bill-subs-api_action'
+        amount:
+          $ref: '#/components/schemas/bill-subs-api_amount'
+        currency:
+          $ref: '#/components/schemas/bill-subs-api_currency'
+        description:
+          $ref: '#/components/schemas/bill-subs-api_description'
+        id:
+          $ref: '#/components/schemas/bill-subs-api_components-schemas-identifier'
+        occurred_at:
+          $ref: '#/components/schemas/bill-subs-api_occurred_at'
+        type:
+          $ref: '#/components/schemas/bill-subs-api_type'
+        zone:
+          $ref: '#/components/schemas/bill-subs-api_schemas-zone'
+    load-balancing_timeout:
+      type: integer
+      description: The timeout (in seconds) before marking the health check as failed.
+      default: 5
+    load-balancing_monitor_id:
+      description: The ID of the Monitor to use for checking the health of origins within this pool.
+    load-balancing_enabled:
+      type: boolean
+      description: Whether to enable (the default) or disable this pool. Disabled pools will not receive traffic and are excluded from health checks. Disabling a pool will cause any load balancers using it to failover to the next pool (if any).
+      default: true
+      example: false
+    load-balancing_longitude:
+      type: number
+      description: The longitude of the data center containing the origins used in this pool in decimal degrees. If this is set, latitude must also be set.
+    load-balancing_schemas-id_response:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_api-response-single'
+      - properties:
+          result:
+            type: object
+            properties:
+              id:
+                $ref: '#/components/schemas/load-balancing_schemas-identifier'
+    bill-subs-api_billing_response_single:
+      allOf:
+      - $ref: '#/components/schemas/bill-subs-api_api-response-single'
+      - type: object
+        properties:
+          result:
+            type: object
+    bill-subs-api_zone:
+      type: object
+      description: A simple zone object. May have null properties if not a zone subscription.
+      properties:
+        id:
+          $ref: '#/components/schemas/bill-subs-api_identifier'
+        name:
+          $ref: '#/components/schemas/bill-subs-api_name'
+    load-balancing_schemas-single_response:
+      allOf:
+      - $ref: '#/components/schemas/load-balancing_api-response-single'
+      - properties:
+          result:
+            $ref: '#/components/schemas/load-balancing_pool'
+    iam_response_create:
+      allOf:
+      - $ref: '#/components/schemas/iam_api-response-single'
+      - type: object
+        properties:
+          result:
+            allOf:
+            - type: object
+            - type: object
+              properties:
+                value:
+                  $ref: '#/components/schemas/iam_value'
+    load-balancing_result_info:
+      type: object
+      properties:
+        count:
+          type: number
+          description: Total number of results for the requested service
+          example: 1
+        page:
+          type: number
+          description: Current page within paginated list of results
+          example: 1
+        per_page:
+          type: number
+          description: Number of results per page of results
+          example: 20
+        total_count:
+          type: number
+          description: Total results available without any search parameters
+          example: 2000
+    bill-subs-api_schemas-identifier:
+      type: string
+      description: Subscription identifier tag.
+      example: 506e3185e9c882d175a2d0cb0093d9f2
+      readOnly: true
+      maxLength: 32
+    load-balancing_schemas-description:
+      type: string
+      description: A human-readable description of the pool.
+      example: Primary data center - Provider XYZ
+    bill-subs-api_schemas-zone:
+      type: object
+      properties:
+        name:
+          readOnly: true
+    iam_schemas-expires_on:
+      type: string
+      format: date-time
+      description: When the invite is no longer active.
+      example: '2014-01-01T05:20:00Z'
+      readOnly: true
+    iam_resources:
+      type: object
+      description: A list of resource names that the policy applies to.
+      example:
+        com.cloudflare.api.account.zone.22b1de5f1c0e4b3ea97bb1e963b06a43: '*'
+        com.cloudflare.api.account.zone.eb78d65290b24279ba6f44721b3ea3c4: '*'
+    iam_schemas-role:
+      type: object
+      required:
+      - id
+      - name
+      - description
+      - permissions
+      properties:
+        description:
+          $ref: '#/components/schemas/iam_description'
+        id:
+          $ref: '#/components/schemas/iam_role_components-schemas-identifier'
+        name:
+          $ref: '#/components/schemas/iam_components-schemas-name'
+        permissions:
+          $ref: '#/components/schemas/iam_schemas-permissions'
+    iam_messages:
+      type: array
+      example: []
+      items:
+        type: object
+        uniqueItems: true
+        required:
+        - code
+        - message
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          message:
+            type: string
+    bill-subs-api_install_id:
+      type: string
+      description: app install id.
+    iam_status:
+      type: string
+      description: Status of the token.
+      enum:
+      - active
+      - disabled
+      - expired
+      example: active
+    iam_policy_with_permission_groups:
+      title: policy_with_permission_groups
+      required:
+      - id
+      - effect
+      - resources
+      - permission_groups
+      properties:
+        effect:
+          $ref: '#/components/schemas/iam_effect'
+        id:
+          $ref: '#/components/schemas/iam_identifier'
+        permission_groups:
+          $ref: '#/components/schemas/iam_permission_groups'
+        resources:
+          $ref: '#/components/schemas/iam_resources'
+    aaa_api-response-common-failure:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          allOf:
+          - $ref: '#/components/schemas/aaa_messages'
+          example:
+          - code: 7003
+            message: No route for the URI
+          minLength: 1
+        messages:
+          allOf:
+          - $ref: '#/components/schemas/aaa_messages'
+          example: []
+        result:
+          type: object
+          enum:
+          - null
+          nullable: true
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - false
+          example: false
+    load-balancing_minimum_origins:
+      type: integer
+      description: The minimum number of origins that must be healthy for this pool to serve traffic. If the number of healthy origins falls below this number, the pool will be marked unhealthy and will failover to the next available pool.
+      default: 1
+    bill-subs-api_subscription-v2:
+      type: object
+      properties:
+        app:
+          properties:
+            install_id:
+              $ref: '#/components/schemas/bill-subs-api_install_id'
+        component_values:
+          $ref: '#/components/schemas/bill-subs-api_component_values'
+        currency:
+          $ref: '#/components/schemas/bill-subs-api_currency'
+        current_period_end:
+          $ref: '#/components/schemas/bill-subs-api_current_period_end'
+        current_period_start:
+          $ref: '#/components/schemas/bill-subs-api_current_period_start'
+        frequency:
+          $ref: '#/components/schemas/bill-subs-api_frequency'
+        id:
+          $ref: '#/components/schemas/bill-subs-api_schemas-identifier'
+        price:
+          $ref: '#/components/schemas/bill-subs-api_price'
+        rate_plan:
+          $ref: '#/components/schemas/bill-subs-api_rate_plan'
+        state:
+          $ref: '#/components/schemas/bill-subs-api_state'
+        zone:
+          $ref: '#/components/schemas/bill-subs-api_zone'
+    iam_response_single:
+      allOf:
+      - $ref: '#/components/schemas/iam_api-response-single'
+      - type: object
+        properties:
+          result:
+            type: object
+    iam_schemas-collection_invite_response:
+      allOf:
+      - $ref: '#/components/schemas/iam_api-response-collection'
+      - type: object
+        properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/iam_schemas-invite'

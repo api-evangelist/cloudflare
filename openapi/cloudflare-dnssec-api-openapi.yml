@@ -1,0 +1,97 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts DNSSEC API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: DNSSEC
+  description: Manage DNSSEC settings for a zone to protect against DNS spoofing.
+paths:
+  /zones/{zone_id}/dnssec:
+    get:
+      operationId: getDnssecSettings
+      summary: Cloudflare Get Dnssec Settings
+      description: Retrieve the current DNSSEC settings for the zone including status, algorithm, digest, and DS record details.
+      tags:
+      - DNSSEC
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      responses:
+        '200':
+          description: DNSSEC settings retrieved successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    patch:
+      operationId: updateDnssecSettings
+      summary: Cloudflare Update Dnssec Settings
+      description: Update DNSSEC configuration for the zone such as enabling or disabling DNSSEC.
+      tags:
+      - DNSSEC
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                  - active
+                  - disabled
+                  description: Desired DNSSEC status.
+            examples:
+              UpdatednssecsettingsRequestExample:
+                summary: Default updateDnssecSettings request
+                x-microcks-default: true
+                value:
+                  status: active
+      responses:
+        '200':
+          description: DNSSEC settings updated successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    delete:
+      operationId: deleteDnssecSettings
+      summary: Cloudflare Delete Dnssec Settings
+      description: Remove DNSSEC configuration from the zone.
+      tags:
+      - DNSSEC
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      responses:
+        '200':
+          description: DNSSEC settings deleted successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    ZoneId:
+      name: zone_id
+      in: path
+      required: true
+      description: The unique identifier of the zone.
+      schema:
+        type: string

@@ -1,0 +1,155 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Scripts API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Scripts
+  description: Upload, download, and manage Worker scripts by name.
+paths:
+  /accounts/{account_id}/workers/scripts:
+    get:
+      operationId: listScripts
+      summary: Cloudflare List Worker Scripts
+      description: Retrieve a list of all Worker scripts for the account.
+      tags:
+      - Scripts
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: List of Worker scripts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScriptListResponse'
+              examples:
+                Listscripts200Example:
+                  summary: Default listScripts 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      tag: example_value
+                      etag: example_value
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/workers/scripts/{script_name}:
+    get:
+      operationId: downloadScript
+      summary: Cloudflare Download Worker Script
+      description: Download a Worker script by name. Returns the script content.
+      tags:
+      - Scripts
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Worker script content.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Script not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    put:
+      operationId: uploadScript
+      summary: Cloudflare Upload Worker Script
+      description: Upload or update a Worker script by name using multipart form data or JSON with base64-encoded content.
+      tags:
+      - Scripts
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Script uploaded successfully.
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    delete:
+      operationId: deleteScript
+      summary: Cloudflare Delete Worker Script
+      description: Delete a Worker script by name.
+      tags:
+      - Scripts
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Script deleted successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Script not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    ScriptName:
+      name: script_name
+      in: path
+      required: true
+      description: The name of the Worker script.
+      schema:
+        type: string
+  schemas:
+    ScriptListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: The script identifier.
+              tag:
+                type: string
+                description: The unique tag for the script.
+              etag:
+                type: string
+                description: The ETag of the script.
+              created_on:
+                type: string
+                format: date-time
+              modified_on:
+                type: string
+                format: date-time
+          example: []
+        success:
+          type: boolean
+          example: true

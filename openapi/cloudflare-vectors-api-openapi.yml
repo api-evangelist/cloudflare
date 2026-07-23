@@ -1,0 +1,284 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Vectors API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Vectors
+  description: Insert, upsert, query, get, and delete vectors within an index.
+paths:
+  /accounts/{account_id}/vectorize/v2/indexes/{index_name}/insert:
+    post:
+      operationId: insertVectors
+      summary: Cloudflare Insert Vectors
+      description: Insert new vectors into the index. If a vector with the same ID already exists, the request will fail.
+      tags:
+      - Vectors
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/IndexName'
+      requestBody:
+        required: true
+        content:
+          application/x-ndjson:
+            schema:
+              type: string
+              description: Newline-delimited JSON vectors.
+            examples:
+              InsertvectorsRequestExample:
+                summary: Default insertVectors request
+                x-microcks-default: true
+                value: example_value
+      responses:
+        '200':
+          description: Vectors inserted successfully.
+        '400':
+          description: Bad request or duplicate IDs.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/vectorize/v2/indexes/{index_name}/upsert:
+    post:
+      operationId: upsertVectors
+      summary: Cloudflare Upsert Vectors
+      description: Insert or update vectors in the index. If a vector with the same ID exists, it will be replaced.
+      tags:
+      - Vectors
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/IndexName'
+      requestBody:
+        required: true
+        content:
+          application/x-ndjson:
+            schema:
+              type: string
+              description: Newline-delimited JSON vectors.
+            examples:
+              UpsertvectorsRequestExample:
+                summary: Default upsertVectors request
+                x-microcks-default: true
+                value: example_value
+      responses:
+        '200':
+          description: Vectors upserted successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/vectorize/v2/indexes/{index_name}/query:
+    post:
+      operationId: queryVectors
+      summary: Cloudflare Query Vectors
+      description: Perform a similarity search against the index. Returns the nearest vectors to the provided query vector.
+      tags:
+      - Vectors
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/IndexName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - vector
+              properties:
+                vector:
+                  type: array
+                  items:
+                    type: number
+                  description: The query vector.
+                topK:
+                  type: integer
+                  description: Number of nearest neighbors to return.
+                  default: 10
+                returnValues:
+                  type: boolean
+                  description: Whether to return vector values.
+                returnMetadata:
+                  type: string
+                  description: Whether to return vector metadata.
+                  enum:
+                  - none
+                  - indexed
+                  - all
+                filter:
+                  type: object
+                  description: Metadata filter for the query.
+            examples:
+              QueryvectorsRequestExample:
+                summary: Default queryVectors request
+                x-microcks-default: true
+                value:
+                  vector:
+                  - 42.5
+                  topK: 10
+                  returnValues: true
+                  returnMetadata: none
+                  filter: example_value
+      responses:
+        '200':
+          description: Query results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+              examples:
+                Queryvectors200Example:
+                  summary: Default queryVectors 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      count: 10
+                      matches:
+                      - id: abc123
+                        score: 42.5
+                        values: {}
+                        metadata: example_value
+                    success: true
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/vectorize/v2/indexes/{index_name}/get_by_ids:
+    post:
+      operationId: getVectorsByIds
+      summary: Cloudflare Get Vectors by Ids
+      description: Retrieve specific vectors by their IDs.
+      tags:
+      - Vectors
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/IndexName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - ids
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Vector IDs to retrieve.
+            examples:
+              GetvectorsbyidsRequestExample:
+                summary: Default getVectorsByIds request
+                x-microcks-default: true
+                value:
+                  ids:
+                  - example_value
+      responses:
+        '200':
+          description: Vectors retrieved.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/vectorize/v2/indexes/{index_name}/delete_by_ids:
+    post:
+      operationId: deleteVectorsByIds
+      summary: Cloudflare Delete Vectors by Ids
+      description: Delete specific vectors from the index by their IDs.
+      tags:
+      - Vectors
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/IndexName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - ids
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Vector IDs to delete.
+            examples:
+              DeletevectorsbyidsRequestExample:
+                summary: Default deleteVectorsByIds request
+                x-microcks-default: true
+                value:
+                  ids:
+                  - example_value
+      responses:
+        '200':
+          description: Vectors deleted.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    IndexName:
+      name: index_name
+      in: path
+      required: true
+      description: The name of the Vectorize index.
+      schema:
+        type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+  schemas:
+    QueryResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            count:
+              type: integer
+              description: Number of results returned.
+            matches:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The vector ID.
+                  score:
+                    type: number
+                    description: Similarity score.
+                  values:
+                    type: array
+                    items:
+                      type: number
+                  metadata:
+                    type: object
+          example: example_value
+        success:
+          type: boolean
+          example: true

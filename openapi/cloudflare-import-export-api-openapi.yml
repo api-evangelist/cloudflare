@@ -1,0 +1,72 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Import/Export API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Import/Export
+  description: Import SQL into and export SQL from D1 databases.
+paths:
+  /accounts/{account_id}/d1/database/{database_id}/export:
+    post:
+      operationId: exportD1Database
+      summary: Cloudflare Export D1 Database
+      description: Export the database contents as SQL. Returns a URL for downloading the SQL dump.
+      tags:
+      - Import/Export
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/DatabaseId'
+      responses:
+        '200':
+          description: Export initiated successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/d1/database/{database_id}/import:
+    post:
+      operationId: importD1Database
+      summary: Cloudflare Import Sql Into D1 Database
+      description: Import SQL into the database. Returns a temporary upload URL and import status.
+      tags:
+      - Import/Export
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/DatabaseId'
+      responses:
+        '200':
+          description: Import initiated successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    DatabaseId:
+      name: database_id
+      in: path
+      required: true
+      description: The unique identifier of the D1 database.
+      schema:
+        type: string

@@ -1,0 +1,72 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Logs API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Logs
+  description: Access request logs and analytics for AI Gateway traffic.
+paths:
+  /accounts/{account_id}/ai-gateway/gateways/{gateway_id}/logs:
+    get:
+      operationId: listAiGatewayLogs
+      summary: Cloudflare List Ai Gateway Logs
+      description: Retrieve request logs for an AI Gateway instance with filtering and pagination support.
+      tags:
+      - Logs
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/GatewayId'
+      - name: page
+        in: query
+        description: Page number for pagination.
+        schema:
+          type: integer
+        example: 10
+      - name: per_page
+        in: query
+        description: Number of log entries per page.
+        schema:
+          type: integer
+        example: 10
+      - name: search
+        in: query
+        description: Search query to filter logs.
+        schema:
+          type: string
+        example: example_value
+      responses:
+        '200':
+          description: List of gateway logs.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    GatewayId:
+      name: gateway_id
+      in: path
+      required: true
+      description: The unique identifier of the AI Gateway.
+      schema:
+        type: string

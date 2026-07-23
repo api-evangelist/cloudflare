@@ -1,0 +1,148 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Configuration API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Configuration
+  description: Configure bucket settings including CORS, lifecycle rules, and public access.
+paths:
+  /accounts/{account_id}/r2/buckets/{bucket_name}/configuration:
+    get:
+      operationId: getR2BucketConfiguration
+      summary: Cloudflare Get Bucket Configuration
+      description: Retrieve the configuration settings for an R2 bucket including CORS and lifecycle rules.
+      tags:
+      - Configuration
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/BucketName'
+      responses:
+        '200':
+          description: Bucket configuration.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    put:
+      operationId: updateR2BucketConfiguration
+      summary: Cloudflare Update Bucket Configuration
+      description: Update configuration settings for an R2 bucket.
+      tags:
+      - Configuration
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/BucketName'
+      responses:
+        '200':
+          description: Configuration updated.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/workers/scripts/{script_name}/schedules:
+    get:
+      operationId: getCronTriggers
+      summary: Cloudflare Get Cron Triggers
+      description: Retrieve the cron trigger schedules for a Worker script.
+      tags:
+      - Configuration
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Cron trigger schedules.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    put:
+      operationId: updateCronTriggers
+      summary: Cloudflare Update Cron Triggers
+      description: Set the cron trigger schedules for a Worker script.
+      tags:
+      - Configuration
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Cron triggers updated successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/workers/scripts/{script_name}/settings:
+    get:
+      operationId: getScriptSettings
+      summary: Cloudflare Get Script Settings
+      description: Retrieve configuration settings for a Worker script including bindings and compatibility settings.
+      tags:
+      - Configuration
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Script settings.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    patch:
+      operationId: updateScriptSettings
+      summary: Cloudflare Update Script Settings
+      description: Update configuration settings for a Worker script.
+      tags:
+      - Configuration
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/ScriptName'
+      responses:
+        '200':
+          description: Settings updated successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    ScriptName:
+      name: script_name
+      in: path
+      required: true
+      description: The name of the Worker script.
+      schema:
+        type: string
+    BucketName:
+      name: bucket_name
+      in: path
+      required: true
+      description: The name of the R2 bucket.
+      schema:
+        type: string

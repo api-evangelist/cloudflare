@@ -1,0 +1,62 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Domains API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Domains
+  description: Attach and detach custom domains to Worker scripts.
+paths:
+  /accounts/{account_id}/workers/domains:
+    get:
+      operationId: listDomains
+      summary: Cloudflare List Worker Domains
+      description: Retrieve all custom domains attached to Worker scripts.
+      tags:
+      - Domains
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: List of Worker domains.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    put:
+      operationId: attachDomain
+      summary: Cloudflare Attach Custom Domain
+      description: Attach a custom domain to a Worker script.
+      tags:
+      - Domains
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: Domain attached successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string

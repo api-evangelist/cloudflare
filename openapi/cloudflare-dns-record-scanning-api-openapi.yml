@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts DNS Record Scanning API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: DNS Record Scanning
+  description: Scan for common DNS records on a domain and review discovered records.
+paths:
+  /zones/{zone_id}/dns_records/scan/trigger:
+    post:
+      operationId: triggerDnsRecordScan
+      summary: Cloudflare Trigger Dns Record Scan
+      description: Initiate an asynchronous scan for common DNS records on the domain. The scan runs in the background and results can be reviewed using the scan review endpoints.
+      tags:
+      - DNS Record Scanning
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      responses:
+        '200':
+          description: Scan triggered successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /zones/{zone_id}/dns_records/scan/review:
+    get:
+      operationId: listScannedDnsRecords
+      summary: Cloudflare List Scanned Dns Records
+      description: Retrieve the DNS records discovered by the most recent scan for review before adding them to the zone.
+      tags:
+      - DNS Record Scanning
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      responses:
+        '200':
+          description: List of scanned DNS records.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    post:
+      operationId: reviewScannedDnsRecords
+      summary: Cloudflare Accept Scanned Dns Records
+      description: Review and accept scanned DNS records to add them to the zone.
+      tags:
+      - DNS Record Scanning
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      responses:
+        '200':
+          description: Scanned records accepted.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    ZoneId:
+      name: zone_id
+      in: path
+      required: true
+      description: The unique identifier of the zone.
+      schema:
+        type: string

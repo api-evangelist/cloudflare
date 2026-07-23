@@ -1,0 +1,104 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Ownership API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Ownership
+  description: Validate ownership of a log destination.
+paths:
+  /zones/{zone_id}/logpush/ownership:
+    post:
+      operationId: validateLogpushOwnership
+      summary: Cloudflare Validate Ownership
+      description: Validate ownership of a destination for Logpush by providing the ownership challenge token.
+      tags:
+      - Ownership
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - destination_conf
+              properties:
+                destination_conf:
+                  type: string
+                  description: The destination configuration string.
+            examples:
+              ValidatelogpushownershipRequestExample:
+                summary: Default validateLogpushOwnership request
+                x-microcks-default: true
+                value:
+                  destination_conf: example_value
+      responses:
+        '200':
+          description: Ownership validation result.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /zones/{zone_id}/logpush/ownership/validate:
+    post:
+      operationId: confirmLogpushOwnership
+      summary: Cloudflare Confirm Ownership
+      description: Confirm ownership of the destination using the ownership token.
+      tags:
+      - Ownership
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - destination_conf
+              - ownership_challenge
+              properties:
+                destination_conf:
+                  type: string
+                  description: The destination configuration string.
+                ownership_challenge:
+                  type: string
+                  description: The ownership challenge token.
+            examples:
+              ConfirmlogpushownershipRequestExample:
+                summary: Default confirmLogpushOwnership request
+                x-microcks-default: true
+                value:
+                  destination_conf: example_value
+                  ownership_challenge: example_value
+      responses:
+        '200':
+          description: Ownership confirmed.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    ZoneId:
+      name: zone_id
+      in: path
+      required: true
+      description: The unique identifier of the zone.
+      schema:
+        type: string

@@ -1,0 +1,112 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Verification API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Verification
+  description: Verify Turnstile challenge tokens on the server side.
+paths:
+  /siteverify:
+    post:
+      operationId: verifyTurnstileToken
+      summary: Cloudflare Verify Turnstile Token
+      description: Validate a Turnstile challenge token on the server side. This is the primary endpoint for verifying that a user has passed the Turnstile challenge.
+      tags:
+      - Verification
+      security: []
+      servers:
+      - url: https://challenges.cloudflare.com
+        description: Turnstile Verification Server
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+              - secret
+              - response
+              properties:
+                secret:
+                  type: string
+                  description: The widget's secret key.
+                response:
+                  type: string
+                  description: The Turnstile token from the client.
+                remoteip:
+                  type: string
+                  description: The user's IP address.
+            examples:
+              VerifyturnstiletokenRequestExample:
+                summary: Default verifyTurnstileToken request
+                x-microcks-default: true
+                value:
+                  secret: example_value
+                  response: example_value
+                  remoteip: example_value
+      responses:
+        '200':
+          description: Verification result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyResponse'
+              examples:
+                Verifyturnstiletoken200Example:
+                  summary: Default verifyTurnstileToken 200 response
+                  x-microcks-default: true
+                  value:
+                    success: true
+                    challenge_ts: '2026-01-15T10:30:00Z'
+                    hostname: example_value
+                    error-codes:
+                    - example_value
+                    action: example_value
+                    cdata: example_value
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  schemas:
+    VerifyResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Whether the token was valid.
+          example: true
+        challenge_ts:
+          type: string
+          format: date-time
+          description: Timestamp of the challenge.
+          example: '2026-01-15T10:30:00Z'
+        hostname:
+          type: string
+          description: Hostname for which the challenge was solved.
+          example: example_value
+        error-codes:
+          type: array
+          items:
+            type: string
+          description: Error codes if verification failed.
+          example: []
+        action:
+          type: string
+          description: The action name from the widget.
+          example: example_value
+        cdata:
+          type: string
+          description: Custom data from the widget.
+          example: example_value

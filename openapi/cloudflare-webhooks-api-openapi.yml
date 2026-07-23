@@ -1,0 +1,97 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Webhooks API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Webhooks
+  description: Configure webhooks for video processing notifications.
+paths:
+  /accounts/{account_id}/stream/webhook:
+    get:
+      operationId: getStreamWebhook
+      summary: Cloudflare Get Webhook Configuration
+      description: Retrieve the configured webhook URL for video processing notifications.
+      tags:
+      - Webhooks
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: Webhook configuration.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    put:
+      operationId: updateStreamWebhook
+      summary: Cloudflare Update Webhook Configuration
+      description: Set or update the webhook URL for video processing notifications.
+      tags:
+      - Webhooks
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - notificationUrl
+              properties:
+                notificationUrl:
+                  type: string
+                  format: uri
+                  description: The URL to receive webhook notifications.
+            examples:
+              UpdatestreamwebhookRequestExample:
+                summary: Default updateStreamWebhook request
+                x-microcks-default: true
+                value:
+                  notificationUrl: https://www.example.com
+      responses:
+        '200':
+          description: Webhook updated.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    delete:
+      operationId: deleteStreamWebhook
+      summary: Cloudflare Delete Webhook Configuration
+      description: Remove the webhook configuration.
+      tags:
+      - Webhooks
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: Webhook deleted.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string

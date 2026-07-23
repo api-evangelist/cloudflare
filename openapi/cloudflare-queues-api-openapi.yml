@@ -1,0 +1,312 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Queues API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Queues
+  description: Create, list, update, and delete message queues.
+paths:
+  /accounts/{account_id}/queues:
+    get:
+      operationId: listQueues
+      summary: Cloudflare List Queues
+      description: Returns all queues owned by the account.
+      tags:
+      - Queues
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: List of queues.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueListResponse'
+              examples:
+                Listqueues200Example:
+                  summary: Default listQueues 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - queue_id: '500123'
+                      queue_name: example_value
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                      producers_total_count: 10
+                      consumers_total_count: 10
+                    success: true
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    post:
+      operationId: createQueue
+      summary: Cloudflare Create Queue
+      description: Create a new message queue for the account.
+      tags:
+      - Queues
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - queue_name
+              properties:
+                queue_name:
+                  type: string
+                  description: The name of the queue.
+            examples:
+              CreatequeueRequestExample:
+                summary: Default createQueue request
+                x-microcks-default: true
+                value:
+                  queue_name: example_value
+      responses:
+        '200':
+          description: Queue created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueResponse'
+              examples:
+                Createqueue200Example:
+                  summary: Default createQueue 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      queue_id: '500123'
+                      queue_name: example_value
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                      producers_total_count: 10
+                      consumers_total_count: 10
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/queues/{queue_id}:
+    get:
+      operationId: getQueue
+      summary: Cloudflare Get Queue
+      description: Retrieve details of a specific queue.
+      tags:
+      - Queues
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      responses:
+        '200':
+          description: Queue details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueResponse'
+              examples:
+                Getqueue200Example:
+                  summary: Default getQueue 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      queue_id: '500123'
+                      queue_name: example_value
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                      producers_total_count: 10
+                      consumers_total_count: 10
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Queue not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    put:
+      operationId: replaceQueue
+      summary: Cloudflare Replace Queue Configuration
+      description: Overwrite the queue configuration.
+      tags:
+      - Queues
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                queue_name:
+                  type: string
+                  description: The new name of the queue.
+            examples:
+              ReplacequeueRequestExample:
+                summary: Default replaceQueue request
+                x-microcks-default: true
+                value:
+                  queue_name: example_value
+      responses:
+        '200':
+          description: Queue replaced successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    patch:
+      operationId: updateQueue
+      summary: Cloudflare Update Queue Settings
+      description: Partially update queue settings.
+      tags:
+      - Queues
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                queue_name:
+                  type: string
+                  description: The new name of the queue.
+            examples:
+              UpdatequeueRequestExample:
+                summary: Default updateQueue request
+                x-microcks-default: true
+                value:
+                  queue_name: example_value
+      responses:
+        '200':
+          description: Queue updated successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    delete:
+      operationId: deleteQueue
+      summary: Cloudflare Delete Queue
+      description: Remove a queue and all its messages.
+      tags:
+      - Queues
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      responses:
+        '200':
+          description: Queue deleted successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Queue not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  schemas:
+    QueueListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Queue'
+          example: []
+        success:
+          type: boolean
+          example: true
+    Queue:
+      type: object
+      properties:
+        queue_id:
+          type: string
+          description: The unique identifier of the queue.
+          example: '500123'
+        queue_name:
+          type: string
+          description: The name of the queue.
+          example: example_value
+        created_on:
+          type: string
+          format: date-time
+          description: When the queue was created.
+          example: '2026-01-15T10:30:00Z'
+        modified_on:
+          type: string
+          format: date-time
+          description: When the queue was last modified.
+          example: '2026-01-15T10:30:00Z'
+        producers_total_count:
+          type: integer
+          description: Number of producers attached.
+          example: 10
+        consumers_total_count:
+          type: integer
+          description: Number of consumers attached.
+          example: 10
+    QueueResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Queue'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    QueueId:
+      name: queue_id
+      in: path
+      required: true
+      description: The unique identifier of the queue.
+      schema:
+        type: string

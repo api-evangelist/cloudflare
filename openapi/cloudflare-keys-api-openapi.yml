@@ -1,0 +1,121 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Keys API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Keys
+  description: List and manage keys within a namespace.
+paths:
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/keys:
+    get:
+      operationId: listKvKeys
+      summary: Cloudflare List Keys
+      description: List keys stored in a KV namespace with cursor-based pagination.
+      tags:
+      - Keys
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/NamespaceId'
+      - name: cursor
+        in: query
+        description: Cursor for pagination.
+        schema:
+          type: string
+        example: example_value
+      - name: limit
+        in: query
+        description: Maximum number of keys to return.
+        schema:
+          type: integer
+          maximum: 1000
+        example: 10
+      - name: prefix
+        in: query
+        description: Filter keys by prefix.
+        schema:
+          type: string
+        example: example_value
+      responses:
+        '200':
+          description: List of keys.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyListResponse'
+              examples:
+                Listkvkeys200Example:
+                  summary: Default listKvKeys 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - name: Example Title
+                      expiration: 10
+                      metadata: example_value
+                    success: true
+                    result_info:
+                      cursor: example_value
+                      count: 10
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    NamespaceId:
+      name: namespace_id
+      in: path
+      required: true
+      description: The unique identifier of the KV namespace.
+      schema:
+        type: string
+  schemas:
+    KeyListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The key name.
+              expiration:
+                type: integer
+                description: Unix timestamp of expiration.
+              metadata:
+                type: object
+                description: Metadata associated with the key.
+          example: []
+        success:
+          type: boolean
+          example: true
+        result_info:
+          type: object
+          properties:
+            cursor:
+              type: string
+              description: Cursor for the next page of results.
+            count:
+              type: integer
+          example: example_value

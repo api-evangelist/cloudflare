@@ -1,0 +1,308 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Workers API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Workers
+  description: Manage Worker resources including creating, updating, and deleting Workers.
+paths:
+  /accounts/{account_id}/workers/workers:
+    get:
+      operationId: listWorkers
+      summary: Cloudflare List Workers
+      description: Returns a paginated list of all Workers for an account.
+      tags:
+      - Workers
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: Successful response with list of Workers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkerListResponse'
+              examples:
+                Listworkers200Example:
+                  summary: Default listWorkers 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - id: abc123
+                      name: Example Title
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    post:
+      operationId: createWorker
+      summary: Cloudflare Create Worker
+      description: Establish a new Worker with the provided configuration.
+      tags:
+      - Workers
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerInput'
+            examples:
+              CreateworkerRequestExample:
+                summary: Default createWorker request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  main_module: example_value
+      responses:
+        '200':
+          description: Worker created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkerResponse'
+              examples:
+                Createworker200Example:
+                  summary: Default createWorker 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      name: Example Title
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/workers/workers/{worker_id}:
+    get:
+      operationId: getWorker
+      summary: Cloudflare Get Worker
+      description: Retrieve details of a specific Worker by its identifier.
+      tags:
+      - Workers
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/WorkerId'
+      responses:
+        '200':
+          description: Worker details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkerResponse'
+              examples:
+                Getworker200Example:
+                  summary: Default getWorker 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      id: abc123
+                      name: Example Title
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Worker not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    put:
+      operationId: replaceWorker
+      summary: Cloudflare Replace Worker
+      description: Complete replacement of Worker properties.
+      tags:
+      - Workers
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/WorkerId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerInput'
+            examples:
+              ReplaceworkerRequestExample:
+                summary: Default replaceWorker request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  main_module: example_value
+      responses:
+        '200':
+          description: Worker replaced successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Worker not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    patch:
+      operationId: editWorker
+      summary: Cloudflare Edit Worker
+      description: Partial update preserving unchanged fields.
+      tags:
+      - Workers
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/WorkerId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerInput'
+            examples:
+              EditworkerRequestExample:
+                summary: Default editWorker request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  main_module: example_value
+      responses:
+        '200':
+          description: Worker updated successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Worker not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    delete:
+      operationId: deleteWorker
+      summary: Cloudflare Delete Worker
+      description: Remove a Worker and all associated resources.
+      tags:
+      - Workers
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/WorkerId'
+      responses:
+        '200':
+          description: Worker deleted successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Worker not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    WorkerId:
+      name: worker_id
+      in: path
+      required: true
+      description: The unique identifier of the Worker.
+      schema:
+        type: string
+  schemas:
+    WorkerInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the Worker.
+          example: Example Title
+        main_module:
+          type: string
+          description: The entry point module for the Worker.
+          example: example_value
+    WorkerListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              created_on:
+                type: string
+                format: date-time
+              modified_on:
+                type: string
+                format: date-time
+          example: []
+        success:
+          type: boolean
+          example: true
+    WorkerResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The unique Worker identifier.
+            name:
+              type: string
+              description: The Worker name.
+            created_on:
+              type: string
+              format: date-time
+              description: When the Worker was created.
+            modified_on:
+              type: string
+              format: date-time
+              description: When the Worker was last modified.
+          example: example_value
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []

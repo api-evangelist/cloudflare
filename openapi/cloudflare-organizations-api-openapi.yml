@@ -1,0 +1,314 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Organizations API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Organizations
+paths:
+  /organizations/{organization_id}/audit_logs:
+    get:
+      tags:
+      - Organizations
+      summary: Cloudflare Get organization audit logs
+      description: Gets a list of audit logs for an organization. Can be filtered by who made the change, on which zone, and the timeframe of the change.
+      operationId: audit-logs-get-organization-audit-logs
+      parameters:
+      - name: organization_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/aaa_identifier'
+      - name: id
+        in: query
+        schema:
+          type: string
+          description: Finds a specific log by its ID.
+          example: f174be97-19b1-40d6-954d-70cd5fbd52db
+      - name: export
+        in: query
+        schema:
+          type: boolean
+          description: Indicates that this request is an export of logs in CSV format.
+          example: true
+      - name: action.type
+        in: query
+        schema:
+          type: string
+          description: Filters by the action type.
+          example: add
+      - name: actor.ip
+        in: query
+        schema:
+          type: string
+          description: Filters by the IP address of the request that made the change by specific IP address or valid CIDR Range.
+          example: 17.168.228.63
+      - name: actor.email
+        in: query
+        schema:
+          type: string
+          format: email
+          description: Filters by the email address of the actor that made the change.
+          example: alice@example.com
+      - name: since
+        in: query
+        schema:
+          type: string
+          format: date-time
+          description: Limits the returned results to logs newer than the specified date. This can be a date string `2019-04-30` or an absolute timestamp that conforms to RFC3339.
+          example: '2019-04-30T01:12:20Z'
+      - name: before
+        in: query
+        schema:
+          type: string
+          format: date-time
+          description: Limits the returned results to logs older than the specified date. This can be a date string `2019-04-30` or an absolute timestamp that conforms to RFC3339.
+          example: '2019-04-30T01:12:20Z'
+      - name: zone.name
+        in: query
+        schema:
+          type: string
+          description: Filters by the name of the zone associated to the change.
+          example: example.com
+      - name: direction
+        in: query
+        schema:
+          type: string
+          description: Changes the direction of the chronological sorting.
+          enum:
+          - desc
+          - asc
+          default: desc
+          example: desc
+      - name: per_page
+        in: query
+        schema:
+          type: number
+          description: Sets the number of results to return per page.
+          default: 100
+          example: 25
+          minimum: 1
+          maximum: 1000
+      - name: page
+        in: query
+        schema:
+          type: number
+          description: Defines which page of results to return.
+          default: 1
+          example: 50
+          minimum: 1
+      - name: hide_user_logs
+        in: query
+        schema:
+          type: boolean
+          description: Indicates whether or not to hide user level audit logs.
+          default: false
+      responses:
+        '200':
+          description: Get organization audit logs response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/aaa_audit_logs_response_collection'
+        4XX:
+          description: Get organization audit logs response failure
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/aaa_audit_logs_response_collection'
+                - $ref: '#/components/schemas/aaa_api-response-common-failure'
+      deprecated: true
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+components:
+  schemas:
+    aaa_api-response-common-failure:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          allOf:
+          - $ref: '#/components/schemas/aaa_messages'
+          example:
+          - code: 7003
+            message: No route for the URI
+          minLength: 1
+        messages:
+          allOf:
+          - $ref: '#/components/schemas/aaa_messages'
+          example: []
+        result:
+          type: object
+          enum:
+          - null
+          nullable: true
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - false
+          example: false
+    aaa_audit_logs_response_collection:
+      oneOf:
+      - properties:
+          errors:
+            type: object
+            nullable: true
+          messages:
+            type: array
+            example: []
+            items: {}
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/aaa_audit-logs'
+          success:
+            type: boolean
+            example: true
+      - $ref: '#/components/schemas/aaa_api-response-common'
+    aaa_audit-logs:
+      type: object
+      properties:
+        action:
+          type: object
+          properties:
+            result:
+              type: boolean
+              description: A boolean that indicates if the action attempted was successful.
+              example: true
+            type:
+              type: string
+              description: A short string that describes the action that was performed.
+              example: change_setting
+        actor:
+          type: object
+          properties:
+            email:
+              type: string
+              format: email
+              description: The email of the user that performed the action.
+              example: michelle@example.com
+            id:
+              type: string
+              description: The ID of the actor that performed the action. If a user performed the action, this will be their User ID.
+              example: f6b5de0326bb5182b8a4840ee01ec774
+            ip:
+              type: string
+              description: The IP address of the request that performed the action.
+              example: 198.41.129.166
+            type:
+              type: string
+              description: The type of actor, whether a User, Cloudflare Admin, or an Automated System.
+              enum:
+              - user
+              - admin
+              - Cloudflare
+              example: user
+        id:
+          type: string
+          description: A string that uniquely identifies the audit log.
+          example: d5b0f326-1232-4452-8858-1089bd7168ef
+        interface:
+          type: string
+          description: The source of the event.
+          example: API
+        metadata:
+          type: object
+          description: An object which can lend more context to the action being logged. This is a flexible value and varies between different actions.
+          example:
+            name: security_level
+            type: firewall
+            value: high
+            zone_name: example.com
+        newValue:
+          type: string
+          description: The new value of the resource that was modified.
+          example: low
+        oldValue:
+          type: string
+          description: The value of the resource before it was modified.
+          example: high
+        owner:
+          type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/aaa_identifier'
+        resource:
+          type: object
+          properties:
+            id:
+              type: string
+              description: An identifier for the resource that was affected by the action.
+              example: 023e105f4ecef8ad9ca31a8372d0c353
+            type:
+              type: string
+              description: A short string that describes the resource that was affected by the action.
+              example: zone
+        when:
+          type: string
+          format: date-time
+          description: A UTC RFC3339 timestamp that specifies when the action being logged occured.
+          example: '2017-04-26T17:31:07Z'
+    aaa_api-response-common:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          $ref: '#/components/schemas/aaa_messages'
+        messages:
+          $ref: '#/components/schemas/aaa_messages'
+        result:
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+          - type: string
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - true
+          example: true
+    aaa_messages:
+      type: array
+      example: []
+      items:
+        type: object
+        uniqueItems: true
+        required:
+        - code
+        - message
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          message:
+            type: string
+    aaa_identifier:
+      type: string
+      description: Identifier
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      readOnly: true
+      maxLength: 32

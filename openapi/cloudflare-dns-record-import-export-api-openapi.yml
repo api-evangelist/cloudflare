@@ -1,0 +1,91 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts DNS Record Import/Export API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: DNS Record Import/Export
+  description: Import and export DNS records using BIND zone file format.
+paths:
+  /zones/{zone_id}/dns_records/export:
+    get:
+      operationId: exportDnsRecords
+      summary: Cloudflare Export Dns Records
+      description: Export all DNS records for a zone in BIND zone file format.
+      tags:
+      - DNS Record Import/Export
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      responses:
+        '200':
+          description: BIND zone file content.
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                Exportdnsrecords200Example:
+                  summary: Default exportDnsRecords 200 response
+                  x-microcks-default: true
+                  value: example_value
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /zones/{zone_id}/dns_records/import:
+    post:
+      operationId: importDnsRecords
+      summary: Cloudflare Import Dns Records
+      description: Import DNS records from a BIND zone file. Upload the BIND config to create DNS records in the zone.
+      tags:
+      - DNS Record Import/Export
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: BIND zone file to import.
+            examples:
+              ImportdnsrecordsRequestExample:
+                summary: Default importDnsRecords request
+                x-microcks-default: true
+                value:
+                  file: example_value
+      responses:
+        '200':
+          description: Import completed successfully.
+        '400':
+          description: Bad request due to invalid BIND config.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    ZoneId:
+      name: zone_id
+      in: path
+      required: true
+      description: The unique identifier of the zone.
+      schema:
+        type: string

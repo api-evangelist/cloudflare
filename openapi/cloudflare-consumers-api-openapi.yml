@@ -1,0 +1,190 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Consumers API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Consumers
+  description: Manage consumers that process messages from queues.
+paths:
+  /accounts/{account_id}/queues/{queue_id}/consumers:
+    get:
+      operationId: listQueueConsumers
+      summary: Cloudflare List Queue Consumers
+      description: Returns the consumers configured for a queue.
+      tags:
+      - Consumers
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      responses:
+        '200':
+          description: List of consumers.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    post:
+      operationId: createQueueConsumer
+      summary: Cloudflare Create Queue Consumer
+      description: Add a new consumer to a queue to process messages.
+      tags:
+      - Consumers
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerInput'
+            examples:
+              CreatequeueconsumerRequestExample:
+                summary: Default createQueueConsumer request
+                x-microcks-default: true
+                value:
+                  script_name: example_value
+                  settings:
+                    batch_size: 10
+                    max_retries: 10
+                    max_wait_time_ms: 10
+      responses:
+        '200':
+          description: Consumer created successfully.
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/queues/{queue_id}/consumers/{consumer_id}:
+    get:
+      operationId: getQueueConsumer
+      summary: Cloudflare Get Queue Consumer
+      description: Retrieve details of a specific queue consumer.
+      tags:
+      - Consumers
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/ConsumerId'
+      responses:
+        '200':
+          description: Consumer details.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Consumer not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    put:
+      operationId: replaceQueueConsumer
+      summary: Cloudflare Replace Queue Consumer
+      description: Update or create a consumer for the queue.
+      tags:
+      - Consumers
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/ConsumerId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerInput'
+            examples:
+              ReplacequeueconsumerRequestExample:
+                summary: Default replaceQueueConsumer request
+                x-microcks-default: true
+                value:
+                  script_name: example_value
+                  settings:
+                    batch_size: 10
+                    max_retries: 10
+                    max_wait_time_ms: 10
+      responses:
+        '200':
+          description: Consumer replaced successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    delete:
+      operationId: deleteQueueConsumer
+      summary: Cloudflare Delete Queue Consumer
+      description: Remove a consumer from the queue.
+      tags:
+      - Consumers
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      - $ref: '#/components/parameters/ConsumerId'
+      responses:
+        '200':
+          description: Consumer deleted successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  schemas:
+    ConsumerInput:
+      type: object
+      properties:
+        script_name:
+          type: string
+          description: The Worker script name that will consume messages.
+          example: example_value
+        settings:
+          type: object
+          properties:
+            batch_size:
+              type: integer
+              description: Maximum number of messages per batch.
+            max_retries:
+              type: integer
+              description: Maximum number of retries for failed messages.
+            max_wait_time_ms:
+              type: integer
+              description: Maximum time to wait for a full batch in milliseconds.
+          example: example_value
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    ConsumerId:
+      name: consumer_id
+      in: path
+      required: true
+      description: The unique identifier of the consumer.
+      schema:
+        type: string
+    QueueId:
+      name: queue_id
+      in: path
+      required: true
+      description: The unique identifier of the queue.
+      schema:
+        type: string

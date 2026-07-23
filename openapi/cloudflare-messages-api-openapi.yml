@@ -1,0 +1,210 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Messages API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Messages
+  description: Send, pull, and acknowledge messages.
+paths:
+  /accounts/{account_id}/queues/{queue_id}/messages:
+    post:
+      operationId: sendMessage
+      summary: Cloudflare Send Message
+      description: Send a single message to the queue.
+      tags:
+      - Messages
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageInput'
+            examples:
+              SendmessageRequestExample:
+                summary: Default sendMessage request
+                x-microcks-default: true
+                value:
+                  body: example_value
+                  content_type: json
+      responses:
+        '200':
+          description: Message sent successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/queues/{queue_id}/messages/batch:
+    post:
+      operationId: sendMessageBatch
+      summary: Cloudflare Send Message Batch
+      description: Send multiple messages to the queue in a single request.
+      tags:
+      - Messages
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messages:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/MessageInput'
+            examples:
+              SendmessagebatchRequestExample:
+                summary: Default sendMessageBatch request
+                x-microcks-default: true
+                value:
+                  messages:
+                  - body: example_value
+                    content_type: json
+      responses:
+        '200':
+          description: Messages sent successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/queues/{queue_id}/messages/pull:
+    post:
+      operationId: pullMessages
+      summary: Cloudflare Pull Messages
+      description: Retrieve a batch of messages from the queue for processing.
+      tags:
+      - Messages
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                visibility_timeout_ms:
+                  type: integer
+                  description: How long the pulled messages should be invisible to other consumers, in milliseconds.
+                batch_size:
+                  type: integer
+                  description: Maximum number of messages to pull.
+            examples:
+              PullmessagesRequestExample:
+                summary: Default pullMessages request
+                x-microcks-default: true
+                value:
+                  visibility_timeout_ms: 10
+                  batch_size: 10
+      responses:
+        '200':
+          description: Messages pulled successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/queues/{queue_id}/messages/ack:
+    post:
+      operationId: ackMessages
+      summary: Cloudflare Acknowledge Messages
+      description: Acknowledge and optionally retry messages from the queue. Acknowledged messages are permanently removed from the queue.
+      tags:
+      - Messages
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                acks:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      lease_id:
+                        type: string
+                        description: The lease ID from the pulled message.
+                retries:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      lease_id:
+                        type: string
+                        description: The lease ID of the message to retry.
+                      delay_seconds:
+                        type: integer
+                        description: Delay before the message becomes visible again.
+            examples:
+              AckmessagesRequestExample:
+                summary: Default ackMessages request
+                x-microcks-default: true
+                value:
+                  acks:
+                  - lease_id: '500123'
+                  retries:
+                  - lease_id: '500123'
+                    delay_seconds: 10
+      responses:
+        '200':
+          description: Messages acknowledged successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    QueueId:
+      name: queue_id
+      in: path
+      required: true
+      description: The unique identifier of the queue.
+      schema:
+        type: string
+  schemas:
+    MessageInput:
+      type: object
+      properties:
+        body:
+          description: The message body content.
+          example: example_value
+        content_type:
+          type: string
+          description: The content type of the message body.
+          enum:
+          - json
+          - text
+          - bytes
+          example: json

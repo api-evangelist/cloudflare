@@ -1,0 +1,94 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Live Inputs API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Live Inputs
+  description: Manage live streaming inputs for RTMPS and SRT ingestion.
+paths:
+  /accounts/{account_id}/stream/live_inputs:
+    get:
+      operationId: listLiveInputs
+      summary: Cloudflare List Live Inputs
+      description: Returns all live inputs configured for the account.
+      tags:
+      - Live Inputs
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: List of live inputs.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    post:
+      operationId: createLiveInput
+      summary: Cloudflare Create Live Input
+      description: Create a new live input for RTMPS or SRT ingestion.
+      tags:
+      - Live Inputs
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                meta:
+                  type: object
+                  description: User-defined metadata for the live input.
+                recording:
+                  type: object
+                  properties:
+                    mode:
+                      type: string
+                      enum:
+                      - false
+                      - automatic
+                    requireSignedURLs:
+                      type: boolean
+                    timeoutSeconds:
+                      type: integer
+            examples:
+              CreateliveinputRequestExample:
+                summary: Default createLiveInput request
+                x-microcks-default: true
+                value:
+                  meta: example_value
+                  recording:
+                    mode: false
+                    requireSignedURLs: https://www.example.com
+                    timeoutSeconds: 10
+      responses:
+        '200':
+          description: Live input created.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string

@@ -1,0 +1,73 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Direct Uploads API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Direct Uploads
+  description: Create one-time upload URLs for client-side image uploads.
+paths:
+  /accounts/{account_id}/images/v1/direct_upload:
+    post:
+      operationId: createImageDirectUpload
+      summary: Cloudflare Create Direct Upload Url
+      description: Create a unique one-time upload URL for direct image uploads from client-side applications.
+      tags:
+      - Direct Uploads
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: Custom identifier for the image.
+                metadata:
+                  type: object
+                  description: User-defined metadata.
+                requireSignedURLs:
+                  type: boolean
+                expiry:
+                  type: string
+                  format: date-time
+                  description: When the upload URL expires.
+            examples:
+              CreateimagedirectuploadRequestExample:
+                summary: Default createImageDirectUpload request
+                x-microcks-default: true
+                value:
+                  id: abc123
+                  metadata: example_value
+                  requireSignedURLs: https://www.example.com
+                  expiry: '2026-01-15T10:30:00Z'
+      responses:
+        '200':
+          description: Direct upload URL created.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string

@@ -1,0 +1,193 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Queries API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Queries
+  description: Execute SQL queries against D1 databases.
+paths:
+  /accounts/{account_id}/d1/database/{database_id}/query:
+    post:
+      operationId: queryD1Database
+      summary: Cloudflare Query D1 Database
+      description: Execute a SQL query against the D1 database. Returns results with metadata about the execution.
+      tags:
+      - Queries
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/DatabaseId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - sql
+              properties:
+                sql:
+                  type: string
+                  description: The SQL query to execute.
+                params:
+                  type: array
+                  items:
+                    oneOf:
+                    - type: string
+                    - type: number
+                    - type: boolean
+                    - type: 'null'
+                  description: Bound parameters for the query.
+            examples:
+              Queryd1databaseRequestExample:
+                summary: Default queryD1Database request
+                x-microcks-default: true
+                value:
+                  sql: example_value
+                  params:
+                  - {}
+      responses:
+        '200':
+          description: Query executed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/D1QueryResponse'
+              examples:
+                Queryd1database200Example:
+                  summary: Default queryD1Database 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - results:
+                      - {}
+                      success: true
+                      meta:
+                        changed_db: true
+                        changes: 10
+                        duration: 42.5
+                        last_row_id: '500123'
+                        rows_read: 10
+                        rows_written: 10
+                        size_after: 10
+                    success: true
+        '400':
+          description: Bad request or SQL error.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/d1/database/{database_id}/raw:
+    post:
+      operationId: rawQueryD1Database
+      summary: Cloudflare Raw Query D1 Database
+      description: Execute a raw SQL query optimized for performance. Returns results as arrays instead of objects.
+      tags:
+      - Queries
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/DatabaseId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - sql
+              properties:
+                sql:
+                  type: string
+                  description: The SQL query to execute.
+                params:
+                  type: array
+                  items:
+                    oneOf:
+                    - type: string
+                    - type: number
+                    - type: boolean
+                    - type: 'null'
+                  description: Bound parameters for the query.
+            examples:
+              Rawqueryd1databaseRequestExample:
+                summary: Default rawQueryD1Database request
+                x-microcks-default: true
+                value:
+                  sql: example_value
+                  params:
+                  - {}
+      responses:
+        '200':
+          description: Raw query executed successfully.
+        '400':
+          description: Bad request or SQL error.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    DatabaseId:
+      name: database_id
+      in: path
+      required: true
+      description: The unique identifier of the D1 database.
+      schema:
+        type: string
+  schemas:
+    D1QueryResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              results:
+                type: array
+                items:
+                  type: object
+              success:
+                type: boolean
+              meta:
+                type: object
+                properties:
+                  changed_db:
+                    type: boolean
+                  changes:
+                    type: integer
+                  duration:
+                    type: number
+                    description: Query duration in milliseconds.
+                  last_row_id:
+                    type: integer
+                  rows_read:
+                    type: integer
+                  rows_written:
+                    type: integer
+                  size_after:
+                    type: integer
+          example: []
+        success:
+          type: boolean
+          example: true

@@ -1,0 +1,340 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Widgets API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Widgets
+  description: Create, list, update, and delete Turnstile widget configurations.
+paths:
+  /accounts/{account_id}/challenges/widgets:
+    get:
+      operationId: listTurnstileWidgets
+      summary: Cloudflare List Turnstile Widgets
+      description: Returns all Turnstile widget configurations for the account.
+      tags:
+      - Widgets
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: List of widgets.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WidgetListResponse'
+              examples:
+                Listturnstilewidgets200Example:
+                  summary: Default listTurnstileWidgets 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                    - sitekey: example_value
+                      secret: example_value
+                      name: Example Title
+                      domains: {}
+                      mode: managed
+                      bot_fight_mode: true
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    post:
+      operationId: createTurnstileWidget
+      summary: Cloudflare Create Turnstile Widget
+      description: Create a new Turnstile widget with the specified mode and allowed domains.
+      tags:
+      - Widgets
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WidgetInput'
+            examples:
+              CreateturnstilewidgetRequestExample:
+                summary: Default createTurnstileWidget request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  domains:
+                  - example_value
+                  mode: managed
+                  bot_fight_mode: true
+      responses:
+        '200':
+          description: Widget created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WidgetResponse'
+              examples:
+                Createturnstilewidget200Example:
+                  summary: Default createTurnstileWidget 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      sitekey: example_value
+                      secret: example_value
+                      name: Example Title
+                      domains:
+                      - {}
+                      mode: managed
+                      bot_fight_mode: true
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/challenges/widgets/{sitekey}:
+    get:
+      operationId: getTurnstileWidget
+      summary: Cloudflare Get Turnstile Widget
+      description: Retrieve details of a specific Turnstile widget.
+      tags:
+      - Widgets
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/Sitekey'
+      responses:
+        '200':
+          description: Widget details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WidgetResponse'
+              examples:
+                Getturnstilewidget200Example:
+                  summary: Default getTurnstileWidget 200 response
+                  x-microcks-default: true
+                  value:
+                    result:
+                      sitekey: example_value
+                      secret: example_value
+                      name: Example Title
+                      domains:
+                      - {}
+                      mode: managed
+                      bot_fight_mode: true
+                      created_on: '2026-01-15T10:30:00Z'
+                      modified_on: '2026-01-15T10:30:00Z'
+                    success: true
+                    errors:
+                    - {}
+                    messages:
+                    - {}
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Widget not found.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    put:
+      operationId: updateTurnstileWidget
+      summary: Cloudflare Update Turnstile Widget
+      description: Update the configuration of a Turnstile widget.
+      tags:
+      - Widgets
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/Sitekey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WidgetInput'
+            examples:
+              UpdateturnstilewidgetRequestExample:
+                summary: Default updateTurnstileWidget request
+                x-microcks-default: true
+                value:
+                  name: Example Title
+                  domains:
+                  - example_value
+                  mode: managed
+                  bot_fight_mode: true
+      responses:
+        '200':
+          description: Widget updated successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    delete:
+      operationId: deleteTurnstileWidget
+      summary: Cloudflare Delete Turnstile Widget
+      description: Delete a Turnstile widget configuration.
+      tags:
+      - Widgets
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/Sitekey'
+      responses:
+        '200':
+          description: Widget deleted.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/challenges/widgets/{sitekey}/rotate_secret:
+    post:
+      operationId: rotateTurnstileSecret
+      summary: Cloudflare Rotate Widget Secret
+      description: Rotate the secret key for a Turnstile widget. The previous secret remains valid for a transition period.
+      tags:
+      - Widgets
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/Sitekey'
+      responses:
+        '200':
+          description: Secret rotated successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    Sitekey:
+      name: sitekey
+      in: path
+      required: true
+      description: The site key of the Turnstile widget.
+      schema:
+        type: string
+  schemas:
+    WidgetListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Widget'
+          example: []
+        success:
+          type: boolean
+          example: true
+    Widget:
+      type: object
+      properties:
+        sitekey:
+          type: string
+          description: The public site key for the widget.
+          example: example_value
+        secret:
+          type: string
+          description: The secret key for server-side verification.
+          example: example_value
+        name:
+          type: string
+          description: A human-readable name for the widget.
+          example: Example Title
+        domains:
+          type: array
+          items:
+            type: string
+          description: Allowed domains for the widget.
+          example: []
+        mode:
+          type: string
+          enum:
+          - managed
+          - non-interactive
+          - invisible
+          description: The challenge mode for the widget.
+          example: managed
+        bot_fight_mode:
+          type: boolean
+          description: Whether Bot Fight Mode is enabled.
+          example: true
+        created_on:
+          type: string
+          format: date-time
+          example: '2026-01-15T10:30:00Z'
+        modified_on:
+          type: string
+          format: date-time
+          example: '2026-01-15T10:30:00Z'
+    WidgetResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Widget'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
+    WidgetInput:
+      type: object
+      required:
+      - name
+      - domains
+      - mode
+      properties:
+        name:
+          type: string
+          description: Name for the widget.
+          example: Example Title
+        domains:
+          type: array
+          items:
+            type: string
+          description: Allowed domains.
+          example: []
+        mode:
+          type: string
+          enum:
+          - managed
+          - non-interactive
+          - invisible
+          example: managed
+        bot_fight_mode:
+          type: boolean
+          example: true

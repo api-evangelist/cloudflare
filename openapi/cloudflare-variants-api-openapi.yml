@@ -1,0 +1,121 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Variants API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Variants
+  description: Manage image variants that define transformation presets.
+paths:
+  /accounts/{account_id}/images/v1/variants:
+    get:
+      operationId: listImageVariants
+      summary: Cloudflare List Image Variants
+      description: Returns all image variant definitions for the account.
+      tags:
+      - Variants
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: List of variants.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    post:
+      operationId: createImageVariant
+      summary: Cloudflare Create Image Variant
+      description: Create a new image variant definition specifying transformation settings like dimensions, fit mode, and metadata stripping.
+      tags:
+      - Variants
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VariantInput'
+            examples:
+              CreateimagevariantRequestExample:
+                summary: Default createImageVariant request
+                x-microcks-default: true
+                value:
+                  id: abc123
+                  options:
+                    fit: scale-down
+                    width: 10
+                    height: 10
+                    metadata: keep
+                  neverRequireSignedURLs: https://www.example.com
+      responses:
+        '200':
+          description: Variant created.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+  schemas:
+    VariantInput:
+      type: object
+      required:
+      - id
+      - options
+      properties:
+        id:
+          type: string
+          description: The name of the variant.
+          example: abc123
+        options:
+          type: object
+          properties:
+            fit:
+              type: string
+              enum:
+              - scale-down
+              - contain
+              - cover
+              - crop
+              - pad
+              description: Resizing behavior.
+            width:
+              type: integer
+              description: Maximum width in pixels.
+            height:
+              type: integer
+              description: Maximum height in pixels.
+            metadata:
+              type: string
+              enum:
+              - keep
+              - copyright
+              - none
+              description: What metadata to preserve.
+          example: example_value
+        neverRequireSignedURLs:
+          type: boolean
+          description: Allow unsigned URL access for this variant.
+          example: https://www.example.com

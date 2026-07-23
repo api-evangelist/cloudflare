@@ -1,0 +1,90 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Time Travel API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Time Travel
+  description: Browse and restore D1 databases to previous points in time.
+paths:
+  /accounts/{account_id}/d1/database/{database_id}/time_travel/bookmark:
+    get:
+      operationId: getD1Bookmark
+      summary: Cloudflare Get D1 Database Bookmark
+      description: Retrieve the current or a historical bookmark for the database, which represents a point-in-time snapshot.
+      tags:
+      - Time Travel
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/DatabaseId'
+      responses:
+        '200':
+          description: Bookmark retrieved.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+  /accounts/{account_id}/d1/database/{database_id}/time_travel/restore:
+    post:
+      operationId: restoreD1Database
+      summary: Cloudflare Restore D1 Database
+      description: Restore the database to a previous state using a bookmark from time travel.
+      tags:
+      - Time Travel
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/DatabaseId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - bookmark
+              properties:
+                bookmark:
+                  type: string
+                  description: The bookmark identifier to restore to.
+            examples:
+              Restored1databaseRequestExample:
+                summary: Default restoreD1Database request
+                x-microcks-default: true
+                value:
+                  bookmark: example_value
+      responses:
+        '200':
+          description: Database restored successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    DatabaseId:
+      name: database_id
+      in: path
+      required: true
+      description: The unique identifier of the D1 database.
+      schema:
+        type: string

@@ -1,0 +1,71 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Purge API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Purge
+  description: Purge all messages from a queue.
+paths:
+  /accounts/{account_id}/queues/{queue_id}/purge:
+    get:
+      operationId: getPurgeStatus
+      summary: Cloudflare Get Purge Status
+      description: Check the status of a queue purge operation.
+      tags:
+      - Purge
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      responses:
+        '200':
+          description: Purge status.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    post:
+      operationId: purgeQueue
+      summary: Cloudflare Purge Queue
+      description: Delete all messages from the queue.
+      tags:
+      - Purge
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      - $ref: '#/components/parameters/QueueId'
+      responses:
+        '200':
+          description: Purge initiated successfully.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    QueueId:
+      name: queue_id
+      in: path
+      required: true
+      description: The unique identifier of the queue.
+      schema:
+        type: string

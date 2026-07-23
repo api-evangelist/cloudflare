@@ -1,0 +1,62 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts Signing Keys API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Signing Keys
+  description: Manage signing keys for signed video URLs.
+paths:
+  /accounts/{account_id}/stream/keys:
+    get:
+      operationId: listSigningKeys
+      summary: Cloudflare List Signing Keys
+      description: Returns all signing keys for creating signed video URLs.
+      tags:
+      - Signing Keys
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: List of signing keys.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+    post:
+      operationId: createSigningKey
+      summary: Cloudflare Create Signing Key
+      description: Create a new signing key for generating signed video URLs.
+      tags:
+      - Signing Keys
+      parameters:
+      - $ref: '#/components/parameters/AccountId'
+      responses:
+        '200':
+          description: Signing key created.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string

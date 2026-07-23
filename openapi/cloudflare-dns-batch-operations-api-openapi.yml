@@ -1,0 +1,176 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare / Accounts DNS Batch Operations API
+  description: Needs description.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  version: 4.0.0
+servers:
+- url: https://api.cloudflare.com/client/v4
+  description: Client API
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: DNS Batch Operations
+  description: Execute multiple DNS record operations in a single API call.
+paths:
+  /zones/{zone_id}/dns_records/batch:
+    post:
+      operationId: batchDnsRecords
+      summary: Cloudflare Batch Dns Record Operations
+      description: Send a batch of DNS record API calls to be executed together. Supports deletes, patches, puts, and posts executed in order.
+      tags:
+      - DNS Batch Operations
+      parameters:
+      - $ref: '#/components/parameters/ZoneId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deletes:
+                  type: array
+                  description: DNS records to delete.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                patches:
+                  type: array
+                  description: DNS records to partially update.
+                  items:
+                    $ref: '#/components/schemas/DnsRecordInput'
+                puts:
+                  type: array
+                  description: DNS records to fully replace.
+                  items:
+                    $ref: '#/components/schemas/DnsRecordInput'
+                posts:
+                  type: array
+                  description: DNS records to create.
+                  items:
+                    $ref: '#/components/schemas/DnsRecordInput'
+            examples:
+              BatchdnsrecordsRequestExample:
+                summary: Default batchDnsRecords request
+                x-microcks-default: true
+                value:
+                  deletes:
+                  - id: abc123
+                  patches:
+                  - name: Example Title
+                    content: example_value
+                    ttl: 10
+                    priority: 10
+                    proxied: true
+                    comment: example_value
+                    tags:
+                    - {}
+                  puts:
+                  - name: Example Title
+                    content: example_value
+                    ttl: 10
+                    priority: 10
+                    proxied: true
+                    comment: example_value
+                    tags:
+                    - {}
+                  posts:
+                  - name: Example Title
+                    content: example_value
+                    ttl: 10
+                    priority: 10
+                    proxied: true
+                    comment: example_value
+                    tags:
+                    - {}
+      responses:
+        '200':
+          description: Batch operation completed successfully.
+        '400':
+          description: Bad request.
+        '401':
+          description: Unauthorized.
+      x-microcks-operation:
+        delay: 0
+        dispatcher: FALLBACK
+components:
+  schemas:
+    RecordType:
+      type: string
+      description: The type of DNS record.
+      enum:
+      - A
+      - AAAA
+      - CAA
+      - CERT
+      - CNAME
+      - DNSKEY
+      - DS
+      - HTTPS
+      - LOC
+      - MX
+      - NAPTR
+      - NS
+      - PTR
+      - SMIMEA
+      - SRV
+      - SSHFP
+      - SVCB
+      - TLSA
+      - TXT
+      - URI
+    DnsRecordInput:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/RecordType'
+        name:
+          type: string
+          description: The DNS record name, e.g. example.com.
+          example: Example Title
+        content:
+          type: string
+          description: The DNS record content value.
+          example: example_value
+        ttl:
+          type: integer
+          description: Time to live in seconds. A value of 1 indicates automatic TTL.
+          minimum: 1
+          maximum: 86400
+          example: 10
+        priority:
+          type: integer
+          description: Required for MX, SRV, and URI records. Record priority.
+          minimum: 0
+          maximum: 65535
+          example: 10
+        proxied:
+          type: boolean
+          description: Whether the record is receiving Cloudflare proxy services.
+          example: true
+        comment:
+          type: string
+          description: A comment about the DNS record.
+          example: example_value
+        tags:
+          type: array
+          items:
+            type: string
+          description: Custom tags for the DNS record.
+          example: []
+  parameters:
+    ZoneId:
+      name: zone_id
+      in: path
+      required: true
+      description: The unique identifier of the zone.
+      schema:
+        type: string
