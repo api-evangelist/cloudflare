@@ -1,0 +1,1543 @@
+{
+  "item": [
+    {
+      "id": "b22dc523-c1f0-43ec-9aa6-16965ac4bf4d",
+      "name": "DNS Records",
+      "description": {
+        "content": "Manage DNS records for a zone including A, AAAA, CNAME, MX, TXT, SRV, and other record types.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "858b4c09-6cbe-447e-97c0-f4b2d9b8992a",
+          "name": "Cloudflare List Dns Records",
+          "request": {
+            "name": "Cloudflare List Dns Records",
+            "description": {
+              "content": "List, search, sort, and filter a zone's DNS records. Returns a paginated list of DNS records for the specified zone.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "zones",
+                ":zone_id",
+                "dns_records"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "type",
+                  "value": "<string>",
+                  "description": "DNS record type to filter by."
+                },
+                {
+                  "disabled": false,
+                  "key": "name",
+                  "value": "<string>",
+                  "description": "DNS record name to filter by."
+                },
+                {
+                  "disabled": false,
+                  "key": "content",
+                  "value": "<string>",
+                  "description": "DNS record content to filter by."
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number of paginated results."
+                },
+                {
+                  "disabled": false,
+                  "key": "per_page",
+                  "value": "100",
+                  "description": "Number of records per page."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "zone_id",
+                  "description": "(Required) The unique identifier of the zone."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "a794753a-3328-40db-bb8c-5c0515008f35",
+              "name": "Successful response with a list of DNS records.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "name",
+                      "value": "Example Title"
+                    },
+                    {
+                      "key": "content",
+                      "value": "example_value"
+                    },
+                    {
+                      "key": "page",
+                      "value": "10"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "10"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": [\n    {\n      \"id\": \"abc123\",\n      \"zone_id\": \"500123\",\n      \"zone_name\": \"example_value\",\n      \"name\": \"Example Title\",\n      \"content\": \"example_value\",\n      \"ttl\": 10,\n      \"proxied\": true,\n      \"proxiable\": true,\n      \"locked\": true,\n      \"comment\": \"example_value\",\n      \"tags\": {},\n      \"created_on\": \"2026-01-15T10:30:00Z\",\n      \"modified_on\": \"2026-01-15T10:30:00Z\"\n    }\n  ],\n  \"success\": true,\n  \"errors\": [\n    {}\n  ],\n  \"messages\": [\n    {}\n  ],\n  \"result_info\": {\n    \"page\": 10,\n    \"per_page\": 10,\n    \"count\": 10,\n    \"total_count\": 10,\n    \"total_pages\": 10\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "89c16a8f-46e8-44b1-92c4-dc7da21ac161",
+              "name": "Bad request due to invalid parameters.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "name",
+                      "value": "Example Title"
+                    },
+                    {
+                      "key": "content",
+                      "value": "example_value"
+                    },
+                    {
+                      "key": "page",
+                      "value": "10"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "10"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "09576031-17d4-485d-a3a4-9800cad59f7a",
+              "name": "Unauthorized due to missing or invalid authentication.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "name",
+                      "value": "Example Title"
+                    },
+                    {
+                      "key": "content",
+                      "value": "example_value"
+                    },
+                    {
+                      "key": "page",
+                      "value": "10"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "10"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "1ece71e4-ee1e-4b94-ac4c-364e82cd7f8c",
+              "name": "Forbidden due to insufficient permissions.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "type",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "name",
+                      "value": "Example Title"
+                    },
+                    {
+                      "key": "content",
+                      "value": "example_value"
+                    },
+                    {
+                      "key": "page",
+                      "value": "10"
+                    },
+                    {
+                      "key": "per_page",
+                      "value": "10"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8feced1b-042c-49cb-b228-a0a938a40bcc",
+          "name": "Cloudflare Create Dns Record",
+          "request": {
+            "name": "Cloudflare Create Dns Record",
+            "description": {
+              "content": "Create a new DNS record for a zone. A/AAAA records cannot coexist with CNAME records on the same name, and NS records cannot share names with other record types.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "zones",
+                ":zone_id",
+                "dns_records"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "zone_id",
+                  "description": "(Required) The unique identifier of the zone."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"<string>\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "a45e6d0f-517a-4edf-ab16-9c128d30ace1",
+              "name": "DNS record created successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"A\",\n  \"name\": \"Example Title\",\n  \"content\": \"example_value\",\n  \"ttl\": 10,\n  \"priority\": 10,\n  \"proxied\": true,\n  \"comment\": \"example_value\",\n  \"tags\": [\n    \"example_value\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": {\n    \"id\": \"abc123\",\n    \"zone_id\": \"500123\",\n    \"zone_name\": \"example_value\",\n    \"name\": \"Example Title\",\n    \"content\": \"example_value\",\n    \"ttl\": 10,\n    \"proxied\": true,\n    \"proxiable\": true,\n    \"locked\": true,\n    \"comment\": \"example_value\",\n    \"tags\": [\n      {}\n    ],\n    \"created_on\": \"2026-01-15T10:30:00Z\",\n    \"modified_on\": \"2026-01-15T10:30:00Z\"\n  },\n  \"success\": true,\n  \"errors\": [\n    {}\n  ],\n  \"messages\": [\n    {}\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8b050431-cec0-4c56-becb-7e72c0aa8bce",
+              "name": "Bad request due to invalid record data.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"A\",\n  \"name\": \"Example Title\",\n  \"content\": \"example_value\",\n  \"ttl\": 10,\n  \"priority\": 10,\n  \"proxied\": true,\n  \"comment\": \"example_value\",\n  \"tags\": [\n    \"example_value\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "103f7228-6d13-40b4-a163-e3a3289990f1",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"A\",\n  \"name\": \"Example Title\",\n  \"content\": \"example_value\",\n  \"ttl\": 10,\n  \"priority\": 10,\n  \"proxied\": true,\n  \"comment\": \"example_value\",\n  \"tags\": [\n    \"example_value\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "eccdae27-66b0-4803-bbc2-f08dff83ac54",
+          "name": "Cloudflare Get Dns Record Details",
+          "request": {
+            "name": "Cloudflare Get Dns Record Details",
+            "description": {
+              "content": "Retrieve the details of a specific DNS record by its identifier.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "zones",
+                ":zone_id",
+                "dns_records",
+                ":dns_record_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "zone_id",
+                  "description": "(Required) The unique identifier of the zone."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "dns_record_id",
+                  "description": "(Required) The unique identifier of the DNS record."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "52a7d0d9-f062-4813-af2b-69a9d2d4b85e",
+              "name": "Successful response with DNS record details.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    ":dns_record_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dns_record_id",
+                      "description": "(Required) The unique identifier of the DNS record."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": {\n    \"id\": \"abc123\",\n    \"zone_id\": \"500123\",\n    \"zone_name\": \"example_value\",\n    \"name\": \"Example Title\",\n    \"content\": \"example_value\",\n    \"ttl\": 10,\n    \"proxied\": true,\n    \"proxiable\": true,\n    \"locked\": true,\n    \"comment\": \"example_value\",\n    \"tags\": [\n      {}\n    ],\n    \"created_on\": \"2026-01-15T10:30:00Z\",\n    \"modified_on\": \"2026-01-15T10:30:00Z\"\n  },\n  \"success\": true,\n  \"errors\": [\n    {}\n  ],\n  \"messages\": [\n    {}\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "183f20fb-3c9a-4866-9911-6deb91d6557d",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    ":dns_record_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dns_record_id",
+                      "description": "(Required) The unique identifier of the DNS record."
+                    }
+                  ]
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "baaac79b-b900-42b7-b513-dd71ba5e34ee",
+              "name": "DNS record not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    ":dns_record_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dns_record_id",
+                      "description": "(Required) The unique identifier of the DNS record."
+                    }
+                  ]
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "db7cae10-ddab-47b0-9ac3-8facd325ee23",
+          "name": "Cloudflare Update Dns Record",
+          "request": {
+            "name": "Cloudflare Update Dns Record",
+            "description": {
+              "content": "Partially update a DNS record. Only the fields provided in the request body will be updated.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "zones",
+                ":zone_id",
+                "dns_records",
+                ":dns_record_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "zone_id",
+                  "description": "(Required) The unique identifier of the zone."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "dns_record_id",
+                  "description": "(Required) The unique identifier of the DNS record."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"<string>\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "bdbe1c26-564b-4e6b-88f4-a00199770045",
+              "name": "DNS record updated successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    ":dns_record_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dns_record_id",
+                      "description": "(Required) The unique identifier of the DNS record."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"A\",\n  \"name\": \"Example Title\",\n  \"content\": \"example_value\",\n  \"ttl\": 10,\n  \"priority\": 10,\n  \"proxied\": true,\n  \"comment\": \"example_value\",\n  \"tags\": [\n    \"example_value\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": {\n    \"id\": \"abc123\",\n    \"zone_id\": \"500123\",\n    \"zone_name\": \"example_value\",\n    \"name\": \"Example Title\",\n    \"content\": \"example_value\",\n    \"ttl\": 10,\n    \"proxied\": true,\n    \"proxiable\": true,\n    \"locked\": true,\n    \"comment\": \"example_value\",\n    \"tags\": [\n      {}\n    ],\n    \"created_on\": \"2026-01-15T10:30:00Z\",\n    \"modified_on\": \"2026-01-15T10:30:00Z\"\n  },\n  \"success\": true,\n  \"errors\": [\n    {}\n  ],\n  \"messages\": [\n    {}\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6a270eba-3a20-4383-8cea-4a259081cd09",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    ":dns_record_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dns_record_id",
+                      "description": "(Required) The unique identifier of the DNS record."
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"A\",\n  \"name\": \"Example Title\",\n  \"content\": \"example_value\",\n  \"ttl\": 10,\n  \"priority\": 10,\n  \"proxied\": true,\n  \"comment\": \"example_value\",\n  \"tags\": [\n    \"example_value\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "54e08acc-f82c-4186-a6b9-fd25d9079ae0",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    ":dns_record_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dns_record_id",
+                      "description": "(Required) The unique identifier of the DNS record."
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"A\",\n  \"name\": \"Example Title\",\n  \"content\": \"example_value\",\n  \"ttl\": 10,\n  \"priority\": 10,\n  \"proxied\": true,\n  \"comment\": \"example_value\",\n  \"tags\": [\n    \"example_value\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "168d8f97-a46f-489e-b115-79d2be2c5afa",
+              "name": "DNS record not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    ":dns_record_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dns_record_id",
+                      "description": "(Required) The unique identifier of the DNS record."
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"A\",\n  \"name\": \"Example Title\",\n  \"content\": \"example_value\",\n  \"ttl\": 10,\n  \"priority\": 10,\n  \"proxied\": true,\n  \"comment\": \"example_value\",\n  \"tags\": [\n    \"example_value\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e2d7afd8-2f4a-46fb-badd-ca62c445f274",
+          "name": "Cloudflare Overwrite Dns Record",
+          "request": {
+            "name": "Cloudflare Overwrite Dns Record",
+            "description": {
+              "content": "Completely replace a DNS record with the provided data. All fields must be provided.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "zones",
+                ":zone_id",
+                "dns_records",
+                ":dns_record_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "zone_id",
+                  "description": "(Required) The unique identifier of the zone."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "dns_record_id",
+                  "description": "(Required) The unique identifier of the DNS record."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PUT",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"<string>\",\n  \"name\": \"<string>\",\n  \"content\": \"<string>\",\n  \"ttl\": \"<integer>\",\n  \"priority\": \"<integer>\",\n  \"proxied\": \"<boolean>\",\n  \"comment\": \"<string>\",\n  \"tags\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "54e3f3d0-493a-4105-9792-2a5d9eda53e1",
+              "name": "DNS record overwritten successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    ":dns_record_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dns_record_id",
+                      "description": "(Required) The unique identifier of the DNS record."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"A\",\n  \"name\": \"Example Title\",\n  \"content\": \"example_value\",\n  \"ttl\": 10,\n  \"priority\": 10,\n  \"proxied\": true,\n  \"comment\": \"example_value\",\n  \"tags\": [\n    \"example_value\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": {\n    \"id\": \"abc123\",\n    \"zone_id\": \"500123\",\n    \"zone_name\": \"example_value\",\n    \"name\": \"Example Title\",\n    \"content\": \"example_value\",\n    \"ttl\": 10,\n    \"proxied\": true,\n    \"proxiable\": true,\n    \"locked\": true,\n    \"comment\": \"example_value\",\n    \"tags\": [\n      {}\n    ],\n    \"created_on\": \"2026-01-15T10:30:00Z\",\n    \"modified_on\": \"2026-01-15T10:30:00Z\"\n  },\n  \"success\": true,\n  \"errors\": [\n    {}\n  ],\n  \"messages\": [\n    {}\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a0eb7b76-201f-4585-a5ba-f8b9f525889f",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    ":dns_record_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dns_record_id",
+                      "description": "(Required) The unique identifier of the DNS record."
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"A\",\n  \"name\": \"Example Title\",\n  \"content\": \"example_value\",\n  \"ttl\": 10,\n  \"priority\": 10,\n  \"proxied\": true,\n  \"comment\": \"example_value\",\n  \"tags\": [\n    \"example_value\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "75c9dc3b-7e7f-433e-b08e-119ccbe48e37",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    ":dns_record_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dns_record_id",
+                      "description": "(Required) The unique identifier of the DNS record."
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"A\",\n  \"name\": \"Example Title\",\n  \"content\": \"example_value\",\n  \"ttl\": 10,\n  \"priority\": 10,\n  \"proxied\": true,\n  \"comment\": \"example_value\",\n  \"tags\": [\n    \"example_value\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "f7409213-013c-4a88-8a34-523fef562691",
+              "name": "DNS record not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    ":dns_record_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dns_record_id",
+                      "description": "(Required) The unique identifier of the DNS record."
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"A\",\n  \"name\": \"Example Title\",\n  \"content\": \"example_value\",\n  \"ttl\": 10,\n  \"priority\": 10,\n  \"proxied\": true,\n  \"comment\": \"example_value\",\n  \"tags\": [\n    \"example_value\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "97a438e2-f52b-4bfb-b183-849e1317e9ce",
+          "name": "Cloudflare Delete Dns Record",
+          "request": {
+            "name": "Cloudflare Delete Dns Record",
+            "description": {
+              "content": "Delete a specific DNS record from the zone.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "zones",
+                ":zone_id",
+                "dns_records",
+                ":dns_record_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "zone_id",
+                  "description": "(Required) The unique identifier of the zone."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "dns_record_id",
+                  "description": "(Required) The unique identifier of the DNS record."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "c6272af4-becc-4d13-8025-d6b77e2f0da3",
+              "name": "DNS record deleted successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    ":dns_record_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dns_record_id",
+                      "description": "(Required) The unique identifier of the DNS record."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": {\n    \"id\": \"abc123\"\n  },\n  \"success\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "28beb0cd-0fea-4e46-8413-5c51836757f4",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    ":dns_record_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dns_record_id",
+                      "description": "(Required) The unique identifier of the DNS record."
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "46146292-874e-4bc4-91f2-91dd20dfbda4",
+              "name": "DNS record not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    ":dns_record_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "dns_record_id",
+                      "description": "(Required) The unique identifier of the DNS record."
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.cloudflare.com/client/v4",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "fe76c5c5-99f1-4fc7-8444-630f75d4d978",
+    "name": "Cloudflare / Accounts DNS Records API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Needs description.",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,376 @@
+{
+  "item": [
+    {
+      "id": "1cea291c-6701-4b6b-8be7-44da467e222f",
+      "name": "DNS Record Import/Export",
+      "description": {
+        "content": "Import and export DNS records using BIND zone file format.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "0dab7c4c-4fc8-4cc9-b620-c63316bad98b",
+          "name": "Cloudflare Export Dns Records",
+          "request": {
+            "name": "Cloudflare Export Dns Records",
+            "description": {
+              "content": "Export all DNS records for a zone in BIND zone file format.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "zones",
+                ":zone_id",
+                "dns_records",
+                "export"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "zone_id",
+                  "description": "(Required) The unique identifier of the zone."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "fda43843-f9de-49e0-a92e-ae0923b15204",
+              "name": "BIND zone file content.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    "export"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "text/plain"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "example_value",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "85f58f36-e5da-470b-94bd-dfc5a1011048",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    "export"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "89c06ba7-300a-46ea-a639-e95359ea49fd",
+          "name": "Cloudflare Import Dns Records",
+          "request": {
+            "name": "Cloudflare Import Dns Records",
+            "description": {
+              "content": "Import DNS records from a BIND zone file. Upload the BIND config to create DNS records in the zone.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "zones",
+                ":zone_id",
+                "dns_records",
+                "import"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "zone_id",
+                  "description": "(Required) The unique identifier of the zone."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "description": "BIND zone file to import."
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "e975ec3d-0d63-4f99-ac83-97b6e9b26ab8",
+              "name": "Import completed successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    "import"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "BIND zone file to import.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "type": "file"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "4c37464f-613d-4efb-942d-18cf5d7c73fd",
+              "name": "Bad request due to invalid BIND config.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    "import"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "BIND zone file to import.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "type": "file"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "1e80d053-8352-40a7-82a0-52eadca45179",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "dns_records",
+                    "import"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "BIND zone file to import.",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "type": "file"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.cloudflare.com/client/v4",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "293d6bec-ffad-46e2-b566-05405c073dbb",
+    "name": "Cloudflare / Accounts DNS Record Import/Export API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Needs description.",
+      "type": "text/plain"
+    }
+  }
+}

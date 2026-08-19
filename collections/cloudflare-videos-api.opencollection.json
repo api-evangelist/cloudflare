@@ -1,0 +1,174 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cloudflare / Accounts Videos API",
+    "version": "4.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Videos",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare List Videos",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "status",
+                "value": "pendingupload",
+                "type": "query",
+                "description": "Filter by video status."
+              },
+              {
+                "name": "search",
+                "value": "example_value",
+                "type": "query",
+                "description": "Search videos by name."
+              }
+            ]
+          },
+          "docs": "Returns a list of all videos in the account with pagination and filtering support."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Upload Video From Url",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Upload a video by providing a URL to fetch the video from."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Get Video Details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/:video_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "video_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the video."
+              }
+            ]
+          },
+          "docs": "Retrieve details of a specific video including processing status and playback information."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Update Video",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/:video_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "video_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the video."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update video metadata and settings."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Delete Video",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/:video_id",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              },
+              {
+                "name": "video_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the video."
+              }
+            ]
+          },
+          "docs": "Delete a video and all its associated data."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Create Direct Upload Url",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/accounts/:account_id/stream/direct_upload",
+            "params": [
+              {
+                "name": "account_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the Cloudflare account."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a unique one-time upload URL for direct video uploads from client-side applications."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

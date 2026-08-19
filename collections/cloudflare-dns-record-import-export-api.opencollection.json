@@ -1,0 +1,66 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cloudflare / Accounts DNS Record Import/Export API",
+    "version": "4.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "DNS Record Import/Export",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Export Dns Records",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/export",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ]
+          },
+          "docs": "Export all DNS records for a zone in BIND zone file format."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Import Dns Records",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/import",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "file",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Import DNS records from a BIND zone file. Upload the BIND config to create DNS records in the zone."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

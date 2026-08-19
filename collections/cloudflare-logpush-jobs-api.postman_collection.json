@@ -1,0 +1,896 @@
+{
+  "item": [
+    {
+      "id": "74c891ad-718a-4620-8251-eea36f3bd83a",
+      "name": "Logpush Jobs",
+      "description": {
+        "content": "Create, list, update, and delete Logpush jobs that push logs to external destinations.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "e54c2cba-30e8-4245-a050-fcaf6a2ba131",
+          "name": "Cloudflare List Logpush Jobs",
+          "request": {
+            "name": "Cloudflare List Logpush Jobs",
+            "description": {
+              "content": "Returns all Logpush jobs for the zone.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "zones",
+                ":zone_id",
+                "logpush",
+                "jobs"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "zone_id",
+                  "description": "(Required) The unique identifier of the zone."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "ee222c88-5b84-416e-b31b-4b20bcd6019b",
+              "name": "List of Logpush jobs.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "logpush",
+                    "jobs"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": [\n    {\n      \"id\": \"abc123\",\n      \"name\": \"Example Title\",\n      \"enabled\": true,\n      \"dataset\": \"http_requests\",\n      \"destination_conf\": \"example_value\",\n      \"logpull_options\": \"example_value\",\n      \"frequency\": \"high\",\n      \"last_complete\": \"2026-01-15T10:30:00Z\",\n      \"last_error\": \"2026-01-15T10:30:00Z\",\n      \"error_message\": \"example_value\"\n    }\n  ],\n  \"success\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "67e64e68-0b19-4af5-b02f-b4d261298b68",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "logpush",
+                    "jobs"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "77d300fe-a51b-4302-8cb2-60902ee6662b",
+          "name": "Cloudflare Create Logpush Job",
+          "request": {
+            "name": "Cloudflare Create Logpush Job",
+            "description": {
+              "content": "Create a new Logpush job to push logs to an external destination.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "zones",
+                ":zone_id",
+                "logpush",
+                "jobs"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "zone_id",
+                  "description": "(Required) The unique identifier of the zone."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\",\n  \"enabled\": \"<boolean>\",\n  \"dataset\": \"<string>\",\n  \"destination_conf\": \"<string>\",\n  \"logpull_options\": \"<string>\",\n  \"frequency\": \"<string>\",\n  \"filter\": \"<string>\",\n  \"ownership_challenge\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "a27655db-cfcf-42bc-bbd4-1b54da99ae56",
+              "name": "Logpush job created.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "logpush",
+                    "jobs"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Example Title\",\n  \"enabled\": true,\n  \"dataset\": \"example_value\",\n  \"destination_conf\": \"example_value\",\n  \"logpull_options\": \"example_value\",\n  \"frequency\": \"high\",\n  \"filter\": \"example_value\",\n  \"ownership_challenge\": \"example_value\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": {\n    \"id\": \"abc123\",\n    \"name\": \"Example Title\",\n    \"enabled\": true,\n    \"dataset\": \"http_requests\",\n    \"destination_conf\": \"example_value\",\n    \"logpull_options\": \"example_value\",\n    \"frequency\": \"high\",\n    \"last_complete\": \"2026-01-15T10:30:00Z\",\n    \"last_error\": \"2026-01-15T10:30:00Z\",\n    \"error_message\": \"example_value\"\n  },\n  \"success\": true,\n  \"errors\": [\n    {}\n  ],\n  \"messages\": [\n    {}\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "371e62a4-f461-4132-ab6d-c9d4a2b32f50",
+              "name": "Bad request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "logpush",
+                    "jobs"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Example Title\",\n  \"enabled\": true,\n  \"dataset\": \"example_value\",\n  \"destination_conf\": \"example_value\",\n  \"logpull_options\": \"example_value\",\n  \"frequency\": \"high\",\n  \"filter\": \"example_value\",\n  \"ownership_challenge\": \"example_value\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "ee6e85b3-0ded-4ebd-9108-aebc5555eae3",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "logpush",
+                    "jobs"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    }
+                  ]
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Example Title\",\n  \"enabled\": true,\n  \"dataset\": \"example_value\",\n  \"destination_conf\": \"example_value\",\n  \"logpull_options\": \"example_value\",\n  \"frequency\": \"high\",\n  \"filter\": \"example_value\",\n  \"ownership_challenge\": \"example_value\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "68ea9fd2-f913-41cb-88f8-55e9f7cf131e",
+          "name": "Cloudflare Get Logpush Job",
+          "request": {
+            "name": "Cloudflare Get Logpush Job",
+            "description": {
+              "content": "Retrieve details of a specific Logpush job.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "zones",
+                ":zone_id",
+                "logpush",
+                "jobs",
+                ":job_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "zone_id",
+                  "description": "(Required) The unique identifier of the zone."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "job_id",
+                  "description": "(Required) The unique identifier of the Logpush job."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "1c59b43b-2423-46d2-a5ce-fccf76d89bf8",
+              "name": "Logpush job details.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "logpush",
+                    "jobs",
+                    ":job_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "job_id",
+                      "description": "(Required) The unique identifier of the Logpush job."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"result\": {\n    \"id\": \"abc123\",\n    \"name\": \"Example Title\",\n    \"enabled\": true,\n    \"dataset\": \"http_requests\",\n    \"destination_conf\": \"example_value\",\n    \"logpull_options\": \"example_value\",\n    \"frequency\": \"high\",\n    \"last_complete\": \"2026-01-15T10:30:00Z\",\n    \"last_error\": \"2026-01-15T10:30:00Z\",\n    \"error_message\": \"example_value\"\n  },\n  \"success\": true,\n  \"errors\": [\n    {}\n  ],\n  \"messages\": [\n    {}\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "98961168-0c0f-49e8-aa70-bc5398fc436b",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "logpush",
+                    "jobs",
+                    ":job_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "job_id",
+                      "description": "(Required) The unique identifier of the Logpush job."
+                    }
+                  ]
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "a66c4060-8844-49fd-8323-a8ada976401a",
+              "name": "Job not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "logpush",
+                    "jobs",
+                    ":job_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "job_id",
+                      "description": "(Required) The unique identifier of the Logpush job."
+                    }
+                  ]
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "79d6802d-3129-48a3-96f1-5367998645b7",
+          "name": "Cloudflare Update Logpush Job",
+          "request": {
+            "name": "Cloudflare Update Logpush Job",
+            "description": {
+              "content": "Update the configuration of a Logpush job.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "zones",
+                ":zone_id",
+                "logpush",
+                "jobs",
+                ":job_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "zone_id",
+                  "description": "(Required) The unique identifier of the zone."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "job_id",
+                  "description": "(Required) The unique identifier of the Logpush job."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "PUT",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\",\n  \"enabled\": \"<boolean>\",\n  \"dataset\": \"<string>\",\n  \"destination_conf\": \"<string>\",\n  \"logpull_options\": \"<string>\",\n  \"frequency\": \"<string>\",\n  \"filter\": \"<string>\",\n  \"ownership_challenge\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "76a89218-f3ff-4ee9-b995-c5411df4685a",
+              "name": "Job updated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "logpush",
+                    "jobs",
+                    ":job_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "job_id",
+                      "description": "(Required) The unique identifier of the Logpush job."
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Example Title\",\n  \"enabled\": true,\n  \"dataset\": \"example_value\",\n  \"destination_conf\": \"example_value\",\n  \"logpull_options\": \"example_value\",\n  \"frequency\": \"high\",\n  \"filter\": \"example_value\",\n  \"ownership_challenge\": \"example_value\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "3d00010f-3f30-4334-8fd9-ef1927dc2e32",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "logpush",
+                    "jobs",
+                    ":job_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "job_id",
+                      "description": "(Required) The unique identifier of the Logpush job."
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Example Title\",\n  \"enabled\": true,\n  \"dataset\": \"example_value\",\n  \"destination_conf\": \"example_value\",\n  \"logpull_options\": \"example_value\",\n  \"frequency\": \"high\",\n  \"filter\": \"example_value\",\n  \"ownership_challenge\": \"example_value\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "70382c06-8304-4403-b462-b22ded990c89",
+          "name": "Cloudflare Delete Logpush Job",
+          "request": {
+            "name": "Cloudflare Delete Logpush Job",
+            "description": {
+              "content": "Delete a Logpush job.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "zones",
+                ":zone_id",
+                "logpush",
+                "jobs",
+                ":job_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "zone_id",
+                  "description": "(Required) The unique identifier of the zone."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "job_id",
+                  "description": "(Required) The unique identifier of the Logpush job."
+                }
+              ]
+            },
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "730427bd-8cf6-4200-85c9-eb650ebed174",
+              "name": "Job deleted.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "logpush",
+                    "jobs",
+                    ":job_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "job_id",
+                      "description": "(Required) The unique identifier of the Logpush job."
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "5beb1df2-ab74-4f1f-b972-44bfd04b8073",
+              "name": "Unauthorized.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "zones",
+                    ":zone_id",
+                    "logpush",
+                    "jobs",
+                    ":job_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "zone_id",
+                      "description": "(Required) The unique identifier of the zone."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "job_id",
+                      "description": "(Required) The unique identifier of the Logpush job."
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.cloudflare.com/client/v4",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "00f42360-53c6-403f-9ff1-d0dfb3c8ff6c",
+    "name": "Cloudflare / Accounts Logpush Jobs API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Needs description.",
+      "type": "text/plain"
+    }
+  }
+}

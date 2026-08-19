@@ -1,0 +1,75 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cloudflare / Accounts DNS Record Scanning API",
+    "version": "4.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "DNS Record Scanning",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Cloudflare Trigger Dns Record Scan",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/scan/trigger",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ]
+          },
+          "docs": "Initiate an asynchronous scan for common DNS records on the domain. The scan runs in the background and results can be reviewed using the scan review endpoints."
+        },
+        {
+          "info": {
+            "name": "Cloudflare List Scanned Dns Records",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/scan/review",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ]
+          },
+          "docs": "Retrieve the DNS records discovered by the most recent scan for review before adding them to the zone."
+        },
+        {
+          "info": {
+            "name": "Cloudflare Accept Scanned Dns Records",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.cloudflare.com/client/v4/zones/:zone_id/dns_records/scan/review",
+            "params": [
+              {
+                "name": "zone_id",
+                "value": "",
+                "type": "path",
+                "description": "The unique identifier of the zone."
+              }
+            ]
+          },
+          "docs": "Review and accept scanned DNS records to add them to the zone."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

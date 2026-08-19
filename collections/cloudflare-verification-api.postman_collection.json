@@ -1,0 +1,166 @@
+{
+  "item": [
+    {
+      "id": "dc755275-09d3-44f7-a561-5a5ed3a6f2be",
+      "name": "Verification",
+      "description": {
+        "content": "Verify Turnstile challenge tokens on the server side.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "a3d08111-8c8e-44a1-938f-392c4b8f5f97",
+          "name": "Cloudflare Verify Turnstile Token",
+          "request": {
+            "name": "Cloudflare Verify Turnstile Token",
+            "description": {
+              "content": "Validate a Turnstile challenge token on the server side. This is the primary endpoint for verifying that a user has passed the Turnstile challenge.",
+              "type": "text/plain"
+            },
+            "url": {
+              "protocol": "https",
+              "path": [
+                "siteverify"
+              ],
+              "host": [
+                "challenges",
+                "cloudflare",
+                "com"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "disabled": false,
+                  "key": "secret",
+                  "value": "<string>",
+                  "description": "(Required) The widget's secret key."
+                },
+                {
+                  "disabled": false,
+                  "key": "response",
+                  "value": "<string>",
+                  "description": "(Required) The Turnstile token from the client."
+                },
+                {
+                  "disabled": false,
+                  "key": "remoteip",
+                  "value": "<string>",
+                  "description": "The user's IP address."
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "1c3a7215-bf41-44db-9b1b-80685428c304",
+              "name": "Verification result.",
+              "originalRequest": {
+                "url": {
+                  "protocol": "https",
+                  "path": [
+                    "siteverify"
+                  ],
+                  "host": [
+                    "challenges",
+                    "cloudflare",
+                    "com"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The widget's secret key.",
+                        "type": "text/plain"
+                      },
+                      "key": "secret",
+                      "value": "example_value"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "(Required) The Turnstile token from the client.",
+                        "type": "text/plain"
+                      },
+                      "key": "response",
+                      "value": "example_value"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "The user's IP address.",
+                        "type": "text/plain"
+                      },
+                      "key": "remoteip",
+                      "value": "example_value"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"challenge_ts\": \"2026-01-15T10:30:00Z\",\n  \"hostname\": \"example_value\",\n  \"error-codes\": [\n    \"example_value\"\n  ],\n  \"action\": \"example_value\",\n  \"cdata\": \"example_value\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.cloudflare.com/client/v4",
+      "key": "baseUrl"
+    }
+  ],
+  "info": {
+    "_postman_id": "80b04d30-36ca-438b-a9a8-da500d5bee21",
+    "name": "Cloudflare / Accounts Verification API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Needs description.",
+      "type": "text/plain"
+    }
+  }
+}
