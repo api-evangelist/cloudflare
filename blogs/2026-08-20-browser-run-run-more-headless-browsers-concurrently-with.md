@@ -1,0 +1,7 @@
+---
+title: "Browser Run - Run more headless browsers concurrently with Browser Run"
+url: "https://developers.cloudflare.com/changelog/post/2026-08-20-limits-increase/"
+date: "2026-08-20"
+feed_url: "https://developers.cloudflare.com/changelog/rss/index.xml"
+---
+Browser Run lets you automate headless browsers on Cloudflare's global network. Run full browser sessions for interactive workflows, or use Quick Actions for one-request tasks such as screenshots, PDFs, and capturing page content. If you are on the Workers Paid plan , your default limits are now higher: Limit Previous New Concurrent browsers 120 200 New browser instances / second 1 3 Quick Actions requests / second 10 30 You can now run hundreds of browser sessions in parallel, launch new browsers faster, and process three times as many Quick Actions per second.
