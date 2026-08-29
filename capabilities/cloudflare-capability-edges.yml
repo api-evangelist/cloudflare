@@ -3,8 +3,7 @@ provider: Cloudflare
 generated_by: planning/capability-mapping/scripts/classify_capabilities.py
 model: claude-opus-5
 frame:
-- Banking & Capital Markets
-- Software & Technology
+- Telecommunications
 min_confidence: 0.7
 capability_model:
   source: https://github.com/vincentmakes/turbo-ea-capabilities
@@ -12,7 +11,7 @@ capability_model:
   attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
     CC BY 4.0
   notice: NOTICE
-edge_count: 5
+edge_count: 4
 edges:
 - tag: Deployments
   spec_file: cloudflare-deployments-api-openapi.yml
@@ -22,49 +21,34 @@ edges:
   confidence: 0.8
   evidence: POST /accounts/{account_id}/pages/projects/{project_name}/deployments/{deployment_id}/rollback  rollbackPagesDeployment  Cloudflare
     Rollback Deployment
-  reason: Create, list and roll back deployments of Pages projects and Worker scripts — this is exactly
-    deployment orchestration of software changes to production. Some ambiguity between release engineering
-    and deployment orchestration, but rollback of a live deployment points at the latter.
+  reason: Operations create, list and roll back deployments of Pages projects and Worker scripts — i.e.
+    delivering software changes to production with controlled rollback, which is deployment orchestration
+    within software release management. Sub-capability chosen over release engineering because the surface
+    is about executing/reverting deployments, not versioning or cadence.
 - tag: Memberships
   spec_file: cloudflare-memberships-api-openapi.yml
   capability_id: BC-620.20
   capability_id_l1: BC-620
   capability_name: Identity & Access Management
-  confidence: 0.8
-  evidence: '"Cloudflare List Memberships", "Cloudflare Update Membership"; schemas iam_roles, iam_permissions,
-    iam_grants'
-  reason: Manages user account memberships with roles, permissions and grants (iam_* schemas) — identity
-    and access administration. Clearly IAM; slight ambiguity versus tenant identity federation.
-- tag: Secrets
-  spec_file: cloudflare-secrets-api-openapi.yml
-  capability_id: BC-4210.60
-  capability_id_l1: BC-4210
-  capability_name: Configuration & Secrets Management
-  confidence: 0.8
-  evidence: GET /accounts/{account_id}/workers/scripts/{script_name}/secrets — 'List Worker Secrets';
-    PUT ... 'Add Worker Secret'
-  reason: Operations manage secret values consumed at runtime by deployed Worker services, which is exactly
-    configuration & secrets management. Some residual ambiguity with general IAM, hence 0.8 rather than
-    0.95.
+  confidence: 0.78
+  evidence: '''user''-s-account-memberships-update-membership''; schemas ''iam_grants'', ''iam_permissions'',
+    ''iam_roles'', ''iam_membership'''
+  reason: Operations manage a user's membership of accounts with roles, permissions and grants (schema
+    prefix iam_). That is account/identity and access administration, i.e. Identity & Access Management,
+    not any HR or partnership notion of 'membership'.
 - tag: Buckets
   spec_file: cloudflare-buckets-api-openapi.yml
   capability_id: BC-600.50
   capability_id_l1: BC-600
   capability_name: IT Infrastructure Management
   confidence: 0.7
-  evidence: POST /accounts/{account_id}/r2/buckets createR2Bucket 'Cloudflare Create R2 Bucket'; schemas
-    Bucket, BucketListResponse
-  reason: CRUD over R2 object-storage buckets — provisioning and lifecycle of cloud storage resources,
-    which is IT Infrastructure Management (compute, storage, network, cloud). No business-domain reading
-    fits.
-- tag: OpenAI Compatible
-  spec_file: cloudflare-openai-compatible-api-openapi.yml
-  capability_id: BC-610.60
-  capability_id_l1: BC-610
-  capability_name: Artificial Intelligence Management
+  evidence: '"Create R2 Bucket"; schema BucketListResponse'
+  reason: Object storage bucket provisioning is cloud storage infrastructure management.
+- tag: Databases
+  spec_file: cloudflare-databases-api-openapi.yml
+  capability_id: BC-600.50
+  capability_id_l1: BC-600
+  capability_name: IT Infrastructure Management
   confidence: 0.7
-  evidence: POST /accounts/{account_id}/ai/v1/chat/completions — "Cloudflare Create Chat Completion";
-    schemas ChatCompletionRequest, EmbeddingResponse
-  reason: OpenAI-compatible inference endpoints for chat, text completion and embeddings — AI/ML model
-    serving. Maps to Artificial Intelligence Management, though the sub-capability leans to model lifecycle/MLOps
-    rather than pure inference.
+  evidence: Create D1 Database; schemas D1Database, D1DatabaseResponse
+  reason: Provisioning and lifecycle of managed D1 databases is cloud storage/compute infrastructure management.
