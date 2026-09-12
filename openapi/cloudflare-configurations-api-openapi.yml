@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Cloudflare / Accounts Configurations API
   description: Needs description.
@@ -224,13 +224,6 @@ paths:
         dispatcher: FALLBACK
 components:
   parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
     ConfigId:
       name: config_id
       in: path
@@ -238,50 +231,43 @@ components:
       description: The unique identifier of the Hyperdrive configuration.
       schema:
         type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
   schemas:
-    HyperdriveConfig:
+    ConfigListResponse:
       type: object
       properties:
-        id:
-          type: string
-          description: The unique identifier.
-          example: abc123
-        name:
-          type: string
-          description: The name of the configuration.
-          example: Example Title
-        origin:
-          type: object
-          properties:
-            scheme:
-              type: string
-              description: The database protocol.
-            host:
-              type: string
-              description: The database host.
-            port:
-              type: integer
-              description: The database port.
-            database:
-              type: string
-              description: The database name.
-            user:
-              type: string
-              description: The database user.
-          example: example_value
-        caching:
-          type: object
-          properties:
-            disabled:
-              type: boolean
-              description: Whether caching is disabled.
-            max_age:
-              type: integer
-              description: Maximum cache age in seconds.
-            stale_while_revalidate:
-              type: integer
-              description: Stale-while-revalidate window in seconds.
-          example: example_value
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/HyperdriveConfig'
+          example: []
+        success:
+          type: boolean
+          example: true
+    ConfigResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/HyperdriveConfig'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
     ConfigInput:
       type: object
       required:
@@ -331,32 +317,46 @@ components:
             stale_while_revalidate:
               type: integer
           example: example_value
-    ConfigListResponse:
+    HyperdriveConfig:
       type: object
       properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/HyperdriveConfig'
-          example: []
-        success:
-          type: boolean
-          example: true
-    ConfigResponse:
-      type: object
-      properties:
-        result:
-          $ref: '#/components/schemas/HyperdriveConfig'
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
+        id:
+          type: string
+          description: The unique identifier.
+          example: abc123
+        name:
+          type: string
+          description: The name of the configuration.
+          example: Example Title
+        origin:
+          type: object
+          properties:
+            scheme:
+              type: string
+              description: The database protocol.
+            host:
+              type: string
+              description: The database host.
+            port:
+              type: integer
+              description: The database port.
+            database:
+              type: string
+              description: The database name.
+            user:
+              type: string
+              description: The database user.
+          example: example_value
+        caching:
+          type: object
+          properties:
+            disabled:
+              type: boolean
+              description: Whether caching is disabled.
+            max_age:
+              type: integer
+              description: Maximum cache age in seconds.
+            stale_while_revalidate:
+              type: integer
+              description: Stale-while-revalidate window in seconds.
+          example: example_value

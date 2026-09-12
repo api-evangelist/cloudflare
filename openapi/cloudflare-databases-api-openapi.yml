@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Cloudflare / Accounts Databases API
   description: Needs description.
@@ -233,40 +233,30 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
-  parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
-    DatabaseId:
-      name: database_id
-      in: path
-      required: true
-      description: The unique identifier of the D1 database.
-      schema:
-        type: string
   schemas:
-    D1DatabaseResponse:
+    D1DatabaseListResponse:
       type: object
       properties:
         result:
-          $ref: '#/components/schemas/D1Database'
+          type: array
+          items:
+            $ref: '#/components/schemas/D1Database'
+          example: []
         success:
           type: boolean
           example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
+        result_info:
+          type: object
+          properties:
+            page:
+              type: integer
+            per_page:
+              type: integer
+            count:
+              type: integer
+            total_count:
+              type: integer
+          example: example_value
     D1Database:
       type: object
       properties:
@@ -295,26 +285,36 @@ components:
           format: date-time
           description: When the database was created.
           example: '2026-01-15T10:30:00Z'
-    D1DatabaseListResponse:
+    D1DatabaseResponse:
       type: object
       properties:
         result:
-          type: array
-          items:
-            $ref: '#/components/schemas/D1Database'
-          example: []
+          $ref: '#/components/schemas/D1Database'
         success:
           type: boolean
           example: true
-        result_info:
-          type: object
-          properties:
-            page:
-              type: integer
-            per_page:
-              type: integer
-            count:
-              type: integer
-            total_count:
-              type: integer
-          example: example_value
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    DatabaseId:
+      name: database_id
+      in: path
+      required: true
+      description: The unique identifier of the D1 database.
+      schema:
+        type: string

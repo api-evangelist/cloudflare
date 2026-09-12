@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Cloudflare / Accounts Namespaces API
   description: Needs description.
@@ -252,22 +252,22 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
-  parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
-    NamespaceId:
-      name: namespace_id
-      in: path
-      required: true
-      description: The unique identifier of the KV namespace.
-      schema:
-        type: string
   schemas:
+    Namespace:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the namespace.
+          example: abc123
+        title:
+          type: string
+          description: The human-readable title of the namespace.
+          example: Example Title
+        supports_url_encoding:
+          type: boolean
+          description: Whether the namespace supports URL-encoded keys.
+          example: https://www.example.com
     NamespaceListResponse_2:
       type: object
       properties:
@@ -291,39 +291,6 @@ components:
             total_count:
               type: integer
           example: example_value
-    Namespace:
-      type: object
-      properties:
-        id:
-          type: string
-          description: The unique identifier of the namespace.
-          example: abc123
-        title:
-          type: string
-          description: The human-readable title of the namespace.
-          example: Example Title
-        supports_url_encoding:
-          type: boolean
-          description: Whether the namespace supports URL-encoded keys.
-          example: https://www.example.com
-    NamespaceResponse:
-      type: object
-      properties:
-        result:
-          $ref: '#/components/schemas/Namespace'
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
     DurableObjectNamespace:
       type: object
       properties:
@@ -364,3 +331,36 @@ components:
           items:
             type: object
           example: []
+    NamespaceResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Namespace'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    NamespaceId:
+      name: namespace_id
+      in: path
+      required: true
+      description: The unique identifier of the KV namespace.
+      schema:
+        type: string

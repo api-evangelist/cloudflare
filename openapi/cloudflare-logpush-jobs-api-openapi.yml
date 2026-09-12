@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Cloudflare / Accounts Logpush Jobs API
   description: Needs description.
@@ -218,24 +218,6 @@ paths:
         dispatcher: FALLBACK
 components:
   schemas:
-    LogpushJobResponse:
-      type: object
-      properties:
-        result:
-          $ref: '#/components/schemas/LogpushJob'
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
     LogpushJobInput:
       type: object
       properties:
@@ -273,6 +255,35 @@ components:
           type: string
           description: The ownership challenge token.
           example: example_value
+    LogpushJobResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/LogpushJob'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
+    LogpushJobListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogpushJob'
+          example: []
+        success:
+          type: boolean
+          example: true
     LogpushJob:
       type: object
       properties:
@@ -328,17 +339,6 @@ components:
           type: string
           description: Last error message.
           example: example_value
-    LogpushJobListResponse:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/LogpushJob'
-          example: []
-        success:
-          type: boolean
-          example: true
   parameters:
     JobId:
       name: job_id

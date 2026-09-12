@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Cloudflare / Accounts Queues API
   description: Needs description.
@@ -237,6 +237,24 @@ paths:
         dispatcher: FALLBACK
 components:
   schemas:
+    QueueResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Queue'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
     QueueListResponse:
       type: object
       properties:
@@ -277,24 +295,6 @@ components:
           type: integer
           description: Number of consumers attached.
           example: 10
-    QueueResponse:
-      type: object
-      properties:
-        result:
-          $ref: '#/components/schemas/Queue'
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
   parameters:
     AccountId:
       name: account_id

@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Cloudflare / Accounts Organizations API
   description: Needs description.
@@ -136,6 +136,46 @@ paths:
         api_key: []
 components:
   schemas:
+    aaa_audit_logs_response_collection:
+      oneOf:
+      - properties:
+          errors:
+            type:
+            - object
+            - 'null'
+          messages:
+            type: array
+            example: []
+            items: {}
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/aaa_audit-logs'
+          success:
+            type: boolean
+            example: true
+      - $ref: '#/components/schemas/aaa_api-response-common'
+    aaa_messages:
+      type: array
+      example: []
+      items:
+        type: object
+        uniqueItems: true
+        required:
+        - code
+        - message
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          message:
+            type: string
+    aaa_identifier:
+      type: string
+      description: Identifier
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      readOnly: true
+      maxLength: 32
     aaa_api-response-common-failure:
       type: object
       required:
@@ -156,34 +196,41 @@ components:
           - $ref: '#/components/schemas/aaa_messages'
           example: []
         result:
-          type: object
+          type:
+          - object
+          - 'null'
           enum:
           - null
-          nullable: true
         success:
           type: boolean
           description: Whether the API call was successful
           enum:
           - false
           example: false
-    aaa_audit_logs_response_collection:
-      oneOf:
-      - properties:
-          errors:
-            type: object
-            nullable: true
-          messages:
-            type: array
-            example: []
+    aaa_api-response-common:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          $ref: '#/components/schemas/aaa_messages'
+        messages:
+          $ref: '#/components/schemas/aaa_messages'
+        result:
+          anyOf:
+          - type: object
+          - type: array
             items: {}
-          result:
-            type: array
-            items:
-              $ref: '#/components/schemas/aaa_audit-logs'
-          success:
-            type: boolean
-            example: true
-      - $ref: '#/components/schemas/aaa_api-response-common'
+          - type: string
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - true
+          example: true
     aaa_audit-logs:
       type: object
       properties:
@@ -267,48 +314,3 @@ components:
           format: date-time
           description: A UTC RFC3339 timestamp that specifies when the action being logged occured.
           example: '2017-04-26T17:31:07Z'
-    aaa_api-response-common:
-      type: object
-      required:
-      - success
-      - errors
-      - messages
-      - result
-      properties:
-        errors:
-          $ref: '#/components/schemas/aaa_messages'
-        messages:
-          $ref: '#/components/schemas/aaa_messages'
-        result:
-          anyOf:
-          - type: object
-          - type: array
-            items: {}
-          - type: string
-        success:
-          type: boolean
-          description: Whether the API call was successful
-          enum:
-          - true
-          example: true
-    aaa_messages:
-      type: array
-      example: []
-      items:
-        type: object
-        uniqueItems: true
-        required:
-        - code
-        - message
-        properties:
-          code:
-            type: integer
-            minimum: 1000
-          message:
-            type: string
-    aaa_identifier:
-      type: string
-      description: Identifier
-      example: 023e105f4ecef8ad9ca31a8372d0c353
-      readOnly: true
-      maxLength: 32

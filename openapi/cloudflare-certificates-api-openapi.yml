@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Cloudflare / Accounts Certificates API
   description: Needs description.
@@ -149,70 +149,25 @@ paths:
       - user_service_key: []
 components:
   schemas:
-    tls-certificates-and-hostnames_schemas-certificate_response_single:
-      allOf:
-      - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-single'
-      - type: object
-        properties:
-          result:
-            type: object
-    tls-certificates-and-hostnames_certificates:
+    tls-certificates-and-hostnames_result_info:
       type: object
-      required:
-      - hostnames
-      - csr
-      - requested_validity
-      - request_type
       properties:
-        certificate:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_components-schemas-certificate'
-        csr:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_csr'
-        expires_on:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_schemas-expires_on'
-        hostnames:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_hostnames'
-        id:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
-        request_type:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_request_type'
-        requested_validity:
-          $ref: '#/components/schemas/tls-certificates-and-hostnames_requested_validity'
-    tls-certificates-and-hostnames_api-response-single:
-      allOf:
-      - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-common'
-      - properties:
-          result:
-            anyOf:
-            - type: object
-            - type: string
-      type: object
-    tls-certificates-and-hostnames_hostnames:
-      type: array
-      description: Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.
-      example:
-      - example.com
-      - '*.example.com'
-      items: {}
-    tls-certificates-and-hostnames_api-response-collection:
-      allOf:
-      - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-common'
-      - properties:
-          result:
-            type: array
-            nullable: true
-            items: {}
-          result_info:
-            $ref: '#/components/schemas/tls-certificates-and-hostnames_result_info'
-      type: object
-    tls-certificates-and-hostnames_request_type:
-      type: string
-      description: Signature type desired on certificate ("origin-rsa" (rsa), "origin-ecc" (ecdsa), or "keyless-certificate" (for Keyless SSL servers).
-      enum:
-      - origin-rsa
-      - origin-ecc
-      - keyless-certificate
-      example: origin-rsa
+        count:
+          type: number
+          description: Total number of results for the requested service
+          example: 1
+        page:
+          type: number
+          description: Current page within paginated list of results
+          example: 1
+        per_page:
+          type: number
+          description: Number of results per page of results
+          example: 20
+        total_count:
+          type: number
+          description: Total results available without any search parameters
+          example: 2000
     tls-certificates-and-hostnames_api-response-common-failure:
       type: object
       required:
@@ -233,25 +188,17 @@ components:
           - $ref: '#/components/schemas/tls-certificates-and-hostnames_messages'
           example: []
         result:
-          type: object
+          type:
+          - object
+          - 'null'
           enum:
           - null
-          nullable: true
         success:
           type: boolean
           description: Whether the API call was successful
           enum:
           - false
           example: false
-    tls-certificates-and-hostnames_schemas-certificate_response_collection:
-      allOf:
-      - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-collection'
-      - type: object
-        properties:
-          result:
-            type: array
-            items:
-              $ref: '#/components/schemas/tls-certificates-and-hostnames_certificates'
     tls-certificates-and-hostnames_api-response-common:
       type: object
       required:
@@ -276,39 +223,25 @@ components:
           enum:
           - true
           example: true
-    tls-certificates-and-hostnames_certificate_response_single_id:
+    tls-certificates-and-hostnames_schemas-certificate_response_single:
       allOf:
-      - $ref: '#/components/schemas/tls-certificates-and-hostnames_schemas-certificate_response_single'
+      - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-single'
+      - type: object
+        properties:
+          result:
+            type: object
+    tls-certificates-and-hostnames_api-response-collection:
+      allOf:
+      - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-common'
       - properties:
           result:
-            properties:
-              id:
-                $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
-    tls-certificates-and-hostnames_identifier:
-      type: string
-      description: Identifier
-      example: 023e105f4ecef8ad9ca31a8372d0c353
-      readOnly: true
-      maxLength: 32
-    tls-certificates-and-hostnames_result_info:
+            type:
+            - array
+            - 'null'
+            items: {}
+          result_info:
+            $ref: '#/components/schemas/tls-certificates-and-hostnames_result_info'
       type: object
-      properties:
-        count:
-          type: number
-          description: Total number of results for the requested service
-          example: 1
-        page:
-          type: number
-          description: Current page within paginated list of results
-          example: 1
-        per_page:
-          type: number
-          description: Number of results per page of results
-          example: 20
-        total_count:
-          type: number
-          description: Total results available without any search parameters
-          example: 2000
     tls-certificates-and-hostnames_schemas-expires_on:
       type: string
       format: date-time
@@ -380,6 +313,14 @@ components:
 
         --END CERTIFICATE--'
       readOnly: true
+    tls-certificates-and-hostnames_certificate_response_single_id:
+      allOf:
+      - $ref: '#/components/schemas/tls-certificates-and-hostnames_schemas-certificate_response_single'
+      - properties:
+          result:
+            properties:
+              id:
+                $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
     tls-certificates-and-hostnames_csr:
       type: string
       description: The Certificate Signing Request (CSR). Must be newline-encoded.
@@ -416,3 +357,64 @@ components:
         dcWYTthM51JIqRBfNqy4QcBnX+GY05yltEEswQI55wdiS3CjTTA67sdbcQ==
 
         --END CERTIFICATE REQUEST--'
+    tls-certificates-and-hostnames_hostnames:
+      type: array
+      description: Array of hostnames or wildcard names (e.g., *.example.com) bound to the certificate.
+      example:
+      - example.com
+      - '*.example.com'
+      items: {}
+    tls-certificates-and-hostnames_certificates:
+      type: object
+      required:
+      - hostnames
+      - csr
+      - requested_validity
+      - request_type
+      properties:
+        certificate:
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_components-schemas-certificate'
+        csr:
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_csr'
+        expires_on:
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_schemas-expires_on'
+        hostnames:
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_hostnames'
+        id:
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_identifier'
+        request_type:
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_request_type'
+        requested_validity:
+          $ref: '#/components/schemas/tls-certificates-and-hostnames_requested_validity'
+    tls-certificates-and-hostnames_request_type:
+      type: string
+      description: Signature type desired on certificate ("origin-rsa" (rsa), "origin-ecc" (ecdsa), or "keyless-certificate" (for Keyless SSL servers).
+      enum:
+      - origin-rsa
+      - origin-ecc
+      - keyless-certificate
+      example: origin-rsa
+    tls-certificates-and-hostnames_schemas-certificate_response_collection:
+      allOf:
+      - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-collection'
+      - type: object
+        properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/tls-certificates-and-hostnames_certificates'
+    tls-certificates-and-hostnames_api-response-single:
+      allOf:
+      - $ref: '#/components/schemas/tls-certificates-and-hostnames_api-response-common'
+      - properties:
+          result:
+            anyOf:
+            - type: object
+            - type: string
+      type: object
+    tls-certificates-and-hostnames_identifier:
+      type: string
+      description: Identifier
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      readOnly: true
+      maxLength: 32

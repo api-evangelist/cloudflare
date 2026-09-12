@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Cloudflare / Accounts Images API
   description: Needs description.
@@ -231,22 +231,25 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
-  parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
-    ImageId:
-      name: image_id
-      in: path
-      required: true
-      description: The unique identifier of the image.
-      schema:
-        type: string
   schemas:
+    ImageResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Image'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
     Image:
       type: object
       properties:
@@ -277,24 +280,6 @@ components:
             format: uri
           description: URLs for each variant of the image.
           example: []
-    ImageResponse:
-      type: object
-      properties:
-        result:
-          $ref: '#/components/schemas/Image'
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
     ImageListResponse:
       type: object
       properties:
@@ -309,3 +294,18 @@ components:
         success:
           type: boolean
           example: true
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    ImageId:
+      name: image_id
+      in: path
+      required: true
+      description: The unique identifier of the image.
+      schema:
+        type: string

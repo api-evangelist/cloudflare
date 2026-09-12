@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Cloudflare / Accounts Projects API
   description: Needs description.
@@ -216,54 +216,7 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
-  parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
-    ProjectName:
-      name: project_name
-      in: path
-      required: true
-      description: The name of the Pages project.
-      schema:
-        type: string
   schemas:
-    ProjectInput:
-      type: object
-      properties:
-        name:
-          type: string
-          description: The name of the project.
-          example: Example Title
-        production_branch:
-          type: string
-          description: The production branch name.
-          example: example_value
-        build_config:
-          type: object
-          properties:
-            build_command:
-              type: string
-            destination_dir:
-              type: string
-            root_dir:
-              type: string
-          example: example_value
-    ProjectListResponse:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Project'
-          example: []
-        success:
-          type: boolean
-          example: true
     Project:
       type: object
       properties:
@@ -307,6 +260,38 @@ components:
               type: string
               description: The root directory of the project.
           example: example_value
+    ProjectInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the project.
+          example: Example Title
+        production_branch:
+          type: string
+          description: The production branch name.
+          example: example_value
+        build_config:
+          type: object
+          properties:
+            build_command:
+              type: string
+            destination_dir:
+              type: string
+            root_dir:
+              type: string
+          example: example_value
+    ProjectListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+          example: []
+        success:
+          type: boolean
+          example: true
     ProjectResponse:
       type: object
       properties:
@@ -325,3 +310,18 @@ components:
           items:
             type: object
           example: []
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    ProjectName:
+      name: project_name
+      in: path
+      required: true
+      description: The name of the Pages project.
+      schema:
+        type: string

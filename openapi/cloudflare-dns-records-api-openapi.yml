@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Cloudflare / Accounts DNS Records API
   description: Needs description.
@@ -406,6 +406,41 @@ paths:
         dispatcher: FALLBACK
 components:
   schemas:
+    DnsRecordListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsRecord'
+          example: []
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
+        result_info:
+          type: object
+          properties:
+            page:
+              type: integer
+            per_page:
+              type: integer
+            count:
+              type: integer
+            total_count:
+              type: integer
+            total_pages:
+              type: integer
+          example: example_value
     DnsRecord:
       type: object
       properties:
@@ -548,53 +583,18 @@ components:
           items:
             type: object
           example: []
-    DnsRecordListResponse:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/DnsRecord'
-          example: []
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
-        result_info:
-          type: object
-          properties:
-            page:
-              type: integer
-            per_page:
-              type: integer
-            count:
-              type: integer
-            total_count:
-              type: integer
-            total_pages:
-              type: integer
-          example: example_value
   parameters:
-    ZoneId:
-      name: zone_id
-      in: path
-      required: true
-      description: The unique identifier of the zone.
-      schema:
-        type: string
     DnsRecordId:
       name: dns_record_id
       in: path
       required: true
       description: The unique identifier of the DNS record.
+      schema:
+        type: string
+    ZoneId:
+      name: zone_id
+      in: path
+      required: true
+      description: The unique identifier of the zone.
       schema:
         type: string

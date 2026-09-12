@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Cloudflare / Accounts Gateways API
   description: Needs description.
@@ -222,51 +222,7 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
-  parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
-    GatewayId:
-      name: gateway_id
-      in: path
-      required: true
-      description: The unique identifier of the AI Gateway.
-      schema:
-        type: string
   schemas:
-    GatewayResponse:
-      type: object
-      properties:
-        result:
-          $ref: '#/components/schemas/Gateway'
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
-    GatewayListResponse:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Gateway'
-          example: []
-        success:
-          type: boolean
-          example: true
     GatewayInput:
       type: object
       required:
@@ -299,6 +255,17 @@ components:
         log_enabled:
           type: boolean
           description: Enable request logging.
+          example: true
+    GatewayListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gateway'
+          example: []
+        success:
+          type: boolean
           example: true
     Gateway:
       type: object
@@ -349,3 +316,36 @@ components:
           format: date-time
           description: When the gateway was last modified.
           example: '2026-01-15T10:30:00Z'
+    GatewayResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Gateway'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
+  parameters:
+    GatewayId:
+      name: gateway_id
+      in: path
+      required: true
+      description: The unique identifier of the AI Gateway.
+      schema:
+        type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string

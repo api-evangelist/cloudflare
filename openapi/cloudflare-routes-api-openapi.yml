@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Cloudflare / Accounts Routes API
   description: Needs description.
@@ -153,13 +153,6 @@ paths:
         dispatcher: FALLBACK
 components:
   parameters:
-    RouteId:
-      name: route_id
-      in: path
-      required: true
-      description: The unique identifier of the route.
-      schema:
-        type: string
     ZoneId:
       name: zone_id
       in: path
@@ -167,20 +160,14 @@ components:
       description: The unique identifier of the zone.
       schema:
         type: string
+    RouteId:
+      name: route_id
+      in: path
+      required: true
+      description: The unique identifier of the route.
+      schema:
+        type: string
   schemas:
-    RouteInput:
-      type: object
-      required:
-      - pattern
-      properties:
-        pattern:
-          type: string
-          description: The URL pattern for the route, e.g. example.com/*.
-          example: example_value
-        script:
-          type: string
-          description: The name of the Worker script to invoke.
-          example: example_value
     RouteListResponse:
       type: object
       properties:
@@ -199,3 +186,16 @@ components:
         success:
           type: boolean
           example: true
+    RouteInput:
+      type: object
+      required:
+      - pattern
+      properties:
+        pattern:
+          type: string
+          description: The URL pattern for the route, e.g. example.com/*.
+          example: example_value
+        script:
+          type: string
+          description: The name of the Worker script to invoke.
+          example: example_value

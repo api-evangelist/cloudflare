@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Cloudflare / Accounts Videos API
   description: Needs description.
@@ -315,18 +315,18 @@ paths:
         dispatcher: FALLBACK
 components:
   parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
     VideoId:
       name: video_id
       in: path
       required: true
       description: The unique identifier of the video.
+      schema:
+        type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
       schema:
         type: string
   schemas:
@@ -341,24 +341,6 @@ components:
         success:
           type: boolean
           example: true
-    VideoResponse:
-      type: object
-      properties:
-        result:
-          $ref: '#/components/schemas/Video'
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
     Video:
       type: object
       properties:
@@ -425,4 +407,22 @@ components:
           type: array
           items:
             type: string
+          example: []
+    VideoResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Video'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
           example: []
