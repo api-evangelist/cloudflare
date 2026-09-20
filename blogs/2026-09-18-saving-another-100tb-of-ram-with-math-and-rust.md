@@ -1,0 +1,8 @@
+---
+title: "Saving another 100TB of RAM with math (and Rust)"
+url: "https://blog.cloudflare.com/saving-100-tb-of-ram-with-math/"
+date: "2026-09-18"
+author: "Kevin Guthrie"
+feed_url: "https://blog.cloudflare.com/rss/"
+---
+Cloudflare's global network is immense but not limitless. As we look for small ways to trim our resource usage, we sometimes get lucky and we can cut significantly more. Here’s how we reduced one of our Pingora-based service's RAM usage with statistics.
