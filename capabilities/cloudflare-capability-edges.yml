@@ -11,7 +11,7 @@ capability_model:
   attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
     CC BY 4.0
   notice: NOTICE
-edge_count: 4
+edge_count: 6
 edges:
 - tag: Deployments
   spec_file: cloudflare-deployments-api-openapi.yml
@@ -25,6 +25,18 @@ edges:
     delivering software changes to production with controlled rollback, which is deployment orchestration
     within software release management. Sub-capability chosen over release engineering because the surface
     is about executing/reverting deployments, not versioning or cadence.
+- tag: Secrets
+  spec_file: cloudflare-secrets-api-openapi.yml
+  capability_id: BC-4210.60
+  capability_id_l1: BC-4210
+  capability_name: Configuration & Secrets Management
+  confidence: 0.8
+  evidence: GET /accounts/{account_id}/workers/scripts/{script_name}/secrets — 'List Worker Secrets';
+    PUT ... 'Add Worker Secret'
+  reason: Operations manage secret values consumed at runtime by deployed Worker services, which is exactly
+    configuration & secrets management. Some residual ambiguity with general IAM, hence 0.8 rather than
+    0.95.
+  recovered_from: capability-edges-sweep.json
 - tag: Memberships
   spec_file: cloudflare-memberships-api-openapi.yml
   capability_id: BC-620.20
@@ -52,3 +64,15 @@ edges:
   confidence: 0.7
   evidence: Create D1 Database; schemas D1Database, D1DatabaseResponse
   reason: Provisioning and lifecycle of managed D1 databases is cloud storage/compute infrastructure management.
+- tag: OpenAI Compatible
+  spec_file: cloudflare-openai-compatible-api-openapi.yml
+  capability_id: BC-610.60
+  capability_id_l1: BC-610
+  capability_name: Artificial Intelligence Management
+  confidence: 0.7
+  evidence: POST /accounts/{account_id}/ai/v1/chat/completions — "Cloudflare Create Chat Completion";
+    schemas ChatCompletionRequest, EmbeddingResponse
+  reason: OpenAI-compatible inference endpoints for chat, text completion and embeddings — AI/ML model
+    serving. Maps to Artificial Intelligence Management, though the sub-capability leans to model lifecycle/MLOps
+    rather than pure inference.
+  recovered_from: capability-edges-sweep.json
