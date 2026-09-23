@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts DNS Record Import/Export API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare DNS DNS Record Import/Export API
+  description: The Cloudflare DNS API allows developers to programmatically manage DNS records for their zones, including creating, listing, updating, and deleting records. It also supports batch operations, DNS record scanning, BIND config import and export, DNSSEC configuration, and DNS analytics.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: DNS Record Import/Export
   description: Import and export DNS records using BIND zone file format.
@@ -89,3 +87,16 @@ components:
       description: The unique identifier of the zone.
       schema:
         type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token authentication. Generate a token from the Cloudflare dashboard with appropriate permissions.
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Auth-Key
+      description: Global API key paired with X-Auth-Email header for authentication.
+externalDocs:
+  description: Cloudflare DNS API Documentation
+  url: https://developers.cloudflare.com/api/resources/dns/

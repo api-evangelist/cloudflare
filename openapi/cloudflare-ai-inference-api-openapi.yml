@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts AI Inference API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare Workers AI AI Inference API
+  description: The Cloudflare Workers AI API enables developers to run machine learning models on Cloudflare's global network via a REST API. It supports text generation, embeddings, image classification, speech recognition, and other AI tasks with OpenAI-compatible endpoints for chat completions, text completions, and embeddings.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: AI Inference
   description: Execute AI models for text generation, embeddings, image classification, and other machine learning tasks.
@@ -87,6 +85,29 @@ paths:
         dispatcher: FALLBACK
 components:
   schemas:
+    AiRunResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            response:
+              type: string
+              description: The generated text response.
+          example: example_value
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
     AiRunRequest:
       type: object
       properties:
@@ -139,29 +160,6 @@ components:
           type: boolean
           description: Whether to stream the response using server-sent events.
           example: true
-    AiRunResponse:
-      type: object
-      properties:
-        result:
-          type: object
-          properties:
-            response:
-              type: string
-              description: The generated text response.
-          example: example_value
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
   parameters:
     AccountId:
       name: account_id
@@ -170,3 +168,11 @@ components:
       description: The unique identifier of the Cloudflare account.
       schema:
         type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with Workers AI Read and Edit permissions.
+externalDocs:
+  description: Cloudflare Workers AI Documentation
+  url: https://developers.cloudflare.com/workers-ai/

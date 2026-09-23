@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Configurations API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare Hyperdrive Configurations API
+  description: Cloudflare Hyperdrive accelerates access to existing databases from Cloudflare Workers by providing connection pooling and query caching at the edge. The API allows developers to create and manage Hyperdrive configurations that connect to PostgreSQL and other databases.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Configurations
   description: Create, list, update, and delete Hyperdrive configurations that connect Workers to databases.
@@ -224,13 +222,6 @@ paths:
         dispatcher: FALLBACK
 components:
   parameters:
-    ConfigId:
-      name: config_id
-      in: path
-      required: true
-      description: The unique identifier of the Hyperdrive configuration.
-      schema:
-        type: string
     AccountId:
       name: account_id
       in: path
@@ -238,36 +229,14 @@ components:
       description: The unique identifier of the Cloudflare account.
       schema:
         type: string
+    ConfigId:
+      name: config_id
+      in: path
+      required: true
+      description: The unique identifier of the Hyperdrive configuration.
+      schema:
+        type: string
   schemas:
-    ConfigListResponse:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/HyperdriveConfig'
-          example: []
-        success:
-          type: boolean
-          example: true
-    ConfigResponse:
-      type: object
-      properties:
-        result:
-          $ref: '#/components/schemas/HyperdriveConfig'
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
     ConfigInput:
       type: object
       required:
@@ -317,6 +286,17 @@ components:
             stale_while_revalidate:
               type: integer
           example: example_value
+    ConfigListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/HyperdriveConfig'
+          example: []
+        success:
+          type: boolean
+          example: true
     HyperdriveConfig:
       type: object
       properties:
@@ -360,3 +340,29 @@ components:
               type: integer
               description: Stale-while-revalidate window in seconds.
           example: example_value
+    ConfigResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/HyperdriveConfig'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with Hyperdrive permissions.
+externalDocs:
+  description: Cloudflare Hyperdrive API Documentation
+  url: https://developers.cloudflare.com/api/resources/hyperdrive/

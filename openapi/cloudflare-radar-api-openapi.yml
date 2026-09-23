@@ -1,7 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Radar API
-  description: Needs description.
+  title: Cloudflare Radar API
+  description: Interact with Cloudflare's products and services via the Cloudflare API.
   license:
     name: BSD-3-Clause
     url: https://opensource.org/licenses/BSD-3-Clause
@@ -21,7 +21,7 @@ paths:
     get:
       tags:
       - Radar
-      summary: Cloudflare Get latest Internet outages and anomalies.
+      summary: Cloudflare Get latest Internet outages and anomalies
       operationId: radar-get-annotations-outages
       parameters:
       - name: limit
@@ -245,7 +245,7 @@ paths:
     get:
       tags:
       - Radar
-      summary: Cloudflare Get the number of outages for locations.
+      summary: Cloudflare Get the number of outages for locations
       operationId: radar-get-annotations-outages-top
       parameters:
       - name: limit
@@ -16092,7 +16092,7 @@ paths:
     get:
       tags:
       - Radar
-      summary: Cloudflare Get Top Autonomous Systems by DNS queries.
+      summary: Cloudflare Get Top Autonomous Systems by DNS queries
       description: Get top autonomous systems by DNS queries made to Cloudflare's public DNS resolver.
       operationId: radar-get-dns-top-ases
       parameters:
@@ -24944,7 +24944,7 @@ paths:
       tags:
       - Radar
       summary: Cloudflare Get IP address
-      description: 'Get IP address information. '
+      description: Get IP address information.
       operationId: radar-get-entities-ip
       parameters:
       - name: ip
@@ -29837,7 +29837,7 @@ paths:
       tags:
       - Radar
       summary: Cloudflare Get Top Autonomous Systems By Bot Class
-      description: Get the top autonomous systems (AS), by HTTP traffic, of the requested bot class. These two categories use Cloudflare's bot score - refer to [Bot Scores](https://developers.cloudflare.com/bots/concepts/bot-score) for more information. Values are a percentage out of the total traffic.
+      description: Get the top autonomous systems (AS), by HTTP traffic, of the requested bot class. These two categories use Cloudflare's bot score - refer to Bot Scores for more information. Values are a percentage out of the total traffic.
       operationId: radar-get-http-top-ases-by-bot-class
       parameters:
       - name: bot_class
@@ -34863,7 +34863,7 @@ paths:
       tags:
       - Radar
       summary: Cloudflare Get NetFlows Time Series
-      description: 'Get network traffic change over time. Visit https://en.wikipedia.org/wiki/NetFlow for more information on NetFlows. '
+      description: Get network traffic change over time. Visit https://en.wikipedia.org/wiki/NetFlow for more information on NetFlows.
       operationId: radar-get-netflows-timeseries
       parameters:
       - name: aggInterval
@@ -36666,7 +36666,11 @@ paths:
       tags:
       - Radar
       summary: Cloudflare Get Domains Rank details
-      description: "Gets Domains Rank details. \n    Cloudflare provides an ordered rank for the top 100 domains, but for the remainder it only provides ranking buckets\n    like top 200 thousand, top one million, etc.. These are available through Radar datasets endpoints."
+      description: 'Gets Domains Rank details.
+
+        Cloudflare provides an ordered rank for the top 100 domains, but for the remainder it only provides ranking buckets
+
+        like top 200 thousand, top one million, etc.. These are available through Radar datasets endpoints.'
       operationId: radar-get-ranking-domain-details
       parameters:
       - name: domain
@@ -37166,7 +37170,7 @@ paths:
     get:
       tags:
       - Radar
-      summary: Cloudflare Search for locations, autonomous systems (AS) and reports.
+      summary: Cloudflare Search for locations, autonomous systems (AS) and reports
       description: Lets you search for locations, autonomous systems (AS) and reports.
       operationId: radar-get-search-global
       parameters:
@@ -37291,8 +37295,12 @@ paths:
     get:
       tags:
       - Radar
-      summary: Cloudflare Get latest Internet traffic anomalies.
-      description: "Internet traffic anomalies are signals that might point to an outage,\n        These alerts are automatically detected by Radar and then manually verified by our team.\n        This endpoint returns the latest alerts.\n        "
+      summary: Cloudflare Get latest Internet traffic anomalies
+      description: 'Internet traffic anomalies are signals that might point to an outage,
+
+        These alerts are automatically detected by Radar and then manually verified by our team.
+
+        This endpoint returns the latest alerts.'
       operationId: radar-get-traffic-anomalies
       parameters:
       - name: limit
@@ -37487,8 +37495,12 @@ paths:
     get:
       tags:
       - Radar
-      summary: Cloudflare Get top locations by total traffic anomalies generated.
-      description: "Internet traffic anomalies are signals that might point to an outage,\n        These alerts are automatically detected by Radar and then manually verified by our team.\n        This endpoint returns the sum of alerts grouped by location.\n        "
+      summary: Cloudflare Get top locations by total traffic anomalies generated
+      description: 'Internet traffic anomalies are signals that might point to an outage,
+
+        These alerts are automatically detected by Radar and then manually verified by our team.
+
+        This endpoint returns the sum of alerts grouped by location.'
       operationId: radar-get-traffic-anomalies-top
       parameters:
       - name: limit
@@ -38055,3 +38067,20 @@ paths:
       - api_email: []
         api_key: []
         api_token: []
+components:
+  securitySchemes:
+    api_email:
+      type: apiKey
+      name: X-Auth-Email
+      in: header
+    api_key:
+      type: apiKey
+      name: X-Auth-Key
+      in: header
+    api_token:
+      type: http
+      scheme: bearer
+    user_service_key:
+      type: apiKey
+      name: X-Auth-User-Service-Key
+      in: header

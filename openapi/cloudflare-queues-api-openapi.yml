@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Queues API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare Queues API
+  description: The Cloudflare Queues API enables developers to create and manage message queues that integrate with Cloudflare Workers. Queues support guaranteed delivery, work offloading from requests, worker-to-worker communication, and data buffering and batching. The API provides endpoints for queue management, consumer configuration, message operations, and purging.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Queues
   description: Create, list, update, and delete message queues.
@@ -310,3 +308,11 @@ components:
       description: The unique identifier of the queue.
       schema:
         type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with Queues permissions.
+externalDocs:
+  description: Cloudflare Queues API Documentation
+  url: https://developers.cloudflare.com/api/resources/queues/

@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Metadata API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare KV Metadata API
+  description: Cloudflare Workers KV is a global, low-latency key-value data store. The KV API allows developers to create namespaces, write and read key-value pairs, list keys, perform bulk operations with support for up to 10,000 key-value pairs per request, and manage key metadata.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Metadata
   description: Read metadata associated with keys.
@@ -48,13 +46,6 @@ components:
       description: The unique identifier of the Cloudflare account.
       schema:
         type: string
-    KeyName:
-      name: key_name
-      in: path
-      required: true
-      description: The key name. Use URL-encoding for special characters such as colon, exclamation mark, and percent.
-      schema:
-        type: string
     NamespaceId:
       name: namespace_id
       in: path
@@ -62,3 +53,18 @@ components:
       description: The unique identifier of the KV namespace.
       schema:
         type: string
+    KeyName:
+      name: key_name
+      in: path
+      required: true
+      description: The key name. Use URL-encoding for special characters such as colon, exclamation mark, and percent.
+      schema:
+        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with Workers KV Storage permissions.
+externalDocs:
+  description: Cloudflare KV API Documentation
+  url: https://developers.cloudflare.com/api/resources/kv/

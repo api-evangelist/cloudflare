@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts OpenAI Compatible API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare Workers AI OpenAI Compatible API
+  description: The Cloudflare Workers AI API enables developers to run machine learning models on Cloudflare's global network via a REST API. It supports text generation, embeddings, image classification, speech recognition, and other AI tasks with OpenAI-compatible endpoints for chat completions, text completions, and embeddings.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: OpenAI Compatible
   description: OpenAI-compatible endpoints for chat completions, text completions, embeddings, and responses.
@@ -243,7 +241,48 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
   schemas:
+    EmbeddingResponse:
+      type: object
+      properties:
+        object:
+          type: string
+          const: list
+          example: example_value
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              object:
+                type: string
+                const: embedding
+              index:
+                type: integer
+              embedding:
+                type: array
+                items:
+                  type: number
+          example: []
+        model:
+          type: string
+          example: example_value
+        usage:
+          type: object
+          properties:
+            prompt_tokens:
+              type: integer
+            total_tokens:
+              type: integer
+          example: example_value
     ChatCompletionRequest:
       type: object
       required:
@@ -340,44 +379,11 @@ components:
             total_tokens:
               type: integer
           example: example_value
-    EmbeddingResponse:
-      type: object
-      properties:
-        object:
-          type: string
-          const: list
-          example: example_value
-        data:
-          type: array
-          items:
-            type: object
-            properties:
-              object:
-                type: string
-                const: embedding
-              index:
-                type: integer
-              embedding:
-                type: array
-                items:
-                  type: number
-          example: []
-        model:
-          type: string
-          example: example_value
-        usage:
-          type: object
-          properties:
-            prompt_tokens:
-              type: integer
-            total_tokens:
-              type: integer
-          example: example_value
-  parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with Workers AI Read and Edit permissions.
+externalDocs:
+  description: Cloudflare Workers AI Documentation
+  url: https://developers.cloudflare.com/workers-ai/

@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Signing Keys API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare Stream Signing Keys API
+  description: Cloudflare Stream provides a single API for uploading, storing, encoding, and delivering live and on-demand video. The API supports direct uploads, TUS resumable uploads, live streaming via RTMPS and SRT, video playback with a built-in player, and signed URL access control.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Signing Keys
   description: Manage signing keys for signed video URLs.
@@ -60,3 +58,11 @@ components:
       description: The unique identifier of the Cloudflare account.
       schema:
         type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with Stream permissions.
+externalDocs:
+  description: Cloudflare Stream Documentation
+  url: https://developers.cloudflare.com/stream/

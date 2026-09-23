@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Databases API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare D1 Databases API
+  description: The Cloudflare D1 API provides endpoints for managing serverless SQL databases on Cloudflare's network. Developers can create, list, and delete databases, execute raw queries, import and export database contents, and use time travel to restore databases to previous states.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Databases
   description: Create, list, update, and delete D1 serverless SQL databases.
@@ -234,29 +232,24 @@ paths:
         dispatcher: FALLBACK
 components:
   schemas:
-    D1DatabaseListResponse:
+    D1DatabaseResponse:
       type: object
       properties:
         result:
-          type: array
-          items:
-            $ref: '#/components/schemas/D1Database'
-          example: []
+          $ref: '#/components/schemas/D1Database'
         success:
           type: boolean
           example: true
-        result_info:
-          type: object
-          properties:
-            page:
-              type: integer
-            per_page:
-              type: integer
-            count:
-              type: integer
-            total_count:
-              type: integer
-          example: example_value
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
     D1Database:
       type: object
       properties:
@@ -285,24 +278,29 @@ components:
           format: date-time
           description: When the database was created.
           example: '2026-01-15T10:30:00Z'
-    D1DatabaseResponse:
+    D1DatabaseListResponse:
       type: object
       properties:
         result:
-          $ref: '#/components/schemas/D1Database'
+          type: array
+          items:
+            $ref: '#/components/schemas/D1Database'
+          example: []
         success:
           type: boolean
           example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
+        result_info:
+          type: object
+          properties:
+            page:
+              type: integer
+            per_page:
+              type: integer
+            count:
+              type: integer
+            total_count:
+              type: integer
+          example: example_value
   parameters:
     AccountId:
       name: account_id
@@ -318,3 +316,11 @@ components:
       description: The unique identifier of the D1 database.
       schema:
         type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with D1 permissions.
+externalDocs:
+  description: Cloudflare D1 API Documentation
+  url: https://developers.cloudflare.com/api/resources/d1/

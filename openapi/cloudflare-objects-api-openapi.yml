@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Objects API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare Objects API
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
+  description: 'Operations tagged Objects across 2 of this provider''s published API definitions: cloudflare-durable-objects-openapi.yml, cloudflare-r2-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Objects
   description: List and manage individual Durable Object instances within a namespace.
@@ -48,6 +46,9 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+    servers:
+    - url: https://api.cloudflare.com/client/v4
+      description: Cloudflare API v4 Production Server
   /accounts/{account_id}/r2/buckets/{bucket_name}/objects:
     get:
       operationId: listR2Objects
@@ -90,15 +91,11 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+    servers:
+    - url: https://api.cloudflare.com/client/v4
+      description: Cloudflare API v4 Production Server
 components:
   parameters:
-    BucketName:
-      name: bucket_name
-      in: path
-      required: true
-      description: The name of the R2 bucket.
-      schema:
-        type: string
     AccountId:
       name: account_id
       in: path
@@ -113,3 +110,18 @@ components:
       description: The unique identifier of the Durable Object namespace.
       schema:
         type: string
+    BucketName:
+      name: bucket_name
+      in: path
+      required: true
+      description: The name of the R2 bucket.
+      schema:
+        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with Workers permissions.
+x-refined-from:
+- cloudflare-durable-objects-openapi.yml
+- cloudflare-r2-openapi.yml

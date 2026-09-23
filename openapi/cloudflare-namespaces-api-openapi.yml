@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Namespaces API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare Namespaces API
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
+  description: 'Operations tagged Namespaces across 2 of this provider''s published API definitions: cloudflare-durable-objects-openapi.yml, cloudflare-kv-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Namespaces
   description: Manage Durable Object namespaces that group related object instances.
@@ -54,6 +52,9 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+    servers:
+    - url: https://api.cloudflare.com/client/v4
+      description: Cloudflare API v4 Production Server
   /accounts/{account_id}/storage/kv/namespaces:
     get:
       operationId: listKvNamespaces
@@ -157,6 +158,9 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+    servers:
+    - url: https://api.cloudflare.com/client/v4
+      description: Cloudflare API v4 Production Server
   /accounts/{account_id}/storage/kv/namespaces/{namespace_id}:
     get:
       operationId: getKvNamespace
@@ -251,46 +255,11 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+    servers:
+    - url: https://api.cloudflare.com/client/v4
+      description: Cloudflare API v4 Production Server
 components:
   schemas:
-    Namespace:
-      type: object
-      properties:
-        id:
-          type: string
-          description: The unique identifier of the namespace.
-          example: abc123
-        title:
-          type: string
-          description: The human-readable title of the namespace.
-          example: Example Title
-        supports_url_encoding:
-          type: boolean
-          description: Whether the namespace supports URL-encoded keys.
-          example: https://www.example.com
-    NamespaceListResponse_2:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Namespace'
-          example: []
-        success:
-          type: boolean
-          example: true
-        result_info:
-          type: object
-          properties:
-            page:
-              type: integer
-            per_page:
-              type: integer
-            count:
-              type: integer
-            total_count:
-              type: integer
-          example: example_value
     DurableObjectNamespace:
       type: object
       properties:
@@ -331,6 +300,21 @@ components:
           items:
             type: object
           example: []
+    Namespace:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the namespace.
+          example: abc123
+        title:
+          type: string
+          description: The human-readable title of the namespace.
+          example: Example Title
+        supports_url_encoding:
+          type: boolean
+          description: Whether the namespace supports URL-encoded keys.
+          example: https://www.example.com
     NamespaceResponse:
       type: object
       properties:
@@ -349,6 +333,29 @@ components:
           items:
             type: object
           example: []
+    NamespaceListResponse_2:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Namespace'
+          example: []
+        success:
+          type: boolean
+          example: true
+        result_info:
+          type: object
+          properties:
+            page:
+              type: integer
+            per_page:
+              type: integer
+            count:
+              type: integer
+            total_count:
+              type: integer
+          example: example_value
   parameters:
     AccountId:
       name: account_id
@@ -364,3 +371,11 @@ components:
       description: The unique identifier of the KV namespace.
       schema:
         type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with Workers permissions.
+x-refined-from:
+- cloudflare-durable-objects-openapi.yml
+- cloudflare-kv-openapi.yml

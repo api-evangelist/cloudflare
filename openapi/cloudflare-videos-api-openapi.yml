@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Videos API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare Stream Videos API
+  description: Cloudflare Stream provides a single API for uploading, storing, encoding, and delivering live and on-demand video. The API supports direct uploads, TUS resumable uploads, live streaming via RTMPS and SRT, video playback with a built-in player, and signed URL access control.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Videos
   description: Upload, list, update, and delete video assets.
@@ -314,33 +312,25 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
-  parameters:
-    VideoId:
-      name: video_id
-      in: path
-      required: true
-      description: The unique identifier of the video.
-      schema:
-        type: string
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
   schemas:
-    VideoListResponse:
+    VideoResponse:
       type: object
       properties:
         result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Video'
-          example: []
+          $ref: '#/components/schemas/Video'
         success:
           type: boolean
           example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
     Video:
       type: object
       properties:
@@ -408,21 +398,37 @@ components:
           items:
             type: string
           example: []
-    VideoResponse:
+    VideoListResponse:
       type: object
       properties:
         result:
-          $ref: '#/components/schemas/Video'
+          type: array
+          items:
+            $ref: '#/components/schemas/Video'
+          example: []
         success:
           type: boolean
           example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    VideoId:
+      name: video_id
+      in: path
+      required: true
+      description: The unique identifier of the video.
+      schema:
+        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with Stream permissions.
+externalDocs:
+  description: Cloudflare Stream Documentation
+  url: https://developers.cloudflare.com/stream/

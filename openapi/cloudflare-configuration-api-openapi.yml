@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Configuration API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare Configuration API
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
+  description: 'Operations tagged Configuration across 2 of this provider''s published API definitions: cloudflare-r2-openapi.yml, cloudflare-workers-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Configuration
   description: Configure bucket settings including CORS, lifecycle rules, and public access.
@@ -53,6 +51,9 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+    servers:
+    - url: https://api.cloudflare.com/client/v4
+      description: Cloudflare API v4 Production Server
   /accounts/{account_id}/workers/scripts/{script_name}/schedules:
     get:
       operationId: getCronTriggers
@@ -88,6 +89,9 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+    servers:
+    - url: https://api.cloudflare.com/client/v4
+      description: Cloudflare API v4 Production Server
   /accounts/{account_id}/workers/scripts/{script_name}/settings:
     get:
       operationId: getScriptSettings
@@ -123,6 +127,9 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+    servers:
+    - url: https://api.cloudflare.com/client/v4
+      description: Cloudflare API v4 Production Server
 components:
   parameters:
     BucketName:
@@ -146,3 +153,11 @@ components:
       description: The name of the Worker script.
       schema:
         type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with R2 Storage permissions.
+x-refined-from:
+- cloudflare-r2-openapi.yml
+- cloudflare-workers-openapi.yml

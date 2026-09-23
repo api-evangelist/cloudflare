@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Gateways API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare AI Gateway Gateways API
+  description: Cloudflare AI Gateway provides visibility and control over AI applications with analytics, logging, caching, rate limiting, request retries, and model fallback. It supports multiple AI providers including OpenAI, Anthropic, and Google Gemini through a unified interface. The API allows developers to create and manage gateways, configure providers, and access logs and analytics.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Gateways
   description: Create, list, update, and delete AI Gateway instances.
@@ -222,51 +220,22 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
+  parameters:
+    GatewayId:
+      name: gateway_id
+      in: path
+      required: true
+      description: The unique identifier of the AI Gateway.
+      schema:
+        type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
   schemas:
-    GatewayInput:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-          description: The name of the gateway.
-          example: Example Title
-        cache_enabled:
-          type: boolean
-          description: Enable response caching.
-          example: true
-        cache_ttl:
-          type: integer
-          description: Cache TTL in seconds.
-          example: 10
-        rate_limiting_enabled:
-          type: boolean
-          description: Enable rate limiting.
-          example: true
-        rate_limiting_limit:
-          type: integer
-          description: Rate limit threshold.
-          example: 10
-        rate_limiting_interval:
-          type: integer
-          description: Rate limiting interval in seconds.
-          example: 10
-        log_enabled:
-          type: boolean
-          description: Enable request logging.
-          example: true
-    GatewayListResponse:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Gateway'
-          example: []
-        success:
-          type: boolean
-          example: true
     Gateway:
       type: object
       properties:
@@ -316,6 +285,50 @@ components:
           format: date-time
           description: When the gateway was last modified.
           example: '2026-01-15T10:30:00Z'
+    GatewayInput:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: The name of the gateway.
+          example: Example Title
+        cache_enabled:
+          type: boolean
+          description: Enable response caching.
+          example: true
+        cache_ttl:
+          type: integer
+          description: Cache TTL in seconds.
+          example: 10
+        rate_limiting_enabled:
+          type: boolean
+          description: Enable rate limiting.
+          example: true
+        rate_limiting_limit:
+          type: integer
+          description: Rate limit threshold.
+          example: 10
+        rate_limiting_interval:
+          type: integer
+          description: Rate limiting interval in seconds.
+          example: 10
+        log_enabled:
+          type: boolean
+          description: Enable request logging.
+          example: true
+    GatewayListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gateway'
+          example: []
+        success:
+          type: boolean
+          example: true
     GatewayResponse:
       type: object
       properties:
@@ -334,18 +347,11 @@ components:
           items:
             type: object
           example: []
-  parameters:
-    GatewayId:
-      name: gateway_id
-      in: path
-      required: true
-      description: The unique identifier of the AI Gateway.
-      schema:
-        type: string
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with AI Gateway permissions.
+externalDocs:
+  description: Cloudflare AI Gateway Documentation
+  url: https://developers.cloudflare.com/ai-gateway/

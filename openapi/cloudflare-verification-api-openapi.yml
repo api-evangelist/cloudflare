@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Verification API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare Turnstile Verification API
+  description: Cloudflare Turnstile is a CAPTCHA replacement that verifies visitors without showing a challenge. The API provides a server-side siteverify endpoint for token validation and management endpoints for creating and configuring Turnstile widgets with support for managed, non-interactive, and invisible modes.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Verification
   description: Verify Turnstile challenge tokens on the server side.
@@ -110,3 +108,11 @@ components:
           type: string
           description: Custom data from the widget.
           example: example_value
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with Turnstile permissions.
+externalDocs:
+  description: Cloudflare Turnstile Documentation
+  url: https://developers.cloudflare.com/turnstile/

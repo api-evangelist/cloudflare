@@ -1,7 +1,7 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Organizations API
-  description: Needs description.
+  title: Cloudflare Organizations API
+  description: Interact with Cloudflare's products and services via the Cloudflare API.
   license:
     name: BSD-3-Clause
     url: https://opensource.org/licenses/BSD-3-Clause
@@ -136,101 +136,6 @@ paths:
         api_key: []
 components:
   schemas:
-    aaa_audit_logs_response_collection:
-      oneOf:
-      - properties:
-          errors:
-            type:
-            - object
-            - 'null'
-          messages:
-            type: array
-            example: []
-            items: {}
-          result:
-            type: array
-            items:
-              $ref: '#/components/schemas/aaa_audit-logs'
-          success:
-            type: boolean
-            example: true
-      - $ref: '#/components/schemas/aaa_api-response-common'
-    aaa_messages:
-      type: array
-      example: []
-      items:
-        type: object
-        uniqueItems: true
-        required:
-        - code
-        - message
-        properties:
-          code:
-            type: integer
-            minimum: 1000
-          message:
-            type: string
-    aaa_identifier:
-      type: string
-      description: Identifier
-      example: 023e105f4ecef8ad9ca31a8372d0c353
-      readOnly: true
-      maxLength: 32
-    aaa_api-response-common-failure:
-      type: object
-      required:
-      - success
-      - errors
-      - messages
-      - result
-      properties:
-        errors:
-          allOf:
-          - $ref: '#/components/schemas/aaa_messages'
-          example:
-          - code: 7003
-            message: No route for the URI
-          minLength: 1
-        messages:
-          allOf:
-          - $ref: '#/components/schemas/aaa_messages'
-          example: []
-        result:
-          type:
-          - object
-          - 'null'
-          enum:
-          - null
-        success:
-          type: boolean
-          description: Whether the API call was successful
-          enum:
-          - false
-          example: false
-    aaa_api-response-common:
-      type: object
-      required:
-      - success
-      - errors
-      - messages
-      - result
-      properties:
-        errors:
-          $ref: '#/components/schemas/aaa_messages'
-        messages:
-          $ref: '#/components/schemas/aaa_messages'
-        result:
-          anyOf:
-          - type: object
-          - type: array
-            items: {}
-          - type: string
-        success:
-          type: boolean
-          description: Whether the API call was successful
-          enum:
-          - true
-          example: true
     aaa_audit-logs:
       type: object
       properties:
@@ -314,3 +219,114 @@ components:
           format: date-time
           description: A UTC RFC3339 timestamp that specifies when the action being logged occured.
           example: '2017-04-26T17:31:07Z'
+    aaa_api-response-common:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          $ref: '#/components/schemas/aaa_messages'
+        messages:
+          $ref: '#/components/schemas/aaa_messages'
+        result:
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+          - type: string
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - true
+          example: true
+    aaa_api-response-common-failure:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          allOf:
+          - $ref: '#/components/schemas/aaa_messages'
+          example:
+          - code: 7003
+            message: No route for the URI
+          minLength: 1
+        messages:
+          allOf:
+          - $ref: '#/components/schemas/aaa_messages'
+          example: []
+        result:
+          type:
+          - object
+          - 'null'
+          enum:
+          - null
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - false
+          example: false
+    aaa_identifier:
+      type: string
+      description: Identifier
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      readOnly: true
+      maxLength: 32
+    aaa_audit_logs_response_collection:
+      oneOf:
+      - properties:
+          errors:
+            type:
+            - object
+            - 'null'
+          messages:
+            type: array
+            example: []
+            items: {}
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/aaa_audit-logs'
+          success:
+            type: boolean
+            example: true
+      - $ref: '#/components/schemas/aaa_api-response-common'
+    aaa_messages:
+      type: array
+      example: []
+      items:
+        type: object
+        uniqueItems: true
+        required:
+        - code
+        - message
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          message:
+            type: string
+  securitySchemes:
+    api_email:
+      type: apiKey
+      name: X-Auth-Email
+      in: header
+    api_key:
+      type: apiKey
+      name: X-Auth-Key
+      in: header
+    api_token:
+      type: http
+      scheme: bearer
+    user_service_key:
+      type: apiKey
+      name: X-Auth-User-Service-Key
+      in: header

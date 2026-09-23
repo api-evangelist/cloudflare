@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Indexes API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare Vectorize Indexes API
+  description: Cloudflare Vectorize is a globally distributed vector database for building AI-powered applications. The API allows developers to create and manage indexes, insert and upsert vectors, and perform similarity queries for semantic search, recommendations, and classification tasks.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Indexes
   description: Create, list, update, and delete vector indexes.
@@ -202,7 +200,55 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    IndexName:
+      name: index_name
+      in: path
+      required: true
+      description: The name of the Vectorize index.
+      schema:
+        type: string
   schemas:
+    VectorizeIndex:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the index.
+          example: Example Title
+        description:
+          type: string
+          description: Description of the index.
+          example: A sample description.
+        config:
+          type: object
+          properties:
+            dimensions:
+              type: integer
+              description: Number of dimensions for each vector.
+            metric:
+              type: string
+              enum:
+              - cosine
+              - euclidean
+              - dot-product
+              description: Distance metric used for similarity.
+          example: example_value
+        created_on:
+          type: string
+          format: date-time
+          example: '2026-01-15T10:30:00Z'
+        modified_on:
+          type: string
+          format: date-time
+          example: '2026-01-15T10:30:00Z'
     IndexInput:
       type: object
       required:
@@ -251,39 +297,6 @@ components:
           items:
             type: object
           example: []
-    VectorizeIndex:
-      type: object
-      properties:
-        name:
-          type: string
-          description: The name of the index.
-          example: Example Title
-        description:
-          type: string
-          description: Description of the index.
-          example: A sample description.
-        config:
-          type: object
-          properties:
-            dimensions:
-              type: integer
-              description: Number of dimensions for each vector.
-            metric:
-              type: string
-              enum:
-              - cosine
-              - euclidean
-              - dot-product
-              description: Distance metric used for similarity.
-          example: example_value
-        created_on:
-          type: string
-          format: date-time
-          example: '2026-01-15T10:30:00Z'
-        modified_on:
-          type: string
-          format: date-time
-          example: '2026-01-15T10:30:00Z'
     IndexListResponse:
       type: object
       properties:
@@ -295,18 +308,11 @@ components:
         success:
           type: boolean
           example: true
-  parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
-    IndexName:
-      name: index_name
-      in: path
-      required: true
-      description: The name of the Vectorize index.
-      schema:
-        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with Vectorize permissions.
+externalDocs:
+  description: Cloudflare Vectorize Documentation
+  url: https://developers.cloudflare.com/vectorize/

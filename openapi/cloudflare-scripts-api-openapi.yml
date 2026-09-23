@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Scripts API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare Workers Scripts API
+  description: Cloudflare Workers allows developers to deploy serverless code to Cloudflare's global network. The Workers API provides endpoints for managing worker scripts, versions, deployments, routes, custom domains, secrets, cron triggers, and configuration including bindings.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Scripts
   description: Upload, download, and manage Worker scripts by name.
@@ -110,21 +108,6 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
-  parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
-    ScriptName:
-      name: script_name
-      in: path
-      required: true
-      description: The name of the Worker script.
-      schema:
-        type: string
   schemas:
     ScriptListResponse:
       type: object
@@ -153,3 +136,26 @@ components:
         success:
           type: boolean
           example: true
+  parameters:
+    ScriptName:
+      name: script_name
+      in: path
+      required: true
+      description: The name of the Worker script.
+      schema:
+        type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token authentication with Workers permissions.
+externalDocs:
+  description: Cloudflare Workers API Documentation
+  url: https://developers.cloudflare.com/api/resources/workers/

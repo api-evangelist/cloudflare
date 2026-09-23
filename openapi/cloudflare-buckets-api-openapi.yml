@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Buckets API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare R2 Buckets API
+  description: Cloudflare R2 is S3-compatible object storage with zero egress fees. The R2 API allows developers to create and manage buckets, upload and retrieve objects, and configure access controls. R2 supports the S3 API for compatibility with existing tools and SDKs. This specification covers the Cloudflare management API for R2 bucket administration.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Buckets
   description: Create, list, and delete R2 storage buckets.
@@ -204,18 +202,18 @@ paths:
         dispatcher: FALLBACK
 components:
   parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
     BucketName:
       name: bucket_name
       in: path
       required: true
       description: The name of the R2 bucket.
+      schema:
+        type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
       schema:
         type: string
   schemas:
@@ -239,20 +237,6 @@ components:
           type: string
           description: Default storage class for the bucket.
           example: example_value
-    BucketListResponse:
-      type: object
-      properties:
-        result:
-          type: object
-          properties:
-            buckets:
-              type: array
-              items:
-                $ref: '#/components/schemas/Bucket'
-          example: example_value
-        success:
-          type: boolean
-          example: true
     BucketResponse:
       type: object
       properties:
@@ -271,3 +255,25 @@ components:
           items:
             type: object
           example: []
+    BucketListResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            buckets:
+              type: array
+              items:
+                $ref: '#/components/schemas/Bucket'
+          example: example_value
+        success:
+          type: boolean
+          example: true
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with R2 Storage permissions.
+externalDocs:
+  description: Cloudflare R2 API Documentation
+  url: https://developers.cloudflare.com/r2/api/s3/api/

@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Direct Uploads API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare Images Direct Uploads API
+  description: The Cloudflare Images API allows developers to upload, store, and transform images at scale. It supports direct uploads, URL-based uploads, on-the-fly image transformations via URL parameters, custom variants, and integration with Workers for programmatic image processing.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Direct Uploads
   description: Create one-time upload URLs for client-side image uploads.
@@ -71,3 +69,11 @@ components:
       description: The unique identifier of the Cloudflare account.
       schema:
         type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with Images permissions.
+externalDocs:
+  description: Cloudflare Images Documentation
+  url: https://developers.cloudflare.com/images/

@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Vectors API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare Vectorize Vectors API
+  description: Cloudflare Vectorize is a globally distributed vector database for building AI-powered applications. The API allows developers to create and manage indexes, insert and upsert vectors, and perform similarity queries for semantic search, recommendations, and classification tasks.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Vectors
   description: Insert, upsert, query, get, and delete vectors within an index.
@@ -237,18 +235,18 @@ paths:
         dispatcher: FALLBACK
 components:
   parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
     IndexName:
       name: index_name
       in: path
       required: true
       description: The name of the Vectorize index.
+      schema:
+        type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
       schema:
         type: string
   schemas:
@@ -282,3 +280,11 @@ components:
         success:
           type: boolean
           example: true
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with Vectorize permissions.
+externalDocs:
+  description: Cloudflare Vectorize Documentation
+  url: https://developers.cloudflare.com/vectorize/

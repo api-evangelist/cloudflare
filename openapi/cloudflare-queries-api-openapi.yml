@@ -1,19 +1,17 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare / Accounts Queries API
-  description: Needs description.
-  license:
-    name: BSD-3-Clause
-    url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  title: Cloudflare D1 Queries API
+  description: The Cloudflare D1 API provides endpoints for managing serverless SQL databases on Cloudflare's network. Developers can create, list, and delete databases, execute raw queries, import and export database contents, and use time travel to restore databases to previous states.
+  version: '4.0'
+  contact:
+    name: Cloudflare Support
+    url: https://support.cloudflare.com/
+  termsOfService: https://www.cloudflare.com/terms/
 servers:
 - url: https://api.cloudflare.com/client/v4
-  description: Client API
+  description: Cloudflare API v4 Production Server
 security:
-- api_email: []
-  api_key: []
-- api_token: []
-- user_service_key: []
+- bearerAuth: []
 tags:
 - name: Queries
   description: Execute SQL queries against D1 databases.
@@ -140,18 +138,18 @@ paths:
         dispatcher: FALLBACK
 components:
   parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
     DatabaseId:
       name: database_id
       in: path
       required: true
       description: The unique identifier of the D1 database.
+      schema:
+        type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
       schema:
         type: string
   schemas:
@@ -191,3 +189,11 @@ components:
         success:
           type: boolean
           example: true
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API token with D1 permissions.
+externalDocs:
+  description: Cloudflare D1 API Documentation
+  url: https://developers.cloudflare.com/api/resources/d1/
