@@ -1,0 +1,490 @@
+# Vendor facets — Cloudflare. The one CDN/edge vendor here that ships things the Kin Score reads:
+# managed robots.txt with Content Signals (consent_identity), a security.txt served from the
+# provider's own zone (well_known_published), and an open-source OAuth provider library for Workers
+# that serves RFC 8414 / RFC 9728 discovery documents and DCR. The lift it can cause directly is
+# small (3 AR points plus about 10 composite points). The large OAuth/MCP lift only happens if the
+# provider builds and deploys the server itself. Caching, TLS, DDoS, WAF, rate limiting,
+# pay-per-crawl and x402 earn nothing at 0.22.0.
+vendor: cloudflare
+name: Cloudflare
+website: https://www.cloudflare.com
+areas:
+- mcp-hosting
+- cdn
+- hosting
+registry_keys:
+- cloudflare
+- cloudflare-pages
+rubric_schema_version: 0.22.0
+generated: '2026-09-25'
+features_refreshed: '2026-09-25'
+basis: measured
+summary: >-
+  Cloudflare lifts a provider's score directly in two places. Its managed robots.txt adds Content Signals,
+  which earns the agent-readiness consent_identity dimension. Its free security.txt is served from the
+  provider's own zone at /.well-known/security.txt, which earns well_known_published and supports the
+  security-disclosure check. The bigger agent-readiness surface (protected-resource metadata, dynamic
+  client registration, served OAuth discovery, a remote MCP server) comes from the open-source Workers
+  OAuth provider library and the Agents SDK. That lift is conditional: it reaches the score only when
+  the provider builds the server, puts it in front of its own API on its own domain, and the probe finds
+  it. Being on Cloudflare does not earn it. The edge itself earns nothing: caching, TLS, DDoS, WAF, rate-limiting
+  rules, API Shield enforcement, pay-per-crawl and x402 paywalls. Markdown for Agents is real, deployed
+  and unscored at 0.22.0.
+features:
+- id: content-signals-robots
+  name: Managed robots.txt with Content Signals Policy
+  description: >-
+    Cloudflare prepends a managed block to the zone's robots.txt, or creates the file, with Content-Signal
+    directives (search, ai-input, ai-train) and Disallow rules for known AI crawlers.
+  source: https://developers.cloudflare.com/bots/additional-configurations/managed-robots-txt/
+  tier: all
+- id: security-txt
+  name: security.txt generator and edge serving
+  description: >-
+    The provider fills in security.txt fields (Contact, Expires, Policy, and so on) in the dashboard or
+    API, and Cloudflare builds the file at the RFC 9116 /.well-known/security.txt path on the provider's
+    zone.
+  source: https://blog.cloudflare.com/security-txt/
+  tier: all
+- id: markdown-for-agents
+  name: Markdown for Agents (Accept text/markdown negotiation)
+  description: >-
+    When a client sends Accept text/markdown, the edge converts the HTML response to Markdown. It adds
+    x-markdown-tokens, and adds a permissive content-signal header when the origin sets none.
+  source: https://developers.cloudflare.com/fundamentals/reference/markdown-for-agents/
+  tier: paid
+- id: ai-crawl-control
+  name: AI Crawl Control
+  description: >-
+    Per-crawler allow/block rules, AI-crawler traffic analytics and robots.txt violation tracking for
+    a zone.
+  source: https://developers.cloudflare.com/ai-crawl-control/
+  tier: all
+- id: pay-per-crawl
+  name: Pay per crawl
+  description: >-
+    AI crawlers either present payment intent in request headers or get an HTTP 402 with a price per zone.
+    Cloudflare is the merchant of record. Closed beta.
+  source: https://developers.cloudflare.com/ai-crawl-control/features/pay-per-crawl/what-is-pay-per-crawl/
+  tier: unknown
+- id: x402-payments
+  name: x402 paywalls for Workers and MCP tools
+  description: >-
+    x402 middleware (x402-hono) and an Agents SDK paidTool helper gate Worker routes and MCP tools behind
+    an HTTP 402 stablecoin payment, settled through a facilitator.
+  source: https://developers.cloudflare.com/agents/agentic-payments/x402/
+  tier: open-source
+- id: monetization-gateway
+  name: Monetization Gateway
+  description: >-
+    Edge-enforced x402 charging for pages, datasets, APIs and MCP tools behind Cloudflare, with per-endpoint
+    pricing rules. Waitlist since July 2026.
+  source: https://blog.cloudflare.com/monetization-gateway/
+  tier: unknown
+- id: web-bot-auth
+  name: Web Bot Auth verification
+  description: >-
+    Cloudflare verifies bots that sign requests with HTTP Message Signatures against a key directory the
+    bot operator hosts at /.well-known/http-message-signatures-directory.
+  source: https://developers.cloudflare.com/bots/reference/bot-verification/web-bot-auth/
+  tier: all
+- id: ai-index
+  name: AI Index (auto-generated llms.txt, MCP server, search API)
+  description: >-
+    Cloudflare builds an AI-optimised index of the domain and exposes an MCP server, llms.txt/llms-full.txt,
+    a search API and robots.txt discoverability directives. Announced as a private beta in September 2025.
+  source: https://blog.cloudflare.com/an-ai-index-for-all-our-customers/
+  tier: unknown
+- id: workers-remote-mcp
+  name: Remote MCP servers on Workers (Agents SDK)
+  description: >-
+    The provider writes and deploys a remote MCP server as a Worker, from Cloudflare templates. It serves
+    on workers.dev by default and supports OAuth-protected or authless servers.
+  source: https://developers.cloudflare.com/agents/guides/remote-mcp-server/
+  tier: all
+- id: agents-sdk
+  name: Agents SDK
+  description: >-
+    A stateful agent runtime on Durable Objects with MCP, browser automation, sandbox, scheduling and
+    payments tools.
+  source: https://developers.cloudflare.com/agents/
+  tier: open-source
+- id: workers-oauth-provider
+  name: workers-oauth-provider library
+  description: >-
+    An OAuth 2.1 provider framework for Workers covering RFC 8414 metadata, RFC 9728 protected-resource
+    metadata, RFC 7591 dynamic client registration, PKCE, token revocation and Client ID Metadata Documents.
+  source: https://github.com/cloudflare/workers-oauth-provider
+  tier: open-source
+- id: api-shield-schema-learning
+  name: API Shield schema learning and export
+  description: >-
+    API Shield learns API operations from live traffic and exports them as an OpenAPI 3.0.0 JSON file,
+    optionally with rate-limit recommendations.
+  source: >-
+    https://developers.cloudflare.com/api-shield/management-and-monitoring/endpoint-management/schema-learning/
+  tier: unknown
+- id: api-shield-schema-validation
+  name: API Shield schema validation, endpoint discovery, mTLS
+  description: >-
+    Enforces an uploaded OpenAPI schema at the edge, keeps an API inventory, and handles mutual TLS with
+    a Cloudflare-managed CA.
+  source: https://developers.cloudflare.com/api-shield/
+  tier: unknown
+- id: rate-limiting-rules
+  name: WAF rate limiting rules
+  description: >-
+    Counts requests per characteristic and blocks, challenges or logs over the threshold. The documentation
+    mentions no standard RateLimit response headers for customer zones.
+  source: https://developers.cloudflare.com/waf/rate-limiting-rules/
+  tier: all
+- id: pages-hosting
+  name: Cloudflare Pages
+  description: >-
+    Git- or upload-deployed full-stack sites on Cloudflare's network. Cloudflare now points new projects
+    to Workers.
+  source: https://developers.cloudflare.com/pages/
+  tier: all
+- id: access
+  name: Cloudflare Access
+  description: Zero Trust gating of applications by identity and device-posture policy.
+  source: https://developers.cloudflare.com/cloudflare-one/access-controls/policies/
+  tier: unknown
+maps:
+- feature: content-signals-robots
+  check: consent_identity
+  layer: agent_readiness
+  provider_must: >-
+    Turn on managed robots.txt for the zone that serves its own domain. The ContentSignal pointer, which
+    targets that robots.txt, must also be declared in apis.yml. The enrichment pipeline declares it when
+    its probe finds the directive.
+  note: >-
+    The dimension is binary and reads the pointer, not the policy. Cloudflare's default values earn the
+    same 3 points as a policy the provider wrote itself. About 99 catalog providers already carry a ContentSignal
+    pointer, most of them pointing at robots.txt, which is the shape this feature produces.
+  points: 3
+  baseline_pass_rate: 0.006
+  cohort_pct: 0.0
+  control_pct: 0.6
+  delta_pp: -0.6
+- feature: security-txt
+  check: well_known_published
+  layer: composite
+  provider_must: >-
+    Fill in the security.txt fields (Contact and Expires are required) for the zone that serves its primary
+    domain. The pipeline's /.well-known/security.txt probe then saves the file under well-known/.
+  conditional: true
+  condition: >-
+    Only when the provider's primary domain is proxied through the Cloudflare zone where the file is configured.
+    A security.txt on a marketing zone does not cover an API served elsewhere.
+  catalog_pass_rate: 0.005
+  facet: discoverability
+  points: 6
+  baseline_pass_rate: 0.018
+  cohort_pct: 3.0
+  control_pct: 1.8
+  delta_pp: 1.2
+- feature: security-txt
+  check: security_disclosure
+  layer: composite
+  credit: 0.5
+  provider_must: >-
+    Set the Policy field to a real disclosure policy. The security-program probe writes the Security pointer
+    from a security.txt Policy/Contact hit.
+  note: >-
+    Discounted because the generator produces only the pointer file. The disclosure program it points
+    to is the provider's own work, and a Contact-only file is thin evidence.
+  catalog_pass_rate: 0.115
+  facet: operational_transparency
+  points: 4
+  baseline_pass_rate: 0.269
+  cohort_pct: 39.4
+  control_pct: 26.8
+  delta_pp: 12.6
+- feature: ai-index
+  check: llms_txt_published
+  layer: composite
+  credit: 0.25
+  provider_must: >-
+    Get into the AI Index beta, enable it on the domain, and let the llms.txt be harvested or declared
+    as an LLMsTxt pointer.
+  note: >-
+    The file is generated by crawling the provider's pages, not written by the provider, so under rule
+    2 it grades as the rubric's derived class (0.25). The feature was announced as a private beta in September
+    2025, and no fetched page confirms general availability.
+  catalog_pass_rate: 0.351
+  facet: discoverability
+  points: 4
+  baseline_pass_rate: 0.65
+  cohort_pct: 75.8
+  control_pct: 65.0
+  delta_pp: 10.8
+- feature: workers-remote-mcp
+  check: mcp_server
+  layer: agent_readiness
+  grade: templated
+  conditional: true
+  condition: >-
+    Only if the provider writes an MCP server over its own API, deploys it (ideally on its own domain,
+    not workers.dev) and the probe verifies it. Cloudflare supplies the runtime and starter templates,
+    not the tools.
+  note: >-
+    Graded templated because the realistic path is a Cloudflare starter template filled with the provider's
+    tools. A server the provider builds by hand and the probe verifies would grade higher, but that credit
+    belongs to the provider's work, not to Workers. An AI Index auto-generated MCP server is one template
+    across customers and would grade platform (0.25).
+  points: 12
+  baseline_pass_rate: 0.22
+  cohort_pct: 17.0
+  control_pct: 22.0
+  delta_pp: -5.0
+- feature: workers-oauth-provider
+  check: protected_resource_metadata
+  layer: agent_readiness
+  grade: verified
+  conditional: true
+  condition: >-
+    Only if the provider puts the library in front of its API or MCP server on a host the probe reads.
+    The library then serves /.well-known/oauth-protected-resource naming its authorization server.
+  points: 5
+  baseline_pass_rate: 0.133
+  cohort_pct: 27.3
+  control_pct: 13.2
+  delta_pp: 14.1
+- feature: workers-oauth-provider
+  check: dynamic_client_registration
+  layer: agent_readiness
+  conditional: true
+  condition: >-
+    Only when the library is deployed as the provider's authorization server with RFC 7591 registration
+    enabled, so that registration_endpoint appears in the served RFC 8414 document.
+  points: 6
+  baseline_pass_rate: 0.134
+  cohort_pct: 21.2
+  control_pct: 13.4
+  delta_pp: 7.8
+- feature: workers-oauth-provider
+  check: delegated_identity
+  layer: agent_readiness
+  grade: served
+  conditional: true
+  condition: >-
+    Only when the provider's served RFC 8414 document from the library lists authorization_code, which
+    requires the provider to have a user identity to delegate.
+  points: 6
+  baseline_pass_rate: 0.209
+  cohort_pct: 37.9
+  control_pct: 20.8
+  delta_pp: 17.1
+- feature: workers-oauth-provider
+  check: auth_clarity
+  layer: agent_readiness
+  grade: served
+  conditional: true
+  condition: >-
+    Only when the provider actually uses the library's served RFC 8414 document, carrying issuer, as its
+    API's authorization server. Wrapping a key-authenticated API does not change what the API accepts.
+  points: 10
+  baseline_pass_rate: 0.474
+  cohort_pct: 55.2
+  control_pct: 47.4
+  delta_pp: 7.8
+- feature: api-shield-schema-learning
+  check: contract_present
+  layer: composite
+  conditional: true
+  creates_artifact: true
+  condition: >-
+    Only if the provider exports the learned schema, reviews it, and publishes it as its own contract.
+    The learned profile inside API Shield is not published anywhere the score reads.
+  note: >-
+    Learned from observed traffic, so it is real rather than invented. The file is OpenAPI 3.0.0 with
+    paths, methods and parameters but no summaries, descriptions or error schemas, so the contract-content
+    checks will mostly fail against it.
+  catalog_pass_rate: 0.31
+  facet: contract_quality
+  points: 20
+  baseline_pass_rate: 0.949
+  saturated: true
+  saturated_note: >-
+    95% of providers with a contract, docs and a reference already earn this; the vendor cannot move it
+    for most of its buyers.
+  cohort_pct: 86.1
+  control_pct: 94.9
+  delta_pp: -8.8
+earns_nothing:
+- feature: pay-per-crawl
+  check: agentic_commerce
+  layer: agent_readiness
+  why: >-
+    agentic_commerce reads a parsing /.well-known/ucp.json or acp.json. Pay per crawl is an HTTP 402 price
+    exchange with Cloudflare as merchant of record, has no discovery document, and is in closed beta.
+- feature: monetization-gateway
+  check: agentic_commerce
+  layer: agent_readiness
+  why: >-
+    Edge-enforced x402 charging publishes no UCP/ACP discovery document on any page fetched, and it is
+    waitlist-only.
+- feature: web-bot-auth
+  check: consent_identity
+  layer: agent_readiness
+  why: >-
+    Verifying signed bots is site-side. The WebBotAuth/HTTPMessageSignatures pointers in the catalog point
+    at a /.well-known/http-message-signatures-directory, which only a bot OPERATOR publishes. A provider
+    that also runs its own signing agent earns that itself.
+- feature: rate-limiting-rules
+  check: rate_limit_signal
+  layer: agent_readiness
+  why: >-
+    The dimension reads RateLimit headers documented in the provider's OpenAPI, or a rate_limits artifact.
+    Edge rules enforce limits but, per the docs, emit no standard headers for customer zones. The RateLimit
+    headers Cloudflare introduced are on its own API.
+- feature: api-shield-schema-validation
+  check: contract_present
+  layer: composite
+  why: Validation consumes an OpenAPI the provider uploads. It enforces a contract and publishes none.
+- feature: pages-hosting
+  check: apis_json_self_hosted
+  layer: composite
+  why: >-
+    Hosting a file on the provider's domain is what any static host does. The credit belongs to the apis.yml/llms.txt/well-known
+    file the provider writes, not to the host.
+- feature: access
+  check: auth_clarity
+  layer: agent_readiness
+  why: >-
+    Access gates applications for workforce identity. The fetched docs show no OAuth discovery or protected-resource
+    document it serves for an API's external consumers.
+- feature: ai-crawl-control
+  check: consent_identity
+  layer: agent_readiness
+  why: >-
+    Blocking and analytics are enforcement. Only the managed robots.txt Content-Signal (mapped above)
+    is something the score reads.
+out_of_reach:
+  checks:
+  - openapi_3_1
+  - info_complete
+  - operations_summary_coverage
+  - operations_description_coverage
+  - error_responses_documented
+  - examples_present
+  - sdk_count_1
+  - sdk_count_3
+  - cli_present
+  - plans_present
+  - pricing_link
+  - status_page_present
+  - change_log_present
+  - agent_card
+  - agentic_commerce
+  - idempotency
+  - error_semantics
+  note: >-
+    An edge network cannot write a provider's contract, SDKs, plans or operational pages. Its payment
+    features stop at HTTP 402 and never produce the UCP/ACP document agentic_commerce reads.
+unscored_practice:
+- feature: markdown-for-agents
+  why: >-
+    Accept text/markdown negotiation at the edge is deployed on Pro and above at no cost, and no 0.22.0
+    check reads it. The content-signal response header it injects by default is also unread, because the
+    ContentSignal pointer targets robots.txt, not a header.
+- feature: x402-payments
+  why: >-
+    x402-gated Workers routes and MCP tools are real agent-payment practice. agentic_commerce reads only
+    UCP/ACP discovery documents, so an x402 paywall scores nothing at 0.22.0.
+surface:
+  discoverability:
+    reachable: 7.0
+    total: 54
+  contract_quality:
+    reachable: 20.0
+    total: 211
+  operational_transparency:
+    reachable: 2.0
+    total: 38
+  agent_readiness:
+    reachable: 36.2
+    total: 139
+hard_rule: >-
+  A model, not a score. Adopting this vendor changes a provider's Kin Score only when the provider publishes
+  the resulting artifacts on its own surface; nothing here writes a score, and no sponsorship or partnership
+  can.
+method: searched
+source:
+- https://blog.cloudflare.com/an-ai-index-for-all-our-customers/
+- https://blog.cloudflare.com/monetization-gateway/
+- https://blog.cloudflare.com/security-txt/
+- https://developers.cloudflare.com/agents/
+- https://developers.cloudflare.com/agents/agentic-payments/x402/
+- https://developers.cloudflare.com/agents/guides/remote-mcp-server/
+- https://developers.cloudflare.com/ai-crawl-control/
+- https://developers.cloudflare.com/ai-crawl-control/features/pay-per-crawl/what-is-pay-per-crawl/
+- https://developers.cloudflare.com/api-shield/
+- >-
+  https://developers.cloudflare.com/api-shield/management-and-monitoring/endpoint-management/schema-learning/
+- https://developers.cloudflare.com/bots/additional-configurations/managed-robots-txt/
+- https://developers.cloudflare.com/bots/reference/bot-verification/web-bot-auth/
+- https://developers.cloudflare.com/cloudflare-one/access-controls/policies/
+- https://developers.cloudflare.com/fundamentals/reference/markdown-for-agents/
+- https://developers.cloudflare.com/pages/
+- https://developers.cloudflare.com/waf/rate-limiting-rules/
+- https://github.com/cloudflare/workers-oauth-provider
+measured:
+  cohort:
+    method: vendors-catalog.json detections (CNAME / header / URL shape / markup), never a name match
+    detected: 121
+    in_baseline: 33
+  control:
+    basis: providers earning contract_present + documentation_present + api_reference_present, minus the
+      cohort
+    n: 5183
+  metric: >-
+    cohort_pct / control_pct = mean share of the check's points earned (derived and platform credit weighted),
+    x100
+  measured_on: '2026-09-25'
+  composite_mean:
+    cohort: 48.8
+    control: 48.0
+  agent_readiness_mean:
+    cohort: 34.9
+    control: 32.5
+  status: measured
+  caveat: >-
+    A cohort delta is association, not cause: customers choose a vendor for reasons that also move their
+    score. Read it beside the capability map, never instead of it.
+simulation:
+  simulated_on: '2026-09-25'
+  rubric: 0.23.0
+  population: providers publishing a contract (contract_present earned), replayable exactly
+  providers: 8977
+  providers_unreplayable: 987
+  providers_moved: 8962
+  conditional_rows: excluded (they depend on what the API already does)
+  composite_lift:
+    median: 0.7
+    p75: 0.9
+    p90: 0.9
+    max: 0.9
+    mean_among_movers: 0.7
+  agent_readiness_lift:
+    median: 2.2
+    p75: 2.2
+    p90: 2.5
+    max: 2.6
+    mean_among_movers: 2.2
+  facet_lift_median_among_movers:
+    discoverability: 1.9
+    operational_transparency: 5.3
+  composite_band_moves:
+    thin -> developing: 254
+    developing -> strong: 93
+    emerging -> thin: 75
+    strong -> exemplar: 25
+    minimal -> emerging: 1
+  agent_readiness_band_moves:
+    agent-aware -> agent-ready: 760
+    agent-ready -> agent-native: 89
+  method: >-
+    each provider's own kin/checks file, the vendor's maps at their stated credit, the scorer's composite
+    formula; from -> to, nothing written
