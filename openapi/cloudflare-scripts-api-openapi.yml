@@ -108,6 +108,21 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    ScriptName:
+      name: script_name
+      in: path
+      required: true
+      description: The name of the Worker script.
+      schema:
+        type: string
   schemas:
     ScriptListResponse:
       type: object
@@ -136,21 +151,6 @@ components:
         success:
           type: boolean
           example: true
-  parameters:
-    ScriptName:
-      name: script_name
-      in: path
-      required: true
-      description: The name of the Worker script.
-      schema:
-        type: string
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
   securitySchemes:
     bearerAuth:
       type: http

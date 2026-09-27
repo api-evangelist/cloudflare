@@ -150,20 +150,22 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
+  parameters:
+    ZoneId:
+      name: zone_id
+      in: path
+      required: true
+      description: The unique identifier of the zone.
+      schema:
+        type: string
+    RouteId:
+      name: route_id
+      in: path
+      required: true
+      description: The unique identifier of the route.
+      schema:
+        type: string
   schemas:
-    RouteInput:
-      type: object
-      required:
-      - pattern
-      properties:
-        pattern:
-          type: string
-          description: The URL pattern for the route, e.g. example.com/*.
-          example: example_value
-        script:
-          type: string
-          description: The name of the Worker script to invoke.
-          example: example_value
     RouteListResponse:
       type: object
       properties:
@@ -182,21 +184,19 @@ components:
         success:
           type: boolean
           example: true
-  parameters:
-    RouteId:
-      name: route_id
-      in: path
-      required: true
-      description: The unique identifier of the route.
-      schema:
-        type: string
-    ZoneId:
-      name: zone_id
-      in: path
-      required: true
-      description: The unique identifier of the zone.
-      schema:
-        type: string
+    RouteInput:
+      type: object
+      required:
+      - pattern
+      properties:
+        pattern:
+          type: string
+          description: The URL pattern for the route, e.g. example.com/*.
+          example: example_value
+        script:
+          type: string
+          description: The name of the Worker script to invoke.
+          example: example_value
   securitySchemes:
     bearerAuth:
       type: http

@@ -222,13 +222,6 @@ paths:
         dispatcher: FALLBACK
 components:
   parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
     WorkerId:
       name: worker_id
       in: path
@@ -236,7 +229,47 @@ components:
       description: The unique identifier of the Worker.
       schema:
         type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
   schemas:
+    WorkerListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              created_on:
+                type: string
+                format: date-time
+              modified_on:
+                type: string
+                format: date-time
+          example: []
+        success:
+          type: boolean
+          example: true
+    WorkerInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the Worker.
+          example: Example Title
+        main_module:
+          type: string
+          description: The entry point module for the Worker.
+          example: example_value
     WorkerResponse:
       type: object
       properties:
@@ -271,39 +304,6 @@ components:
           items:
             type: object
           example: []
-    WorkerListResponse:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              created_on:
-                type: string
-                format: date-time
-              modified_on:
-                type: string
-                format: date-time
-          example: []
-        success:
-          type: boolean
-          example: true
-    WorkerInput:
-      type: object
-      properties:
-        name:
-          type: string
-          description: The name of the Worker.
-          example: Example Title
-        main_module:
-          type: string
-          description: The entry point module for the Worker.
-          example: example_value
   securitySchemes:
     bearerAuth:
       type: http

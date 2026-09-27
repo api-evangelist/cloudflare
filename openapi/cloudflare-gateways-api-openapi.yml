@@ -220,21 +220,6 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
-  parameters:
-    GatewayId:
-      name: gateway_id
-      in: path
-      required: true
-      description: The unique identifier of the AI Gateway.
-      schema:
-        type: string
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
   schemas:
     Gateway:
       type: object
@@ -285,6 +270,17 @@ components:
           format: date-time
           description: When the gateway was last modified.
           example: '2026-01-15T10:30:00Z'
+    GatewayListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gateway'
+          example: []
+        success:
+          type: boolean
+          example: true
     GatewayInput:
       type: object
       required:
@@ -318,17 +314,6 @@ components:
           type: boolean
           description: Enable request logging.
           example: true
-    GatewayListResponse:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Gateway'
-          example: []
-        success:
-          type: boolean
-          example: true
     GatewayResponse:
       type: object
       properties:
@@ -347,6 +332,21 @@ components:
           items:
             type: object
           example: []
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    GatewayId:
+      name: gateway_id
+      in: path
+      required: true
+      description: The unique identifier of the AI Gateway.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http

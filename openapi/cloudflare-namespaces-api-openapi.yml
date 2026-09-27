@@ -260,25 +260,6 @@ paths:
       description: Cloudflare API v4 Production Server
 components:
   schemas:
-    DurableObjectNamespace:
-      type: object
-      properties:
-        id:
-          type: string
-          description: The unique identifier of the namespace.
-          example: abc123
-        name:
-          type: string
-          description: The name of the namespace.
-          example: Example Title
-        script:
-          type: string
-          description: The Worker script associated with the namespace.
-          example: example_value
-        class:
-          type: string
-          description: The Durable Object class name.
-          example: example_value
     NamespaceListResponse:
       type: object
       properties:
@@ -300,6 +281,48 @@ components:
           items:
             type: object
           example: []
+    DurableObjectNamespace:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the namespace.
+          example: abc123
+        name:
+          type: string
+          description: The name of the namespace.
+          example: Example Title
+        script:
+          type: string
+          description: The Worker script associated with the namespace.
+          example: example_value
+        class:
+          type: string
+          description: The Durable Object class name.
+          example: example_value
+    NamespaceListResponse_2:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Namespace'
+          example: []
+        success:
+          type: boolean
+          example: true
+        result_info:
+          type: object
+          properties:
+            page:
+              type: integer
+            per_page:
+              type: integer
+            count:
+              type: integer
+            total_count:
+              type: integer
+          example: example_value
     Namespace:
       type: object
       properties:
@@ -333,29 +356,6 @@ components:
           items:
             type: object
           example: []
-    NamespaceListResponse_2:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Namespace'
-          example: []
-        success:
-          type: boolean
-          example: true
-        result_info:
-          type: object
-          properties:
-            page:
-              type: integer
-            per_page:
-              type: integer
-            count:
-              type: integer
-            total_count:
-              type: integer
-          example: example_value
   parameters:
     AccountId:
       name: account_id

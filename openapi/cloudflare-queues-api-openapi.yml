@@ -234,36 +234,22 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
+  parameters:
+    QueueId:
+      name: queue_id
+      in: path
+      required: true
+      description: The unique identifier of the queue.
+      schema:
+        type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
   schemas:
-    QueueResponse:
-      type: object
-      properties:
-        result:
-          $ref: '#/components/schemas/Queue'
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
-    QueueListResponse:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Queue'
-          example: []
-        success:
-          type: boolean
-          example: true
     Queue:
       type: object
       properties:
@@ -293,21 +279,35 @@ components:
           type: integer
           description: Number of consumers attached.
           example: 10
-  parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
-    QueueId:
-      name: queue_id
-      in: path
-      required: true
-      description: The unique identifier of the queue.
-      schema:
-        type: string
+    QueueListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Queue'
+          example: []
+        success:
+          type: boolean
+          example: true
+    QueueResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Queue'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
   securitySchemes:
     bearerAuth:
       type: http
