@@ -200,21 +200,6 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
-  parameters:
-    IndexName:
-      name: index_name
-      in: path
-      required: true
-      description: The name of the Vectorize index.
-      schema:
-        type: string
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
   schemas:
     IndexResponse:
       type: object
@@ -234,36 +219,6 @@ components:
           items:
             type: object
           example: []
-    IndexInput:
-      type: object
-      required:
-      - name
-      - config
-      properties:
-        name:
-          type: string
-          description: The name of the index.
-          example: Example Title
-        description:
-          type: string
-          description: Description of the index.
-          example: A sample description.
-        config:
-          type: object
-          required:
-          - dimensions
-          - metric
-          properties:
-            dimensions:
-              type: integer
-              description: Number of dimensions.
-            metric:
-              type: string
-              enum:
-              - cosine
-              - euclidean
-              - dot-product
-          example: example_value
     IndexListResponse:
       type: object
       properties:
@@ -308,6 +263,51 @@ components:
           type: string
           format: date-time
           example: '2026-01-15T10:30:00Z'
+    IndexInput:
+      type: object
+      required:
+      - name
+      - config
+      properties:
+        name:
+          type: string
+          description: The name of the index.
+          example: Example Title
+        description:
+          type: string
+          description: Description of the index.
+          example: A sample description.
+        config:
+          type: object
+          required:
+          - dimensions
+          - metric
+          properties:
+            dimensions:
+              type: integer
+              description: Number of dimensions.
+            metric:
+              type: string
+              enum:
+              - cosine
+              - euclidean
+              - dot-product
+          example: example_value
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    IndexName:
+      name: index_name
+      in: path
+      required: true
+      description: The name of the Vectorize index.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http

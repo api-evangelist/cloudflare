@@ -422,6 +422,80 @@ components:
           items:
             type: object
           example: []
+    DnsRecordInput:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/RecordType'
+        name:
+          type: string
+          description: The DNS record name, e.g. example.com.
+          example: Example Title
+        content:
+          type: string
+          description: The DNS record content value.
+          example: example_value
+        ttl:
+          type: integer
+          description: Time to live in seconds. A value of 1 indicates automatic TTL.
+          minimum: 1
+          maximum: 86400
+          example: 10
+        priority:
+          type: integer
+          description: Required for MX, SRV, and URI records. Record priority.
+          minimum: 0
+          maximum: 65535
+          example: 10
+        proxied:
+          type: boolean
+          description: Whether the record is receiving Cloudflare proxy services.
+          example: true
+        comment:
+          type: string
+          description: A comment about the DNS record.
+          example: example_value
+        tags:
+          type: array
+          items:
+            type: string
+          description: Custom tags for the DNS record.
+          example: []
+    DnsRecordListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsRecord'
+          example: []
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
+        result_info:
+          type: object
+          properties:
+            page:
+              type: integer
+            per_page:
+              type: integer
+            count:
+              type: integer
+            total_count:
+              type: integer
+            total_pages:
+              type: integer
+          example: example_value
     DnsRecord:
       type: object
       properties:
@@ -483,45 +557,6 @@ components:
           format: date-time
           description: When the record was last modified.
           example: '2026-01-15T10:30:00Z'
-    DnsRecordInput:
-      type: object
-      properties:
-        type:
-          $ref: '#/components/schemas/RecordType'
-        name:
-          type: string
-          description: The DNS record name, e.g. example.com.
-          example: Example Title
-        content:
-          type: string
-          description: The DNS record content value.
-          example: example_value
-        ttl:
-          type: integer
-          description: Time to live in seconds. A value of 1 indicates automatic TTL.
-          minimum: 1
-          maximum: 86400
-          example: 10
-        priority:
-          type: integer
-          description: Required for MX, SRV, and URI records. Record priority.
-          minimum: 0
-          maximum: 65535
-          example: 10
-        proxied:
-          type: boolean
-          description: Whether the record is receiving Cloudflare proxy services.
-          example: true
-        comment:
-          type: string
-          description: A comment about the DNS record.
-          example: example_value
-        tags:
-          type: array
-          items:
-            type: string
-          description: Custom tags for the DNS record.
-          example: []
     RecordType:
       type: string
       description: The type of DNS record.
@@ -546,41 +581,6 @@ components:
       - TLSA
       - TXT
       - URI
-    DnsRecordListResponse:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/DnsRecord'
-          example: []
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
-        result_info:
-          type: object
-          properties:
-            page:
-              type: integer
-            per_page:
-              type: integer
-            count:
-              type: integer
-            total_count:
-              type: integer
-            total_pages:
-              type: integer
-          example: example_value
   parameters:
     DnsRecordId:
       name: dns_record_id

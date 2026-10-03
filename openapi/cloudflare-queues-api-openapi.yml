@@ -234,22 +234,18 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
-  parameters:
-    QueueId:
-      name: queue_id
-      in: path
-      required: true
-      description: The unique identifier of the queue.
-      schema:
-        type: string
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
   schemas:
+    QueueListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Queue'
+          example: []
+        success:
+          type: boolean
+          example: true
     Queue:
       type: object
       properties:
@@ -279,17 +275,6 @@ components:
           type: integer
           description: Number of consumers attached.
           example: 10
-    QueueListResponse:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Queue'
-          example: []
-        success:
-          type: boolean
-          example: true
     QueueResponse:
       type: object
       properties:
@@ -308,6 +293,21 @@ components:
           items:
             type: object
           example: []
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    QueueId:
+      name: queue_id
+      in: path
+      required: true
+      description: The unique identifier of the queue.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http

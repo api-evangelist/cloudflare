@@ -67,6 +67,33 @@ components:
       type: string
       description: A digest of the IP data. Useful for determining if the data has changed.
       example: a8e453d9d129a3769407127936edfdb0
+    addressing_ips_jdcloud:
+      type: object
+      properties:
+        etag:
+          $ref: '#/components/schemas/addressing_etag'
+        ipv4_cidrs:
+          $ref: '#/components/schemas/addressing_ipv4_cidrs'
+        ipv6_cidrs:
+          $ref: '#/components/schemas/addressing_ipv6_cidrs'
+        jdcloud_cidrs:
+          $ref: '#/components/schemas/addressing_jdcloud_cidrs'
+    addressing_jdcloud_cidrs:
+      type: array
+      description: List IPv4 and IPv6 CIDRs, only populated if `?networks=jdcloud` is used.
+      items:
+        type: string
+        description: IPv4 or IPv6 CIDR.
+        example: 199.27.128.0/21
+    addressing_api-response-single:
+      allOf:
+      - $ref: '#/components/schemas/addressing_api-response-common'
+      - properties:
+          result:
+            anyOf:
+            - type: object
+            - type: string
+      type: object
     addressing_messages:
       type: array
       example: []
@@ -82,26 +109,6 @@ components:
             minimum: 1000
           message:
             type: string
-    addressing_ips:
-      type: object
-      properties:
-        etag:
-          $ref: '#/components/schemas/addressing_etag'
-        ipv4_cidrs:
-          $ref: '#/components/schemas/addressing_ipv4_cidrs'
-        ipv6_cidrs:
-          $ref: '#/components/schemas/addressing_ipv6_cidrs'
-    addressing_ips_jdcloud:
-      type: object
-      properties:
-        etag:
-          $ref: '#/components/schemas/addressing_etag'
-        ipv4_cidrs:
-          $ref: '#/components/schemas/addressing_ipv4_cidrs'
-        ipv6_cidrs:
-          $ref: '#/components/schemas/addressing_ipv6_cidrs'
-        jdcloud_cidrs:
-          $ref: '#/components/schemas/addressing_jdcloud_cidrs'
     addressing_ipv6_cidrs:
       type: array
       description: List of Cloudflare IPv6 CIDR addresses.
@@ -109,53 +116,6 @@ components:
         type: string
         description: IPv6 CIDR.
         example: 2400:cb00::/32
-    addressing_api-response-single:
-      allOf:
-      - $ref: '#/components/schemas/addressing_api-response-common'
-      - properties:
-          result:
-            anyOf:
-            - type: object
-            - type: string
-      type: object
-    addressing_api-response-common:
-      type: object
-      required:
-      - success
-      - errors
-      - messages
-      - result
-      properties:
-        errors:
-          $ref: '#/components/schemas/addressing_messages'
-        messages:
-          $ref: '#/components/schemas/addressing_messages'
-        result:
-          anyOf:
-          - type: object
-          - type: array
-            items: {}
-          - type: string
-        success:
-          type: boolean
-          description: Whether the API call was successful
-          enum:
-          - true
-          example: true
-    addressing_ipv4_cidrs:
-      type: array
-      description: List of Cloudflare IPv4 CIDR addresses.
-      items:
-        type: string
-        description: IPv4 CIDR.
-        example: 199.27.128.0/21
-    addressing_jdcloud_cidrs:
-      type: array
-      description: List IPv4 and IPv6 CIDRs, only populated if `?networks=jdcloud` is used.
-      items:
-        type: string
-        description: IPv4 or IPv6 CIDR.
-        example: 199.27.128.0/21
     addressing_api-response-common-failure:
       type: object
       required:
@@ -187,6 +147,46 @@ components:
           enum:
           - false
           example: false
+    addressing_ipv4_cidrs:
+      type: array
+      description: List of Cloudflare IPv4 CIDR addresses.
+      items:
+        type: string
+        description: IPv4 CIDR.
+        example: 199.27.128.0/21
+    addressing_ips:
+      type: object
+      properties:
+        etag:
+          $ref: '#/components/schemas/addressing_etag'
+        ipv4_cidrs:
+          $ref: '#/components/schemas/addressing_ipv4_cidrs'
+        ipv6_cidrs:
+          $ref: '#/components/schemas/addressing_ipv6_cidrs'
+    addressing_api-response-common:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          $ref: '#/components/schemas/addressing_messages'
+        messages:
+          $ref: '#/components/schemas/addressing_messages'
+        result:
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+          - type: string
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - true
+          example: true
   securitySchemes:
     api_email:
       type: apiKey

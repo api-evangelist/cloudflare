@@ -230,20 +230,6 @@ paths:
         dispatcher: FALLBACK
 components:
   schemas:
-    ImageListResponse:
-      type: object
-      properties:
-        result:
-          type: object
-          properties:
-            images:
-              type: array
-              items:
-                $ref: '#/components/schemas/Image'
-          example: example_value
-        success:
-          type: boolean
-          example: true
     ImageResponse:
       type: object
       properties:
@@ -292,19 +278,33 @@ components:
             format: uri
           description: URLs for each variant of the image.
           example: []
+    ImageListResponse:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            images:
+              type: array
+              items:
+                $ref: '#/components/schemas/Image'
+          example: example_value
+        success:
+          type: boolean
+          example: true
   parameters:
-    ImageId:
-      name: image_id
-      in: path
-      required: true
-      description: The unique identifier of the image.
-      schema:
-        type: string
     AccountId:
       name: account_id
       in: path
       required: true
       description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    ImageId:
+      name: image_id
+      in: path
+      required: true
+      description: The unique identifier of the image.
       schema:
         type: string
   securitySchemes:

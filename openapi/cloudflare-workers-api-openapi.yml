@@ -221,22 +221,18 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
-  parameters:
-    WorkerId:
-      name: worker_id
-      in: path
-      required: true
-      description: The unique identifier of the Worker.
-      schema:
-        type: string
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
   schemas:
+    WorkerInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the Worker.
+          example: Example Title
+        main_module:
+          type: string
+          description: The entry point module for the Worker.
+          example: example_value
     WorkerListResponse:
       type: object
       properties:
@@ -259,17 +255,6 @@ components:
         success:
           type: boolean
           example: true
-    WorkerInput:
-      type: object
-      properties:
-        name:
-          type: string
-          description: The name of the Worker.
-          example: Example Title
-        main_module:
-          type: string
-          description: The entry point module for the Worker.
-          example: example_value
     WorkerResponse:
       type: object
       properties:
@@ -304,6 +289,21 @@ components:
           items:
             type: object
           example: []
+  parameters:
+    WorkerId:
+      name: worker_id
+      in: path
+      required: true
+      description: The unique identifier of the Worker.
+      schema:
+        type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http

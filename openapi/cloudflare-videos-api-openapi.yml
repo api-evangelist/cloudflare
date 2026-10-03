@@ -312,7 +312,40 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    VideoId:
+      name: video_id
+      in: path
+      required: true
+      description: The unique identifier of the video.
+      schema:
+        type: string
   schemas:
+    VideoResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Video'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
     VideoListResponse:
       type: object
       properties:
@@ -391,39 +424,6 @@ components:
           items:
             type: string
           example: []
-    VideoResponse:
-      type: object
-      properties:
-        result:
-          $ref: '#/components/schemas/Video'
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
-  parameters:
-    VideoId:
-      name: video_id
-      in: path
-      required: true
-      description: The unique identifier of the video.
-      schema:
-        type: string
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
   securitySchemes:
     bearerAuth:
       type: http

@@ -221,6 +221,68 @@ paths:
         dispatcher: FALLBACK
 components:
   schemas:
+    GatewayInput:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: The name of the gateway.
+          example: Example Title
+        cache_enabled:
+          type: boolean
+          description: Enable response caching.
+          example: true
+        cache_ttl:
+          type: integer
+          description: Cache TTL in seconds.
+          example: 10
+        rate_limiting_enabled:
+          type: boolean
+          description: Enable rate limiting.
+          example: true
+        rate_limiting_limit:
+          type: integer
+          description: Rate limit threshold.
+          example: 10
+        rate_limiting_interval:
+          type: integer
+          description: Rate limiting interval in seconds.
+          example: 10
+        log_enabled:
+          type: boolean
+          description: Enable request logging.
+          example: true
+    GatewayListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gateway'
+          example: []
+        success:
+          type: boolean
+          example: true
+    GatewayResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Gateway'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
     Gateway:
       type: object
       properties:
@@ -270,68 +332,6 @@ components:
           format: date-time
           description: When the gateway was last modified.
           example: '2026-01-15T10:30:00Z'
-    GatewayListResponse:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Gateway'
-          example: []
-        success:
-          type: boolean
-          example: true
-    GatewayInput:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-          description: The name of the gateway.
-          example: Example Title
-        cache_enabled:
-          type: boolean
-          description: Enable response caching.
-          example: true
-        cache_ttl:
-          type: integer
-          description: Cache TTL in seconds.
-          example: 10
-        rate_limiting_enabled:
-          type: boolean
-          description: Enable rate limiting.
-          example: true
-        rate_limiting_limit:
-          type: integer
-          description: Rate limit threshold.
-          example: 10
-        rate_limiting_interval:
-          type: integer
-          description: Rate limiting interval in seconds.
-          example: 10
-        log_enabled:
-          type: boolean
-          description: Enable request logging.
-          example: true
-    GatewayResponse:
-      type: object
-      properties:
-        result:
-          $ref: '#/components/schemas/Gateway'
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
   parameters:
     AccountId:
       name: account_id

@@ -224,6 +224,33 @@ paths:
         dispatcher: FALLBACK
 components:
   schemas:
+    WidgetInput:
+      type: object
+      required:
+      - name
+      - domains
+      - mode
+      properties:
+        name:
+          type: string
+          description: Name for the widget.
+          example: Example Title
+        domains:
+          type: array
+          items:
+            type: string
+          description: Allowed domains.
+          example: []
+        mode:
+          type: string
+          enum:
+          - managed
+          - non-interactive
+          - invisible
+          example: managed
+        bot_fight_mode:
+          type: boolean
+          example: true
     Widget:
       type: object
       properties:
@@ -265,31 +292,15 @@ components:
           type: string
           format: date-time
           example: '2026-01-15T10:30:00Z'
-    WidgetInput:
+    WidgetListResponse:
       type: object
-      required:
-      - name
-      - domains
-      - mode
       properties:
-        name:
-          type: string
-          description: Name for the widget.
-          example: Example Title
-        domains:
+        result:
           type: array
           items:
-            type: string
-          description: Allowed domains.
+            $ref: '#/components/schemas/Widget'
           example: []
-        mode:
-          type: string
-          enum:
-          - managed
-          - non-interactive
-          - invisible
-          example: managed
-        bot_fight_mode:
+        success:
           type: boolean
           example: true
     WidgetResponse:
@@ -310,17 +321,6 @@ components:
           items:
             type: object
           example: []
-    WidgetListResponse:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Widget'
-          example: []
-        success:
-          type: boolean
-          example: true
   parameters:
     AccountId:
       name: account_id

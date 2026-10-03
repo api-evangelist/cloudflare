@@ -260,6 +260,25 @@ paths:
       description: Cloudflare API v4 Production Server
 components:
   schemas:
+    DurableObjectNamespace:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the namespace.
+          example: abc123
+        name:
+          type: string
+          description: The name of the namespace.
+          example: Example Title
+        script:
+          type: string
+          description: The Worker script associated with the namespace.
+          example: example_value
+        class:
+          type: string
+          description: The Durable Object class name.
+          example: example_value
     NamespaceListResponse:
       type: object
       properties:
@@ -281,25 +300,39 @@ components:
           items:
             type: object
           example: []
-    DurableObjectNamespace:
+    NamespaceResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Namespace'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
+    Namespace:
       type: object
       properties:
         id:
           type: string
           description: The unique identifier of the namespace.
           example: abc123
-        name:
+        title:
           type: string
-          description: The name of the namespace.
+          description: The human-readable title of the namespace.
           example: Example Title
-        script:
-          type: string
-          description: The Worker script associated with the namespace.
-          example: example_value
-        class:
-          type: string
-          description: The Durable Object class name.
-          example: example_value
+        supports_url_encoding:
+          type: boolean
+          description: Whether the namespace supports URL-encoded keys.
+          example: https://www.example.com
     NamespaceListResponse_2:
       type: object
       properties:
@@ -323,39 +356,6 @@ components:
             total_count:
               type: integer
           example: example_value
-    Namespace:
-      type: object
-      properties:
-        id:
-          type: string
-          description: The unique identifier of the namespace.
-          example: abc123
-        title:
-          type: string
-          description: The human-readable title of the namespace.
-          example: Example Title
-        supports_url_encoding:
-          type: boolean
-          description: Whether the namespace supports URL-encoded keys.
-          example: https://www.example.com
-    NamespaceResponse:
-      type: object
-      properties:
-        result:
-          $ref: '#/components/schemas/Namespace'
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
   parameters:
     AccountId:
       name: account_id
