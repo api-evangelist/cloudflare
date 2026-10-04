@@ -1,17 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare Stream Webhooks API
-  description: Cloudflare Stream provides a single API for uploading, storing, encoding, and delivering live and on-demand video. The API supports direct uploads, TUS resumable uploads, live streaming via RTMPS and SRT, video playback with a built-in player, and signed URL access control.
-  version: '4.0'
-  contact:
-    name: Cloudflare Support
-    url: https://support.cloudflare.com/
-  termsOfService: https://www.cloudflare.com/terms/
+  title: Cloudflare Webhooks API
+  version: '1.0'
+  description: 'Operations tagged Webhooks across 2 of this provider''s published API definitions: cloudflare-stream-openapi.yml, cloudflare-openapi.json. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.cloudflare.com/client/v4
   description: Cloudflare API v4 Production Server
-security:
-- bearerAuth: []
 tags:
 - name: Webhooks
   description: Configure webhooks for video processing notifications.
@@ -33,6 +27,8 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
     put:
       operationId: updateStreamWebhook
       summary: Cloudflare Update Webhook Configuration
@@ -68,6 +64,8 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
     delete:
       operationId: deleteStreamWebhook
       summary: Cloudflare Delete Webhook Configuration
@@ -84,6 +82,837 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.cloudflare.com/client/v4
+      description: Cloudflare API v4 Production Server
+  /accounts/{account_id}/realtime/kit/{app_id}/webhooks:
+    get:
+      operationId: getAllWebhooks
+      summary: Fetch all webhooks details
+      description: Returns details of all webhooks for an App.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      responses:
+        '200':
+          description: Operation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/realtimekit_WebhooksListSuccessResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              examples:
+                default:
+                  value: "{\n  message: \"Unauthorized\"\n}\n"
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.webhooks
+      x-fern-sdk-method-name: list
+    post:
+      operationId: addWebhook
+      summary: Add a webhook
+      description: Adds a new webhook to an App.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/realtimekit_WebhookRequest'
+      responses:
+        '201':
+          description: Webhook registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/realtimekit_WebhookSuccessResponse'
+        '400':
+          description: Error - malformed request
+          content:
+            application/json:
+              examples:
+                default:
+                  value: "{\n  success: false,\n  error: { code: 400, message: 'BAD_REQUEST: \"name\" is required' }\n}\n"
+              schema:
+                $ref: '#/components/schemas/realtimekit_ErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              examples:
+                default:
+                  value: "{\n  message: \"Unauthorized\"\n}\n"
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.webhooks
+      x-fern-sdk-method-name: create
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/realtime/kit/{app_id}/webhooks/all:
+    get:
+      operationId: getAllWebhookEvents
+      summary: Fetch all supported webhook events
+      description: Returns the list of webhook event names supported by RealtimeKit.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      responses:
+        '200':
+          description: Operation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/realtimekit_WebhookEventsSuccessResponse'
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.webhooks.events
+      x-fern-sdk-method-name: list
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/realtime/kit/{app_id}/webhooks/{webhook_id}:
+    delete:
+      operationId: deleteWebhook
+      summary: Delete a webhook
+      description: Removes a webhook for the given webhook ID.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      - name: webhook_id
+        in: path
+        description: ID of the webhook
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Operation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/realtimekit_WebhookSuccessResponse'
+        '400':
+          description: Error - malformed request
+          content:
+            application/json:
+              examples:
+                default:
+                  value: "{\n  \"success\": false,\n  \"error\": { \"code\": 400, \"message\": \"BAD_REQUEST \\\"id\\\" must be a valid GUID\" }\n}\n"
+              schema:
+                $ref: '#/components/schemas/realtimekit_ErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              examples:
+                default:
+                  value: "{\n  \"message\": \"Unauthorized\"\n}\n"
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.webhooks
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the webhook. Event delivery to it will stop.
+      x-stability: beta
+    get:
+      operationId: getWebhook
+      summary: Fetch details of a webhook
+      description: Returns webhook details for the given webhook ID.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      - name: webhook_id
+        in: path
+        description: ID of the webhook
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Operation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/realtimekit_WebhookSuccessResponse'
+        '400':
+          description: Error - malformed request
+          content:
+            application/json:
+              examples:
+                default:
+                  value: "{\n  success: false,\n  error: { code: 400, message: 'BAD_REQUEST: \"id\" must be a valid GUID' }\n}\n"
+              schema:
+                $ref: '#/components/schemas/realtimekit_ErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              examples:
+                default:
+                  value: "{\n  message: \"Unauthorized\"\n}\n"
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.webhooks
+      x-fern-sdk-method-name: get
+      x-stability: beta
+    patch:
+      operationId: editWebhook
+      summary: Edit a webhook
+      description: Edits the webhook details for the given webhook ID.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      - name: webhook_id
+        in: path
+        description: ID of the webhook
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            examples:
+              default:
+                value: "{\n  \"name\": \"test\",\n  \"events\": [ \"meeting.started\" ],\n  \"url\": \"https://new-test-url.com\"\n}\n"
+            schema:
+              $ref: '#/components/schemas/realtimekit_PatchWebhookRequest'
+      responses:
+        '200':
+          description: Operation successful
+          content:
+            application/json:
+              examples:
+                default:
+                  value: "{\n  \"success\": true,\n  \"data\": {\n    id: \"901e9adf-ebd9-41f0-9098-28171bc04ddd\",\n    \"name\": \"test\",\n    \"events\": [ \"meeting.started\" ],\n    \"url\": \"https://new-test-url.com\",\n    \"created_at\": \"2021-09-09T10:25:12.330Z\",\n    \"updated_at\": \"2021-09-09T10:25:12.376Z\"\n  }\n}\n"
+              schema:
+                $ref: '#/components/schemas/realtimekit_WebhookSuccessResponse'
+        '400':
+          description: Error - malformed request
+          content:
+            application/json:
+              examples:
+                default:
+                  value: "{\n  \"success\": false,\n  \"error\": { \"code\": 400, \"message\": \"BAD_REQUEST \\\"id\\\" must be a valid GUID\" }\n}\n"
+              schema:
+                $ref: '#/components/schemas/realtimekit_ErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              examples:
+                default:
+                  value: "{\n  \"message\": \"Unauthorized\"\n}\n"
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.webhooks
+      x-fern-sdk-method-name: update
+      x-stability: beta
+    put:
+      operationId: replaceWebhook
+      summary: Replace a webhook
+      description: Replace all details for the given webhook ID.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      - name: webhook_id
+        in: path
+        description: ID of the webhook
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            examples:
+              default:
+                value: "{\n  \"name\": \"test\",\n  \"events\": [ \"meeting.started\" ],\n  \"url\": \"https://new-test-url.com\"\n}\n"
+            schema:
+              $ref: '#/components/schemas/realtimekit_WebhookRequest'
+      responses:
+        '200':
+          description: Operation successful
+          content:
+            application/json:
+              examples:
+                default:
+                  value: "{\n  \"success\": true,\n  \"data\": {\n    id: \"901e9adf-ebd9-41f0-9098-28171bc04ddd\",\n    \"name\": \"test\",\n    \"events\": [ \"meeting.started\" ],\n    \"url\": \"https://new-test-url.com\",\n    \"created_at\": \"2021-09-09T10:25:12.330Z\",\n    \"updated_at\": \"2021-09-09T10:25:12.376Z\"\n  }\n}\n"
+              schema:
+                $ref: '#/components/schemas/realtimekit_WebhookSuccessResponse'
+        '400':
+          description: Error - malformed request
+          content:
+            application/json:
+              examples:
+                default:
+                  value: "{\n  \"success\": false,\n  \"error\": { \"code\": 400, \"message\": \"BAD_REQUEST \\\"id\\\" must be a valid GUID\" }\n}\n"
+              schema:
+                $ref: '#/components/schemas/realtimekit_ErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              examples:
+                default:
+                  value: "{\n  message: \"Unauthorized\"\n}\n"
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.webhooks
+      x-fern-sdk-method-name: replace
+      x-stability: beta
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/data-security/posture/webhooks:
+    get:
+      operationId: ListWebhooks
+      summary: List webhook configurations
+      description: 'Retrieves all webhook configurations for the authenticated account.
+
+        Returns an array of webhook configurations that can be used to send finding notifications.'
+      parameters:
+      - $ref: '#/components/parameters/posture-api_AccountTag'
+      responses:
+        '200':
+          description: 'OK: Successful HTTP request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_webhook-list-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Zero Trust Read
+      - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.webhooks
+      x-fern-sdk-method-name: list
+    post:
+      operationId: CreateWebhook
+      summary: Create a new webhook configuration
+      description: Creates a new webhook configuration for sending finding notifications to external endpoints.
+      parameters:
+      - $ref: '#/components/parameters/posture-api_AccountTag'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/posture-api_CreateWebhookRequest'
+      responses:
+        '200':
+          description: 'OK: Webhook created successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                - $ref: '#/components/schemas/posture-api_api-response-common'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/posture-api_Webhook'
+                  type: object
+        '400':
+          description: 'Bad Request: Invalid request parameters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '422':
+          description: 'Unprocessable Entity: Webhook configuration limit reached for this account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.webhooks
+      x-fern-sdk-method-name: create
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/data-security/posture/webhooks/evaluate:
+    post:
+      operationId: EvaluateNewWebhook
+      summary: Test a webhook configuration before creating it
+      description: 'Sends a test webhook event to the specified destination URL to verify the webhook endpoint
+
+        is reachable and properly configured. This allows customers to validate their webhook
+
+        configuration before creating the actual webhook resource.
+
+
+        The test payload includes:
+
+        - event_type: "webhook.test"
+
+        - timestamp: Current UTC timestamp
+
+        - message: Test message indicating this is from Cloudflare CASB
+
+        - data: Object with test: true'
+      parameters:
+      - $ref: '#/components/parameters/posture-api_AccountTag'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/posture-api_EvaluateNewWebhookRequest'
+      responses:
+        '200':
+          description: 'OK: Webhook test completed (check success field for result)'
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/posture-api_api-response-common'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/posture-api_EvaluateNewWebhookResponse'
+                  type: object
+        '400':
+          description: 'Bad Request: Invalid request parameters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.webhooks
+      x-fern-sdk-method-name: evaluate
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/data-security/posture/webhooks/jobs:
+    post:
+      operationId: CreateWebhookJobs
+      summary: Create webhook jobs
+      description: Creates webhook jobs to send a finding instance to one or more configured webhooks.
+      parameters:
+      - $ref: '#/components/parameters/posture-api_AccountTag'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/posture-api_CreateWebhookJobsRequest'
+      responses:
+        '200':
+          description: 'OK: Webhook jobs successfully created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_CreateWebhookJobsResponse'
+        '400':
+          description: 'Bad Request: Invalid request parameters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '404':
+          description: 'Not Found: Webhook or finding instance not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.webhooks.jobs
+      x-fern-sdk-method-name: create
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/data-security/posture/webhooks/{webhook_id}:
+    delete:
+      operationId: DeleteWebhook
+      summary: Delete a webhook configuration
+      description: 'Soft deletes a webhook configuration by its unique identifier.
+
+        The webhook will be marked as deleted and will no longer be available for use.'
+      parameters:
+      - $ref: '#/components/parameters/posture-api_AccountTag'
+      - $ref: '#/components/parameters/posture-api_WebhookId'
+      responses:
+        '200':
+          description: 'OK: Webhook successfully deleted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_api-response-common'
+        '400':
+          description: 'Bad Request: Invalid webhook ID or webhook already deleted'
+        '409':
+          description: 'Conflict: webhook is associated with one or more policies and cannot be deleted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.webhooks
+      x-fern-sdk-method-name: delete
+    get:
+      operationId: GetWebhookConfigByID
+      summary: Get webhook configuration by ID
+      description: Retrieves a specific webhook configuration by its unique identifier.
+      parameters:
+      - $ref: '#/components/parameters/posture-api_AccountTag'
+      - $ref: '#/components/parameters/posture-api_WebhookId'
+      responses:
+        '200':
+          description: 'OK: Successful HTTP request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_webhook-response'
+        '400':
+          description: 'Bad Request: Invalid webhook ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '404':
+          description: 'Not Found: Webhook not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Zero Trust Read
+      - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.webhooks
+      x-fern-sdk-method-name: get
+    put:
+      operationId: UpdateWebhook
+      summary: Update an existing webhook configuration
+      description: Updates an existing webhook configuration with new settings.
+      parameters:
+      - $ref: '#/components/parameters/posture-api_AccountTag'
+      - $ref: '#/components/parameters/posture-api_WebhookId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/posture-api_UpdateWebhookRequest'
+      responses:
+        '200':
+          description: 'OK: Webhook updated successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                - $ref: '#/components/schemas/posture-api_api-response-common'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/posture-api_Webhook'
+                  type: object
+        '400':
+          description: 'Bad Request: Invalid request parameters'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '404':
+          description: 'Not Found: Webhook not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.webhooks
+      x-fern-sdk-method-name: update
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/data-security/posture/webhooks/{webhook_id}/evaluate:
+    post:
+      operationId: EvaluateExistingWebhook
+      summary: Test an existing webhook configuration
+      description: 'Sends a test webhook event using an existing webhook configuration.
+
+        This allows customers to verify their webhook endpoint is still reachable and properly
+
+        configured after creating the webhook resource.
+
+
+        The test payload includes:
+
+        - event_type: "webhook.test"
+
+        - timestamp: Current UTC timestamp
+
+        - message: Test message indicating this is from Cloudflare CASB
+
+        - data: Object with test: true'
+      parameters:
+      - $ref: '#/components/parameters/posture-api_AccountTag'
+      - $ref: '#/components/parameters/posture-api_WebhookId'
+      responses:
+        '200':
+          description: 'OK: Webhook test completed (check success field for result)'
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/posture-api_api-response-common'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/posture-api_EvaluateNewWebhookResponse'
+                  type: object
+        '400':
+          description: 'Bad Request: Invalid webhook ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '401':
+          description: 'Unauthorized: Authentication required'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '403':
+          description: 'Forbidden: Insufficient permissions'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+        '404':
+          description: 'Not Found: Webhook not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/posture-api_error-response'
+      security:
+      - api_token: []
+      tags:
+      - Webhooks
+      x-api-token-group:
+      - Zero Trust Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.webhooks
+      x-fern-sdk-method-name: evaluate-existing
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
 components:
   parameters:
     AccountId:
@@ -93,11 +922,772 @@ components:
       description: The unique identifier of the Cloudflare account.
       schema:
         type: string
+    posture-api_WebhookId:
+      description: A UUID identifying the webhook configuration.
+      in: path
+      name: webhook_id
+      required: true
+      schema:
+        type: string
+        format: uuid
+    posture-api_AccountTag:
+      description: Cloudflare account ID for the user making the request.
+      example: 46148281d8a93d002ef242d8b0d5f9f6
+      in: path
+      name: account_id
+      required: true
+      schema:
+        type: string
+  schemas:
+    realtimekit_account_identifier:
+      description: The account identifier tag.
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      x-auditable: true
+    realtimekit_WebhookSuccessResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/realtimekit_Webhook'
+        success:
+          type: boolean
+          example: true
+      required:
+      - success
+      - data
+    realtimekit_Webhook:
+      type: object
+      properties:
+        created_at:
+          description: Timestamp when this webhook was created
+          type: string
+          format: date-time
+          example: '2022-05-28T07:01:53.075Z'
+        enabled:
+          description: Set to true if the webhook is active
+          type: boolean
+        events:
+          description: Events this webhook will send updates for
+          type: array
+          items:
+            enum:
+            - meeting.started
+            - meeting.ended
+            - meeting.participantJoined
+            - meeting.participantLeft
+            - meeting.chatSynced
+            - recording.statusUpdate
+            - livestreaming.statusUpdate
+            - meeting.transcript
+            - meeting.summary
+            type: string
+          example:
+          - meeting.started
+          - meeting.ended
+          - meeting.participantJoined
+          - meeting.participantLeft
+          - meeting.chatSynced
+          - recording.statusUpdate
+          - livestreaming.statusUpdate
+          - meeting.transcript
+          - meeting.summary
+        id:
+          description: ID of the webhook
+          type: string
+          format: uuid
+          example: 0d1f069d-43bb-489a-ad8c-7eb95592ba8e
+          readOnly: true
+        name:
+          description: Name of the webhook
+          type: string
+          example: All events webhook
+        updated_at:
+          description: Timestamp when this webhook was updated
+          type: string
+          format: date-time
+          example: '2022-05-28T07:01:53.075Z'
+        url:
+          description: URL the webhook will send events to
+          type: string
+          format: uri
+          example: https://webhook.site/b23a5bbd-c7b0-4ced-a9e2-78ae7889897e
+      required:
+      - id
+      - name
+      - url
+      - events
+      - created_at
+      - updated_at
+      - enabled
+    realtimekit_WebhookEventsSuccessResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            enum:
+            - meeting.started
+            - meeting.ended
+            - meeting.participantJoined
+            - meeting.participantLeft
+            - meeting.chatSynced
+            - recording.statusUpdate
+            - livestreaming.statusUpdate
+            - meeting.transcript
+            - meeting.summary
+            type: string
+        success:
+          type: boolean
+          example: true
+      required:
+      - success
+      - data
+    realtimekit_WebhookRequest:
+      type: object
+      properties:
+        enabled:
+          description: Set whether or not the webhook should be active when created
+          type: boolean
+          default: true
+        events:
+          description: Events that this webhook will get triggered by
+          type: array
+          items:
+            enum:
+            - meeting.started
+            - meeting.ended
+            - meeting.participantJoined
+            - meeting.participantLeft
+            - meeting.chatSynced
+            - recording.statusUpdate
+            - livestreaming.statusUpdate
+            - meeting.transcript
+            - meeting.summary
+            type: string
+          example:
+          - meeting.started
+          - meeting.ended
+          - meeting.participantJoined
+          - meeting.participantLeft
+          - meeting.chatSynced
+          - recording.statusUpdate
+          - livestreaming.statusUpdate
+          - meeting.transcript
+          - meeting.summary
+        name:
+          description: Name of the webhook
+          type: string
+          example: All events webhook
+        url:
+          description: URL this webhook will send events to
+          type: string
+          format: uri
+          example: https://webhook.site/b23a5bbd-c7b0-4ced-a9e2-78ae7889897e
+      required:
+      - name
+      - url
+      - events
+    realtimekit_ErrorResponse:
+      type: object
+      properties:
+        error:
+          description: Object containing details of the error that occurred
+          type: object
+          properties:
+            code:
+              description: Error code
+              type: number
+              example: 404
+            message:
+              description: Error message
+              type: string
+              example: 'Error: resource not found'
+          required:
+          - code
+          - message
+        success:
+          description: Whether the operation succeeded or not
+          type: boolean
+          example: false
+      required:
+      - success
+      - error
+    realtimekit_PatchWebhookRequest:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          default: true
+        events:
+          description: Events that the webhook will get triggered by
+          type: array
+          items:
+            enum:
+            - meeting.started
+            - meeting.ended
+            - meeting.participantJoined
+            - meeting.participantLeft
+            - recording.statusUpdate
+            - livestreaming.statusUpdate
+            - meeting.chatSynced
+            - meeting.transcript
+            - meeting.summary
+            type: string
+        name:
+          description: Name of the webhook
+          type: string
+        url:
+          description: URL the webhook will send events to
+          type: string
+          format: uri
+          example: https://webhook.site/b23a5bbd-c7b0-4ced-a9e2-78ae7889897e
+    realtimekit_WebhooksListSuccessResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_Webhook'
+        success:
+          type: boolean
+          example: true
+      required:
+      - success
+      - data
+    realtimekit_app_id:
+      description: The app identifier tag.
+      type: string
+      example: 14a396e7-ca44-4937-bf1f-050a69118543
+    posture-api_WebhookHeaderInput:
+      description: A header to include in webhook requests. On Create/Evaluate, both key and value are required. On Update, omitting value means "keep existing value".
+      type: object
+      properties:
+        key:
+          description: Header key name.
+          type: string
+          example: Authorization
+          maxLength: 255
+        value:
+          description: Header value. Required on Create and Evaluate. On Update, omit or set to null to keep existing value.
+          type:
+          - string
+          - 'null'
+          example: Bearer token123
+          maxLength: 4096
+          writeOnly: true
+          x-sensitive: true
+      required:
+      - key
+    posture-api_Webhook:
+      description: Webhook configuration for sending finding notifications.
+      type: object
+      properties:
+        authentication_type:
+          description: Type of authentication used for the webhook.
+          type: string
+          example: Bearer Auth
+          enum:
+          - Basic Auth
+          - None
+          - Bearer Auth
+          - Static Headers
+          - HMAC-Signing
+        created_at:
+          description: Timestamp when the webhook configuration was created.
+          type: string
+          format: date-time
+          example: '2024-01-15T10:30:00Z'
+          readOnly: true
+        destination_url:
+          description: Target URL for the webhook configuration. Where resulting data will be sent.
+          type: string
+          format: uri
+          example: https://example.com/webhook
+        headers:
+          description: List of header keys configured for this webhook. Values are not included for security reasons.
+          type: array
+          items:
+            properties:
+              key:
+                description: Header key name (lowercase).
+                type: string
+                example: authorization
+              value:
+                description: Header value. This field is never returned in API responses for security reasons.
+                type: string
+                example: my-authorization-value
+                writeOnly: true
+                x-sensitive: true
+            type: object
+        id:
+          description: Unique identifier for the specific webhook configuration.
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+          readOnly: true
+        label:
+          description: Account-specified display label for the webhook configuration.
+          type: string
+          example: Send to Gmail
+        status:
+          description: Current status of the webhook configuration. If disabled, data cannot be sent through this configuration.
+          type: string
+          example: enabled
+          enum:
+          - enabled
+          - disabled
+        updated_at:
+          description: Timestamp when the webhook configuration was last updated.
+          type: string
+          format: date-time
+          example: '2024-01-20T14:45:00Z'
+          readOnly: true
+        version:
+          description: Version number of the configuration.
+          type: integer
+          format: uint32
+          example: 1
+          readOnly: true
+      required:
+      - id
+      - label
+      - destination_url
+      - status
+      - authentication_type
+      - created_at
+      - updated_at
+      - version
+    posture-api_error-response:
+      description: Standard error response structure.
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/posture-api_messages'
+        messages:
+          $ref: '#/components/schemas/posture-api_messages'
+        success:
+          description: Indicates the request failed.
+          type: boolean
+          example: false
+          enum:
+          - false
+      required:
+      - success
+      - errors
+      - messages
+    posture-api_EvaluateNewWebhookResponse:
+      description: Response body for webhook evaluation test results.
+      type: object
+      properties:
+        message:
+          description: Human-readable message describing the test result.
+          type: string
+          example: Webhook test successful
+        status_code:
+          description: HTTP status code returned by the webhook endpoint. 0 if connection failed.
+          type: integer
+          example: 200
+        success:
+          description: Whether the webhook test was successful (received 2xx response).
+          type: boolean
+          example: true
+      required:
+      - success
+      - status_code
+      - message
+    posture-api_WebhookJobStatusEnum:
+      description: Status of a webhook job.
+      type: string
+      enum:
+      - pending
+      - processing
+      - completed
+      - failed
+    posture-api_WebhookJobFailure:
+      description: Information about a failed webhook job creation.
+      type: object
+      properties:
+        error:
+          description: Error message describing the failure.
+          type: string
+          example: Failed to create webhook job
+        finding_instance_id:
+          description: ID of the finding instance that failed to create a webhook job.
+          type: string
+          format: uuid
+          example: 2e6b4c8a-9d1f-4e3b-8c7a-5f9e2d1a6b4c
+        webhook_id:
+          description: ID of the webhook configuration.
+          type: string
+          format: uuid
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      required:
+      - webhook_id
+      - finding_instance_id
+      - error
+    posture-api_webhook-list-response:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/posture-api_api-response-common'
+      - properties:
+          result:
+            description: List of webhook configurations.
+            type: array
+            items:
+              $ref: '#/components/schemas/posture-api_Webhook'
+        type: object
+    posture-api_WebhookJobActorTypeEnum:
+      description: Type of actor that triggered the webhook job.
+      type: string
+      enum:
+      - user
+      - account_token
+    posture-api_api-response-common:
+      description: Common response structure for all API endpoints.
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/posture-api_messages'
+        messages:
+          $ref: '#/components/schemas/posture-api_messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: true
+      required:
+      - success
+      - errors
+      - messages
+    posture-api_webhook-response:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/posture-api_api-response-common'
+      - properties:
+          result:
+            $ref: '#/components/schemas/posture-api_Webhook'
+        type: object
+    posture-api_WebhookJobFailureReasonEnum:
+      description: Reason for webhook job failure.
+      type: string
+      enum:
+      - Permission Denied
+      - Integration Unavailable
+      - Service Temporarily Unavailable
+      - System Error
+    posture-api_CreateWebhookJobsResponse:
+      description: Response for webhook job creation requests.
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/posture-api_api-response-common'
+      - properties:
+          result:
+            type: object
+            properties:
+              created:
+                description: Successfully created webhook jobs.
+                type: array
+                items:
+                  $ref: '#/components/schemas/posture-api_WebhookJob'
+              failed:
+                description: Failed webhook job creation attempts.
+                type: array
+                items:
+                  $ref: '#/components/schemas/posture-api_WebhookJobFailure'
+            required:
+            - created
+            - failed
+        required:
+        - result
+        type: object
+    posture-api_UpdateWebhookRequest:
+      description: Request body for updating an existing webhook configuration.
+      type: object
+      properties:
+        authentication_type:
+          description: Type of authentication used for the webhook.
+          type: string
+          example: Bearer Auth
+          enum:
+          - Basic Auth
+          - None
+          - Bearer Auth
+          - Static Headers
+          - HMAC-Signing
+        destination_url:
+          description: Target URL for the webhook configuration. Where resulting data will be sent.
+          type: string
+          format: uri
+          example: https://example.com/webhook
+        headers:
+          description: List of custom headers to include in webhook requests.
+          type: array
+          items:
+            $ref: '#/components/schemas/posture-api_WebhookHeaderInput'
+          example:
+          - key: Authorization
+            value: Bearer token123
+          - key: X-Custom-Header
+            value: value
+        label:
+          description: Account-specified display label for the webhook configuration.
+          type: string
+          example: Send to Slack
+        signing_secret:
+          description: Secret key used for HMAC signing when authentication_type is "HMAC-Signing".
+          type: string
+          example: my-secret-key
+          writeOnly: true
+          x-sensitive: true
+        status:
+          description: Status of the webhook configuration.
+          type: string
+          example: enabled
+          enum:
+          - enabled
+          - disabled
+      required:
+      - label
+      - destination_url
+      - authentication_type
+      - status
+    posture-api_CreateWebhookRequest:
+      description: Request body for creating a new webhook configuration.
+      type: object
+      properties:
+        authentication_type:
+          description: Type of authentication used for the webhook.
+          type: string
+          example: Bearer Auth
+          enum:
+          - Basic Auth
+          - None
+          - Bearer Auth
+          - Static Headers
+          - HMAC-Signing
+        destination_url:
+          description: Target URL for the webhook configuration. Where resulting data will be sent.
+          type: string
+          format: uri
+          example: https://example.com/webhook
+        headers:
+          description: List of custom headers to include in webhook requests.
+          type: array
+          items:
+            $ref: '#/components/schemas/posture-api_WebhookHeaderInput'
+          example:
+          - key: Authorization
+            value: Bearer token123
+          - key: X-Custom-Header
+            value: value
+        label:
+          description: Account-specified display label for the webhook configuration.
+          type: string
+          example: Send to Slack
+        signing_secret:
+          description: Secret key used for HMAC signing when authentication_type is "HMAC-Signing".
+          type: string
+          example: my-secret-key
+          writeOnly: true
+          x-sensitive: true
+        status:
+          description: Status of the webhook configuration. Defaults to enabled when omitted.
+          type: string
+          example: enabled
+          default: enabled
+          enum:
+          - enabled
+          - disabled
+      required:
+      - label
+      - destination_url
+      - authentication_type
+    posture-api_CreateWebhookJobsRequest:
+      description: Request body for creating up to 100 webhook jobs. The number of jobs is the product of webhook_ids and finding_instance_ids.
+      type: object
+      properties:
+        finding_instance_ids:
+          description: Array of finding instance IDs to send to the webhooks.
+          type: array
+          items:
+            format: uuid
+            type: string
+          example:
+          - 770e8400-e29b-41d4-a716-446655440002
+          - 660e8400-e29b-41d4-a716-446655440001
+        webhook_ids:
+          description: Array of webhook IDs to trigger jobs for.
+          type: array
+          items:
+            format: uuid
+            type: string
+          example:
+          - 550e8400-e29b-41d4-a716-446655440000
+          - 660e8400-e29b-41d4-a716-446655440001
+          minItems: 1
+      required:
+      - webhook_ids
+      - finding_instance_ids
+    posture-api_EvaluateNewWebhookRequest:
+      description: Request body for testing a webhook configuration before creating it.
+      type: object
+      properties:
+        authentication_type:
+          description: Type of authentication to use for the test webhook request.
+          type: string
+          example: Bearer Auth
+          enum:
+          - Basic Auth
+          - None
+          - Bearer Auth
+          - Static Headers
+          - HMAC-Signing
+        destination_url:
+          description: Target URL to send the test webhook event to.
+          type: string
+          format: uri
+          example: https://example.com/webhook
+        headers:
+          description: List of custom headers to include in the test webhook request.
+          type: array
+          items:
+            $ref: '#/components/schemas/posture-api_WebhookHeaderInput'
+          example:
+          - key: Authorization
+            value: Bearer token123
+          - key: X-Custom-Header
+            value: value
+        signing_secret:
+          description: Secret key used for HMAC signing when authentication_type is "HMAC-Signing".
+          type: string
+          example: my-secret-key
+          writeOnly: true
+          x-sensitive: true
+      required:
+      - destination_url
+      - authentication_type
+    posture-api_messages:
+      type: array
+      items:
+        properties:
+          code:
+            description: Error or message code.
+            type: integer
+            example: 1000
+            minimum: 1000
+          documentation_url:
+            description: Link to relevant documentation.
+            type: string
+            format: uri
+            example: https://developers.cloudflare.com/api/operations/list-findings
+          message:
+            description: Human-readable message.
+            type: string
+            example: Request processed successfully
+          source:
+            type: object
+            properties:
+              pointer:
+                description: JSON pointer to the source of the error.
+                type: string
+                example: /data/attributes/name
+        required:
+        - code
+        - message
+        type: object
+      example: []
+      uniqueItems: true
+    posture-api_WebhookJobParameters:
+      description: Parameters for a webhook job.
+      type: object
+      properties:
+        finding_instance_id:
+          description: ID of the finding instance.
+          type: string
+          format: uuid
+          example: 3f7b8c9d-6e5a-4f3b-9c2d-1e0a8b7c6d5e
+      required:
+      - finding_instance_id
+    posture-api_WebhookJob:
+      description: Information about a webhook job.
+      type: object
+      properties:
+        asset_data:
+          description: Asset data associated with this webhook job.
+          type: object
+          additionalProperties: true
+        created_at:
+          description: When the webhook job was created.
+          type: string
+          format: date-time
+          example: '2025-07-07T18:39:13.123456Z'
+        failure_details:
+          description: Additional details about the failure.
+          type: object
+          additionalProperties: true
+        failure_reason:
+          $ref: '#/components/schemas/posture-api_WebhookJobFailureReasonEnum'
+        id:
+          description: Unique identifier for the webhook job.
+          type: string
+          format: uuid
+          example: c416bc38-75db-425f-ae25-c37b5df5c37f
+        integration_id:
+          description: ID of the integration.
+          type: string
+          format: uuid
+          example: 9f8e7d6c-5b4a-3210-fedc-ba0987654321
+        last_updated_at:
+          description: When the webhook job was last updated.
+          type: string
+          format: date-time
+          example: '2025-07-07T18:39:13.123456Z'
+        parameters:
+          $ref: '#/components/schemas/posture-api_WebhookJobParameters'
+        status:
+          $ref: '#/components/schemas/posture-api_WebhookJobStatusEnum'
+        triggered_by_actor:
+          $ref: '#/components/schemas/posture-api_WebhookJobActorTypeEnum'
+        triggered_by_id:
+          description: ID of the actor that triggered the job.
+          type: string
+          example: user@example.com
+        webhook_id:
+          description: ID of the webhook configuration.
+          type: string
+          format: uuid
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      required:
+      - id
+      - webhook_id
+      - integration_id
+      - asset_data
+      - parameters
+      - status
+      - triggered_by_actor
+      - triggered_by_id
+      - created_at
+      - last_updated_at
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       description: API token with Stream permissions.
-externalDocs:
-  description: Cloudflare Stream Documentation
-  url: https://developers.cloudflare.com/stream/
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+x-refined-from:
+- cloudflare-stream-openapi.yml
+- cloudflare-openapi.json

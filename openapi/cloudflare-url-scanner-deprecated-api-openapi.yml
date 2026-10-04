@@ -1,0 +1,3679 @@
+openapi: 3.2.0
+info:
+  description: Welcome to Cloudflare's API documentation site.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  title: Cloudflare URL Scanner (Deprecated) API
+  version: 4.0.0
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: URL Scanner (Deprecated)
+paths:
+  /accounts/{account_id}/urlscanner/response/{response_id}:
+    get:
+      operationId: urlscanner-get-response-text
+      summary: Get raw response
+      description: Returns the plain response of the network request.
+      parameters:
+      - name: response_id
+        in: path
+        description: Response hash.
+        required: true
+        schema:
+          description: Response hash.
+          type: string
+      - name: account_id
+        in: path
+        description: Account ID.
+        required: true
+        schema:
+          description: Account ID.
+          type: string
+      responses:
+        '200':
+          description: When `har.log.entries[].response._cf.contentAvailable` is `true`, use `response._cf.hash` value to fetch the raw response.
+          content:
+            text/plain:
+              schema:
+                description: Web resource text/image.
+                type: string
+        '400':
+          description: Invalid params.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Scan ID is not a valid UUID.
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    description: Whether request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+        '404':
+          description: Scan not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Scan not found.
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    description: Whether request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+      deprecated: true
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - URL Scanner (Deprecated)
+      x-api-token-group:
+      - URL Scanner Write
+      - URL Scanner Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: url-scanner.response
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+      x-forge-sunset:
+        date: '2030-01-01T00:00:00Z'
+      x-stainless-deprecation-message: Use [V2](https://developers.cloudflare.com/api/resources/url_scanner/subresources/responses/methods/get/) instead.
+  /accounts/{account_id}/urlscanner/scan:
+    get:
+      operationId: urlscanner-search-scans
+      summary: Search URL scans
+      description: 'Search scans by date and webpages'' requests, including full URL (after redirects), hostname, and path.
+
+        A successful scan will appear in search results a few minutes after finishing but may take much longer if the system in under load. By default, only successfully completed scans will appear in search results, unless searching by `scanId`. Please take into account that older scans may be removed from the search index at an unspecified time.'
+      parameters:
+      - name: account_id
+        in: path
+        description: Account ID.
+        required: true
+        schema:
+          description: Account ID.
+          type: string
+      - name: scan_id
+        in: query
+        description: Scan UUID.
+        schema:
+          description: Scan UUID.
+          type: string
+          format: uuid
+      - name: limit
+        in: query
+        description: Limit the number of objects in the response.
+        schema:
+          description: Limit the number of objects in the response.
+          type: integer
+          example: 100
+      - name: next_cursor
+        in: query
+        description: Pagination cursor to get the next set of results.
+        schema:
+          description: Pagination cursor to get the next set of results.
+          type: string
+      - name: date_start
+        in: query
+        description: Filter scans requested after date (inclusive).
+        schema:
+          description: Filter scans requested after date (inclusive).
+          type: string
+          format: date-time
+      - name: date_end
+        in: query
+        description: Filter scans requested before date (inclusive).
+        schema:
+          description: Filter scans requested before date (inclusive).
+          type: string
+          format: date-time
+      - name: url
+        in: query
+        description: Filter scans by URL of _any_ request made by the webpage
+        schema:
+          description: Filter scans by URL of _any_ request made by the webpage
+          type: string
+          example: https://example.com/?hello
+      - name: hostname
+        in: query
+        description: Filter scans by hostname of _any_ request made by the webpage.
+        schema:
+          description: Filter scans by hostname of _any_ request made by the webpage.
+          type: string
+          example: example.com
+      - name: path
+        in: query
+        description: Filter scans by url path of _any_ request made by the webpage.
+        schema:
+          description: Filter scans by url path of _any_ request made by the webpage.
+          type: string
+          example: /samples/subresource-integrity/
+      - name: ip
+        in: query
+        description: Filter scans by IP address (IPv4 or IPv6) of _any_ request made by the webpage.
+        schema:
+          description: Filter scans by IP address (IPv4 or IPv6) of _any_ request made by the webpage.
+          type: string
+          example: 1.1.1.1
+      - name: hash
+        in: query
+        description: Filter scans by hash of any html/js/css request made by the webpage.
+        schema:
+          description: Filter scans by hash of any html/js/css request made by the webpage.
+          type: string
+      - name: page_url
+        in: query
+        description: Filter scans by submitted or scanned URL
+        schema:
+          description: Filter scans by submitted or scanned URL
+          type: string
+      - name: page_hostname
+        in: query
+        description: Filter scans by main page hostname (domain of effective URL).
+        schema:
+          description: Filter scans by main page hostname (domain of effective URL).
+          type: string
+      - name: page_path
+        in: query
+        description: Filter scans by exact match of effective URL path (also supports suffix search).
+        schema:
+          description: Filter scans by exact match of effective URL path (also supports suffix search).
+          type: string
+      - name: page_asn
+        in: query
+        description: Filter scans by main page Autonomous System Number (ASN).
+        schema:
+          description: Filter scans by main page Autonomous System Number (ASN).
+          type: string
+      - name: page_ip
+        in: query
+        description: Filter scans by  main page IP address (IPv4 or IPv6).
+        schema:
+          description: Filter scans by  main page IP address (IPv4 or IPv6).
+          type: string
+      - name: account_scans
+        in: query
+        description: Return only scans created by account.
+        schema:
+          description: Return only scans created by account.
+          type: boolean
+      - name: is_malicious
+        in: query
+        description: Filter scans by malicious verdict.
+        schema:
+          description: Filter scans by malicious verdict.
+          type: boolean
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Error
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: OK
+                      required:
+                      - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      tasks:
+                        type: array
+                        items:
+                          properties:
+                            country:
+                              description: Alpha-2 country code
+                              type: string
+                            success:
+                              description: Whether scan was successful or not
+                              type: boolean
+                            time:
+                              description: When scan was submitted (UTC)
+                              type: string
+                              format: date-time
+                            url:
+                              description: Scan url (after redirects)
+                              type: string
+                              example: https://www.example.com/
+                            uuid:
+                              description: Scan id
+                              type: string
+                              format: uuid
+                            visibility:
+                              description: Submitted visibility status.
+                              type: string
+                              example: public
+                              enum:
+                              - public
+                              - unlisted
+                          required:
+                          - uuid
+                          - url
+                          - success
+                          - time
+                          - country
+                          - visibility
+                          type: object
+                    required:
+                    - tasks
+                  success:
+                    description: Whether search request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+                - result
+        '400':
+          description: Invalid params.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Scan ID is not a valid UUID.
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    description: Whether request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+      deprecated: true
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - URL Scanner (Deprecated)
+      x-api-token-group:
+      - URL Scanner Write
+      - URL Scanner Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: url-scanner.scan.get.urlscanner
+      x-fern-sdk-method-name: scans
+      x-forge-hidden: true
+      x-forge-sunset:
+        date: '2030-01-01T00:00:00Z'
+      x-stainless-deprecation-message: Use [V2](https://developers.cloudflare.com/api/resources/url_scanner/subresources/scans/methods/list/) instead.
+    post:
+      operationId: urlscanner-create-scan
+      summary: Create URL Scan
+      description: Submit a URL to scan. You can also set some options, like the visibility level and custom headers. Check limits at https://developers.cloudflare.com/security-center/investigate/scan-limits/.
+      parameters:
+      - name: account_id
+        in: path
+        description: Account ID.
+        required: true
+        schema:
+          description: Account ID.
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                country:
+                  description: Country to geo egress from
+                  type: string
+                  enum:
+                  - AF
+                  - AL
+                  - DZ
+                  - AD
+                  - AO
+                  - AG
+                  - AR
+                  - AM
+                  - AU
+                  - AT
+                  - AZ
+                  - BH
+                  - BD
+                  - BB
+                  - BY
+                  - BE
+                  - BZ
+                  - BJ
+                  - BM
+                  - BT
+                  - BO
+                  - BA
+                  - BW
+                  - BR
+                  - BN
+                  - BG
+                  - BF
+                  - BI
+                  - KH
+                  - CM
+                  - CA
+                  - CV
+                  - KY
+                  - CF
+                  - TD
+                  - CL
+                  - CN
+                  - CO
+                  - KM
+                  - CG
+                  - CR
+                  - CI
+                  - HR
+                  - CU
+                  - CY
+                  - CZ
+                  - CD
+                  - DK
+                  - DJ
+                  - DM
+                  - DO
+                  - EC
+                  - EG
+                  - SV
+                  - GQ
+                  - ER
+                  - EE
+                  - SZ
+                  - ET
+                  - FJ
+                  - FI
+                  - FR
+                  - GA
+                  - GE
+                  - DE
+                  - GH
+                  - GR
+                  - GL
+                  - GD
+                  - GT
+                  - GN
+                  - GW
+                  - GY
+                  - HT
+                  - HN
+                  - HU
+                  - IS
+                  - IN
+                  - ID
+                  - IR
+                  - IQ
+                  - IE
+                  - IL
+                  - IT
+                  - JM
+                  - JP
+                  - JO
+                  - KZ
+                  - KE
+                  - KI
+                  - KW
+                  - KG
+                  - LA
+                  - LV
+                  - LB
+                  - LS
+                  - LR
+                  - LY
+                  - LI
+                  - LT
+                  - LU
+                  - MO
+                  - MG
+                  - MW
+                  - MY
+                  - MV
+                  - ML
+                  - MR
+                  - MU
+                  - MX
+                  - FM
+                  - MD
+                  - MC
+                  - MN
+                  - MS
+                  - MA
+                  - MZ
+                  - MM
+                  - NA
+                  - NR
+                  - NP
+                  - NL
+                  - NZ
+                  - NI
+                  - NE
+                  - NG
+                  - KP
+                  - MK
+                  - 'NO'
+                  - OM
+                  - PK
+                  - PS
+                  - PA
+                  - PG
+                  - PY
+                  - PE
+                  - PH
+                  - PL
+                  - PT
+                  - QA
+                  - RO
+                  - RU
+                  - RW
+                  - SH
+                  - KN
+                  - LC
+                  - VC
+                  - WS
+                  - SM
+                  - ST
+                  - SA
+                  - SN
+                  - RS
+                  - SC
+                  - SL
+                  - SK
+                  - SI
+                  - SB
+                  - SO
+                  - ZA
+                  - KR
+                  - SS
+                  - ES
+                  - LK
+                  - SD
+                  - SR
+                  - SE
+                  - CH
+                  - SY
+                  - TW
+                  - TJ
+                  - TZ
+                  - TH
+                  - BS
+                  - GM
+                  - TL
+                  - TG
+                  - TO
+                  - TT
+                  - TN
+                  - TR
+                  - TM
+                  - UG
+                  - UA
+                  - AE
+                  - GB
+                  - US
+                  - UY
+                  - UZ
+                  - VU
+                  - VE
+                  - VN
+                  - YE
+                  - ZM
+                  - ZW
+                customHeaders:
+                  description: Set custom headers.
+                  type: object
+                  additionalProperties:
+                    type: string
+                screenshotsResolutions:
+                  description: Take multiple screenshots targeting different device types.
+                  type: array
+                  items:
+                    default: desktop
+                    description: Device resolutions.
+                    enum:
+                    - desktop
+                    - mobile
+                    - tablet
+                    type: string
+                  default:
+                  - desktop
+                url:
+                  type: string
+                  example: https://www.example.com
+                visibility:
+                  description: The option `Public` means it will be included in listings like recent scans and search results. `Unlisted` means it will not be included in the aforementioned listings, users will need to have the scan's ID to access it. A a scan will be automatically marked as unlisted if it fails, if it contains potential PII or other sensitive material.
+                  type: string
+                  default: Public
+                  enum:
+                  - Public
+                  - Unlisted
+              required:
+              - url
+      responses:
+        '200':
+          description: Scan request accepted successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Submission unsuccessful
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Submission successful
+                      required:
+                      - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      time:
+                        description: Time when url was submitted for scanning.
+                        type: string
+                        format: date-time
+                      url:
+                        description: Canonical form of submitted URL. Use this if you want to later search by URL.
+                        type: string
+                      uuid:
+                        description: Scan ID.
+                        type: string
+                        format: uuid
+                      visibility:
+                        description: Submitted visibility status.
+                        type: string
+                        example: public
+                        enum:
+                        - public
+                        - unlisted
+                    required:
+                    - visibility
+                    - uuid
+                    - url
+                    - time
+                  success:
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+                - result
+        '400':
+          description: Invalid params.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Scan ID is not a valid UUID.
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    description: Whether request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+        '409':
+          description: 'Scan request denied: hostname was recently scanned.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Submission unsuccessful
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      tasks:
+                        type: array
+                        items:
+                          properties:
+                            clientLocation:
+                              description: Submitter location
+                              type: string
+                              example: PT
+                            clientType:
+                              type: string
+                              enum:
+                              - Site
+                              - Automatic
+                              - Api
+                            effectiveUrl:
+                              description: URL of the primary request, after all HTTP redirects
+                              type: string
+                              example: http://example.com/
+                            errors:
+                              type: array
+                              items:
+                                properties:
+                                  message:
+                                    type: string
+                                required:
+                                - message
+                                type: object
+                            scannedFrom:
+                              type: object
+                              properties:
+                                colo:
+                                  description: IATA code of Cloudflare datacenter
+                                  type: string
+                                  example: MAD
+                              required:
+                              - colo
+                            status:
+                              type: string
+                              enum:
+                              - Queued
+                              - InProgress
+                              - InPostProcessing
+                              - Finished
+                            success:
+                              type: boolean
+                              example: true
+                            time:
+                              type: string
+                              example: '2023-05-03T17:05:04.843Z'
+                            timeEnd:
+                              type: string
+                              example: '2023-05-03T17:05:19.374Z'
+                            url:
+                              description: Submitted URL
+                              type: string
+                              example: http://example.com
+                            uuid:
+                              description: Scan ID
+                              type: string
+                              example: 2ee568d0-bf70-4827-b922-b7088c0f056f
+                            visibility:
+                              type: string
+                              enum:
+                              - Public
+                              - Unlisted
+                          required:
+                          - uuid
+                          - url
+                          - status
+                          - success
+                          - errors
+                          - time
+                          - timeEnd
+                          - visibility
+                          - clientLocation
+                          - clientType
+                          - effectiveUrl
+                          - scannedFrom
+                          type: object
+                    required:
+                    - tasks
+                  success:
+                    type: boolean
+                    example: true
+                required:
+                - messages
+                - errors
+                - success
+                - result
+        '429':
+          description: 'Scan request denied: rate limited.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Submission unsuccessful
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    type: boolean
+                    example: true
+                required:
+                - messages
+                - errors
+                - success
+      deprecated: true
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - URL Scanner (Deprecated)
+      x-api-token-group:
+      - URL Scanner Write
+      - URL Scanner Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: url-scanner.scan
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
+      x-forge-sunset:
+        date: '2030-01-01T00:00:00Z'
+      x-stainless-deprecation-message: Use [V2](https://developers.cloudflare.com/api/resources/url_scanner/subresources/scans/methods/create/) instead.
+  /accounts/{account_id}/urlscanner/scan/{scan_id}:
+    get:
+      operationId: urlscanner-get-scan
+      summary: Get URL scan
+      description: Get URL scan by uuid
+      parameters:
+      - name: scan_id
+        in: path
+        description: Scan UUID.
+        required: true
+        schema:
+          description: Scan UUID.
+          type: string
+          format: uuid
+      - name: account_id
+        in: path
+        description: Account ID.
+        required: true
+        schema:
+          description: Account ID.
+          type: string
+      - name: full
+        in: query
+        description: Whether to return full report (scan summary and network log).
+        schema:
+          description: Whether to return full report (scan summary and network log).
+          type: boolean
+      responses:
+        '200':
+          description: Scan has finished. It may or may not have been successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Error
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: OK
+                      required:
+                      - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      scan:
+                        type: object
+                        properties:
+                          asns:
+                            description: Dictionary of Autonomous System Numbers where ASN's are the keys
+                            type: object
+                            properties:
+                              asn:
+                                description: ASN's contacted
+                                type: object
+                                properties:
+                                  asn:
+                                    type: string
+                                    example: '15133'
+                                  description:
+                                    type: string
+                                    example: EDGECAST
+                                  location_alpha2:
+                                    type: string
+                                    example: US
+                                  name:
+                                    type: string
+                                    example: EDGECAST
+                                  org_name:
+                                    type: string
+                                    example: Edgecast Inc.
+                                required:
+                                - asn
+                                - name
+                                - description
+                                - org_name
+                                - location_alpha2
+                          certificates:
+                            type: array
+                            items:
+                              properties:
+                                issuer:
+                                  type: string
+                                subjectName:
+                                  type: string
+                                  example: rkmod.somee.com
+                                validFrom:
+                                  type: number
+                                  example: 1682684400
+                                validTo:
+                                  type: number
+                                  example: 1696698000
+                              required:
+                              - issuer
+                              - subjectName
+                              - validFrom
+                              - validTo
+                              type: object
+                          domains:
+                            type: object
+                            properties:
+                              example.com:
+                                type: object
+                                properties:
+                                  categories:
+                                    type: object
+                                    properties:
+                                      content:
+                                        items:
+                                          properties:
+                                            id:
+                                              type: integer
+                                            name:
+                                              type: string
+                                              example: Technology
+                                            super_category_id:
+                                              type: integer
+                                          required:
+                                          - id
+                                          - name
+                                          type: object
+                                        type: array
+                                      inherited:
+                                        type: object
+                                        properties:
+                                          content:
+                                            items:
+                                              properties:
+                                                id:
+                                                  type: integer
+                                                name:
+                                                  type: string
+                                                  example: Technology
+                                                super_category_id:
+                                                  type: integer
+                                              required:
+                                              - id
+                                              - name
+                                              type: object
+                                            type: array
+                                          from:
+                                            type: string
+                                            example: example.com
+                                          risks:
+                                            type: array
+                                            items:
+                                              properties:
+                                                id:
+                                                  type: integer
+                                                name:
+                                                  type: string
+                                                  example: Technology
+                                                super_category_id:
+                                                  type: integer
+                                              required:
+                                              - id
+                                              - name
+                                              type: object
+                                      risks:
+                                        type: array
+                                        items:
+                                          properties:
+                                            id:
+                                              type: integer
+                                            name:
+                                              type: string
+                                              example: Technology
+                                            super_category_id:
+                                              type: integer
+                                          required:
+                                          - id
+                                          - name
+                                          type: object
+                                    required:
+                                    - inherited
+                                  dns:
+                                    type: array
+                                    items:
+                                      properties:
+                                        address:
+                                          type: string
+                                          example: 93.184.216.34
+                                        dnssec_valid:
+                                          type: boolean
+                                        name:
+                                          type: string
+                                          example: example.com
+                                        type:
+                                          type: string
+                                          example: A
+                                      required:
+                                      - name
+                                      - address
+                                      - type
+                                      - dnssec_valid
+                                      type: object
+                                  name:
+                                    type: string
+                                    example: example.com
+                                  rank:
+                                    type: object
+                                    properties:
+                                      bucket:
+                                        type: string
+                                        example: '500'
+                                      name:
+                                        type: string
+                                        example: example.com
+                                      rank:
+                                        description: Rank in the Global Radar Rank, if set. See more at https://blog.cloudflare.com/radar-domain-rankings/
+                                        type: integer
+                                    required:
+                                    - name
+                                    - bucket
+                                  type:
+                                    type: string
+                                    example: Apex domain
+                                required:
+                                - name
+                                - type
+                                - categories
+                                - dns
+                                - rank
+                          geo:
+                            type: object
+                            properties:
+                              continents:
+                                type: array
+                                items:
+                                  description: GeoIP continent location
+                                  example: North America
+                                  type: string
+                              locations:
+                                type: array
+                                items:
+                                  description: GeoIP country location
+                                  example: US
+                                  type: string
+                            required:
+                            - locations
+                            - continents
+                          ips:
+                            type: object
+                            properties:
+                              ip:
+                                type: object
+                                properties:
+                                  asn:
+                                    type: string
+                                    example: '15133'
+                                  asnDescription:
+                                    type: string
+                                    example: EDGECAST
+                                  asnLocationAlpha2:
+                                    type: string
+                                    example: US
+                                  asnName:
+                                    type: string
+                                    example: EDGECAST
+                                  asnOrgName:
+                                    type: string
+                                    example: Edgecast Inc.
+                                  continent:
+                                    type: string
+                                    example: North America
+                                  geonameId:
+                                    type: string
+                                    example: '6252001'
+                                  ip:
+                                    type: string
+                                    example: 2606:2800:220:1:248:1893:25c8:1946
+                                  ipVersion:
+                                    type: string
+                                    example: IPv6
+                                  latitude:
+                                    type: string
+                                    example: '39.76'
+                                  locationAlpha2:
+                                    type: string
+                                    example: US
+                                  locationName:
+                                    type: string
+                                    example: United States
+                                  longitude:
+                                    type: string
+                                    example: '-98.5'
+                                  subdivision1Name:
+                                    type: string
+                                  subdivision2Name:
+                                    type: string
+                                required:
+                                - ip
+                                - ipVersion
+                                - locationAlpha2
+                                - locationName
+                                - subdivision1Name
+                                - subdivision2Name
+                                - latitude
+                                - longitude
+                                - continent
+                                - geonameId
+                                - asn
+                                - asnName
+                                - asnOrgName
+                                - asnDescription
+                                - asnLocationAlpha2
+                          links:
+                            type: object
+                            properties:
+                              link:
+                                type: object
+                                properties:
+                                  href:
+                                    description: Outgoing link detected in the DOM
+                                    type: string
+                                    example: https://www.iana.org/domains/example
+                                  text:
+                                    type: string
+                                    example: More information...
+                                required:
+                                - href
+                                - text
+                          meta:
+                            type: object
+                            properties:
+                              processors:
+                                type: object
+                                properties:
+                                  categories:
+                                    type: object
+                                    properties:
+                                      content:
+                                        items:
+                                          properties:
+                                            id:
+                                              type: integer
+                                              example: 155
+                                            name:
+                                              type: string
+                                              example: Technology
+                                            super_category_id:
+                                              type: integer
+                                          required:
+                                          - id
+                                          - name
+                                          type: object
+                                        type: array
+                                      risks:
+                                        type: array
+                                        items:
+                                          properties:
+                                            id:
+                                              type: integer
+                                              example: 17
+                                            name:
+                                              type: string
+                                              example: Newly Seen Domains
+                                            super_category_id:
+                                              type: integer
+                                              example: 32
+                                          required:
+                                          - id
+                                          - super_category_id
+                                          - name
+                                          type: object
+                                    required:
+                                    - content
+                                    - risks
+                                  phishing:
+                                    type: array
+                                    items:
+                                      example: CredentialHarvester
+                                      type: string
+                                  rank:
+                                    type: object
+                                    properties:
+                                      bucket:
+                                        type: string
+                                        example: '500'
+                                      name:
+                                        type: string
+                                        example: example.com
+                                      rank:
+                                        description: Rank in the Global Radar Rank, if set. See more at https://blog.cloudflare.com/radar-domain-rankings/
+                                        type: integer
+                                    required:
+                                    - name
+                                    - bucket
+                                  tech:
+                                    type: array
+                                    items:
+                                      properties:
+                                        categories:
+                                          type: array
+                                          items:
+                                            properties:
+                                              groups:
+                                                type: array
+                                                items:
+                                                  type: integer
+                                              id:
+                                                type: integer
+                                                example: 63
+                                              name:
+                                                type: string
+                                                example: IAAS
+                                              priority:
+                                                type: integer
+                                                example: 8
+                                              slug:
+                                                type: string
+                                                example: iaas
+                                            required:
+                                            - id
+                                            - slug
+                                            - groups
+                                            - name
+                                            - priority
+                                            type: object
+                                        confidence:
+                                          type: integer
+                                          example: 100
+                                        description:
+                                          type: string
+                                        evidence:
+                                          type: object
+                                          properties:
+                                            impliedBy:
+                                              type: array
+                                              items:
+                                                type: string
+                                            patterns:
+                                              type: array
+                                              items:
+                                                properties:
+                                                  confidence:
+                                                    type: integer
+                                                    example: 100
+                                                  excludes:
+                                                    type: array
+                                                    items:
+                                                      type: string
+                                                  implies:
+                                                    type: array
+                                                    items:
+                                                      type: string
+                                                  match:
+                                                    type: string
+                                                    example: ECS
+                                                  name:
+                                                    description: Header or Cookie name when set
+                                                    type: string
+                                                    example: server
+                                                  regex:
+                                                    type: string
+                                                    example: ^ECS
+                                                  type:
+                                                    type: string
+                                                    example: headers
+                                                  value:
+                                                    type: string
+                                                    example: ECS (dcb/7EEE)
+                                                  version:
+                                                    type: string
+                                                required:
+                                                - type
+                                                - regex
+                                                - value
+                                                - match
+                                                - name
+                                                - confidence
+                                                - version
+                                                - implies
+                                                - excludes
+                                                type: object
+                                          required:
+                                          - patterns
+                                          - impliedBy
+                                        icon:
+                                          type: string
+                                          example: Amazon ECS.svg
+                                        name:
+                                          type: string
+                                          example: Amazon ECS
+                                        slug:
+                                          type: string
+                                          example: amazon-ecs
+                                        website:
+                                          type: string
+                                          example: https://aws.amazon.com/ecs/
+                                      required:
+                                      - name
+                                      - slug
+                                      - categories
+                                      - confidence
+                                      - icon
+                                      - website
+                                      - evidence
+                                      type: object
+                                required:
+                                - tech
+                                - categories
+                                - rank
+                                - phishing
+                            required:
+                            - processors
+                          page:
+                            type: object
+                            properties:
+                              asn:
+                                type: string
+                                example: '15133'
+                              asnLocationAlpha2:
+                                type: string
+                                example: US
+                              asnname:
+                                type: string
+                                example: EDGECAST
+                              console:
+                                type: array
+                                items:
+                                  properties:
+                                    category:
+                                      type: string
+                                      example: network
+                                    text:
+                                      type: string
+                                      example: 'Failed to load resource: the server responded with a status of 404 (Not Found)'
+                                    type:
+                                      type: string
+                                      example: error
+                                    url:
+                                      type: string
+                                      example: http://example.com/favicon.ico
+                                  required:
+                                  - type
+                                  - text
+                                  - category
+                                  type: object
+                              cookies:
+                                type: array
+                                items:
+                                  properties:
+                                    domain:
+                                      type: string
+                                      example: rkmod.somee.com
+                                    expires:
+                                      type: number
+                                      example: -1
+                                    httpOnly:
+                                      type: boolean
+                                    name:
+                                      type: string
+                                      example: b
+                                    path:
+                                      type: string
+                                      example: /
+                                    priority:
+                                      type: string
+                                      example: Medium
+                                    sameParty:
+                                      type: boolean
+                                    secure:
+                                      type: boolean
+                                    session:
+                                      type: boolean
+                                      example: true
+                                    size:
+                                      type: number
+                                      example: 2
+                                    sourcePort:
+                                      type: number
+                                      example: 443
+                                    sourceScheme:
+                                      type: string
+                                      example: Secure
+                                    value:
+                                      type: string
+                                      example: b
+                                  required:
+                                  - name
+                                  - value
+                                  - domain
+                                  - path
+                                  - expires
+                                  - size
+                                  - httpOnly
+                                  - secure
+                                  - session
+                                  - sameParty
+                                  - sourceScheme
+                                  - sourcePort
+                                  type: object
+                              country:
+                                type: string
+                                example: United States
+                              countryLocationAlpha2:
+                                type: string
+                                example: US
+                              domain:
+                                type: string
+                                example: example.com
+                              headers:
+                                type: array
+                                items:
+                                  properties:
+                                    name:
+                                      type: string
+                                      example: Content-Length
+                                    value:
+                                      type: string
+                                      example: '648'
+                                  required:
+                                  - name
+                                  - value
+                                  type: object
+                              ip:
+                                type: string
+                                example: 2606:2800:220:1:248:1893:25c8:1946
+                              js:
+                                type: object
+                                properties:
+                                  variables:
+                                    type: array
+                                    items:
+                                      properties:
+                                        name:
+                                          type: string
+                                          example: checkFrame
+                                        type:
+                                          type: string
+                                          example: string
+                                      required:
+                                      - name
+                                      - type
+                                      type: object
+                                required:
+                                - variables
+                              securityViolations:
+                                type: array
+                                items:
+                                  properties:
+                                    category:
+                                      type: string
+                                      example: csp
+                                    text:
+                                      type: string
+                                      example: '[Report Only] Refused to load the stylesheet ''https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css'' because it violates the following Content Security Policy directive: ... '
+                                    url:
+                                      type: string
+                                      example: http://example.com/
+                                  required:
+                                  - text
+                                  - category
+                                  - url
+                                  type: object
+                              status:
+                                type: number
+                                example: 200
+                              subdivision1Name:
+                                type: string
+                              subdivision2name:
+                                type: string
+                              url:
+                                type: string
+                                example: http://example.com/
+                            required:
+                            - url
+                            - domain
+                            - country
+                            - countryLocationAlpha2
+                            - subdivision1Name
+                            - subdivision2name
+                            - ip
+                            - asn
+                            - asnname
+                            - asnLocationAlpha2
+                            - cookies
+                            - headers
+                            - status
+                            - js
+                            - console
+                            - securityViolations
+                          performance:
+                            type: array
+                            items:
+                              properties:
+                                connectEnd:
+                                  type: number
+                                  example: 82.59999999403954
+                                connectStart:
+                                  type: number
+                                  example: 72.79999999701977
+                                decodedBodySize:
+                                  type: number
+                                  example: 1256
+                                domComplete:
+                                  type: number
+                                  example: 306
+                                domContentLoadedEventEnd:
+                                  type: number
+                                  example: 305.8999999910593
+                                domContentLoadedEventStart:
+                                  type: number
+                                  example: 305.8999999910593
+                                domInteractive:
+                                  type: number
+                                  example: 305.8999999910593
+                                domainLookupEnd:
+                                  type: number
+                                  example: 72.79999999701977
+                                domainLookupStart:
+                                  type: number
+                                  example: 2.199999988079071
+                                duration:
+                                  type: number
+                                  example: 306
+                                encodedBodySize:
+                                  type: number
+                                  example: 648
+                                entryType:
+                                  type: string
+                                  example: navigation
+                                fetchStart:
+                                  type: number
+                                  example: 0.8999999910593033
+                                initiatorType:
+                                  type: string
+                                  example: navigation
+                                loadEventEnd:
+                                  type: number
+                                  example: 306
+                                loadEventStart:
+                                  type: number
+                                  example: 306
+                                name:
+                                  type: string
+                                  example: http://example.com/
+                                nextHopProtocol:
+                                  type: string
+                                  example: http/1.1
+                                redirectCount:
+                                  type: number
+                                redirectEnd:
+                                  type: number
+                                redirectStart:
+                                  type: number
+                                requestStart:
+                                  type: number
+                                  example: 82.69999998807907
+                                responseEnd:
+                                  type: number
+                                  example: 270.8999999910593
+                                responseStart:
+                                  type: number
+                                  example: 265.69999998807907
+                                secureConnectionStart:
+                                  type: number
+                                startTime:
+                                  type: number
+                                transferSize:
+                                  type: number
+                                  example: 948
+                                type:
+                                  type: string
+                                  example: navigate
+                                unloadEventEnd:
+                                  type: number
+                                unloadEventStart:
+                                  type: number
+                                workerStart:
+                                  type: number
+                              required:
+                              - name
+                              - entryType
+                              - startTime
+                              - duration
+                              - initiatorType
+                              - nextHopProtocol
+                              - workerStart
+                              - redirectStart
+                              - redirectEnd
+                              - fetchStart
+                              - domainLookupStart
+                              - domainLookupEnd
+                              - connectStart
+                              - connectEnd
+                              - secureConnectionStart
+                              - requestStart
+                              - responseStart
+                              - responseEnd
+                              - transferSize
+                              - encodedBodySize
+                              - decodedBodySize
+                              - unloadEventStart
+                              - unloadEventEnd
+                              - domInteractive
+                              - domContentLoadedEventStart
+                              - domContentLoadedEventEnd
+                              - domComplete
+                              - loadEventStart
+                              - loadEventEnd
+                              - type
+                              - redirectCount
+                              type: object
+                          task:
+                            type: object
+                            properties:
+                              clientLocation:
+                                description: Submitter location
+                                type: string
+                                example: PT
+                              clientType:
+                                type: string
+                                enum:
+                                - Site
+                                - Automatic
+                                - Api
+                              effectiveUrl:
+                                description: URL of the primary request, after all HTTP redirects
+                                type: string
+                                example: http://example.com/
+                              errors:
+                                type: array
+                                items:
+                                  properties:
+                                    message:
+                                      type: string
+                                  required:
+                                  - message
+                                  type: object
+                              scannedFrom:
+                                type: object
+                                properties:
+                                  colo:
+                                    description: IATA code of Cloudflare datacenter
+                                    type: string
+                                    example: MAD
+                                required:
+                                - colo
+                              status:
+                                type: string
+                                enum:
+                                - Queued
+                                - InProgress
+                                - InPostProcessing
+                                - Finished
+                              success:
+                                type: boolean
+                                example: true
+                              time:
+                                type: string
+                                example: '2023-05-03T17:05:04.843Z'
+                              timeEnd:
+                                type: string
+                                example: '2023-05-03T17:05:19.374Z'
+                              url:
+                                description: Submitted URL
+                                type: string
+                                example: http://example.com
+                              uuid:
+                                description: Scan ID
+                                type: string
+                                example: 2ee568d0-bf70-4827-b922-b7088c0f056f
+                              visibility:
+                                type: string
+                                enum:
+                                - Public
+                                - Unlisted
+                            required:
+                            - uuid
+                            - url
+                            - status
+                            - success
+                            - errors
+                            - time
+                            - timeEnd
+                            - visibility
+                            - clientLocation
+                            - clientType
+                            - effectiveUrl
+                            - scannedFrom
+                          verdicts:
+                            type: object
+                            properties:
+                              overall:
+                                type: object
+                                properties:
+                                  categories:
+                                    type: array
+                                    items:
+                                      properties:
+                                        id:
+                                          type: number
+                                          example: 117
+                                        name:
+                                          type: string
+                                          example: Malware
+                                        super_category_id:
+                                          type: number
+                                          example: 32
+                                      required:
+                                      - id
+                                      - super_category_id
+                                      - name
+                                      type: object
+                                  malicious:
+                                    description: At least one of our subsystems marked the site as potentially malicious at the time of the scan.
+                                    type: boolean
+                                    example: true
+                                  phishing:
+                                    type: array
+                                    items:
+                                      example: Credential Harvester
+                                      type: string
+                                required:
+                                - malicious
+                                - categories
+                                - phishing
+                            required:
+                            - overall
+                        required:
+                        - task
+                        - meta
+                        - page
+                        - geo
+                        - certificates
+                        - performance
+                        - verdicts
+                    required:
+                    - scan
+                  success:
+                    description: Whether request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+                - result
+        '202':
+          description: 'Scan is in progress. Check current status in `result.scan.task.status`. Possible statuses: `Queued`,`InProgress`,`InPostProcessing`,`Finished`.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: In Progress
+                      required:
+                      - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      scan:
+                        type: object
+                        properties:
+                          task:
+                            type: object
+                            properties:
+                              effectiveUrl:
+                                type: string
+                                example: http://example.com/
+                              errors:
+                                type: array
+                                items:
+                                  properties:
+                                    message:
+                                      type: string
+                                  required:
+                                  - message
+                                  type: object
+                              location:
+                                type: string
+                                example: PT
+                              region:
+                                type: string
+                                example: enam
+                              status:
+                                type: string
+                                example: InProgress
+                              success:
+                                type: boolean
+                                example: true
+                              time:
+                                type: string
+                                example: '2023-05-03T17:05:04.843Z'
+                              url:
+                                type: string
+                                example: http://example.com
+                              uuid:
+                                type: string
+                                example: 2ee568d0-bf70-4827-b922-b7088c0f056f
+                              visibility:
+                                type: string
+                                example: Public
+                            required:
+                            - uuid
+                            - url
+                            - status
+                            - success
+                            - errors
+                            - time
+                            - visibility
+                            - location
+                            - region
+                            - effectiveUrl
+                        required:
+                        - task
+                    required:
+                    - scan
+                  success:
+                    description: Whether request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+                - result
+        '400':
+          description: Invalid params.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Scan ID is not a valid UUID.
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    description: Whether request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+        '404':
+          description: Scan not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Scan not found.
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    description: Whether request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+      deprecated: true
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - URL Scanner (Deprecated)
+      x-api-token-group:
+      - URL Scanner Write
+      - URL Scanner Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: url-scanner.scan.get.urlscanner
+      x-fern-sdk-method-name: scan
+      x-forge-hidden: true
+      x-forge-sunset:
+        date: '2030-01-01T00:00:00Z'
+      x-stainless-deprecation-message: Use [V2](https://developers.cloudflare.com/api/resources/url_scanner/subresources/scans/methods/get/) instead.
+  /accounts/{account_id}/urlscanner/scan/{scan_id}/har:
+    get:
+      operationId: urlscanner-get-scan-har
+      summary: Get URL scan's HAR
+      description: Get a URL scan's HAR file. See HAR spec at http://www.softwareishard.com/blog/har-12-spec/.
+      parameters:
+      - name: scan_id
+        in: path
+        description: Scan UUID.
+        required: true
+        schema:
+          description: Scan UUID.
+          type: string
+          format: uuid
+      - name: account_id
+        in: path
+        description: Account ID.
+        required: true
+        schema:
+          description: Account ID.
+          type: string
+      responses:
+        '200':
+          description: Returns the scan's har.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Error
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: OK
+                      required:
+                      - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      har:
+                        type: object
+                        properties:
+                          log:
+                            type: object
+                            properties:
+                              creator:
+                                type: object
+                                properties:
+                                  comment:
+                                    type: string
+                                    example: https://github.com/sitespeedio/chrome-har
+                                  name:
+                                    type: string
+                                    example: chrome-har
+                                  version:
+                                    type: string
+                                    example: 0.13.1
+                                required:
+                                - name
+                                - version
+                                - comment
+                              entries:
+                                type: array
+                                items:
+                                  properties:
+                                    _initialPriority:
+                                      type: string
+                                      example: VeryHigh
+                                    _initiator_type:
+                                      type: string
+                                      example: other
+                                    _priority:
+                                      type: string
+                                      example: VeryHigh
+                                    _requestId:
+                                      type: string
+                                      example: DDC779F0CB3746BAF283EC1A51B0F2F8
+                                    _requestTime:
+                                      type: number
+                                      example: 114135.331081
+                                    _resourceType:
+                                      type: string
+                                      example: document
+                                    cache:
+                                      type: object
+                                    connection:
+                                      type: string
+                                      example: '33'
+                                    pageref:
+                                      type: string
+                                      example: page_1
+                                    request:
+                                      type: object
+                                      properties:
+                                        bodySize:
+                                          type: number
+                                        headers:
+                                          type: array
+                                          items:
+                                            properties:
+                                              name:
+                                                type: string
+                                                example: Upgrade-Insecure-Requests
+                                              value:
+                                                type: string
+                                                example: '1'
+                                            required:
+                                            - name
+                                            - value
+                                            type: object
+                                        headersSize:
+                                          type: number
+                                          example: 197
+                                        httpVersion:
+                                          type: string
+                                          example: http/1.1
+                                        method:
+                                          type: string
+                                          example: GET
+                                        url:
+                                          type: string
+                                          example: http://example.com/
+                                      required:
+                                      - method
+                                      - url
+                                      - headersSize
+                                      - bodySize
+                                      - headers
+                                      - httpVersion
+                                    response:
+                                      type: object
+                                      properties:
+                                        _transferSize:
+                                          type: number
+                                          example: 1071
+                                        bodySize:
+                                          type: number
+                                          example: 648
+                                        content:
+                                          properties:
+                                            compression:
+                                              type: integer
+                                              example: 608
+                                            mimeType:
+                                              type: string
+                                              example: text/html
+                                            size:
+                                              type: number
+                                              example: 1256
+                                          required:
+                                          - mimeType
+                                          - size
+                                          type: object
+                                        headers:
+                                          type: array
+                                          items:
+                                            properties:
+                                              name:
+                                                type: string
+                                                example: Content-Encoding
+                                              value:
+                                                type: string
+                                                example: gzip
+                                            required:
+                                            - name
+                                            - value
+                                            type: object
+                                        headersSize:
+                                          type: number
+                                          example: 423
+                                        httpVersion:
+                                          type: string
+                                          example: http/1.1
+                                        redirectURL:
+                                          type: string
+                                        status:
+                                          type: number
+                                          example: 200
+                                        statusText:
+                                          type: string
+                                          example: OK
+                                      required:
+                                      - httpVersion
+                                      - redirectURL
+                                      - status
+                                      - statusText
+                                      - content
+                                      - headersSize
+                                      - bodySize
+                                      - headers
+                                      - _transferSize
+                                    serverIPAddress:
+                                      type: string
+                                      example: 2606:2800:220:1:248:1893:25c8:1946
+                                    startedDateTime:
+                                      type: string
+                                      example: '2023-05-03T17:05:13.196Z'
+                                    time:
+                                      type: number
+                                      example: 268.64
+                                  required:
+                                  - cache
+                                  - startedDateTime
+                                  - _requestId
+                                  - _initialPriority
+                                  - _priority
+                                  - pageref
+                                  - request
+                                  - time
+                                  - _initiator_type
+                                  - _resourceType
+                                  - response
+                                  - connection
+                                  - serverIPAddress
+                                  - _requestTime
+                                  type: object
+                              pages:
+                                type: array
+                                items:
+                                  properties:
+                                    id:
+                                      type: string
+                                      example: page_1
+                                    pageTimings:
+                                      type: object
+                                      properties:
+                                        onContentLoad:
+                                          type: number
+                                          example: 305.408
+                                        onLoad:
+                                          type: number
+                                          example: 305.169
+                                      required:
+                                      - onLoad
+                                      - onContentLoad
+                                    startedDateTime:
+                                      type: string
+                                      example: '2023-05-03T17:05:13.195Z'
+                                    title:
+                                      type: string
+                                      example: http://example.com/
+                                  required:
+                                  - id
+                                  - startedDateTime
+                                  - title
+                                  - pageTimings
+                                  type: object
+                              version:
+                                type: string
+                                example: '1.2'
+                            required:
+                            - version
+                            - creator
+                            - pages
+                            - entries
+                        required:
+                        - log
+                    required:
+                    - har
+                  success:
+                    description: Whether search request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+                - result
+        '202':
+          description: 'Scan is in progress. Check current status in `result.scan.task.status`. Possible statuses: `Queued`,`InProgress`,`InPostProcessing`,`Finished`.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: In Progress
+                      required:
+                      - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      scan:
+                        type: object
+                        properties:
+                          task:
+                            type: object
+                            properties:
+                              effectiveUrl:
+                                type: string
+                                example: http://example.com/
+                              errors:
+                                type: array
+                                items:
+                                  properties:
+                                    message:
+                                      type: string
+                                  required:
+                                  - message
+                                  type: object
+                              location:
+                                type: string
+                                example: PT
+                              region:
+                                type: string
+                                example: enam
+                              status:
+                                type: string
+                                example: InProgress
+                              success:
+                                type: boolean
+                                example: true
+                              time:
+                                type: string
+                                example: '2023-05-03T17:05:04.843Z'
+                              url:
+                                type: string
+                                example: http://example.com
+                              uuid:
+                                type: string
+                                example: 2ee568d0-bf70-4827-b922-b7088c0f056f
+                              visibility:
+                                type: string
+                                example: Public
+                            required:
+                            - uuid
+                            - url
+                            - status
+                            - success
+                            - errors
+                            - time
+                            - visibility
+                            - location
+                            - region
+                            - effectiveUrl
+                        required:
+                        - task
+                    required:
+                    - scan
+                  success:
+                    description: Whether request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+                - result
+        '400':
+          description: Invalid params.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Scan ID is not a valid UUID.
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    description: Whether request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+        '404':
+          description: Scan not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Scan not found.
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    description: Whether request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+      deprecated: true
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - URL Scanner (Deprecated)
+      x-api-token-group:
+      - URL Scanner Write
+      - URL Scanner Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: url-scanner.scan.har
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+      x-forge-sunset:
+        date: '2030-01-01T00:00:00Z'
+      x-stainless-deprecation-message: Use [V2](https://developers.cloudflare.com/api/resources/url_scanner/subresources/scans/methods/har/) instead.
+  /accounts/{account_id}/urlscanner/scan/{scan_id}/screenshot:
+    get:
+      operationId: urlscanner-get-scan-screenshot
+      summary: Get screenshot
+      description: Get scan's screenshot by resolution (desktop/mobile/tablet).
+      parameters:
+      - name: scan_id
+        in: path
+        description: Scan UUID.
+        required: true
+        schema:
+          description: Scan UUID.
+          type: string
+          format: uuid
+      - name: account_id
+        in: path
+        description: Account ID.
+        required: true
+        schema:
+          description: Account ID.
+          type: string
+      - name: resolution
+        in: query
+        description: Target device type.
+        schema:
+          description: Target device type.
+          type: string
+          default: desktop
+          enum:
+          - desktop
+          - mobile
+          - tablet
+      responses:
+        '200':
+          description: Returns the scan's requested screenshot.
+          content:
+            image/png:
+              schema:
+                description: PNG Image.
+                type: string
+        '202':
+          description: 'Scan is in progress. Check current status in `result.scan.task.status`. Possible statuses: `Queued`,`InProgress`,`InPostProcessing`,`Finished`.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: In Progress
+                      required:
+                      - message
+                      type: object
+                  result:
+                    type: object
+                    properties:
+                      scan:
+                        type: object
+                        properties:
+                          task:
+                            type: object
+                            properties:
+                              effectiveUrl:
+                                type: string
+                                example: http://example.com/
+                              errors:
+                                type: array
+                                items:
+                                  properties:
+                                    message:
+                                      type: string
+                                  required:
+                                  - message
+                                  type: object
+                              location:
+                                type: string
+                                example: PT
+                              region:
+                                type: string
+                                example: enam
+                              status:
+                                type: string
+                                example: InProgress
+                              success:
+                                type: boolean
+                                example: true
+                              time:
+                                type: string
+                                example: '2023-05-03T17:05:04.843Z'
+                              url:
+                                type: string
+                                example: http://example.com
+                              uuid:
+                                type: string
+                                example: 2ee568d0-bf70-4827-b922-b7088c0f056f
+                              visibility:
+                                type: string
+                                example: Public
+                            required:
+                            - uuid
+                            - url
+                            - status
+                            - success
+                            - errors
+                            - time
+                            - visibility
+                            - location
+                            - region
+                            - effectiveUrl
+                        required:
+                        - task
+                    required:
+                    - scan
+                  success:
+                    description: Whether request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+                - result
+        '400':
+          description: Invalid params.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Scan ID is not a valid UUID.
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    description: Whether request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+        '404':
+          description: Scan not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          example: Scan not found.
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    description: Whether request was successful or not
+                    type: boolean
+                required:
+                - messages
+                - errors
+                - success
+      deprecated: true
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - URL Scanner (Deprecated)
+      x-api-token-group:
+      - URL Scanner Write
+      - URL Scanner Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: url-scanner.scan.screenshot
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+      x-forge-sunset:
+        date: '2030-01-01T00:00:00Z'
+      x-stainless-deprecation-message: Use [V2](https://developers.cloudflare.com/api/resources/url_scanner/subresources/scans/methods/screenshot/) instead.
+components:
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-forge-commands:
+  abuse-reports:
+    description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
+    groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
+      emails:
+        description: Emails sent for abuse reports
+      mitigations:
+        description: Mitigation actions taken in response to abuse reports
+  accounts:
+    description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
+    groups:
+      applications:
+        description: Applications operations
+      categories:
+        description: Categories operations
+      organizations:
+        description: Move accounts between organizations
+      profile:
+        description: View and manage the profile for a Cloudflare account
+      roles:
+        description: View the roles available for assigning to account members, each defining a set of permissions
+      subscriptions:
+        description: View and manage plan subscriptions attached to this account
+      tokens:
+        description: Create and manage scoped API tokens for programmatic access to the Cloudflare API
+  ai-gateway:
+    description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
+    groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
+      datasets:
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
+      dynamic-routing:
+        description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
+      evaluation-types:
+        description: 'Deprecated: list the evaluator types that evaluations can use'
+      evaluations:
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
+      logs:
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
+  ai-search:
+    description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
+    groups:
+      items:
+        description: Content indexed by AI Search instances
+      jobs:
+        description: Indexing job lifecycle for AI Search instances
+      namespace:
+        description: Logical groupings for organizing AI Search instances
+      tokens:
+        description: Credentials used by AI Search instances
+  ai-security:
+    description: Detect prompt injection, PII, and unsafe topics in traffic to your AI applications
+    groups:
+      custom-topics:
+        description: Organization-specific topic categories used by AI Security for Apps content detection
+  analytics:
+    description: Zone-level traffic analytics — dashboard summaries, per-colo breakdowns, and Argo latency metrics
+    groups:
+      colo:
+        description: Per-data-center (colo) traffic analytics breakdown for the zone
+      dashboard:
+        description: Aggregated zone dashboard analytics — requests, bandwidth, threats, and page views
+      latency:
+        description: Argo Smart Routing latency analytics showing time-to-first-byte improvements
+  argo:
+    description: Network optimization features that speed up and improve reliability of traffic to your origins
+    groups:
+      smart-routing:
+        description: Route traffic through the fastest network paths to your origin using real-time latency data
+      tiered-caching:
+        description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  billing:
+    description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
+    groups:
+      profiles:
+        description: Billing profile with payment method, address, and invoice preferences
+      usage:
+        description: Metered usage data for billed services — requests, bandwidth, and feature consumption
+  botnet-feed:
+    description: Botnet threat intelligence feeds — IP and ASN-level data on known command-and-control infrastructure
+    groups:
+      asn:
+        description: ASN-level botnet activity data showing networks with known C2 infrastructure
+      configs:
+        description: Botnet feed subscription configuration and notification preferences
+  builds:
+    description: Build and deploy Workers from connected repositories, then inspect build status and logs.
+    groups:
+      deploy-hooks:
+        description: Manage branch-specific HTTP hooks that start builds.
+      limits:
+        description: View build-minute availability and refresh information.
+      logs:
+        description: Retrieve build logs.
+      repos:
+        description: Manage source repository connections for Workers Builds.
+      tokens:
+        description: Manage credentials used by Workers Builds to deploy Workers.
+      triggers:
+        description: Configure how repository changes build and deploy Workers.
+      versions:
+        description: Find builds associated with Worker versions.
+      workers:
+        description: Manage repository-backed build configuration for Workers.
+  cache:
+    description: Purge cached content and configure Cache Reserve, tiered caching, and variant serving
+    groups:
+      origin-cloud-regions:
+        description: Manage Origin Cloud Regions routing and failover configurations
+      settings:
+        description: Configure Cache Reserve, tiered caching, and variant serving
+      settings.regional-tiered-cache:
+        description: Restrict tiered cache topology to data centers within a specific geographic region
+      settings.reserve:
+        description: Persistent storage tier that keeps cached assets even after eviction from edge caches
+      settings.smart-tiered-cache:
+        description: Automatically determine the best upper-tier data centers for tiered cache topology
+      settings.variants:
+        description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
+  client-side-security:
+    description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
+    groups:
+      connections:
+        description: Third-party connections made by scripts on your pages — track data exfiltration risks
+      cookies:
+        description: Cookies set by your pages with classification and same-site attribute tracking
+      policies:
+        description: Content Security Policies that control which scripts and connections are allowed on your pages
+      scripts:
+        description: JavaScript files detected on your pages with change tracking and malicious code detection
+      settings:
+        description: Fine tune Client-Side Security behaviors
+  cloud-connector:
+    description: Route traffic from Cloudflare directly to cloud provider services (AWS, Azure, GCP) without origin servers
+    groups:
+      rules:
+        description: Routing rules that map request patterns to cloud provider endpoints
+  cloudforce-one:
+    description: Detection rule management APIs
+    groups:
+      binary-storage:
+        description: Upload and retrieve malware samples and suspicious binaries for analysis
+      requests:
+        description: Additional request operations — priority listing and asset creation
+      rules:
+        description: Rule management operations
+        groups:
+          approvals:
+            description: Approval workflow operations
+          email:
+            description: Email rule operations
+          exemptions:
+            description: Exemption rule operations
+          managed:
+            description: Managed rule operations
+          stats:
+            description: Rule statistics operations
+          tree:
+            description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
+  containers:
+    description: Deploy and manage Containers applications on Cloudflare's global network
+    groups:
+      applications:
+        description: Manage Containers applications
+      applications.instances:
+        description: Inspect Containers instances belonging to applications
+      applications.rollouts:
+        description: Manage rollouts for scheduler-backed applications
+      applications.versions:
+        description: Inspect versions of scheduler-backed applications
+      registries:
+        description: Manage Containers image registries
+      registries.credentials:
+        description: Generate image registry credentials
+  content-scan:
+    description: Malicious uploads detection, scan uploaded content in HTTP requests for malware and malicious payloads
+    groups:
+      expressions:
+        description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
+  custom-pages:
+    description: Manage custom error and challenge pages and their assets for accounts and zones
+    groups:
+      account-custom-pages:
+        description: Manage account-level custom pages
+      account-custom-pages.preview-tokens:
+        description: Preview tokens for account-level custom pages
+      assets:
+        description: Manage account- and zone-level custom assets
+      zone-custom-pages:
+        description: Manage zone-level custom pages
+      zone-custom-pages.preview-tokens:
+        description: Preview tokens for zone-level custom pages
+  d1:
+    description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
+    groups:
+      time-travel:
+        description: use specific point-in-time backups of your D1 database
+        x-forge-epilogue: For more information about Time Travel, see https://developers.cloudflare.com/d1/reference/time-travel
+  diagnostics:
+    description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
+    groups:
+      endpoint-healthchecks:
+        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+      traceroutes:
+        description: Run traceroutes from Cloudflare data centers to diagnose network path issues
+  email-routing:
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
+    groups:
+      addresses:
+        description: Verified destination email addresses that can receive forwarded mail
+      dns:
+        description: Inspect or unlock the DNS records required by Email Routing
+      rules:
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
+  email-security:
+    description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
+    groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
+      investigate:
+        description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
+      phishguard:
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
+      settings:
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
+      submissions:
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
+  email-sending:
+    description: Send transactional email and manage sending subdomains and their DNS configuration
+    groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
+      subdomains:
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
+  filters:
+    description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
+  firewall:
+    description: Legacy firewall rules, zone lockdowns, access rules, user-agent blocking, and WAF packages
+    groups:
+      access-rules:
+        description: IP-based access rules that allow, block, challenge, or whitelist traffic globally or per-zone
+      lockdowns:
+        description: Zone lockdown rules that restrict access to URLs by IP address or range
+      rules:
+        description: Legacy firewall rules with filter expressions — prefer Rulesets for new configurations
+      ua-rules:
+        description: Block or challenge requests based on the User-Agent header string
+      waf:
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
+      zone-access-rules:
+        description: Zone-scoped IP access rules for blocking or allowing traffic
+  google-tag-gateway:
+    description: Google Tag Gateway operations
+    groups:
+      config:
+        description: Google Tag Gateway config operations
+  healthchecks:
+    description: Standalone health checks that monitor origin server availability from Cloudflare's edge
+    groups:
+      previews:
+        description: Test a health check configuration before deploying it to production
+  hyperdrive:
+    description: Accelerate access to existing databases by caching queries and pooling connections at the edge
+  iam:
+    description: Identity and access management — permission groups, resource groups, user groups, and SSO connectors
+    groups:
+      permission-groups:
+        description: View the permission groups that can be assigned to API tokens and policies
+      resource-groups:
+        description: Define scopes that limit which account resources a policy or token can access
+      sso:
+        description: Configure single sign-on connectors to authenticate account members through an external identity provider
+      user-groups:
+        description: Organize account members into groups for easier permission assignment
+  images:
+    description: Store, resize, and deliver optimized images globally — variants, signing keys, and direct uploads
+    groups:
+      flows:
+        description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
+      keys:
+        description: Manage signing keys for generating private image URLs
+      variants:
+        description: Manage named resize variants for transforming images on delivery
+  intel:
+    description: Threat intelligence lookups — IP reputation, domain info, ASN details, WHOIS, and indicator feeds
+    groups:
+      asn:
+        description: ASN intelligence — ownership, geolocation, and subnet details for autonomous systems
+      attack-surface-report:
+        description: Attack surface intelligence — exposed assets, vulnerabilities, and infrastructure mapping
+      dns:
+        description: Passive DNS data showing historical DNS resolution records for domains
+      domain-history:
+        description: Historical domain registration and categorization changes over time
+      domains:
+        description: Domain intelligence — risk scores, categories, and associated infrastructure
+      indicator-feeds:
+        description: Threat indicator feeds — subscribe to and manage curated lists of malicious IPs, domains, and URLs
+      ip-lists:
+        description: Curated IP lists used for threat detection and policy enforcement
+      ips:
+        description: IP address intelligence — geolocation, risk assessment, and hosting provider details
+      miscategorizations:
+        description: Report and track domain miscategorization corrections
+      whois:
+        description: WHOIS registration data for domains including registrant, registrar, and nameservers
+  k2:
+    description: Durable, ordered event streams that you produce records to and consume from with subscriptions
+    groups:
+      streams:
+        description: K2 streams, their retention, and the HTTP and Workers binding inputs used to produce records
+      streams.subscriptions:
+        description: Subscriptions that consume a K2 stream, with committed-position lag
+  leaked-credential-checks:
+    description: Detect compromised credentials in login requests by checking against known breach databases
+    groups:
+      detections:
+        description: Custom detection locations that tell the WAF where to find usernames and passwords in requests
+  load-balancers:
+    description: Distribute traffic across origin pools with health monitoring, geo-steering, and failover
+    groups:
+      monitor-groups:
+        description: Group monitors together for shared configuration and bulk management
+      monitor-groups.references:
+        description: List references to monitor groups used by load balancer pools
+      monitors:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.previews:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.references:
+        description: Health check configurations that probe origin servers and determine pool availability
+      pools:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.health:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.references:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      previews:
+        description: Preview the result of a health check monitor configuration before applying it
+      regions:
+        description: Geographic regions used for regional pool steering and traffic policies
+      searches:
+        description: Search across all load balancer resources (pools, monitors, load balancers) by name or reference
+  logs:
+    description: Log control, retention, and raw log access — CMB config, ray ID lookups, and received fields
+    groups:
+      control:
+        description: Log control operations
+      received:
+        description: Received log operations
+  magic-network-monitoring:
+    description: Flow-based network traffic monitoring with configurable alerting rules and VPC flow ingestion
+    groups:
+      configs:
+        description: Account-level monitoring configuration — sampling rates, thresholds, and notification settings
+      rules:
+        description: Monitoring rules that define traffic thresholds and trigger alerts or prefix advertisements
+      vpc-flows:
+        description: Ingest VPC flow logs from cloud providers for network visibility and anomaly detection
+  magic-transit:
+    description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
+    groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
+      apps:
+        description: Application-aware traffic policies for Magic WAN that steer traffic by app type
+      bgp-filter-profiles:
+        description: BGP filter profiles for controlling which routes are allowed or denied on Magic Transit tunnels
+      bgp-settings:
+        description: BGP settings for controlling default ASN and route redistribution on Magic Transit tunnels
+      cf-interconnects:
+        description: Cloudflare Network Interconnect (CNI) links for direct physical or virtual peering
+      gre-tunnels:
+        description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
+      ipsec-tunnels:
+        description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
+      routes:
+        description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
+      sites:
+        description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
+  mcp:
+    description: Manage MCP portals and upstream MCP servers for Cloudflare Access AI controls
+    groups:
+      portals:
+        description: Manage MCP portals, attached servers, and Code Mode settings
+      servers:
+        description: Manage upstream MCP servers, credentials, capabilities, and sync state
+  network-interconnects:
+    description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
+    groups:
+      cnis:
+        description: Cloud Network Interconnect (CNI) connections — private links from cloud providers to Cloudflare
+      interconnects:
+        description: Physical cross-connect and partner interconnect sessions with LOA and status tracking
+      settings:
+        description: Account-level interconnect settings and default configurations
+      slots:
+        description: Available interconnect facility slots showing port capacity at Cloudflare data centers
+  organizations:
+    description: Multi-user organizations that group accounts, members, and shared settings under a single entity
+    groups:
+      account-organizations:
+        description: List organizations associated with a specific account
+      accounts:
+        description: Accounts operations
+      members:
+        description: Members operations
+      members-batch-create:
+        description: Members Batch Create operations
+      organization-profile:
+        description: View and update the public profile information for an organization
+      shares:
+        description: Shares operations
+  origin-post-quantum-encryption:
+    description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
+  pages:
+    description: Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains
+    groups:
+      projects:
+        description: Pages projects, deployments, build logs, and custom domain bindings
+  pipelines:
+    description: Ingest, transform, and route event streams into R2, analytics, or other destinations in real time
+    groups:
+      sinks:
+        description: Destinations where pipeline data is written — R2 buckets, HTTP endpoints, or other storage
+      streams:
+        description: Inbound data streams that feed events into a pipeline for processing
+  precursor:
+    description: Precursor settings for a zone
+  queues:
+    description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
+    groups:
+      consumers:
+        description: Workers that automatically receive and process messages from a queue
+      messages:
+        description: Push messages to a queue and pull or acknowledge them from consumers
+      purge:
+        description: Remove all pending messages from a queue
+      subscriptions:
+        description: Manage queue subscriptions for event-driven message routing
+  r2:
+    description: S3-compatible object storage with zero egress fees — buckets, lifecycle rules, event notifications, and data migration
+    groups:
+      buckets:
+        description: Create and configure R2 buckets including CORS, lifecycle, custom domains, event notifications, and object locks
+      buckets.jobs:
+        description: Create and inspect background jobs for an R2 bucket
+      buckets.local-uploads:
+        description: R2 bucket local upload configuration
+      super-slurper:
+        description: Migrate data from external S3-compatible storage into R2 buckets with resumable transfer jobs
+      temporary-credentials:
+        description: Generate short-lived S3-compatible credentials scoped to specific buckets and operations
+  r2-data-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  radar:
+    description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
+    groups:
+      agent-readiness:
+        description: Agent readiness summary statistics across the Cloudflare network
+      ai:
+        description: AI inference trends and model usage statistics across the Cloudflare network
+      annotations:
+        description: Radar annotations marking significant Internet events (outages, cable cuts, etc.)
+      as112:
+        description: AS112 DNS sinkhole statistics — reverse DNS query volumes for private address space
+      attacks:
+        description: DDoS and application-layer attack trends, vectors, and target analysis
+      bgp:
+        description: BGP routing data — prefix announcements, AS-level stats, route leaks, and hijack events
+      bots:
+        description: Internet-wide bot traffic trends, categories, and distribution statistics
+      ct:
+        description: Certificate Transparency log monitoring and newly-issued certificate discovery
+      datasets:
+        description: Downloadable Radar datasets for offline analysis and research
+      dns:
+        description: Global DNS query trends — top domains, resolver stats, and DNSSEC adoption
+      email:
+        description: Email security trends — DMARC/SPF/DKIM adoption, spam, and phishing statistics
+      entities:
+        description: Look up ASNs, IPs, domains, and locations with metadata and traffic summaries
+      geolocations:
+        description: Geographic location metadata used for regional traffic analysis
+      http:
+        description: HTTP protocol trends — TLS versions, HTTP versions, browser share, and OS distribution
+      leaked-credentials:
+        description: Leaked credential detection trends and exposure statistics
+      netflows:
+        description: Network-layer traffic flow data and volumetric trend analysis
+      origins:
+        description: Cloud and hosting origin providers (e.g. Amazon, by region) and their traffic metrics
+      post-quantum:
+        description: Post-quantum encryption adoption and deployment trends across the Internet
+      quality:
+        description: Internet connection quality metrics — speed, latency, and jitter by geography and ASN
+      ranking:
+        description: Top domain rankings based on DNS query popularity across the Cloudflare network
+      robots-txt:
+        description: Robots.txt adoption and crawler directive trends across the web
+      search:
+        description: Search Radar data across IPs, ASNs, domains, and locations
+      tcp-resets-timeouts:
+        description: TCP connection reset and timeout statistics indicating network health issues
+      tlds:
+        description: Top-level domain (TLD) metadata and performance trends
+      traffic-anomalies:
+        description: Detected traffic anomalies and unusual patterns in Internet traffic flows
+      verified-bots:
+        description: Catalog of known good bots (Googlebot, Bingbot, etc.) and their traffic patterns
+  rate-limits:
+    description: Legacy per-zone rate limiting rules — prefer Advanced Rate Limiting in Rulesets for new configurations
+  realtime:
+    description: Real-time audio, video, and data services on Cloudflare's global network
+    groups:
+      kit:
+        description: SDK-backed meetings, participants, recordings, livestreams, and webhooks
+      kit.analytics:
+        description: Usage and livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams:
+        description: Livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams.daily:
+        description: Daily livestream analytics for RealtimeKit applications
+      kit.analytics.usage:
+        description: Usage analytics for RealtimeKit applications
+      kit.apps:
+        description: RealtimeKit applications that group meetings, sessions, and configuration
+      kit.livestreams:
+        description: Independent and meeting-based livestreams and their sessions
+      kit.livestreams.sessions:
+        description: Sessions for RealtimeKit livestreams
+      kit.meetings:
+        description: Meetings, participants, access tokens, and meeting livestreams
+      kit.meetings.active:
+        description: Live meeting state and participant controls
+      kit.meetings.active.polls:
+        description: Polls for active meeting sessions
+      kit.meetings.livestream:
+        description: Livestream operations associated with RealtimeKit meetings
+      kit.meetings.participants:
+        description: Participants in RealtimeKit meetings
+      kit.meetings.participants.tokens:
+        description: Access tokens for RealtimeKit meeting participants
+      kit.presets:
+        description: Reusable meeting configuration for media, permissions, and interface behavior
+      kit.recordings:
+        description: Meeting and participant-track recordings and recording controls
+      kit.recordings.active:
+        description: Active recordings for RealtimeKit meetings
+      kit.recordings.tracks:
+        description: Participant-track recordings for RealtimeKit meetings
+      kit.sessions:
+        description: Historical session data, participants, chat, transcripts, and summaries
+      kit.sessions.chat:
+        description: Chat messages from historical RealtimeKit sessions
+      kit.sessions.livestreams:
+        description: Livestreams associated with historical RealtimeKit sessions
+      kit.sessions.participants:
+        description: Participants in historical RealtimeKit sessions
+      kit.sessions.peers:
+        description: Peer details from historical RealtimeKit sessions
+      kit.sessions.summaries:
+        description: Summaries of historical RealtimeKit sessions
+      kit.sessions.transcripts:
+        description: Transcripts from historical RealtimeKit sessions
+      kit.webhooks:
+        description: Webhook endpoints and supported events for RealtimeKit notifications
+      kit.webhooks.events:
+        description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
+  request-tracers:
+    description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
+    groups:
+      traces:
+        description: Simulate request processing to debug rule matches, transforms, and routing decisions
+  resource-sharing:
+    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    groups:
+      recipients:
+        description: Update share recipients
+      resources:
+        description: Individual resources (zones, configs) that have been shared with recipients
+  rules:
+    description: Resources used by Cloudflare rules and rulesets
+    groups:
+      lists:
+        description: Custom account-level lists of IPs, hostnames, ASNs, or redirects used in rule expressions
+  rum:
+    description: Real User Measurement (Web Analytics) — track page loads, Core Web Vitals, and visitor metrics
+    groups:
+      rules:
+        description: Rules that control which pages and paths are tracked by Web Analytics
+      site-info:
+        description: Web Analytics sites — register domains and get the JavaScript beacon snippet
+  scim:
+    description: SCIM 2.0 provisioning — manage users, groups, and identity provider sync for your account
+    groups:
+      groups:
+        description: Groups operations
+      resource-types:
+        description: Resource Types operations
+      schemas:
+        description: Schemas operations
+      service-provider-config:
+        description: Service Provider Config operations
+      users:
+        description: Users operations
+  secrets-store:
+    description: Centralized secret management — store API keys, tokens, and credentials for use across Workers and other products
+    groups:
+      quota:
+        description: Account quota limits for secrets stores, secrets count, and storage capacity
+      secrets:
+        description: Encrypted key-value secrets within a store. Pass --store-id to scope.
+      stores:
+        description: Secret stores that hold encrypted key-value secrets accessible by Workers and services
+  security-center:
+    description: Security posture dashboard — view and manage security insights, misconfigurations, and vulnerabilities
+    groups:
+      insights:
+        description: Security findings and recommendations across your account — DNS, SSL, WAF misconfigurations, etc.
+      zone-insights:
+        description: Zone-scoped security insights — counts by class, severity, type, and dismissal
+  security-txt:
+    description: Manage the /.well-known/security.txt file that tells security researchers how to report vulnerabilities
+  smart-shield:
+    description: Smart Shield settings, health checks, and cache reserve management
+    groups:
+      cache-reserve-clear:
+        description: Cache Reserve Clear operations
+      health-checks:
+        description: Health checks operations
+  spectrum:
+    description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
+    groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
+      apps:
+        description: Spectrum application configurations that map protocols and ports to origin servers
+  speed:
+    description: Observatory speed tests — run Lighthouse audits, track performance trends, and schedule recurring tests
+    groups:
+      availabilities:
+        description: Check which speed test regions and configurations are available for your zone
+      pages:
+        description: Tested pages with their performance history, trends, and individual test results
+      schedule:
+        description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
+  stream:
+    description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
+    groups:
+      audio-tracks:
+        description: Add, edit, or remove additional audio tracks on a video
+      captions:
+        description: Upload, generate, or retrieve captions and subtitles for videos in multiple languages
+      clip:
+        description: Create a new video clip from an existing video by specifying start and end times
+      copy:
+        description: Import a video from a URL into Stream for processing and delivery
+      direct-upload:
+        description: Generate a tokenized URL that lets end-users upload video directly to Stream
+      downloads:
+        description: Create downloadable MP4 renditions of a video for offline viewing
+      embed:
+        description: Retrieve the HTML embed code snippet for a video
+      keys:
+        description: Signing keys used to generate short-lived signed URLs for private video playback
+      live-inputs:
+        description: Enable and disable live input streams
+      token:
+        description: Generate short-lived signed URL tokens for secure private video playback
+      typed-downloads:
+        description: Type-specific stream download creation and deletion
+      videos:
+        description: Aggregate video storage usage statistics for the account
+      watermarks:
+        description: Watermark profiles that overlay an image on every video in the account
+      webhooks:
+        description: Webhook notifications for video lifecycle events (ready, error, etc.)
+  tenants:
+    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    groups:
+      account-types:
+        description: Account Types operations
+      accounts:
+        description: Accounts operations
+      entitlements:
+        description: Entitlements operations
+      memberships:
+        description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
+  url-scanner:
+    description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
+    groups:
+      response:
+        description: Response operations
+      responses:
+        description: Raw HTTP response data captured during URL scans
+      scan:
+        description: Scan operations
+      scans:
+        description: URL scan requests and results — submit URLs for analysis and retrieve threat verdicts
+  user:
+    description: Your Cloudflare user profile, invitations, organizations, billing, and personal API tokens
+    groups:
+      billing:
+        description: View billing history and payment profile for your user (deprecated — prefer account-level billing)
+      firewall:
+        description: Firewall operations
+      load-balancers.monitors:
+        description: Load Balancers operations
+      load-balancers.monitors.preview:
+        description: Load Balancers operations
+      load-balancers.monitors.references:
+        description: Load Balancers operations
+      load-balancers.pools:
+        description: Load Balancers operations
+      load-balancers.pools.edit.pools:
+        description: Load Balancers operations
+      load-balancers.pools.health:
+        description: Load Balancers operations
+      load-balancers.pools.preview:
+        description: Load Balancers operations
+      load-balancers.pools.references:
+        description: Load Balancers operations
+      load-balancers.preview:
+        description: Load Balancers operations
+      load-balancing-analytics.events:
+        description: Load Balancing Analytics operations
+      subscriptions:
+        description: View and manage zone-level plan subscriptions owned by your user
+      tenants:
+        description: Tenants operations
+      tokens:
+        description: Create and manage personal API tokens scoped to your user for programmatic API access
+  user.analytics:
+    description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
+  waiting-rooms:
+    description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
+    groups:
+      account-waiting-rooms:
+        description: Account-scoped waiting room listing
+      events:
+        description: Scheduled events that temporarily override waiting room settings for sales, launches, etc.
+      page:
+        description: Custom HTML waiting page templates and preview rendering
+      rules:
+        description: Rules that bypass or modify waiting room behavior for specific request patterns
+      settings:
+        description: Zone-level waiting room defaults and cookie configuration
+      statuses:
+        description: Real-time queue status showing active users, queued users, and estimated wait times
+  workflows:
+    description: Durable, multi-step workflows that run on Workers with automatic retries and state persistence
+    groups:
+      instances:
+        description: Workflow instance operations
+      versions:
+        description: Workflow version operations
+  zaraz:
+    description: Server-side tag manager — load third-party tools (analytics, pixels, etc.) from Cloudflare's edge without client-side JS
+    groups:
+      config:
+        description: Full Zaraz configuration including tools, triggers, and variables for the zone
+      default:
+        description: Default Zaraz configuration template used as a starting point for new zones
+      export:
+        description: Export the current Zaraz configuration as a portable JSON document
+      history:
+        description: Configuration version history — browse and restore previous Zaraz configurations
+      publish:
+        description: Publish pending Zaraz configuration changes to make them live on the zone
+      workflow:
+        description: Workflow state for Zaraz configuration changes (draft vs. published)
+  zero-trust:
+    description: Cloudflare's SASE platform — secure access, device posture, DLP, tunnels, gateway policies, and network segmentation
+    groups:
+      dex:
+        description: Digital Experience Monitoring — synthetic tests, fleet-wide device metrics, and network path diagnostics
+      dlp.custom-prompt-topics:
+        description: Data Loss Prevention - manage custom prompt topics for AI-based content detection
+      dlp.data-classes:
+        description: Data Loss Prevention - manage data classes used to classify sensitive information
+      dlp.data-tag-categories:
+        description: Data Loss Prevention - manage categories that organize data tags
+      dlp.data-tag-category-templates:
+        description: Data Loss Prevention - browse templates for creating data tag categories
+      dlp.data-tags:
+        description: Data Loss Prevention - manage tags used to classify and organize sensitive data
+      dlp.datasets:
+        description: Data Loss Prevention - manage datasets, versions, and uploads
+      dlp.document-fingerprints:
+        description: Data Loss Prevention - manage document fingerprints for detecting matching documents
+      dlp.email.account-mapping:
+        description: Data Loss Prevention - configure account mappings for outbound email scanning
+      dlp.email.rules:
+        description: Data Loss Prevention - manage outbound email scanning rules and their priorities
+      dlp.entries:
+        description: Data Loss Prevention - list and manage detection entries
+      dlp.limits:
+        description: Data Loss Prevention - view account limits and resource quotas
+      dlp.patterns:
+        description: Data Loss Prevention - validate regular expressions used for content detection
+      dlp.profiles:
+        description: Data Loss Prevention - list and retrieve profiles
+      dlp.profiles.custom:
+        description: Data Loss Prevention - manage custom profiles
+      dlp.profiles.predefined:
+        description: Data Loss Prevention - manage predefined profiles
+      dlp.sensitivity-group-templates:
+        description: Data Loss Prevention - browse templates for creating sensitivity groups
+      dlp.sensitivity-groups:
+        description: Data Loss Prevention - manage sensitivity groups and their level ordering
+      dlp.sensitivity-levels:
+        description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
+      dlp.settings:
+        description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.integrations:
+        description: User Risk Scoring - manage integrations that provide risk score signals
+      risk-scoring.integrations.references:
+        description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
+  zones:
+    description: Zones are domains on Cloudflare — list, create, and configure domain settings
+    groups:
+      aegis:
+        description: Aegis operations
+      fonts:
+        description: Fonts operations
+      origin-h2-max-streams:
+        description: Origin H2 Max Streams operations
+      origin-max-http-version:
+        description: Origin Max Http Version operations
+      origin-tls-compliance-modes:
+        description: Manage zone Origin TLS Compliance Modes setting
+      rum:
+        description: Rum operations
+      speed-brain:
+        description: Speed Brain operations

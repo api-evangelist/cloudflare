@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-dns-record-input-schema.json",
+  "title": "DnsRecordInput",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-dns-batch-operations-api-openapi.yml#/components/schemas/DnsRecordInput",
+  "type": "object",
+  "properties": {
+    "type": {
+      "$ref": "#/$defs/RecordType"
+    },
+    "name": {
+      "type": "string",
+      "description": "The DNS record name, e.g. example.com."
+    },
+    "content": {
+      "type": "string",
+      "description": "The DNS record content value."
+    },
+    "ttl": {
+      "type": "integer",
+      "description": "Time to live in seconds. A value of 1 indicates automatic TTL.",
+      "minimum": 1,
+      "maximum": 86400
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Required for MX, SRV, and URI records. Record priority.",
+      "minimum": 0,
+      "maximum": 65535
+    },
+    "proxied": {
+      "type": "boolean",
+      "description": "Whether the record is receiving Cloudflare proxy services."
+    },
+    "comment": {
+      "type": "string",
+      "description": "A comment about the DNS record."
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Custom tags for the DNS record."
+    }
+  },
+  "$defs": {
+    "RecordType": {
+      "type": "string",
+      "description": "The type of DNS record.",
+      "enum": [
+        "A",
+        "AAAA",
+        "CAA",
+        "CERT",
+        "CNAME",
+        "DNSKEY",
+        "DS",
+        "HTTPS",
+        "LOC",
+        "MX",
+        "NAPTR",
+        "NS",
+        "PTR",
+        "SMIMEA",
+        "SRV",
+        "SSHFP",
+        "SVCB",
+        "TLSA",
+        "TXT",
+        "URI"
+      ]
+    }
+  }
+}

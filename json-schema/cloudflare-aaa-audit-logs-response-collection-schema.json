@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-aaa-audit-logs-response-collection-schema.json",
+  "title": "aaa_audit_logs_response_collection",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-organizations-api-openapi.yml#/components/schemas/aaa_audit_logs_response_collection",
+  "oneOf": [
+    {
+      "properties": {
+        "errors": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "messages": {
+          "type": "array",
+          "items": {}
+        },
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/aaa_audit-logs"
+          }
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    {
+      "$ref": "#/$defs/aaa_api-response-common"
+    }
+  ],
+  "$defs": {
+    "aaa_api-response-common": {
+      "type": "object",
+      "required": [
+        "success",
+        "errors",
+        "messages",
+        "result"
+      ],
+      "properties": {
+        "errors": {
+          "$ref": "#/$defs/aaa_messages"
+        },
+        "messages": {
+          "$ref": "#/$defs/aaa_messages"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "success": {
+          "type": "boolean",
+          "description": "Whether the API call was successful",
+          "enum": [
+            true
+          ]
+        }
+      }
+    },
+    "aaa_audit-logs": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "object",
+          "properties": {
+            "result": {
+              "type": "boolean",
+              "description": "A boolean that indicates if the action attempted was successful."
+            },
+            "type": {
+              "type": "string",
+              "description": "A short string that describes the action that was performed."
+            }
+          }
+        },
+        "actor": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "The email of the user that performed the action."
+            },
+            "id": {
+              "type": "string",
+              "description": "The ID of the actor that performed the action. If a user performed the action, this will be their User ID."
+            },
+            "ip": {
+              "type": "string",
+              "description": "The IP address of the request that performed the action."
+            },
+            "type": {
+              "type": "string",
+              "description": "The type of actor, whether a User, Cloudflare Admin, or an Automated System.",
+              "enum": [
+                "user",
+                "admin",
+                "Cloudflare"
+              ]
+            }
+          }
+        },
+        "id": {
+          "type": "string",
+          "description": "A string that uniquely identifies the audit log."
+        },
+        "interface": {
+          "type": "string",
+          "description": "The source of the event."
+        },
+        "metadata": {
+          "type": "object",
+          "description": "An object which can lend more context to the action being logged. This is a flexible value and varies between different actions."
+        },
+        "newValue": {
+          "type": "string",
+          "description": "The new value of the resource that was modified."
+        },
+        "oldValue": {
+          "type": "string",
+          "description": "The value of the resource before it was modified."
+        },
+        "owner": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/aaa_identifier"
+            }
+          }
+        },
+        "resource": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "An identifier for the resource that was affected by the action."
+            },
+            "type": {
+              "type": "string",
+              "description": "A short string that describes the resource that was affected by the action."
+            }
+          }
+        },
+        "when": {
+          "type": "string",
+          "format": "date-time",
+          "description": "A UTC RFC3339 timestamp that specifies when the action being logged occured."
+        }
+      }
+    },
+    "aaa_identifier": {
+      "type": "string",
+      "description": "Identifier",
+      "readOnly": true,
+      "maxLength": 32
+    },
+    "aaa_messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "uniqueItems": true,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "minimum": 1000
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

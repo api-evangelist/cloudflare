@@ -1,17 +1,11 @@
 openapi: 3.2.0
 info:
   title: Cloudflare Workers API
-  description: Cloudflare Workers allows developers to deploy serverless code to Cloudflare's global network. The Workers API provides endpoints for managing worker scripts, versions, deployments, routes, custom domains, secrets, cron triggers, and configuration including bindings.
-  version: '4.0'
-  contact:
-    name: Cloudflare Support
-    url: https://support.cloudflare.com/
-  termsOfService: https://www.cloudflare.com/terms/
+  version: '1.0'
+  description: 'Operations tagged Workers across 2 of this provider''s published API definitions: cloudflare-workers-openapi.yml, cloudflare-openapi.json. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.cloudflare.com/client/v4
   description: Cloudflare API v4 Production Server
-security:
-- bearerAuth: []
 tags:
 - name: Workers
   description: Manage Worker resources including creating, updating, and deleting Workers.
@@ -48,6 +42,8 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
     post:
       operationId: createWorker
       summary: Cloudflare Create Worker
@@ -98,6 +94,11 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.cloudflare.com/client/v4
+      description: Cloudflare API v4 Production Server
   /accounts/{account_id}/workers/workers/{worker_id}:
     get:
       operationId: getWorker
@@ -137,6 +138,8 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
     put:
       operationId: replaceWorker
       summary: Cloudflare Replace Worker
@@ -169,6 +172,8 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
     patch:
       operationId: editWorker
       summary: Cloudflare Edit Worker
@@ -201,6 +206,8 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
     delete:
       operationId: deleteWorker
       summary: Cloudflare Delete Worker
@@ -220,19 +227,587 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.cloudflare.com/client/v4
+      description: Cloudflare API v4 Production Server
+  /accounts/{account_id}/builds/workers:
+    post:
+      operationId: createWorkerBuild
+      summary: Create Worker build configuration
+      description: Connect a Worker tag to a repository and production build settings.
+      parameters:
+      - $ref: '#/components/parameters/builds_AccountId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              git_repository:
+                branch: main
+                provider_account_id: cloudflare
+                provider_account_name: Cloudflare
+                provider_type: github
+                repo_id: workers-sdk
+                repo_name: workers-sdk
+              previews_base_config:
+                build_caching_enabled: true
+                build_command: npm run build
+                build_token_uuid: 4b1e4d0f-6f2a-4c9d-9a3b-7c5e2f8a1d64
+                deploy_command: npx wrangler preview
+                environment_variables: {}
+                path_excludes:
+                - '*.md'
+                path_includes:
+                - '*'
+                root_directory: /
+              previews_enabled: true
+              production_settings:
+                build_caching_enabled: true
+                build_command: npm run build
+                build_token_uuid: 4b1e4d0f-6f2a-4c9d-9a3b-7c5e2f8a1d64
+                deploy_command: npx wrangler deploy
+                environment_variables: {}
+                path_excludes:
+                - '*.md'
+                path_includes:
+                - '*'
+                root_directory: /
+              script_tag: my-worker
+            schema:
+              $ref: '#/components/schemas/builds_CreateWorkerRequest'
+      responses:
+        '201':
+          description: Worker build configuration created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/builds_APIResponse'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/builds_WorkerResponse'
+                  type: object
+        '400':
+          $ref: '#/components/responses/builds_BadRequest'
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+        '404':
+          $ref: '#/components/responses/builds_NotFound'
+        '409':
+          $ref: '#/components/responses/builds_Conflict'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers
+      x-api-token-group:
+      - Workers CI Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: builds.workers
+      x-fern-sdk-method-name: create
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/builds/workers/{external_script_id}/builds:
+    get:
+      operationId: listBuildsByScript
+      summary: List builds for a Worker
+      description: List paginated build records associated with a Worker tag.
+      parameters:
+      - $ref: '#/components/parameters/builds_AccountId'
+      - name: external_script_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/builds_external_script_id'
+      - $ref: '#/components/parameters/builds_Page'
+      - $ref: '#/components/parameters/builds_PerPage'
+      responses:
+        '200':
+          description: Builds retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/builds_APIResponse'
+                - properties:
+                    result:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/builds_BuildResponse'
+                    result_info:
+                      $ref: '#/components/schemas/builds_PaginationInfo'
+                  type: object
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers
+      x-api-token-group:
+      - Workers CI Write
+      - Workers CI Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: builds
+      x-fern-sdk-method-name: list
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/builds/workers/{external_script_id}/triggers:
+    get:
+      operationId: listTriggersByScript
+      summary: List triggers for a Worker
+      description: List trigger UUIDs and build settings associated with a Worker tag.
+      parameters:
+      - $ref: '#/components/parameters/builds_AccountId'
+      - name: external_script_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/builds_external_script_id'
+      responses:
+        '200':
+          description: Triggers retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/builds_APIResponse'
+                - properties:
+                    result:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/builds_TriggerResponse'
+                  type: object
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers
+      x-api-token-group:
+      - Workers CI Write
+      - Workers CI Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: builds.triggers
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/builds/workers/{script_tag}:
+    delete:
+      operationId: deleteWorkerBuild
+      summary: Delete Worker build configuration
+      description: Delete build settings and triggers for a Worker tag and cancel unfinished builds. The Worker is not deleted.
+      parameters:
+      - $ref: '#/components/parameters/builds_AccountId'
+      - $ref: '#/components/parameters/builds_ScriptTag'
+      responses:
+        '200':
+          description: Worker build configuration deleted successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/builds_APIResponse'
+                - properties:
+                    result:
+                      type: string
+                      example: ok
+                  type: object
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+        '404':
+          $ref: '#/components/responses/builds_NotFound'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers
+      x-api-token-group:
+      - Workers CI Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: builds.workers
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the Worker build configuration and its triggers, and cancels unfinished builds. The Worker is not deleted.
+    get:
+      operationId: getWorkerBuild
+      summary: Get Worker build configuration
+      description: Retrieve the repository and production build settings associated with a Worker tag.
+      parameters:
+      - $ref: '#/components/parameters/builds_AccountId'
+      - $ref: '#/components/parameters/builds_ScriptTag'
+      responses:
+        '200':
+          description: Worker build configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/builds_APIResponse'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/builds_WorkerResponse'
+                  type: object
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+        '404':
+          $ref: '#/components/responses/builds_NotFound'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers
+      x-api-token-group:
+      - Workers CI Write
+      - Workers CI Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: builds.workers
+      x-fern-sdk-method-name: get
+    patch:
+      operationId: updateWorkerBuild
+      summary: Update Worker build configuration
+      description: Update the build configuration for a Worker script. Supports partial updates to git repository settings, production build settings, and Preview settings.
+      parameters:
+      - $ref: '#/components/parameters/builds_AccountId'
+      - $ref: '#/components/parameters/builds_ScriptTag'
+      - name: patch_existing_previews
+        in: query
+        description: Apply a previews_base_config patch to every existing Preview of the Worker as well as to the base config.
+        schema:
+          type: string
+          default: 'false'
+          enum:
+          - 'true'
+          - 'false'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              production_settings:
+                build_command: npm run build:production
+                deploy_command: npx wrangler deploy --env production
+            schema:
+              $ref: '#/components/schemas/builds_UpdateWorkerRequest'
+      responses:
+        '200':
+          description: Worker build configuration updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/builds_APIResponse'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/builds_WorkerResponse'
+                  type: object
+        '400':
+          $ref: '#/components/responses/builds_BadRequest'
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+        '404':
+          $ref: '#/components/responses/builds_NotFound'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers
+      x-api-token-group:
+      - Workers CI Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: builds.workers
+      x-fern-sdk-method-name: update
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/builds/workers/{script_tag}/migrate_to_previews:
+    post:
+      operationId: migrateWorkerToPreviews
+      summary: Migrate worker to previews
+      description: Migrate a Worker's legacy non-production trigger to Previews. The legacy build settings become the Previews base config and the legacy trigger is removed.
+      parameters:
+      - $ref: '#/components/parameters/builds_AccountId'
+      - $ref: '#/components/parameters/builds_ScriptTag'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example: {}
+            schema:
+              $ref: '#/components/schemas/builds_MigrateToPreviewsRequest'
+      responses:
+        '200':
+          description: Worker migrated to Previews successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/builds_APIResponse'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/builds_WorkerResponse'
+                  type: object
+        '400':
+          $ref: '#/components/responses/builds_BadRequest'
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+        '404':
+          $ref: '#/components/responses/builds_NotFound'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers
+      x-api-token-group:
+      - Workers CI Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: workers-builds.workers
+      x-fern-sdk-method-name: migrate-to-previews
+      x-forge-hidden: true
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/builds/workers/{script_tag}/previews:
+    get:
+      operationId: listWorkerPreviews
+      summary: List previews
+      description: List the Previews of a Worker with pagination.
+      parameters:
+      - $ref: '#/components/parameters/builds_AccountId'
+      - $ref: '#/components/parameters/builds_ScriptTag'
+      - $ref: '#/components/parameters/builds_Page'
+      - $ref: '#/components/parameters/builds_PerPage'
+      responses:
+        '200':
+          description: Previews retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/builds_APIResponse'
+                - properties:
+                    result:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/builds_PreviewSummary'
+                    result_info:
+                      $ref: '#/components/schemas/builds_PaginationInfo'
+                  type: object
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers
+      x-api-token-group:
+      - Workers CI Write
+      - Workers CI Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: workers-builds.workers.previews
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/builds/workers/{script_tag}/previews/{preview_id}:
+    get:
+      operationId: getWorkerPreview
+      summary: Get preview
+      description: Retrieve a single Preview of a Worker, including the build settings it currently uses.
+      parameters:
+      - $ref: '#/components/parameters/builds_AccountId'
+      - $ref: '#/components/parameters/builds_ScriptTag'
+      - $ref: '#/components/parameters/builds_PreviewId'
+      responses:
+        '200':
+          description: Preview retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/builds_APIResponse'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/builds_PreviewResponse'
+                  type: object
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+        '404':
+          $ref: '#/components/responses/builds_NotFound'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers
+      x-api-token-group:
+      - Workers CI Write
+      - Workers CI Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: workers-builds.workers.previews
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    patch:
+      operationId: updateWorkerPreview
+      summary: Update preview
+      description: Update a single Preview of a Worker. Supports partial updates to the tracked branch, the automation flags, and the build settings.
+      parameters:
+      - $ref: '#/components/parameters/builds_AccountId'
+      - $ref: '#/components/parameters/builds_ScriptTag'
+      - $ref: '#/components/parameters/builds_PreviewId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              auto_build: false
+              settings:
+                build_command: npm run build:preview
+            schema:
+              $ref: '#/components/schemas/builds_UpdatePreviewRequest'
+      responses:
+        '200':
+          description: Preview updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/builds_APIResponse'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/builds_PreviewResponse'
+                  type: object
+        '400':
+          $ref: '#/components/responses/builds_BadRequest'
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+        '404':
+          $ref: '#/components/responses/builds_NotFound'
+        '409':
+          $ref: '#/components/responses/builds_Conflict'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers
+      x-api-token-group:
+      - Workers CI Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: workers-builds.workers.previews
+      x-fern-sdk-method-name: edit
+      x-forge-hidden: true
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/builds/workers/{script_tag}/previews/{preview_id}/builds:
+    get:
+      operationId: listBuildsByPreview
+      summary: List builds by preview
+      description: List the builds of a single Preview with pagination.
+      parameters:
+      - $ref: '#/components/parameters/builds_AccountId'
+      - $ref: '#/components/parameters/builds_ScriptTag'
+      - $ref: '#/components/parameters/builds_PreviewId'
+      - $ref: '#/components/parameters/builds_Page'
+      - $ref: '#/components/parameters/builds_PerPage'
+      responses:
+        '200':
+          description: Builds retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/builds_APIResponse'
+                - properties:
+                    result:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/builds_BuildResponse'
+                    result_info:
+                      $ref: '#/components/schemas/builds_PaginationInfo'
+                  type: object
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+        '404':
+          $ref: '#/components/responses/builds_NotFound'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers
+      x-api-token-group:
+      - Workers CI Write
+      - Workers CI Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: workers-builds.workers.previews
+      x-fern-sdk-method-name: list-builds
+      x-forge-hidden: true
+    post:
+      operationId: createPreviewBuild
+      summary: Create preview build
+      description: Trigger a build for a single Preview.
+      parameters:
+      - $ref: '#/components/parameters/builds_AccountId'
+      - $ref: '#/components/parameters/builds_ScriptTag'
+      - $ref: '#/components/parameters/builds_PreviewId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/builds_CreateBuildRequest'
+      responses:
+        '200':
+          description: Build created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/builds_APIResponse'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/builds_BuildResponse'
+                  type: object
+        '400':
+          $ref: '#/components/responses/builds_BadRequest'
+        '401':
+          $ref: '#/components/responses/builds_Unauthorized'
+        '404':
+          $ref: '#/components/responses/builds_NotFound'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers
+      x-api-token-group:
+      - Workers CI Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: workers-builds.workers.previews
+      x-fern-sdk-method-name: create-build
+      x-forge-hidden: true
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
 components:
   schemas:
-    WorkerInput:
-      type: object
-      properties:
-        name:
-          type: string
-          description: The name of the Worker.
-          example: Example Title
-        main_module:
-          type: string
-          description: The entry point module for the Worker.
-          example: example_value
     WorkerListResponse:
       type: object
       properties:
@@ -255,6 +830,17 @@ components:
         success:
           type: boolean
           example: true
+    WorkerInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the Worker.
+          example: Example Title
+        main_module:
+          type: string
+          description: The entry point module for the Worker.
+          example: example_value
     WorkerResponse:
       type: object
       properties:
@@ -289,14 +875,1891 @@ components:
           items:
             type: object
           example: []
-  parameters:
-    WorkerId:
-      name: worker_id
-      in: path
-      required: true
-      description: The unique identifier of the Worker.
-      schema:
+    builds_CreateBuildRequest:
+      type: object
+      properties:
+        branch:
+          description: Git branch name (required if commit_hash not provided)
+          allOf:
+          - $ref: '#/components/schemas/builds_branch'
+        commit_hash:
+          description: Git commit hash (required if branch not provided)
+          allOf:
+          - $ref: '#/components/schemas/builds_commit_hash'
+        seed_repo:
+          description: Optional repository and file overrides used to seed this build.
+          allOf:
+          - $ref: '#/components/schemas/builds_BuildSeedRepoInput'
+      anyOf:
+      - required:
+        - commit_hash
+      - required:
+        - branch
+    builds_is_secret:
+      description: Whether to hide the value after it is saved. Secret values remain available to builds but appear as `null` when you list variables; non-secret values remain visible.
+      type: boolean
+      example: false
+    builds_preview_auto_delete:
+      description: Whether deleting the git branch also deletes this Preview.
+      type: boolean
+      example: true
+    builds_BuildSeedRepoInput:
+      type: object
+      properties:
+        branch:
+          description: Repository branch to seed.
+          allOf:
+          - $ref: '#/components/schemas/builds_branch'
+        files:
+          description: Files to add or replace for this build. Maximum 2.
+          type: array
+          items:
+            $ref: '#/components/schemas/builds_BuildSeedRepoInputFile'
+          maxItems: 2
+        owner:
+          description: Repository owner or namespace.
+          type: string
+          example: cloudflare
+        path:
+          description: Path within the repository to seed.
+          type: string
+          example: /
+        provider:
+          description: Source control provider for the seed repository.
+          type: string
+          enum:
+          - github
+          - gitlab
+        repository:
+          description: Repository name.
+          type: string
+          example: workers-sdk
+      required:
+      - provider
+      - owner
+      - repository
+    workers_ErrorWorkerNameInvalid:
+      type: object
+      properties:
+        code:
+          description: Code indicating that the Worker name is invalid.
+          type: integer
+          enum:
+          - 10016
+        message:
+          description: Message explaining why the Worker name is invalid.
+          type: string
+      required:
+      - code
+      - message
+    workers_api-response-collection:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/workers_api-response-common'
+      - properties:
+          result_info:
+            type: object
+            properties:
+              count:
+                description: Total number of results for the requested service.
+                type: number
+                example: 1
+              page:
+                description: Current page within paginated list of results.
+                type: number
+                example: 1
+              per_page:
+                description: Number of results per page of results.
+                type: number
+                example: 20
+              total_count:
+                description: Total results available without any search parameters.
+                type: number
+                example: 2000
+              total_pages:
+                description: The number of total pages in the entire result set.
+                type: number
+                example: 100
+        type: object
+    builds_CreateWorkerBuildSettingsInput:
+      description: Build and deploy settings when creating a Worker build configuration
+      type: object
+      properties:
+        build_caching_enabled:
+          default: true
+          allOf:
+          - $ref: '#/components/schemas/builds_build_caching_enabled'
+        build_command:
+          $ref: '#/components/schemas/builds_build_command'
+        build_token_uuid:
+          $ref: '#/components/schemas/builds_build_token_uuid'
+        deploy_command:
+          $ref: '#/components/schemas/builds_deploy_command'
+        environment_variables:
+          $ref: '#/components/schemas/builds_EnvironmentVariablesRequest'
+        path_excludes:
+          $ref: '#/components/schemas/builds_path_excludes'
+        path_includes:
+          $ref: '#/components/schemas/builds_path_includes'
+        root_directory:
+          default: /
+          allOf:
+          - $ref: '#/components/schemas/builds_root_directory'
+      required:
+      - build_command
+      - deploy_command
+      - build_token_uuid
+    builds_APIResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/builds_ApiError'
+        messages:
+          type: array
+          items:
+            type: string
+        result:
+          type:
+          - object
+          - 'null'
+        result_info:
+          $ref: '#/components/schemas/builds_PaginationInfo'
+        success:
+          type: boolean
+          example: true
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    builds_UpdateWorkerRequest:
+      description: Request body for updating a Worker build configuration. At least one field must be provided.
+      type: object
+      properties:
+        git_repository:
+          description: Git repository settings to update
+          type: object
+          minProperties: 1
+          properties:
+            branch:
+              description: New git branch to watch for builds
+              type: string
+              example: main
+              maxLength: 256
+              minLength: 1
+        previews_base_config:
+          $ref: '#/components/schemas/builds_UpdateWorkerBuildSettingsInput'
+        previews_enabled:
+          description: Enable or disable Previews for this Worker. Enabling requires previews_base_config to already exist or to be sent in the same request.
+          type: boolean
+          example: true
+        production_settings:
+          $ref: '#/components/schemas/builds_UpdateWorkerBuildSettingsInput'
+      minProperties: 1
+    builds_SCMProviderType:
+      description: Source control provider.
+      type: string
+      example: github
+      enum:
+      - github
+      - gitlab
+      - gitlab_internal
+      - origin
+    builds_build_token_uuid:
+      description: UUID of the build token used when deploying the Worker.
+      type: string
+      format: uuid
+    builds_WorkerGitRepository:
+      description: Git repository details linked to a Worker script build configuration
+      type: object
+      properties:
+        branch:
+          description: Git branch to watch for builds
+          type: string
+          example: main
+          maxLength: 256
+          minLength: 1
+        grant_id:
+          description: Internal grant ID for GitLab internal integrations
+          type:
+          - string
+          - 'null'
+        provider_account_id:
+          $ref: '#/components/schemas/builds_provider_account_id'
+        provider_account_name:
+          $ref: '#/components/schemas/builds_provider_account_name'
+        provider_type:
+          $ref: '#/components/schemas/builds_SCMProviderType'
+        repo_id:
+          $ref: '#/components/schemas/builds_repo_id'
+        repo_name:
+          $ref: '#/components/schemas/builds_repo_name'
+    workers_ErrorInternalServer:
+      type: object
+      properties:
+        code:
+          description: Code indicating that an unknown internal server error has occurred.
+          type: integer
+          enum:
+          - 10002
+        message:
+          description: Message explaining that an unknown error occurred and providing guidance for reporting the issue.
+          type: string
+      required:
+      - code
+      - message
+    builds_created_on:
+      type: string
+      format: date-time
+    builds_modified_on:
+      type: string
+      format: date-time
+    builds_PaginationInfo:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 25
+        page:
+          type: integer
+          example: 1
+        per_page:
+          type: integer
+          example: 50
+        total_count:
+          type: integer
+          example: 150
+        total_pages:
+          type: integer
+          example: 3
+    builds_CreateWorkerRequest:
+      description: Request body for creating a Worker build configuration.
+      type: object
+      properties:
+        git_repository:
+          $ref: '#/components/schemas/builds_CreateWorkerGitRepositoryInput'
+        previews_base_config:
+          $ref: '#/components/schemas/builds_CreateWorkerBuildSettingsInput'
+        previews_enabled:
+          description: Whether Previews are enabled for this Worker
+          type: boolean
+          example: false
+        production_settings:
+          $ref: '#/components/schemas/builds_CreateWorkerBuildSettingsInput'
+        script_tag:
+          $ref: '#/components/schemas/builds_external_script_id'
+      required:
+      - script_tag
+      - git_repository
+      - production_settings
+      - previews_enabled
+      - previews_base_config
+    workers_ErrorWorkerInvalid:
+      type: object
+      properties:
+        code:
+          description: Code indicating that the Worker request contains invalid data.
+          type: integer
+          enum:
+          - 10021
+        message:
+          description: Message explaining why the Worker request is invalid, such as malformed JSON.
+          type: string
+      required:
+      - code
+      - message
+    builds_EnvironmentVariablesRequest:
+      description: Map of environment-variable names to build-time values. Names must begin with a letter or underscore and contain only letters, numbers, and underscores.
+      type: object
+      example:
+        API_KEY:
+          is_secret: true
+          value: secret-key
+        NODE_ENV:
+          is_secret: false
+          value: production
+      additionalProperties:
+        properties:
+          is_secret:
+            $ref: '#/components/schemas/builds_is_secret'
+          value:
+            description: Value made available to the build. Maximum length is 5000 characters.
+            type: string
+            example: production
+            maxLength: 5000
+        required:
+        - is_secret
+        - value
+        type: object
+    workers_PreviewsBaseConfig:
+      type: object
+      properties:
+        cache_options:
+          description: Cache options used when creating new Previews.
+          allOf:
+          - $ref: '#/components/schemas/workers_cache_options'
+        env:
+          description: Bindings used when creating new Previews, keyed by binding name.
+          allOf:
+          - $ref: '#/components/schemas/workers_env'
+        limits:
+          description: Resource limits enforced at runtime for newly created Previews.
+          allOf:
+          - $ref: '#/components/schemas/workers_limits'
+          x-stainless-terraform-configurability: computed_optional
+        logpush:
+          description: Whether logpush is enabled when creating new Previews.
+          type: boolean
+          x-auditable: true
+        observability:
+          description: Observability settings used when creating new Previews.
+          allOf:
+          - $ref: '#/components/schemas/workers_observability'
+        placement:
+          description: Placement configuration used when creating new Previews.
+          allOf:
+          - $ref: '#/components/schemas/workers_placement_info_no_status'
+        tail_consumers:
+          description: Other Workers that should consume logs from newly created Previews.
+          type: array
+          items:
+            properties:
+              name:
+                description: Name of the consumer Worker.
+                type: string
+                example: my-tail-consumer
+                x-auditable: true
+            required:
+            - name
+            type: object
+          x-stainless-collection-type: set
+    workers_ErrorAuth:
+      type: object
+      properties:
+        code:
+          description: Code indicating that the user is not authorized to perform this action.
+          type: integer
+          enum:
+          - 10023
+        message:
+          description: Message explaining that the user lacks access to this feature.
+          type: string
+      required:
+      - code
+      - message
+    builds_preview_auto_build:
+      description: Whether pushes to the git branch build this Preview. Deploy hooks, manual builds, and retries run regardless of this setting.
+      type: boolean
+      example: true
+    builds_provider_account_id:
+      description: Provider-specific identifier of the account or namespace that owns the repository.
+      type: string
+      example: cloudflare
+    builds_commit_hash:
+      description: Git commit hash
+      type: string
+      example: abc123def456
+    workers_identifier:
+      description: Identifier.
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      x-auditable: true
+    builds_deploy_hook_name:
+      description: Deploy hook name (1-58 characters).
+      type: string
+      example: Production Deploy Hook
+      maxLength: 58
+      minLength: 1
+    builds_WorkerBuildSettings:
+      description: Build and deploy settings for a Worker script environment
+      type: object
+      properties:
+        build_caching_enabled:
+          $ref: '#/components/schemas/builds_build_caching_enabled'
+        build_command:
+          $ref: '#/components/schemas/builds_build_command'
+        build_token_uuid:
+          $ref: '#/components/schemas/builds_build_token_uuid'
+        deploy_command:
+          $ref: '#/components/schemas/builds_deploy_command'
+        environment_variables:
+          $ref: '#/components/schemas/builds_EnvironmentVariablesResponse'
+        path_excludes:
+          $ref: '#/components/schemas/builds_path_excludes'
+        path_includes:
+          $ref: '#/components/schemas/builds_path_includes'
+        proposed_deploy_command:
+          description: Deploy command proposed for migrating this Worker to Previews. Only returned on previews_base_config, and only while the Worker still has a legacy non-production trigger to migrate. Null when the existing deploy command cannot be rewritten automatically, in which case migrate_to_previews needs an explicit deploy_command.
+          type:
+          - string
+          - 'null'
+          example: npx wrangler preview
+        root_directory:
+          $ref: '#/components/schemas/builds_root_directory'
+    builds_EnvironmentVariablesResponse:
+      type: object
+      example:
+        API_KEY:
+          created_on: '2023-01-01T00:00:00Z'
+          is_secret: true
+          value: null
+        NODE_ENV:
+          created_on: '2023-01-01T00:00:00Z'
+          is_secret: false
+          value: production
+      additionalProperties:
+        properties:
+          created_on:
+            $ref: '#/components/schemas/builds_created_on'
+          is_secret:
+            $ref: '#/components/schemas/builds_is_secret'
+          value:
+            description: Value is null for secret environment variables
+            type:
+            - string
+            - 'null'
+        required:
+        - is_secret
+        - created_on
+        type: object
+    workers_ErrorWorkerNamePreviewLengthLimit:
+      type: object
+      properties:
+        code:
+          description: Code indicating that the Worker name is too long to be used with previews enabled.
+          type: integer
+          enum:
+          - 100315
+        message:
+          description: Message explaining that Worker names with previews enabled cannot exceed 54 characters.
+          type: string
+      required:
+      - code
+      - message
+    builds_TriggerResponse:
+      type: object
+      properties:
+        branch_excludes:
+          $ref: '#/components/schemas/builds_branch_excludes'
+        branch_includes:
+          $ref: '#/components/schemas/builds_branch_includes'
+        build_caching_enabled:
+          $ref: '#/components/schemas/builds_build_caching_enabled'
+        build_command:
+          $ref: '#/components/schemas/builds_build_command'
+        build_token_name:
+          $ref: '#/components/schemas/builds_build_token_name'
+        build_token_uuid:
+          $ref: '#/components/schemas/builds_build_token_uuid'
+        created_on:
+          $ref: '#/components/schemas/builds_created_on'
+        deleted_on:
+          $ref: '#/components/schemas/builds_deleted_on'
+        deploy_command:
+          $ref: '#/components/schemas/builds_deploy_command'
+        external_script_id:
+          $ref: '#/components/schemas/builds_external_script_id'
+        modified_on:
+          $ref: '#/components/schemas/builds_modified_on'
+        path_excludes:
+          $ref: '#/components/schemas/builds_path_excludes'
+        path_includes:
+          $ref: '#/components/schemas/builds_path_includes'
+        repo_connection:
+          $ref: '#/components/schemas/builds_UpsertRepoConnectionResponse'
+        root_directory:
+          $ref: '#/components/schemas/builds_root_directory'
+        trigger_name:
+          $ref: '#/components/schemas/builds_trigger_name'
+        trigger_uuid:
+          $ref: '#/components/schemas/builds_trigger_uuid'
+    builds_build_uuid:
+      description: Build UUID.
+      type: string
+      format: uuid
+    workers_ErrorWorkerTagInvalid:
+      type: object
+      properties:
+        code:
+          description: Code indicating that the Worker has a tag containing invalid characters.
+          type: integer
+          enum:
+          - 100134
+        message:
+          description: Message explaining that tags cannot contain certain characters like comma or ampersand.
+          type: string
+      required:
+      - code
+      - message
+    builds_BuildSeedRepoInputFile:
+      type: object
+      properties:
+        content:
+          example: 'name = "my-worker"
+
+            main = "src/index.js"
+
+            '
+          type: string
+        filename:
+          type: string
+          example: wrangler.toml
+        isBase64:
+          description: Whether content is Base64-encoded.
+          type: boolean
+          default: false
+        replace:
+          description: Existing text in the target file to replace with content.
+          type: string
+      required:
+      - filename
+      - content
+    builds_CreateWorkerGitRepositoryInput:
+      discriminator:
+        mapping:
+          github: '#/components/schemas/builds_CreateWorkerGitRepositoryFunfettiInput'
+          gitlab: '#/components/schemas/builds_CreateWorkerGitRepositoryFunfettiInput'
+          gitlab_internal: '#/components/schemas/builds_CreateWorkerGitRepositoryGrantInput'
+          origin: '#/components/schemas/builds_CreateWorkerGitRepositoryGrantInput'
+        propertyName: provider_type
+      oneOf:
+      - $ref: '#/components/schemas/builds_CreateWorkerGitRepositoryFunfettiInput'
+      - $ref: '#/components/schemas/builds_CreateWorkerGitRepositoryGrantInput'
+    workers_placement_info_no_status:
+      description: Configuration for [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement). Specify mode='smart' for Smart Placement, or one of region/hostname/host.
+      type: object
+      oneOf:
+      - additionalProperties: false
+        properties:
+          mode:
+            description: Enables [Smart Placement](https://developers.cloudflare.com/workers/configuration/smart-placement).
+            type: string
+            enum:
+            - smart
+            x-auditable: true
+        required:
+        - mode
+        type: object
+      - additionalProperties: false
+        properties:
+          region:
+            description: Cloud region for targeted placement in format 'provider:region'.
+            type: string
+            example: aws:us-east-1
+            x-auditable: true
+        required:
+        - region
+        type: object
+      - additionalProperties: false
+        properties:
+          hostname:
+            description: HTTP hostname for targeted placement.
+            type: string
+            example: api.example.com
+            x-auditable: true
+        required:
+        - hostname
+        type: object
+      - additionalProperties: false
+        properties:
+          host:
+            description: TCP host and port for targeted placement.
+            type: string
+            example: db.example.com:5432
+            x-auditable: true
+        required:
+        - host
+        type: object
+      - additionalProperties: false
+        properties:
+          mode:
+            description: Targeted placement mode.
+            type: string
+            enum:
+            - targeted
+            x-auditable: true
+          region:
+            description: Cloud region for targeted placement in format 'provider:region'.
+            type: string
+            example: aws:us-east-1
+            x-auditable: true
+        required:
+        - mode
+        - region
+        type: object
+      - additionalProperties: false
+        properties:
+          hostname:
+            description: HTTP hostname for targeted placement.
+            type: string
+            example: api.example.com
+            x-auditable: true
+          mode:
+            description: Targeted placement mode.
+            type: string
+            enum:
+            - targeted
+            x-auditable: true
+        required:
+        - mode
+        - hostname
+        type: object
+      - additionalProperties: false
+        properties:
+          host:
+            description: TCP host and port for targeted placement.
+            type: string
+            example: db.example.com:5432
+            x-auditable: true
+          mode:
+            description: Targeted placement mode.
+            type: string
+            enum:
+            - targeted
+            x-auditable: true
+        required:
+        - mode
+        - host
+        type: object
+      - additionalProperties: false
+        properties:
+          mode:
+            description: Targeted placement mode.
+            type: string
+            enum:
+            - targeted
+            x-auditable: true
+          target:
+            description: Array of placement targets (currently limited to single target).
+            type: array
+            items:
+              $ref: '#/components/schemas/workers_placement_target'
+            maxItems: 1
+            minItems: 1
+            x-auditable: true
+        required:
+        - mode
+        - target
+        type: object
+    workers_Worker:
+      type: object
+      properties:
+        created_on:
+          description: When the Worker was created.
+          type: string
+          format: date-time
+          readOnly: true
+          x-auditable: true
+        deployed_on:
+          description: When the Worker's most recent deployment was created. `null` if the Worker has never been deployed.
+          type:
+          - string
+          - 'null'
+          format: date-time
+          readOnly: true
+        id:
+          description: Immutable ID of the Worker.
+          type: string
+          example: e8f70fdbc8b1fb0b8ddb1af166186758
+          readOnly: true
+          x-auditable: true
+        logpush:
+          description: Whether logpush is enabled for the Worker.
+          type: boolean
+          default: false
+          x-auditable: true
+        name:
+          description: Name of the Worker.
+          type: string
+          example: my-worker
+          pattern: ^[a-z0-9_][a-z0-9-_]*$
+          x-auditable: true
+        observability:
+          description: Observability settings for the Worker.
+          type: object
+          properties:
+            enabled:
+              description: Whether observability is enabled for the Worker.
+              type: boolean
+              default: false
+              x-auditable: true
+            head_sampling_rate:
+              description: The sampling rate for observability. From 0 to 1 (1 = 100%, 0.1 = 10%).
+              type: number
+              example: 1
+              default: 1
+              x-auditable: true
+            issues:
+              description: Real-time Issues settings for the Worker.
+              type:
+              - object
+              - 'null'
+              properties:
+                enabled:
+                  description: Whether real-time Issues are enabled for the Worker.
+                  type: boolean
+                  default: false
+                  x-auditable: true
+            logs:
+              description: Log settings for the Worker.
+              type: object
+              properties:
+                destinations:
+                  description: A list of destinations where logs will be exported to.
+                  type: array
+                  items:
+                    type: string
+                  default: []
+                  x-auditable: true
+                enabled:
+                  description: Whether logs are enabled for the Worker.
+                  type: boolean
+                  default: false
+                  x-auditable: true
+                head_sampling_rate:
+                  description: The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%).
+                  type: number
+                  example: 1
+                  default: 1
+                  x-auditable: true
+                invocation_logs:
+                  description: Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.
+                  type: boolean
+                  default: true
+                  x-auditable: true
+                persist:
+                  description: Whether log persistence is enabled for the Worker.
+                  type: boolean
+                  default: true
+                  x-auditable: true
+            redact_query_string:
+              description: Whether query strings are removed from request URLs in logs and traces.
+              type: boolean
+              default: false
+              x-auditable: true
+            traces:
+              description: Trace settings for the Worker.
+              type: object
+              properties:
+                destinations:
+                  description: A list of destinations where traces will be exported to.
+                  type: array
+                  items:
+                    type: string
+                  default: []
+                  x-auditable: true
+                enabled:
+                  description: Whether traces are enabled for the Worker.
+                  type: boolean
+                  default: false
+                  x-auditable: true
+                head_sampling_rate:
+                  description: The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%).
+                  type: number
+                  example: 1
+                  default: 1
+                  x-auditable: true
+                persist:
+                  description: Whether trace persistence is enabled for the Worker.
+                  type: boolean
+                  default: true
+                  x-auditable: true
+                propagation_policy:
+                  description: Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. "authenticated" honors inbound trace context only when accompanied by a valid trace auth token. "accept" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled. Returns null when the trace propagation feature is not enabled for the account.
+                  type:
+                  - string
+                  - 'null'
+                  enum:
+                  - authenticated
+                  - accept
+                  - null
+                  x-auditable: true
+        previews_base_config:
+          description: Template configuration used when creating new Previews for this Worker.
+          allOf:
+          - $ref: '#/components/schemas/workers_PreviewsBaseConfig'
+          x-auditable: true
+        references:
+          description: Other resources that reference the Worker and depend on it existing.
+          type: object
+          properties:
+            dispatch_namespace_outbounds:
+              description: Other Workers that reference the Worker as an outbound for a dispatch namespace.
+              type: array
+              items:
+                properties:
+                  namespace_id:
+                    description: ID of the dispatch namespace.
+                    type: string
+                    example: e8f70fdbc8b1fb0b8ddb1af166186758
+                  namespace_name:
+                    description: Name of the dispatch namespace.
+                    type: string
+                    example: my-dispatch-namespace
+                  worker_id:
+                    description: ID of the Worker using the dispatch namespace.
+                    type: string
+                    example: e8f70fdbc8b1fb0b8ddb1af166186758
+                  worker_name:
+                    description: Name of the Worker using the dispatch namespace.
+                    type: string
+                    example: my-worker
+                required:
+                - worker_id
+                - worker_name
+                - namespace_id
+                - namespace_name
+                type: object
+            domains:
+              description: Custom domains connected to the Worker.
+              type: array
+              items:
+                properties:
+                  certificate_id:
+                    description: ID of the TLS certificate issued for the custom domain.
+                    type: string
+                  hostname:
+                    description: Full hostname of the custom domain, including the zone name.
+                    type: string
+                    example: my-worker.example.com
+                  id:
+                    description: ID of the custom domain.
+                    type: string
+                    example: e8f70fdbc8b1fb0b8ddb1af166186758
+                  zone_id:
+                    description: ID of the zone.
+                    type: string
+                    example: e8f70fdbc8b1fb0b8ddb1af166186758
+                  zone_name:
+                    description: Name of the zone.
+                    type: string
+                    example: example.com
+                required:
+                - id
+                - hostname
+                - zone_id
+                - zone_name
+                - certificate_id
+                type: object
+            durable_objects:
+              description: Other Workers that reference Durable Object classes implemented by the Worker.
+              type: array
+              items:
+                properties:
+                  namespace_id:
+                    description: ID of the Durable Object namespace being used.
+                    type: string
+                    example: e8f70fdbc8b1fb0b8ddb1af166186758
+                  namespace_name:
+                    description: Name of the Durable Object namespace being used.
+                    type: string
+                    example: my-durable-object-namespace
+                  worker_id:
+                    description: ID of the Worker using the Durable Object implementation.
+                    type: string
+                    example: e8f70fdbc8b1fb0b8ddb1af166186758
+                  worker_name:
+                    description: Name of the Worker using the Durable Object implementation.
+                    type: string
+                    example: my-worker
+                required:
+                - worker_id
+                - worker_name
+                - namespace_id
+                - namespace_name
+                type: object
+            queues:
+              description: Queues that send messages to the Worker.
+              type: array
+              items:
+                properties:
+                  queue_consumer_id:
+                    description: ID of the queue consumer configuration.
+                    type: string
+                    example: e8f70fdbc8b1fb0b8ddb1af166186758
+                  queue_id:
+                    description: ID of the queue.
+                    type: string
+                    example: e8f70fdbc8b1fb0b8ddb1af166186758
+                  queue_name:
+                    description: Name of the queue.
+                    type: string
+                    example: my-queue
+                required:
+                - queue_id
+                - queue_name
+                - queue_consumer_id
+                type: object
+            workers:
+              description: Other Workers that reference the Worker using [service bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/).
+              type: array
+              items:
+                properties:
+                  id:
+                    description: ID of the referencing Worker.
+                    type: string
+                    example: e8f70fdbc8b1fb0b8ddb1af166186758
+                  name:
+                    description: Name of the referencing Worker.
+                    type: string
+                    example: my-worker
+                required:
+                - id
+                - name
+                type: object
+          readOnly: true
+          required:
+          - workers
+          - domains
+          - dispatch_namespace_outbounds
+          - durable_objects
+          - queues
+        subdomain:
+          description: Subdomain settings for the Worker.
+          type: object
+          properties:
+            enabled:
+              description: Whether the *.workers.dev subdomain is enabled for the Worker.
+              type: boolean
+              default: false
+              x-auditable: true
+            preview_url_suffix:
+              description: Prepend a version or preview prefix to this host suffix to form the *.workers.dev [preview URL](https://developers.cloudflare.com/workers/configuration/previews/) the Worker would serve on once previews are enabled, e.g. `https://<prefix>-my-worker.my-subdomain.workers.dev`. Present whenever the account owns a workers.dev subdomain, regardless of whether `previews_enabled` is true, so presence does not imply preview URLs are currently live. Absent only when the account owns no workers.dev subdomain.
+              type: string
+              example: -my-worker.my-subdomain.workers.dev
+              readOnly: true
+            previews_enabled:
+              description: Whether [preview URLs](https://developers.cloudflare.com/workers/configuration/previews/) are enabled for the Worker.
+              type: boolean
+              x-auditable: true
+              x-stainless-terraform-configurability: computed_optional
+            url:
+              description: The address the Worker would serve on once its *.workers.dev subdomain is enabled. Present whenever the account owns a workers.dev subdomain, regardless of whether `enabled` is true, so presence does not imply the Worker is currently live at this URL. Absent only when the account owns no workers.dev subdomain.
+              type: string
+              format: uri
+              example: https://my-worker.my-subdomain.workers.dev
+              readOnly: true
+        tags:
+          description: Tags associated with the Worker.
+          type: array
+          items:
+            maxLength: 1024
+            pattern: ^[^,&]*$
+            type: string
+          example:
+          - my-team
+          - my-public-api
+          default: []
+          maxItems: 8
+          x-stainless-collection-type: set
+        tail_consumers:
+          description: Other Workers that should consume logs from the Worker.
+          type: array
+          items:
+            properties:
+              name:
+                description: Name of the consumer Worker.
+                type: string
+                example: my-tail-consumer
+                x-auditable: true
+            required:
+            - name
+            type: object
+          default: []
+          x-stainless-collection-type: set
+        updated_on:
+          description: When the Worker was most recently updated.
+          type: string
+          format: date-time
+          readOnly: true
+          x-auditable: true
+      required:
+      - id
+      - name
+      - tags
+      - subdomain
+      - observability
+      - logpush
+      - tail_consumers
+      - created_on
+      - updated_on
+      - references
+    workers_env:
+      description: 'Bindings attached to a Worker, keyed by binding name. `bindings`
+
+        carries the same information as an array of objects that each
+
+        name themselves, and an upload can use one form or the other.
+
+        '
+      type: object
+      example:
+        MY_ENV_VAR:
+          text: my_data
+          type: plain_text
+      additionalProperties:
+        $ref: '#/components/schemas/workers_env_binding_item'
+    workers_env_binding_item:
+      description: 'A single entry in the `env` map. An entry holds the same payload
+
+        as an entry of `bindings` without the `name` property, because
+
+        the map key supplies the name. See `binding_item` for the payload
+
+        of each binding kind.
+
+        '
+      type: object
+      properties:
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          example: plain_text
+          x-auditable: true
+      additionalProperties: true
+      required:
+      - type
+    builds_deploy_command:
+      description: Command to deploy the Worker.
+      type: string
+      example: npx wrangler deploy
+    builds_repo_id:
+      description: Provider-specific repository identifier.
+      type: string
+      example: workers-sdk
+    builds_BuildOutcome:
+      type: string
+      example: success
+      enum:
+      - success
+      - fail
+      - skipped
+      - cancelled
+      - terminated
+    builds_branch_includes:
+      description: Branch patterns that can start builds.
+      type: array
+      items:
         type: string
+      example:
+      - main
+    workers_ErrorWorkerNameConflict:
+      type: object
+      properties:
+        code:
+          description: Code indicating that a Worker with this name already exists.
+          type: integer
+          enum:
+          - 10040
+        message:
+          description: Message explaining that the Worker name is already in use and suggesting to choose a different name.
+          type: string
+      required:
+      - code
+      - message
+    builds_WorkerResponse:
+      description: Worker build configuration including git repository linkage, production settings, and Preview settings
+      type: object
+      properties:
+        git_repository:
+          $ref: '#/components/schemas/builds_WorkerGitRepository'
+        previews_base_config:
+          $ref: '#/components/schemas/builds_WorkerBuildSettings'
+        previews_enabled:
+          description: Whether Previews are enabled for this Worker
+          type: boolean
+          example: false
+        production_settings:
+          $ref: '#/components/schemas/builds_WorkerBuildSettings'
+        script_tag:
+          $ref: '#/components/schemas/builds_external_script_id'
+    workers_messages:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          documentation_url:
+            type: string
+          message:
+            type: string
+          source:
+            type: object
+            properties:
+              pointer:
+                type: string
+        required:
+        - code
+        - message
+        type: object
+        uniqueItems: true
+      example: []
+    workers_api-response-common-failure:
+      type: object
+      properties:
+        errors:
+          example:
+          - code: 7003
+            message: No route for the URI
+          allOf:
+          - $ref: '#/components/schemas/workers_messages'
+          minLength: 1
+        messages:
+          example: []
+          allOf:
+          - $ref: '#/components/schemas/workers_messages'
+        result:
+          type:
+          - object
+          - 'null'
+          enum:
+          - null
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: false
+          enum:
+          - false
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    builds_trigger_name:
+      description: Human-readable name of the build trigger.
+      type: string
+      example: Production Deploy
+    builds_repo_name:
+      description: Human-readable repository name.
+      type: string
+      example: workers-sdk
+    builds_path_includes:
+      description: Path patterns that can start builds.
+      type: array
+      items:
+        type: string
+      example:
+      - '*'
+      default:
+      - '*'
+    workers_ErrorWorkerNameSubdomainLengthLimit:
+      type: object
+      properties:
+        code:
+          description: Code indicating that the Worker name is too long to be used as a subdomain.
+          type: integer
+          enum:
+          - 100132
+        message:
+          description: Message explaining that the Worker name exceeds the 63 character limit for subdomains.
+          type: string
+      required:
+      - code
+      - message
+    builds_path_excludes:
+      description: Path patterns that must not start builds.
+      type: array
+      items:
+        type: string
+      example:
+      - '*.md'
+    builds_build_token_name:
+      type: string
+      example: My Build Token
+    workers_ErrorWorkerNotFound:
+      type: object
+      properties:
+        code:
+          description: Code indicating that the Worker does not exist.
+          type: integer
+          enum:
+          - 10007
+        message:
+          description: Message explaining that the Worker was not found.
+          type: string
+      required:
+      - code
+      - message
+    builds_ApiError:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 12000
+        message:
+          type: string
+          example: Not found
+      required:
+      - message
+    builds_build_caching_enabled:
+      description: Whether builds reuse cached dependencies and build artifacts.
+      type: boolean
+      example: false
+      default: false
+    workers_ErrorWorkerTagLengthLimit:
+      type: object
+      properties:
+        code:
+          description: Code indicating that the Worker has a tag that exceeds the maximum tag length.
+          type: integer
+          enum:
+          - 100102
+        message:
+          description: Message explaining why the tag is too long, including the maximum tag length.
+          type: string
+      required:
+      - code
+      - message
+    workers_cache_options:
+      description: 'Global CacheW configuration for the Worker. When caching is on,
+
+        the platform provisions a `cloudflare.app` zone for the Worker.
+
+        A `type: worker` entry in the `exports` map can override this
+
+        value for a single entrypoint.
+
+        '
+      type: object
+      properties:
+        cross_version_cache:
+          description: 'Whether cached responses are shared across Worker version
+
+            uploads. This is independent of `enabled`. It can stay true
+
+            while caching is off, so the preference survives turning
+
+            caching off and back on.
+
+            '
+          type: boolean
+          example: true
+          default: false
+          x-auditable: true
+        enabled:
+          description: Whether caching is enabled for this Worker.
+          type: boolean
+          example: true
+          default: false
+          x-auditable: true
+      additionalProperties: false
+      required:
+      - enabled
+    workers_ErrorWorkerObservabilitySamplingRateInvalid:
+      type: object
+      properties:
+        code:
+          description: Code indicating that an observability sampling rate is invalid.
+          type: integer
+          enum:
+          - 100308
+        message:
+          description: Message explaining that sampling rates must be between 0 and 1 inclusive.
+          type: string
+      required:
+      - code
+      - message
+    builds_MigrateToPreviewsRequest:
+      description: Request body for migrating a Worker's legacy non-production trigger to Previews.
+      type: object
+      properties:
+        deploy_command:
+          description: Deploy command for the migrated Preview settings. Omit it to have the existing 'wrangler versions upload' command rewritten to 'wrangler preview' automatically, which fails with 400 when the existing command cannot be rewritten.
+          type: string
+          example: npx wrangler preview
+    builds_CreateWorkerGitRepositoryFunfettiInput:
+      description: GitHub or GitLab repository input for creating a Worker build configuration
+      type: object
+      properties:
+        branch:
+          description: Git branch to watch for builds
+          type: string
+          example: main
+          maxLength: 256
+          minLength: 1
+        provider_account_id:
+          $ref: '#/components/schemas/builds_provider_account_id'
+        provider_account_name:
+          $ref: '#/components/schemas/builds_provider_account_name'
+        provider_type:
+          type: string
+          example: github
+          enum:
+          - github
+          - gitlab
+        repo_id:
+          $ref: '#/components/schemas/builds_repo_id'
+        repo_name:
+          $ref: '#/components/schemas/builds_repo_name'
+      required:
+      - repo_id
+      - repo_name
+      - provider_type
+      - provider_account_id
+      - provider_account_name
+      - branch
+    builds_UpdatePreviewRequest:
+      description: Request body for updating a Preview. At least one field must be provided, and omitted fields are left unchanged.
+      type: object
+      properties:
+        auto_build:
+          $ref: '#/components/schemas/builds_preview_auto_build'
+        auto_delete:
+          $ref: '#/components/schemas/builds_preview_auto_delete'
+        branch:
+          description: Git branch this Preview tracks
+          type: string
+          example: feature-branch
+          maxLength: 256
+          minLength: 1
+        settings:
+          $ref: '#/components/schemas/builds_UpdateWorkerBuildSettingsInput'
+      minProperties: 1
+    workers_placement_target:
+      description: A target to run your Worker near.
+      type: object
+      oneOf:
+      - additionalProperties: false
+        properties:
+          region:
+            description: Cloud region in format 'provider:region'.
+            type: string
+            example: aws:us-east-1
+        required:
+        - region
+        type: object
+      - additionalProperties: false
+        properties:
+          hostname:
+            description: HTTP hostname for targeted placement.
+            type: string
+            example: api.example.com
+        required:
+        - hostname
+        type: object
+      - additionalProperties: false
+        properties:
+          host:
+            description: TCP host:port for targeted placement.
+            type: string
+            example: db.example.com:5432
+        required:
+        - host
+        type: object
+    workers_ErrorMissingParam:
+      type: object
+      properties:
+        code:
+          description: Code indicating that a required URL parameter is missing.
+          type: integer
+          enum:
+          - 10003
+        message:
+          description: Message explaining which required parameter is missing and suggesting to check the URL.
+          type: string
+      required:
+      - code
+      - message
+    builds_trigger_uuid:
+      description: Trigger UUID.
+      type: string
+      format: uuid
+    builds_UpdateWorkerBuildSettingsInput:
+      description: Partial build settings for updating a Worker build configuration
+      type: object
+      properties:
+        build_caching_enabled:
+          $ref: '#/components/schemas/builds_build_caching_enabled'
+        build_command:
+          $ref: '#/components/schemas/builds_build_command'
+        build_token_uuid:
+          $ref: '#/components/schemas/builds_build_token_uuid'
+        deploy_command:
+          $ref: '#/components/schemas/builds_deploy_command'
+        environment_variables:
+          description: Environment variable updates. Set the variable entry to null to delete it.
+          type: object
+          additionalProperties:
+            properties:
+              is_secret:
+                $ref: '#/components/schemas/builds_is_secret'
+              value:
+                description: Value made available to the build. Maximum length is 5000 characters.
+                type: string
+                maxLength: 5000
+            required:
+            - is_secret
+            - value
+            type:
+            - object
+            - 'null'
+        path_excludes:
+          $ref: '#/components/schemas/builds_path_excludes'
+        path_includes:
+          $ref: '#/components/schemas/builds_path_includes'
+        root_directory:
+          $ref: '#/components/schemas/builds_root_directory'
+      minProperties: 1
+    builds_deleted_on:
+      type:
+      - string
+      - 'null'
+      format: date-time
+    builds_branch:
+      description: Git branch name.
+      type: string
+      example: main
+    builds_PreviewSummary:
+      description: A single Preview of a Worker, without its build settings.
+      type: object
+      properties:
+        auto_build:
+          $ref: '#/components/schemas/builds_preview_auto_build'
+        auto_delete:
+          $ref: '#/components/schemas/builds_preview_auto_delete'
+        branch:
+          $ref: '#/components/schemas/builds_branch'
+        preview_id:
+          $ref: '#/components/schemas/builds_external_script_id'
+    workers_observability:
+      description: Observability settings for the Worker.
+      type: object
+      properties:
+        enabled:
+          description: Whether observability is enabled for the Worker.
+          type: boolean
+          default: false
+          x-auditable: true
+        head_sampling_rate:
+          description: The sampling rate for observability. From 0 to 1 (1 = 100%, 0.1 = 10%).
+          type: number
+          example: 1
+          default: 1
+          x-auditable: true
+        issues:
+          description: Real-time Issues settings for the Worker.
+          type:
+          - object
+          - 'null'
+          properties:
+            enabled:
+              description: Whether real-time Issues are enabled for the Worker.
+              type: boolean
+              default: false
+              x-auditable: true
+        logs:
+          description: Log settings for the Worker.
+          type: object
+          properties:
+            destinations:
+              description: A list of destinations where logs will be exported to.
+              type: array
+              items:
+                type: string
+              default: []
+              x-auditable: true
+            enabled:
+              description: Whether logs are enabled for the Worker.
+              type: boolean
+              default: false
+              x-auditable: true
+            head_sampling_rate:
+              description: The sampling rate for logs. From 0 to 1 (1 = 100%, 0.1 = 10%).
+              type: number
+              example: 1
+              default: 1
+              x-auditable: true
+            invocation_logs:
+              description: Whether [invocation logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/#invocation-logs) are enabled for the Worker.
+              type: boolean
+              default: true
+              x-auditable: true
+            persist:
+              description: Whether log persistence is enabled for the Worker.
+              type: boolean
+              default: true
+              x-auditable: true
+        redact_query_string:
+          description: Whether query strings are removed from request URLs in logs and traces.
+          type: boolean
+          default: false
+          x-auditable: true
+        traces:
+          description: Trace settings for the Worker.
+          type: object
+          properties:
+            destinations:
+              description: A list of destinations where traces will be exported to.
+              type: array
+              items:
+                type: string
+              default: []
+              x-auditable: true
+            enabled:
+              description: Whether traces are enabled for the Worker.
+              type: boolean
+              default: false
+              x-auditable: true
+            head_sampling_rate:
+              description: The sampling rate for traces. From 0 to 1 (1 = 100%, 0.1 = 10%).
+              type: number
+              example: 1
+              default: 1
+              x-auditable: true
+            persist:
+              description: Whether trace persistence is enabled for the Worker.
+              type: boolean
+              default: true
+              x-auditable: true
+            propagation_policy:
+              description: Controls how inbound trace context (traceparent/tracestate) headers on incoming requests are handled. "authenticated" honors inbound trace context only when accompanied by a valid trace auth token. "accept" unconditionally accepts inbound trace context. Requires the trace propagation feature to be enabled. Returns null when the trace propagation feature is not enabled for the account.
+              type:
+              - string
+              - 'null'
+              enum:
+              - authenticated
+              - accept
+              - null
+              x-auditable: true
+    workers_api-response-common:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/workers_messages'
+        messages:
+          $ref: '#/components/schemas/workers_messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: true
+          enum:
+          - true
+      required:
+      - success
+      - errors
+      - messages
+    builds_branch_excludes:
+      description: Branch patterns that must not start builds.
+      type: array
+      items:
+        type: string
+      example: []
+    workers_limits:
+      description: Limits to apply for this Worker.
+      type: object
+      properties:
+        cpu_ms:
+          description: The amount of CPU time this Worker can use in milliseconds.
+          type: integer
+          example: 50
+          x-auditable: true
+        subrequests:
+          description: The number of subrequests this Worker can make per request.
+          type: integer
+          example: 1000
+          x-auditable: true
+    builds_root_directory:
+      description: Repository directory in which build and deploy commands run.
+      type: string
+      example: /
+    builds_repo_connection_uuid:
+      description: Repository connection UUID.
+      type: string
+      format: uuid
+    builds_build_command:
+      description: Command to build the Worker.
+      type: string
+      example: npm run build
+    builds_BuildTriggerMetadataResponse:
+      type: object
+      properties:
+        author:
+          type: string
+          example: developer@cloudflare.com
+        branch:
+          $ref: '#/components/schemas/builds_branch'
+        build_command:
+          $ref: '#/components/schemas/builds_build_command'
+        build_token_name:
+          $ref: '#/components/schemas/builds_build_token_name'
+        build_token_uuid:
+          $ref: '#/components/schemas/builds_build_token_uuid'
+        build_trigger_source:
+          $ref: '#/components/schemas/builds_BuildTriggerSource'
+        commit_hash:
+          $ref: '#/components/schemas/builds_commit_hash'
+        commit_message:
+          type: string
+          example: Add new feature
+        deploy_command:
+          $ref: '#/components/schemas/builds_deploy_command'
+        environment_variables:
+          type: object
+          additionalProperties:
+            type: string
+        provider_account_name:
+          $ref: '#/components/schemas/builds_provider_account_name'
+        provider_type:
+          $ref: '#/components/schemas/builds_SCMProviderType'
+        repo_name:
+          $ref: '#/components/schemas/builds_repo_name'
+        root_directory:
+          $ref: '#/components/schemas/builds_root_directory'
+    builds_CreateWorkerGitRepositoryGrantInput:
+      description: Grant-backed repository input for creating a Worker build configuration
+      type: object
+      properties:
+        branch:
+          description: Git branch to watch for builds
+          type: string
+          example: main
+          maxLength: 256
+          minLength: 1
+        grant_id:
+          description: Grant ID required for grant-backed providers
+          type: string
+          example: grant-123
+          minLength: 1
+        provider_account_id:
+          $ref: '#/components/schemas/builds_provider_account_id'
+        provider_account_name:
+          $ref: '#/components/schemas/builds_provider_account_name'
+        provider_type:
+          type: string
+          example: gitlab_internal
+          enum:
+          - gitlab_internal
+          - origin
+        repo_id:
+          $ref: '#/components/schemas/builds_repo_id'
+        repo_name:
+          $ref: '#/components/schemas/builds_repo_name'
+      required:
+      - repo_id
+      - repo_name
+      - provider_type
+      - provider_account_id
+      - provider_account_name
+      - branch
+      - grant_id
+    builds_provider_account_name:
+      description: Human-readable name of the account or namespace that owns the repository.
+      type: string
+      example: Cloudflare
+    builds_BuildStatus:
+      type: string
+      example: running
+      enum:
+      - queued
+      - initializing
+      - running
+      - stopped
+    builds_UpsertRepoConnectionResponse:
+      type: object
+      properties:
+        created_on:
+          $ref: '#/components/schemas/builds_created_on'
+        deleted_on:
+          $ref: '#/components/schemas/builds_deleted_on'
+        modified_on:
+          $ref: '#/components/schemas/builds_modified_on'
+        provider_account_id:
+          $ref: '#/components/schemas/builds_provider_account_id'
+        provider_account_name:
+          $ref: '#/components/schemas/builds_provider_account_name'
+        provider_type:
+          $ref: '#/components/schemas/builds_SCMProviderType'
+        repo_connection_uuid:
+          $ref: '#/components/schemas/builds_repo_connection_uuid'
+        repo_id:
+          $ref: '#/components/schemas/builds_repo_id'
+        repo_name:
+          $ref: '#/components/schemas/builds_repo_name'
+    builds_account_id:
+      description: Account identifier.
+      type: string
+      example: account-123
+    workers_ErrorWorkerTagLimit:
+      type: object
+      properties:
+        code:
+          description: Code indicating that the Worker has exceeded the maximum number of tags allowed.
+          type: integer
+          enum:
+          - 100103
+        message:
+          description: Message explaining that the tag limit has been exceeded and suggesting to remove a tag.
+          type: string
+      required:
+      - code
+      - message
+    builds_external_script_id:
+      description: System-generated tag of the Worker. This is not the Worker name.
+      type: string
+      example: dd7160bb9cef458093557736f4b9e75b
+    builds_BuildTriggerSource:
+      type: string
+      example: push
+      enum:
+      - push
+      - pull_request
+      - manual
+      - api
+    builds_BuildResponse:
+      type: object
+      properties:
+        build_outcome:
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/builds_BuildOutcome'
+        build_trigger_metadata:
+          $ref: '#/components/schemas/builds_BuildTriggerMetadataResponse'
+        build_uuid:
+          $ref: '#/components/schemas/builds_build_uuid'
+        created_on:
+          $ref: '#/components/schemas/builds_created_on'
+        deploy_hook:
+          type:
+          - object
+          - 'null'
+          properties:
+            deploy_hook_name:
+              $ref: '#/components/schemas/builds_deploy_hook_name'
+        initializing_on:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        modified_on:
+          $ref: '#/components/schemas/builds_modified_on'
+        preview_url:
+          description: URL serving the Worker version this build deployed. Only returned by Get build by UUID, and only once the build has produced a preview artifact.
+          type: string
+          format: uri
+          example: https://abc123-my-worker.my-subdomain.workers.dev
+        pull_request:
+          type:
+          - object
+          - 'null'
+          properties:
+            closed_on:
+              type:
+              - string
+              - 'null'
+              format: date-time
+            created_on:
+              $ref: '#/components/schemas/builds_created_on'
+            pull_request_url:
+              type: string
+              format: uri
+              example: https://github.com/cloudflare/workers-sdk/pull/123
+        running_on:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        status:
+          $ref: '#/components/schemas/builds_BuildStatus'
+        stopped_on:
+          $ref: '#/components/schemas/builds_stopped_on'
+        trigger:
+          description: Trigger information without build_token_uuid
+          type: object
+          properties:
+            branch_excludes:
+              $ref: '#/components/schemas/builds_branch_excludes'
+            branch_includes:
+              $ref: '#/components/schemas/builds_branch_includes'
+            build_caching_enabled:
+              $ref: '#/components/schemas/builds_build_caching_enabled'
+            build_command:
+              $ref: '#/components/schemas/builds_build_command'
+            created_on:
+              $ref: '#/components/schemas/builds_created_on'
+            deleted_on:
+              $ref: '#/components/schemas/builds_deleted_on'
+            deploy_command:
+              $ref: '#/components/schemas/builds_deploy_command'
+            external_script_id:
+              $ref: '#/components/schemas/builds_external_script_id'
+            modified_on:
+              $ref: '#/components/schemas/builds_modified_on'
+            path_excludes:
+              $ref: '#/components/schemas/builds_path_excludes'
+            path_includes:
+              $ref: '#/components/schemas/builds_path_includes'
+            repo_connection:
+              $ref: '#/components/schemas/builds_UpsertRepoConnectionResponse'
+            root_directory:
+              $ref: '#/components/schemas/builds_root_directory'
+            trigger_name:
+              $ref: '#/components/schemas/builds_trigger_name'
+            trigger_uuid:
+              $ref: '#/components/schemas/builds_trigger_uuid'
+    builds_PreviewResponse:
+      description: A single Preview of a Worker, with the build settings it currently uses.
+      type: object
+      properties:
+        auto_build:
+          $ref: '#/components/schemas/builds_preview_auto_build'
+        auto_delete:
+          $ref: '#/components/schemas/builds_preview_auto_delete'
+        branch:
+          $ref: '#/components/schemas/builds_branch'
+        preview_id:
+          $ref: '#/components/schemas/builds_external_script_id'
+        settings:
+          $ref: '#/components/schemas/builds_WorkerBuildSettings'
+    builds_ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/builds_ApiError'
+        messages:
+          type: array
+          items:
+            type: string
+          example: []
+        result:
+          type:
+          - object
+          - 'null'
+        success:
+          type: boolean
+          example: false
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    workers_ErrorWorkerLimit:
+      type: object
+      properties:
+        code:
+          description: Code indicating that the account has exceeded the maximum number of Workers allowed.
+          type: integer
+          enum:
+          - 10037
+        message:
+          description: Message explaining that the Worker limit has been exceeded and providing guidance.
+          type: string
+      required:
+      - code
+      - message
+    builds_stopped_on:
+      type:
+      - string
+      - 'null'
+      format: date-time
+  parameters:
     AccountId:
       name: account_id
       in: path
@@ -304,11 +2767,168 @@ components:
       description: The unique identifier of the Cloudflare account.
       schema:
         type: string
+    WorkerId:
+      name: worker_id
+      in: path
+      required: true
+      description: The unique identifier of the Worker.
+      schema:
+        type: string
+    builds_ScriptTag:
+      description: The Worker script tag (external script ID)
+      in: path
+      name: script_tag
+      required: true
+      schema:
+        $ref: '#/components/schemas/builds_external_script_id'
+    builds_Page:
+      description: Page number for pagination
+      in: query
+      name: page
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+    builds_PreviewId:
+      description: The script tag of the Preview, which is a Worker in its own right
+      in: path
+      name: preview_id
+      required: true
+      schema:
+        $ref: '#/components/schemas/builds_external_script_id'
+    builds_AccountId:
+      in: path
+      name: account_id
+      required: true
+      schema:
+        $ref: '#/components/schemas/builds_account_id'
+    builds_PerPage:
+      description: Number of items per page
+      in: query
+      name: per_page
+      schema:
+        type: integer
+        default: 50
+        maximum: 200
+        minimum: 1
+  responses:
+    workers_ErrorInternalServer:
+      description: Internal Server Error - An unexpected server error occurred.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/workers_api-response-common-failure'
+            - properties:
+                errors:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/workers_ErrorInternalServer'
+              required:
+              - errors
+              type: object
+    builds_Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          example:
+            errors:
+            - code: 12005
+              message: Missing token from authorization header
+            messages: []
+            result: null
+            success: false
+          schema:
+            $ref: '#/components/schemas/builds_ErrorResponse'
+    builds_NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          example:
+            errors:
+            - code: 12000
+              message: Not found
+            messages: []
+            result: null
+            success: false
+          schema:
+            $ref: '#/components/schemas/builds_ErrorResponse'
+    workers_ErrorWorkerNotFound:
+      description: Not Found - Worker does not exist.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/workers_api-response-common-failure'
+            - properties:
+                errors:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/workers_ErrorWorkerNotFound'
+              required:
+              - errors
+              type: object
+    builds_Conflict:
+      description: Conflict - duplicate resource
+      content:
+        application/json:
+          example:
+            errors:
+            - code: 12049
+              message: Resource already exists
+            messages: []
+            result: null
+            success: false
+          schema:
+            $ref: '#/components/schemas/builds_ErrorResponse'
+    builds_BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          example:
+            errors:
+            - code: 12002
+              message: Invalid request body
+            messages: []
+            result: null
+            success: false
+          schema:
+            $ref: '#/components/schemas/builds_ErrorResponse'
+    workers_ErrorAuth:
+      description: Authentication required or insufficient permissions.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/workers_api-response-common-failure'
+            - properties:
+                errors:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/workers_ErrorAuth'
+              required:
+              - errors
+              type: object
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       description: API token authentication with Workers permissions.
-externalDocs:
-  description: Cloudflare Workers API Documentation
-  url: https://developers.cloudflare.com/api/resources/workers/
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+x-refined-from:
+- cloudflare-workers-openapi.yml
+- cloudflare-openapi.json

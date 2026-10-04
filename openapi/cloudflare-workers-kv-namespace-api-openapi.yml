@@ -1,0 +1,2127 @@
+openapi: 3.2.0
+info:
+  description: Welcome to Cloudflare's API documentation site.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  title: Cloudflare Workers KV Namespace API
+  version: 4.0.0
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Workers KV Namespace
+paths:
+  /accounts/{account_id}/storage/kv/namespaces:
+    get:
+      operationId: workers-kv-namespace-list-namespaces
+      summary: List namespaces
+      description: Lists Workers KV namespaces owned by the specified account. Use `page` and `per_page` to select a page of results, and `order` and `direction` to control sorting.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_identifier'
+      - name: page
+        in: query
+        schema:
+          description: Page number of paginated results.
+          type: number
+          default: 1
+          minimum: 1
+      - name: per_page
+        in: query
+        schema:
+          description: Maximum number of results per page.
+          type: number
+          default: 20
+          maximum: 1000
+          minimum: 1
+      - name: order
+        in: query
+        schema:
+          description: Namespace field to sort by (`id` or `title`).
+          type: string
+          example: id
+          enum:
+          - id
+          - title
+      - name: direction
+        in: query
+        schema:
+          description: Sort namespaces in ascending (`asc`) or descending (`desc`) order.
+          type: string
+          example: asc
+          enum:
+          - asc
+          - desc
+      responses:
+        '200':
+          description: List Namespaces response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_api-response-collection'
+                - properties:
+                    result:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/workers-kv_namespace'
+                  type: object
+        4XX:
+          description: List Namespaces response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers-kv_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers KV Namespace
+      x-api-token-group:
+      - Workers KV Storage Write
+      - Workers KV Storage Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: kv.namespaces
+      x-fern-sdk-method-name: list
+    post:
+      operationId: workers-kv-namespace-create-a-namespace
+      summary: Create a namespace
+      description: Creates a Workers KV namespace in the specified account with the given title. Returns `400` if the account already owns a namespace with that title; an existing namespace must be explicitly deleted before it can be replaced. An optional jurisdiction restricts where data is durably stored and can only be set at creation time.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/workers-kv_create_namespace_body'
+      responses:
+        '200':
+          description: Create a Namespace response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_api-response-common'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/workers-kv_namespace'
+                  type: object
+        4XX:
+          description: Create a Namespace response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers-kv_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers KV Namespace
+      x-api-token-group:
+      - Workers KV Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: kv.namespaces
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}:
+    delete:
+      operationId: workers-kv-namespace-remove-a-namespace
+      summary: Delete a namespace
+      description: Deletes the specified Workers KV namespace and its stored key-value pairs from the account.
+      parameters:
+      - name: namespace_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_namespace_identifier'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Remove a Namespace response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers-kv_api-response-common-no-result'
+        4XX:
+          description: Remove a Namespace response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers-kv_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers KV Namespace
+      x-api-token-group:
+      - Workers KV Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: kv.namespaces
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the selected Workers KV namespace and all of its key-value pairs.
+    get:
+      operationId: workers-kv-namespace-get-a-namespace
+      summary: Get a namespace
+      description: Returns the Workers KV namespace for the specified account and namespace ID.
+      parameters:
+      - name: namespace_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_namespace_identifier'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_identifier'
+      responses:
+        '200':
+          description: Get a Namespace response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_api-response-common'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/workers-kv_namespace'
+                  type: object
+        4XX:
+          description: Get a Namespace response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers-kv_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers KV Namespace
+      x-api-token-group:
+      - Workers KV Storage Write
+      - Workers KV Storage Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: kv.namespaces
+      x-fern-sdk-method-name: get
+    put:
+      operationId: workers-kv-namespace-rename-a-namespace
+      summary: Rename a namespace
+      description: Changes the title of the specified Workers KV namespace and returns the updated namespace. The namespace ID and stored key-value pairs are unchanged.
+      parameters:
+      - name: namespace_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_namespace_identifier'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/workers-kv_create_rename_namespace_body'
+      responses:
+        '200':
+          description: Rename a Namespace response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_api-response-common'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/workers-kv_namespace'
+                  required:
+                  - result
+                  type: object
+        4XX:
+          description: Rename a Namespace response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers-kv_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers KV Namespace
+      x-api-token-group:
+      - Workers KV Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: kv.namespaces
+      x-fern-sdk-method-name: update
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk:
+    delete:
+      operationId: workers-kv-namespace-delete-multiple-key-value-pairs-deprecated
+      summary: Delete multiple key-value pairs
+      description: Remove multiple KV pairs from the namespace. Body should be an array of up to 10,000 keys to be removed.
+      parameters:
+      - name: namespace_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_namespace_identifier'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/workers-kv_bulk_delete'
+      responses:
+        '200':
+          description: Delete multiple key-value pairs response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_api-response-common-no-result'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/workers-kv_bulk-result'
+                  type: object
+        4XX:
+          description: Delete multiple key-value pairs response failure.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_api-response-common-no-result'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/workers-kv_bulk-result'
+                  type: object
+      deprecated: true
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers KV Namespace
+      x-api-token-group:
+      - Workers KV Storage Write
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: kv.bulk-deprecated
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
+    put:
+      operationId: workers-kv-namespace-write-multiple-key-value-pairs
+      summary: Write multiple key-value pairs
+      description: Writes up to 10,000 key-value pairs to the specified Workers KV namespace from a JSON array, with optional metadata and expiration settings for each pair. Existing values and expirations are overwritten. If neither `expiration` nor `expiration_ttl` is specified, the key-value pair will not expire. If both are set, `expiration_ttl` takes precedence. The entire request must be 100 megabytes or less. The result reports the number of successful writes and any keys that failed and should be retried.
+      parameters:
+      - name: namespace_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_namespace_identifier'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/workers-kv_bulk_write'
+      responses:
+        '200':
+          description: Write multiple key-value pairs response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_api-response-common-no-result'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/workers-kv_bulk-result'
+                  type: object
+        4XX:
+          description: Write multiple key-value pairs response failure.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_api-response-common-no-result'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/workers-kv_bulk-result'
+                  type: object
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers KV Namespace
+      x-api-token-group:
+      - Workers KV Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: kv.bulk
+      x-fern-sdk-method-name: put
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk/delete:
+    post:
+      operationId: workers-kv-namespace-delete-multiple-key-value-pairs
+      summary: Delete multiple key-value pairs
+      description: Deletes up to 10,000 key-value pairs from the specified Workers KV namespace. Send a JSON array of the key names to delete. The result reports the number of successful deletions and any keys that failed and should be retried.
+      parameters:
+      - name: namespace_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_namespace_identifier'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/workers-kv_bulk_delete'
+      responses:
+        '200':
+          description: Delete multiple key-value pairs response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_api-response-common-no-result'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/workers-kv_bulk-result'
+                  type: object
+        4XX:
+          description: Delete multiple key-value pairs response failure.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_api-response-common-no-result'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/workers-kv_bulk-result'
+                  type: object
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers KV Namespace
+      x-api-token-group:
+      - Workers KV Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: kv.bulk
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the specified keys and their values from the Workers KV namespace.
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/bulk/get:
+    post:
+      operationId: workers-kv-namespace-get-multiple-key-value-pairs
+      summary: Get multiple key-value pairs
+      description: Retrieves the text-based values of up to 100 keys from the specified Workers KV namespace. The result maps each requested key to its value. Set `type` to `json` to parse JSON values instead of returning strings, and set `withMetadata` to `true` to include metadata with each value. Binary values are not supported by this operation.
+      parameters:
+      - name: namespace_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_namespace_identifier'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                keys:
+                  description: Array of keys to retrieve (maximum of 100).
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/workers-kv_key_name_bulk'
+                  maxItems: 100
+                type:
+                  description: Return values as strings with `text`, or parse stored JSON values with `json`.
+                  type: string
+                  default: text
+                  enum:
+                  - text
+                  - json
+                withMetadata:
+                  description: Whether to include metadata in the response.
+                  type: boolean
+                  default: false
+              required:
+              - keys
+      responses:
+        '200':
+          description: Get multiple key-value pairs response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_api-response-common-no-result'
+                - properties:
+                    result:
+                      oneOf:
+                      - $ref: '#/components/schemas/workers-kv_bulk-get-result'
+                      - $ref: '#/components/schemas/workers-kv_bulk-get-result-with-metadata'
+                  type: object
+        4XX:
+          description: Get multiple key-value pairs response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers-kv_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers KV Namespace
+      x-api-token-group:
+      - Workers KV Storage Write
+      - Workers KV Storage Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: kv.bulk
+      x-fern-sdk-method-name: get
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/keys:
+    get:
+      operationId: workers-kv-namespace-list-a-namespace'-s-keys
+      summary: List keys in a namespace
+      description: Lists key names in the specified Workers KV namespace, with expiration times and metadata when present. Use `prefix` to filter names and `cursor` to request the next page. Values are not included.
+      parameters:
+      - name: namespace_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_namespace_identifier'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_identifier'
+      - name: limit
+        in: query
+        schema:
+          description: Maximum number of keys to return in one response. Pass `result_info.cursor` from the response as `cursor` to request the next page.
+          type: number
+          default: 1000
+          maximum: 1000
+          minimum: 10
+      - name: prefix
+        in: query
+        schema:
+          description: Filters returned keys by a name prefix. Exact matches and any key names that begin with the prefix will be returned.
+          type: string
+          example: My-Prefix
+      - name: cursor
+        in: query
+        schema:
+          description: Opaque pagination token from `result_info.cursor` in the previous response. Pass it unchanged to request the next page of keys.
+          type: string
+          example: 6Ck1la0VxJ0djhidm1MdX2FyDGxLKVeeHZZmORS_8XeSuhz9SjIJRaSa2lnsF01tQOHrfTGAP3R5X1Kv5iVUuMbNKhWNAXHOl6ePB0TUL8nw
+          x-stainless-pagination-property:
+            purpose: next_cursor_param
+      responses:
+        '200':
+          description: List a Namespace's Keys response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_api-response-common'
+                - properties:
+                    result:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/workers-kv_key'
+                      x-stainless-pagination-property:
+                        purpose: items
+                    result_info:
+                      $ref: '#/components/schemas/workers-kv_cursor_result_info'
+                  type: object
+        4XX:
+          description: List a Namespace's Keys response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers-kv_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers KV Namespace
+      x-api-token-group:
+      - Workers KV Storage Write
+      - Workers KV Storage Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: kv.keys
+      x-fern-sdk-method-name: list
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/metadata/{key_name}:
+    get:
+      operationId: workers-kv-namespace-read-the-metadata-for-a-key
+      summary: Get a key's metadata
+      description: Returns the JSON metadata associated with the specified key in the Workers KV namespace, without retrieving its value. Use URL-encoding for special characters (for example, `:`, `!`, `%`) in the key name when constructing the request URL.
+      parameters:
+      - name: key_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_key_name'
+      - name: namespace_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_namespace_identifier'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_identifier'
+      responses:
+        '200':
+          description: Read the metadata for a key response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_api-response-common'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/workers-kv_list_metadata'
+                  type: object
+        4XX:
+          description: Read the metadata for a key response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers-kv_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers KV Namespace
+      x-api-token-group:
+      - Workers KV Storage Write
+      - Workers KV Storage Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: kv.metadata
+      x-fern-sdk-method-name: get
+  /accounts/{account_id}/storage/kv/namespaces/{namespace_id}/values/{key_name}:
+    delete:
+      operationId: workers-kv-namespace-delete-key-value-pair
+      summary: Delete a key-value pair
+      description: Deletes the specified key and its value from the Workers KV namespace. Use URL-encoding for special characters (for example, `:`, `!`, `%`) in the key name when constructing the request URL.
+      parameters:
+      - name: key_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_key_name'
+      - name: namespace_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_namespace_identifier'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Delete key-value pair response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers-kv_api-response-common-no-result'
+        4XX:
+          description: Delete key-value pair response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers-kv_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers KV Namespace
+      x-api-token-group:
+      - Workers KV Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: kv.keys
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the selected key-value pair from the Workers KV namespace.
+    get:
+      operationId: workers-kv-namespace-read-key-value-pair
+      summary: Get a key's value
+      description: Returns the value stored under the specified key in the Workers KV namespace as raw bytes. Use URL-encoding for special characters (for example, `:`, `!`, `%`) in the key name when constructing the request URL. If the key-value pair expires, the `expiration` response header contains its expiration time in seconds since the UNIX epoch.
+      parameters:
+      - name: key_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_key_name'
+      - name: namespace_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_namespace_identifier'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_identifier'
+      responses:
+        '200':
+          description: Read key-value pair response.
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/workers-kv_value'
+        4XX:
+          description: Read key-value pair response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers-kv_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers KV Namespace
+      x-api-token-group:
+      - Workers KV Storage Write
+      - Workers KV Storage Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: kv.keys
+      x-fern-sdk-method-name: get
+    put:
+      operationId: workers-kv-namespace-write-key-value-pair-with-metadata
+      summary: Write a key-value pair with optional metadata
+      description: Writes a value under the specified key in the Workers KV namespace, creating the key-value pair or replacing its existing value, expiration, and metadata. Send the value as an `application/octet-stream` request body, or use `multipart/form-data` with a `value` part and an optional JSON `metadata` part. Use URL-encoding for special characters (for example, `:`, `!`, `%`) in the key name when constructing the request URL. If neither `expiration` nor `expiration_ttl` is specified, the key-value pair will not expire. If both are set, `expiration_ttl` takes precedence.
+      parameters:
+      - name: key_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_key_name'
+      - name: namespace_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_namespace_identifier'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers-kv_identifier'
+      - name: expiration
+        in: query
+        schema:
+          $ref: '#/components/schemas/workers-kv_expiration'
+      - name: expiration_ttl
+        in: query
+        schema:
+          $ref: '#/components/schemas/workers-kv_expiration_ttl'
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              $ref: '#/components/schemas/workers-kv_value'
+            x-stainless-only:
+            - http
+          multipart/form-data:
+            encoding:
+              metadata:
+                contentType: application/json
+            schema:
+              type: object
+              properties:
+                metadata:
+                  $ref: '#/components/schemas/workers-kv_metadata'
+                value:
+                  $ref: '#/components/schemas/workers-kv_value'
+              required:
+              - value
+      responses:
+        '200':
+          description: Write key-value pair with metadata response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers-kv_api-response-common-no-result'
+        4XX:
+          description: Write key-value pair with metadata response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers-kv_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Workers KV Namespace
+      x-api-token-group:
+      - Workers KV Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: kv.keys
+      x-fern-sdk-method-name: put
+components:
+  schemas:
+    workers-kv_jurisdiction:
+      description: Specify the jurisdiction to restrict the KV namespace to durably store data within. Can only be set at namespace creation time.
+      type: string
+      example: eu
+      enum:
+      - eu
+      - fedramp
+      - us
+      x-auditable: true
+    workers-kv_api-response-collection:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/workers-kv_api-response-common'
+      - properties:
+          result_info:
+            $ref: '#/components/schemas/workers-kv_result_info'
+        type: object
+    workers-kv_api-response-common:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/workers-kv_messages'
+        messages:
+          $ref: '#/components/schemas/workers-kv_messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: true
+          enum:
+          - true
+      required:
+      - success
+      - errors
+      - messages
+    workers-kv_bulk_write:
+      type: array
+      items:
+        properties:
+          base64:
+            description: Indicates whether or not the server should base64 decode the value before storing it. Useful for writing values that wouldn't otherwise be valid JSON strings, such as images.
+            type: boolean
+            default: false
+          expiration:
+            $ref: '#/components/schemas/workers-kv_expiration'
+          expiration_ttl:
+            $ref: '#/components/schemas/workers-kv_expiration_ttl'
+          key:
+            $ref: '#/components/schemas/workers-kv_key_name_bulk'
+          metadata:
+            $ref: '#/components/schemas/workers-kv_list_metadata'
+          value:
+            description: A UTF-8 encoded string to be stored, up to 25 MiB in length.
+            type: string
+            example: Some string
+            maxLength: 26214400
+        required:
+        - key
+        - value
+        type: object
+      maxItems: 10000
+    workers-kv_any:
+      anyOf:
+      - type: string
+      - type: number
+      - type: integer
+      - type: boolean
+      - additionalProperties: true
+        type:
+        - object
+        - 'null'
+      - items:
+          $ref: '#/components/schemas/workers-kv_any'
+        type: array
+      x-stainless-override-schema:
+        type: unknown
+    workers-kv_bulk-get-result-with-metadata:
+      type: object
+      properties:
+        values:
+          description: Requested keys are paired with their values and metadata in an object.
+          type: object
+          example:
+            key1:
+              expiration: 1577836800
+              metadata:
+                someMetadataKey: someMetadataValue
+              value: value1
+            key2:
+              metadata:
+                anotherKey: anotherValue
+              value: value2
+          additionalProperties:
+            properties:
+              expiration:
+                $ref: '#/components/schemas/workers-kv_expiration'
+              metadata:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_any'
+                - description: The metadata associated with the key.
+              value:
+                allOf:
+                - $ref: '#/components/schemas/workers-kv_any'
+                - description: The value associated with the key.
+            required:
+            - value
+            - metadata
+            type:
+            - object
+            - 'null'
+    workers-kv_namespace:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/workers-kv_namespace_identifier'
+        jurisdiction:
+          $ref: '#/components/schemas/workers-kv_jurisdiction'
+        mode:
+          $ref: '#/components/schemas/workers-kv_namespace_mode'
+        supports_url_encoding:
+          description: True if keys written on the URL will be URL-decoded before storing. For example, if set to "true", a key written on the URL as "%3F" will be stored as "?".
+          type: boolean
+          example: true
+          readOnly: true
+          x-auditable: true
+        title:
+          $ref: '#/components/schemas/workers-kv_namespace_title'
+      required:
+      - id
+      - title
+    workers-kv_bulk-result:
+      type: object
+      properties:
+        successful_key_count:
+          description: Number of keys successfully written or deleted by the bulk operation.
+          type: number
+          example: 100
+        unsuccessful_keys:
+          description: Names of keys that failed to be written or deleted. Retry the operation for these keys.
+          type: array
+          items:
+            type: string
+    workers-kv_key_name_bulk:
+      description: A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid.
+      type: string
+      example: My-Key
+      maxLength: 512
+    workers-kv_result_info:
+      type: object
+      properties:
+        count:
+          description: Total number of results for the requested service.
+          type: number
+          example: 1
+        page:
+          description: Current page within paginated list of results.
+          type: number
+          example: 1
+        per_page:
+          description: Number of results per page of results.
+          type: number
+          example: 20
+        total_count:
+          description: Total results available without any search parameters.
+          type: number
+          example: 2000
+    workers-kv_create_namespace_body:
+      type: object
+      properties:
+        jurisdiction:
+          $ref: '#/components/schemas/workers-kv_jurisdiction'
+        mode:
+          description: The mode of the Workers KV namespace. Specify `instant` when creating a namespace to create a KV Instant namespace. Omit this field when creating a namespace to create a classic namespace. Currently, `instant` is the only supported explicit value.
+          type: string
+          example: instant
+          enum:
+          - instant
+          x-fern-property-name: namespaceMode
+        title:
+          $ref: '#/components/schemas/workers-kv_namespace_title'
+      required:
+      - title
+    workers-kv_cursor:
+      description: Opaque pagination token returned in `result_info.cursor`. Pass it unchanged as the `cursor` query parameter to request the next page of keys.
+      type: string
+      example: 6Ck1la0VxJ0djhidm1MdX2FyDGxLKVeeHZZmORS_8XeSuhz9SjIJRaSa2lnsF01tQOHrfTGAP3R5X1Kv5iVUuMbNKhWNAXHOl6ePB0TUL8nw
+      x-stainless-pagination-property:
+        purpose: next_cursor_field
+    workers-kv_value:
+      description: A byte sequence to be stored, up to 25 MiB in length.
+      example: Some Value
+      anyOf:
+      - type: string
+      - format: binary
+        type: string
+    workers-kv_messages:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          message:
+            type: string
+        required:
+        - code
+        - message
+        type: object
+      example: []
+      uniqueItems: true
+    workers-kv_list_metadata:
+      allOf:
+      - $ref: '#/components/schemas/workers-kv_any'
+      - description: Arbitrary JSON that is associated with a key.
+        example:
+          someMetadataKey: someMetadataValue
+    workers-kv_namespace_identifier:
+      description: ID of the Workers KV namespace.
+      type: string
+      example: 0f2ac74b498b48028cb68387c421e279
+      maxLength: 32
+      readOnly: true
+      x-auditable: true
+    workers-kv_metadata:
+      allOf:
+      - $ref: '#/components/schemas/workers-kv_any'
+      - description: Associates arbitrary JSON data with a key/value pair.
+        example:
+          someMetadataKey: someMetadataValue
+    workers-kv_namespace_mode:
+      description: The mode of the Workers KV namespace. Specify `instant` when creating a namespace to create a KV Instant namespace. Omit this field when creating a namespace to create a classic namespace. Currently, `instant` is the only supported explicit value.
+      type: string
+      example: instant
+      enum:
+      - instant
+    workers-kv_expiration_ttl:
+      description: Number of seconds until the key expires. Must be at least 60. Takes precedence over `expiration` when both are specified.
+      type: number
+      example: 300
+      minimum: 60
+    workers-kv_bulk_delete:
+      type: array
+      items:
+        $ref: '#/components/schemas/workers-kv_key_name_bulk'
+      maxItems: 10000
+    workers-kv_namespace_title:
+      description: Human-readable string name for a Workers KV namespace.
+      type: string
+      example: My Own Namespace
+      maxLength: 512
+      x-auditable: true
+    workers-kv_key:
+      description: A name for a value. A value stored under a given key may be retrieved via the same key.
+      type: object
+      properties:
+        expiration:
+          description: The time, measured in number of seconds since the UNIX epoch, at which the key will expire. This property is omitted for keys that will not expire.
+          type: number
+          example: 1577836800
+        metadata:
+          $ref: '#/components/schemas/workers-kv_list_metadata'
+        name:
+          $ref: '#/components/schemas/workers-kv_key_name'
+      required:
+      - name
+    workers-kv_key_name:
+      description: A key's name. The name may be at most 512 bytes. All printable, non-whitespace characters are valid. Use percent-encoding to define key names as part of a URL.
+      type: string
+      example: My-Key
+      maxLength: 512
+    workers-kv_api-response-common-failure:
+      type: object
+      properties:
+        errors:
+          example:
+          - code: 7003
+            message: No route for the URI
+          allOf:
+          - $ref: '#/components/schemas/workers-kv_messages'
+          minLength: 1
+        messages:
+          example: []
+          allOf:
+          - $ref: '#/components/schemas/workers-kv_messages'
+        result:
+          type:
+          - object
+          - 'null'
+          x-stainless-empty-object: true
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: false
+          enum:
+          - false
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    workers-kv_bulk-get-result:
+      type: object
+      properties:
+        values:
+          description: Requested keys are paired with their values in an object.
+          type: object
+          example:
+            key1: value1
+            key2: value2
+          additionalProperties:
+            description: The value associated with the key.
+            oneOf:
+            - type: string
+            - type: number
+            - type: boolean
+            - additionalProperties: true
+              type: object
+    workers-kv_api-response-common-no-result:
+      allOf:
+      - $ref: '#/components/schemas/workers-kv_api-response-common'
+      - properties:
+          result:
+            type:
+            - object
+            - 'null'
+            x-stainless-empty-object: true
+        type: object
+    workers-kv_cursor_result_info:
+      type: object
+      properties:
+        count:
+          description: Total results returned based on your list parameters.
+          type: number
+          example: 1
+        cursor:
+          $ref: '#/components/schemas/workers-kv_cursor'
+    workers-kv_create_rename_namespace_body:
+      type: object
+      properties:
+        title:
+          $ref: '#/components/schemas/workers-kv_namespace_title'
+      required:
+      - title
+    workers-kv_identifier:
+      description: ID of the Cloudflare account that owns the Workers KV namespaces.
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      readOnly: true
+      x-auditable: true
+    workers-kv_expiration:
+      description: Expires the key at a certain time, measured in number of seconds since the UNIX epoch.
+      type: number
+      example: 1578435000
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-forge-commands:
+  abuse-reports:
+    description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
+    groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
+      emails:
+        description: Emails sent for abuse reports
+      mitigations:
+        description: Mitigation actions taken in response to abuse reports
+  accounts:
+    description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
+    groups:
+      applications:
+        description: Applications operations
+      categories:
+        description: Categories operations
+      organizations:
+        description: Move accounts between organizations
+      profile:
+        description: View and manage the profile for a Cloudflare account
+      roles:
+        description: View the roles available for assigning to account members, each defining a set of permissions
+      subscriptions:
+        description: View and manage plan subscriptions attached to this account
+      tokens:
+        description: Create and manage scoped API tokens for programmatic access to the Cloudflare API
+  ai-gateway:
+    description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
+    groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
+      datasets:
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
+      dynamic-routing:
+        description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
+      evaluation-types:
+        description: 'Deprecated: list the evaluator types that evaluations can use'
+      evaluations:
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
+      logs:
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
+  ai-search:
+    description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
+    groups:
+      items:
+        description: Content indexed by AI Search instances
+      jobs:
+        description: Indexing job lifecycle for AI Search instances
+      namespace:
+        description: Logical groupings for organizing AI Search instances
+      tokens:
+        description: Credentials used by AI Search instances
+  ai-security:
+    description: Detect prompt injection, PII, and unsafe topics in traffic to your AI applications
+    groups:
+      custom-topics:
+        description: Organization-specific topic categories used by AI Security for Apps content detection
+  analytics:
+    description: Zone-level traffic analytics — dashboard summaries, per-colo breakdowns, and Argo latency metrics
+    groups:
+      colo:
+        description: Per-data-center (colo) traffic analytics breakdown for the zone
+      dashboard:
+        description: Aggregated zone dashboard analytics — requests, bandwidth, threats, and page views
+      latency:
+        description: Argo Smart Routing latency analytics showing time-to-first-byte improvements
+  argo:
+    description: Network optimization features that speed up and improve reliability of traffic to your origins
+    groups:
+      smart-routing:
+        description: Route traffic through the fastest network paths to your origin using real-time latency data
+      tiered-caching:
+        description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  billing:
+    description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
+    groups:
+      profiles:
+        description: Billing profile with payment method, address, and invoice preferences
+      usage:
+        description: Metered usage data for billed services — requests, bandwidth, and feature consumption
+  botnet-feed:
+    description: Botnet threat intelligence feeds — IP and ASN-level data on known command-and-control infrastructure
+    groups:
+      asn:
+        description: ASN-level botnet activity data showing networks with known C2 infrastructure
+      configs:
+        description: Botnet feed subscription configuration and notification preferences
+  builds:
+    description: Build and deploy Workers from connected repositories, then inspect build status and logs.
+    groups:
+      deploy-hooks:
+        description: Manage branch-specific HTTP hooks that start builds.
+      limits:
+        description: View build-minute availability and refresh information.
+      logs:
+        description: Retrieve build logs.
+      repos:
+        description: Manage source repository connections for Workers Builds.
+      tokens:
+        description: Manage credentials used by Workers Builds to deploy Workers.
+      triggers:
+        description: Configure how repository changes build and deploy Workers.
+      versions:
+        description: Find builds associated with Worker versions.
+      workers:
+        description: Manage repository-backed build configuration for Workers.
+  cache:
+    description: Purge cached content and configure Cache Reserve, tiered caching, and variant serving
+    groups:
+      origin-cloud-regions:
+        description: Manage Origin Cloud Regions routing and failover configurations
+      settings:
+        description: Configure Cache Reserve, tiered caching, and variant serving
+      settings.regional-tiered-cache:
+        description: Restrict tiered cache topology to data centers within a specific geographic region
+      settings.reserve:
+        description: Persistent storage tier that keeps cached assets even after eviction from edge caches
+      settings.smart-tiered-cache:
+        description: Automatically determine the best upper-tier data centers for tiered cache topology
+      settings.variants:
+        description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
+  client-side-security:
+    description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
+    groups:
+      connections:
+        description: Third-party connections made by scripts on your pages — track data exfiltration risks
+      cookies:
+        description: Cookies set by your pages with classification and same-site attribute tracking
+      policies:
+        description: Content Security Policies that control which scripts and connections are allowed on your pages
+      scripts:
+        description: JavaScript files detected on your pages with change tracking and malicious code detection
+      settings:
+        description: Fine tune Client-Side Security behaviors
+  cloud-connector:
+    description: Route traffic from Cloudflare directly to cloud provider services (AWS, Azure, GCP) without origin servers
+    groups:
+      rules:
+        description: Routing rules that map request patterns to cloud provider endpoints
+  cloudforce-one:
+    description: Detection rule management APIs
+    groups:
+      binary-storage:
+        description: Upload and retrieve malware samples and suspicious binaries for analysis
+      requests:
+        description: Additional request operations — priority listing and asset creation
+      rules:
+        description: Rule management operations
+        groups:
+          approvals:
+            description: Approval workflow operations
+          email:
+            description: Email rule operations
+          exemptions:
+            description: Exemption rule operations
+          managed:
+            description: Managed rule operations
+          stats:
+            description: Rule statistics operations
+          tree:
+            description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
+  containers:
+    description: Deploy and manage Containers applications on Cloudflare's global network
+    groups:
+      applications:
+        description: Manage Containers applications
+      applications.instances:
+        description: Inspect Containers instances belonging to applications
+      applications.rollouts:
+        description: Manage rollouts for scheduler-backed applications
+      applications.versions:
+        description: Inspect versions of scheduler-backed applications
+      registries:
+        description: Manage Containers image registries
+      registries.credentials:
+        description: Generate image registry credentials
+  content-scan:
+    description: Malicious uploads detection, scan uploaded content in HTTP requests for malware and malicious payloads
+    groups:
+      expressions:
+        description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
+  custom-pages:
+    description: Manage custom error and challenge pages and their assets for accounts and zones
+    groups:
+      account-custom-pages:
+        description: Manage account-level custom pages
+      account-custom-pages.preview-tokens:
+        description: Preview tokens for account-level custom pages
+      assets:
+        description: Manage account- and zone-level custom assets
+      zone-custom-pages:
+        description: Manage zone-level custom pages
+      zone-custom-pages.preview-tokens:
+        description: Preview tokens for zone-level custom pages
+  d1:
+    description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
+    groups:
+      time-travel:
+        description: use specific point-in-time backups of your D1 database
+        x-forge-epilogue: For more information about Time Travel, see https://developers.cloudflare.com/d1/reference/time-travel
+  diagnostics:
+    description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
+    groups:
+      endpoint-healthchecks:
+        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+      traceroutes:
+        description: Run traceroutes from Cloudflare data centers to diagnose network path issues
+  email-routing:
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
+    groups:
+      addresses:
+        description: Verified destination email addresses that can receive forwarded mail
+      dns:
+        description: Inspect or unlock the DNS records required by Email Routing
+      rules:
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
+  email-security:
+    description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
+    groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
+      investigate:
+        description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
+      phishguard:
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
+      settings:
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
+      submissions:
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
+  email-sending:
+    description: Send transactional email and manage sending subdomains and their DNS configuration
+    groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
+      subdomains:
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
+  filters:
+    description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
+  firewall:
+    description: Legacy firewall rules, zone lockdowns, access rules, user-agent blocking, and WAF packages
+    groups:
+      access-rules:
+        description: IP-based access rules that allow, block, challenge, or whitelist traffic globally or per-zone
+      lockdowns:
+        description: Zone lockdown rules that restrict access to URLs by IP address or range
+      rules:
+        description: Legacy firewall rules with filter expressions — prefer Rulesets for new configurations
+      ua-rules:
+        description: Block or challenge requests based on the User-Agent header string
+      waf:
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
+      zone-access-rules:
+        description: Zone-scoped IP access rules for blocking or allowing traffic
+  google-tag-gateway:
+    description: Google Tag Gateway operations
+    groups:
+      config:
+        description: Google Tag Gateway config operations
+  healthchecks:
+    description: Standalone health checks that monitor origin server availability from Cloudflare's edge
+    groups:
+      previews:
+        description: Test a health check configuration before deploying it to production
+  hyperdrive:
+    description: Accelerate access to existing databases by caching queries and pooling connections at the edge
+  iam:
+    description: Identity and access management — permission groups, resource groups, user groups, and SSO connectors
+    groups:
+      permission-groups:
+        description: View the permission groups that can be assigned to API tokens and policies
+      resource-groups:
+        description: Define scopes that limit which account resources a policy or token can access
+      sso:
+        description: Configure single sign-on connectors to authenticate account members through an external identity provider
+      user-groups:
+        description: Organize account members into groups for easier permission assignment
+  images:
+    description: Store, resize, and deliver optimized images globally — variants, signing keys, and direct uploads
+    groups:
+      flows:
+        description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
+      keys:
+        description: Manage signing keys for generating private image URLs
+      variants:
+        description: Manage named resize variants for transforming images on delivery
+  intel:
+    description: Threat intelligence lookups — IP reputation, domain info, ASN details, WHOIS, and indicator feeds
+    groups:
+      asn:
+        description: ASN intelligence — ownership, geolocation, and subnet details for autonomous systems
+      attack-surface-report:
+        description: Attack surface intelligence — exposed assets, vulnerabilities, and infrastructure mapping
+      dns:
+        description: Passive DNS data showing historical DNS resolution records for domains
+      domain-history:
+        description: Historical domain registration and categorization changes over time
+      domains:
+        description: Domain intelligence — risk scores, categories, and associated infrastructure
+      indicator-feeds:
+        description: Threat indicator feeds — subscribe to and manage curated lists of malicious IPs, domains, and URLs
+      ip-lists:
+        description: Curated IP lists used for threat detection and policy enforcement
+      ips:
+        description: IP address intelligence — geolocation, risk assessment, and hosting provider details
+      miscategorizations:
+        description: Report and track domain miscategorization corrections
+      whois:
+        description: WHOIS registration data for domains including registrant, registrar, and nameservers
+  k2:
+    description: Durable, ordered event streams that you produce records to and consume from with subscriptions
+    groups:
+      streams:
+        description: K2 streams, their retention, and the HTTP and Workers binding inputs used to produce records
+      streams.subscriptions:
+        description: Subscriptions that consume a K2 stream, with committed-position lag
+  leaked-credential-checks:
+    description: Detect compromised credentials in login requests by checking against known breach databases
+    groups:
+      detections:
+        description: Custom detection locations that tell the WAF where to find usernames and passwords in requests
+  load-balancers:
+    description: Distribute traffic across origin pools with health monitoring, geo-steering, and failover
+    groups:
+      monitor-groups:
+        description: Group monitors together for shared configuration and bulk management
+      monitor-groups.references:
+        description: List references to monitor groups used by load balancer pools
+      monitors:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.previews:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.references:
+        description: Health check configurations that probe origin servers and determine pool availability
+      pools:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.health:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.references:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      previews:
+        description: Preview the result of a health check monitor configuration before applying it
+      regions:
+        description: Geographic regions used for regional pool steering and traffic policies
+      searches:
+        description: Search across all load balancer resources (pools, monitors, load balancers) by name or reference
+  logs:
+    description: Log control, retention, and raw log access — CMB config, ray ID lookups, and received fields
+    groups:
+      control:
+        description: Log control operations
+      received:
+        description: Received log operations
+  magic-network-monitoring:
+    description: Flow-based network traffic monitoring with configurable alerting rules and VPC flow ingestion
+    groups:
+      configs:
+        description: Account-level monitoring configuration — sampling rates, thresholds, and notification settings
+      rules:
+        description: Monitoring rules that define traffic thresholds and trigger alerts or prefix advertisements
+      vpc-flows:
+        description: Ingest VPC flow logs from cloud providers for network visibility and anomaly detection
+  magic-transit:
+    description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
+    groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
+      apps:
+        description: Application-aware traffic policies for Magic WAN that steer traffic by app type
+      bgp-filter-profiles:
+        description: BGP filter profiles for controlling which routes are allowed or denied on Magic Transit tunnels
+      bgp-settings:
+        description: BGP settings for controlling default ASN and route redistribution on Magic Transit tunnels
+      cf-interconnects:
+        description: Cloudflare Network Interconnect (CNI) links for direct physical or virtual peering
+      gre-tunnels:
+        description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
+      ipsec-tunnels:
+        description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
+      routes:
+        description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
+      sites:
+        description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
+  mcp:
+    description: Manage MCP portals and upstream MCP servers for Cloudflare Access AI controls
+    groups:
+      portals:
+        description: Manage MCP portals, attached servers, and Code Mode settings
+      servers:
+        description: Manage upstream MCP servers, credentials, capabilities, and sync state
+  network-interconnects:
+    description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
+    groups:
+      cnis:
+        description: Cloud Network Interconnect (CNI) connections — private links from cloud providers to Cloudflare
+      interconnects:
+        description: Physical cross-connect and partner interconnect sessions with LOA and status tracking
+      settings:
+        description: Account-level interconnect settings and default configurations
+      slots:
+        description: Available interconnect facility slots showing port capacity at Cloudflare data centers
+  organizations:
+    description: Multi-user organizations that group accounts, members, and shared settings under a single entity
+    groups:
+      account-organizations:
+        description: List organizations associated with a specific account
+      accounts:
+        description: Accounts operations
+      members:
+        description: Members operations
+      members-batch-create:
+        description: Members Batch Create operations
+      organization-profile:
+        description: View and update the public profile information for an organization
+      shares:
+        description: Shares operations
+  origin-post-quantum-encryption:
+    description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
+  pages:
+    description: Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains
+    groups:
+      projects:
+        description: Pages projects, deployments, build logs, and custom domain bindings
+  pipelines:
+    description: Ingest, transform, and route event streams into R2, analytics, or other destinations in real time
+    groups:
+      sinks:
+        description: Destinations where pipeline data is written — R2 buckets, HTTP endpoints, or other storage
+      streams:
+        description: Inbound data streams that feed events into a pipeline for processing
+  precursor:
+    description: Precursor settings for a zone
+  queues:
+    description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
+    groups:
+      consumers:
+        description: Workers that automatically receive and process messages from a queue
+      messages:
+        description: Push messages to a queue and pull or acknowledge them from consumers
+      purge:
+        description: Remove all pending messages from a queue
+      subscriptions:
+        description: Manage queue subscriptions for event-driven message routing
+  r2:
+    description: S3-compatible object storage with zero egress fees — buckets, lifecycle rules, event notifications, and data migration
+    groups:
+      buckets:
+        description: Create and configure R2 buckets including CORS, lifecycle, custom domains, event notifications, and object locks
+      buckets.jobs:
+        description: Create and inspect background jobs for an R2 bucket
+      buckets.local-uploads:
+        description: R2 bucket local upload configuration
+      super-slurper:
+        description: Migrate data from external S3-compatible storage into R2 buckets with resumable transfer jobs
+      temporary-credentials:
+        description: Generate short-lived S3-compatible credentials scoped to specific buckets and operations
+  r2-data-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  radar:
+    description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
+    groups:
+      agent-readiness:
+        description: Agent readiness summary statistics across the Cloudflare network
+      ai:
+        description: AI inference trends and model usage statistics across the Cloudflare network
+      annotations:
+        description: Radar annotations marking significant Internet events (outages, cable cuts, etc.)
+      as112:
+        description: AS112 DNS sinkhole statistics — reverse DNS query volumes for private address space
+      attacks:
+        description: DDoS and application-layer attack trends, vectors, and target analysis
+      bgp:
+        description: BGP routing data — prefix announcements, AS-level stats, route leaks, and hijack events
+      bots:
+        description: Internet-wide bot traffic trends, categories, and distribution statistics
+      ct:
+        description: Certificate Transparency log monitoring and newly-issued certificate discovery
+      datasets:
+        description: Downloadable Radar datasets for offline analysis and research
+      dns:
+        description: Global DNS query trends — top domains, resolver stats, and DNSSEC adoption
+      email:
+        description: Email security trends — DMARC/SPF/DKIM adoption, spam, and phishing statistics
+      entities:
+        description: Look up ASNs, IPs, domains, and locations with metadata and traffic summaries
+      geolocations:
+        description: Geographic location metadata used for regional traffic analysis
+      http:
+        description: HTTP protocol trends — TLS versions, HTTP versions, browser share, and OS distribution
+      leaked-credentials:
+        description: Leaked credential detection trends and exposure statistics
+      netflows:
+        description: Network-layer traffic flow data and volumetric trend analysis
+      origins:
+        description: Cloud and hosting origin providers (e.g. Amazon, by region) and their traffic metrics
+      post-quantum:
+        description: Post-quantum encryption adoption and deployment trends across the Internet
+      quality:
+        description: Internet connection quality metrics — speed, latency, and jitter by geography and ASN
+      ranking:
+        description: Top domain rankings based on DNS query popularity across the Cloudflare network
+      robots-txt:
+        description: Robots.txt adoption and crawler directive trends across the web
+      search:
+        description: Search Radar data across IPs, ASNs, domains, and locations
+      tcp-resets-timeouts:
+        description: TCP connection reset and timeout statistics indicating network health issues
+      tlds:
+        description: Top-level domain (TLD) metadata and performance trends
+      traffic-anomalies:
+        description: Detected traffic anomalies and unusual patterns in Internet traffic flows
+      verified-bots:
+        description: Catalog of known good bots (Googlebot, Bingbot, etc.) and their traffic patterns
+  rate-limits:
+    description: Legacy per-zone rate limiting rules — prefer Advanced Rate Limiting in Rulesets for new configurations
+  realtime:
+    description: Real-time audio, video, and data services on Cloudflare's global network
+    groups:
+      kit:
+        description: SDK-backed meetings, participants, recordings, livestreams, and webhooks
+      kit.analytics:
+        description: Usage and livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams:
+        description: Livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams.daily:
+        description: Daily livestream analytics for RealtimeKit applications
+      kit.analytics.usage:
+        description: Usage analytics for RealtimeKit applications
+      kit.apps:
+        description: RealtimeKit applications that group meetings, sessions, and configuration
+      kit.livestreams:
+        description: Independent and meeting-based livestreams and their sessions
+      kit.livestreams.sessions:
+        description: Sessions for RealtimeKit livestreams
+      kit.meetings:
+        description: Meetings, participants, access tokens, and meeting livestreams
+      kit.meetings.active:
+        description: Live meeting state and participant controls
+      kit.meetings.active.polls:
+        description: Polls for active meeting sessions
+      kit.meetings.livestream:
+        description: Livestream operations associated with RealtimeKit meetings
+      kit.meetings.participants:
+        description: Participants in RealtimeKit meetings
+      kit.meetings.participants.tokens:
+        description: Access tokens for RealtimeKit meeting participants
+      kit.presets:
+        description: Reusable meeting configuration for media, permissions, and interface behavior
+      kit.recordings:
+        description: Meeting and participant-track recordings and recording controls
+      kit.recordings.active:
+        description: Active recordings for RealtimeKit meetings
+      kit.recordings.tracks:
+        description: Participant-track recordings for RealtimeKit meetings
+      kit.sessions:
+        description: Historical session data, participants, chat, transcripts, and summaries
+      kit.sessions.chat:
+        description: Chat messages from historical RealtimeKit sessions
+      kit.sessions.livestreams:
+        description: Livestreams associated with historical RealtimeKit sessions
+      kit.sessions.participants:
+        description: Participants in historical RealtimeKit sessions
+      kit.sessions.peers:
+        description: Peer details from historical RealtimeKit sessions
+      kit.sessions.summaries:
+        description: Summaries of historical RealtimeKit sessions
+      kit.sessions.transcripts:
+        description: Transcripts from historical RealtimeKit sessions
+      kit.webhooks:
+        description: Webhook endpoints and supported events for RealtimeKit notifications
+      kit.webhooks.events:
+        description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
+  request-tracers:
+    description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
+    groups:
+      traces:
+        description: Simulate request processing to debug rule matches, transforms, and routing decisions
+  resource-sharing:
+    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    groups:
+      recipients:
+        description: Update share recipients
+      resources:
+        description: Individual resources (zones, configs) that have been shared with recipients
+  rules:
+    description: Resources used by Cloudflare rules and rulesets
+    groups:
+      lists:
+        description: Custom account-level lists of IPs, hostnames, ASNs, or redirects used in rule expressions
+  rum:
+    description: Real User Measurement (Web Analytics) — track page loads, Core Web Vitals, and visitor metrics
+    groups:
+      rules:
+        description: Rules that control which pages and paths are tracked by Web Analytics
+      site-info:
+        description: Web Analytics sites — register domains and get the JavaScript beacon snippet
+  scim:
+    description: SCIM 2.0 provisioning — manage users, groups, and identity provider sync for your account
+    groups:
+      groups:
+        description: Groups operations
+      resource-types:
+        description: Resource Types operations
+      schemas:
+        description: Schemas operations
+      service-provider-config:
+        description: Service Provider Config operations
+      users:
+        description: Users operations
+  secrets-store:
+    description: Centralized secret management — store API keys, tokens, and credentials for use across Workers and other products
+    groups:
+      quota:
+        description: Account quota limits for secrets stores, secrets count, and storage capacity
+      secrets:
+        description: Encrypted key-value secrets within a store. Pass --store-id to scope.
+      stores:
+        description: Secret stores that hold encrypted key-value secrets accessible by Workers and services
+  security-center:
+    description: Security posture dashboard — view and manage security insights, misconfigurations, and vulnerabilities
+    groups:
+      insights:
+        description: Security findings and recommendations across your account — DNS, SSL, WAF misconfigurations, etc.
+      zone-insights:
+        description: Zone-scoped security insights — counts by class, severity, type, and dismissal
+  security-txt:
+    description: Manage the /.well-known/security.txt file that tells security researchers how to report vulnerabilities
+  smart-shield:
+    description: Smart Shield settings, health checks, and cache reserve management
+    groups:
+      cache-reserve-clear:
+        description: Cache Reserve Clear operations
+      health-checks:
+        description: Health checks operations
+  spectrum:
+    description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
+    groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
+      apps:
+        description: Spectrum application configurations that map protocols and ports to origin servers
+  speed:
+    description: Observatory speed tests — run Lighthouse audits, track performance trends, and schedule recurring tests
+    groups:
+      availabilities:
+        description: Check which speed test regions and configurations are available for your zone
+      pages:
+        description: Tested pages with their performance history, trends, and individual test results
+      schedule:
+        description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
+  stream:
+    description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
+    groups:
+      audio-tracks:
+        description: Add, edit, or remove additional audio tracks on a video
+      captions:
+        description: Upload, generate, or retrieve captions and subtitles for videos in multiple languages
+      clip:
+        description: Create a new video clip from an existing video by specifying start and end times
+      copy:
+        description: Import a video from a URL into Stream for processing and delivery
+      direct-upload:
+        description: Generate a tokenized URL that lets end-users upload video directly to Stream
+      downloads:
+        description: Create downloadable MP4 renditions of a video for offline viewing
+      embed:
+        description: Retrieve the HTML embed code snippet for a video
+      keys:
+        description: Signing keys used to generate short-lived signed URLs for private video playback
+      live-inputs:
+        description: Enable and disable live input streams
+      token:
+        description: Generate short-lived signed URL tokens for secure private video playback
+      typed-downloads:
+        description: Type-specific stream download creation and deletion
+      videos:
+        description: Aggregate video storage usage statistics for the account
+      watermarks:
+        description: Watermark profiles that overlay an image on every video in the account
+      webhooks:
+        description: Webhook notifications for video lifecycle events (ready, error, etc.)
+  tenants:
+    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    groups:
+      account-types:
+        description: Account Types operations
+      accounts:
+        description: Accounts operations
+      entitlements:
+        description: Entitlements operations
+      memberships:
+        description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
+  url-scanner:
+    description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
+    groups:
+      response:
+        description: Response operations
+      responses:
+        description: Raw HTTP response data captured during URL scans
+      scan:
+        description: Scan operations
+      scans:
+        description: URL scan requests and results — submit URLs for analysis and retrieve threat verdicts
+  user:
+    description: Your Cloudflare user profile, invitations, organizations, billing, and personal API tokens
+    groups:
+      billing:
+        description: View billing history and payment profile for your user (deprecated — prefer account-level billing)
+      firewall:
+        description: Firewall operations
+      load-balancers.monitors:
+        description: Load Balancers operations
+      load-balancers.monitors.preview:
+        description: Load Balancers operations
+      load-balancers.monitors.references:
+        description: Load Balancers operations
+      load-balancers.pools:
+        description: Load Balancers operations
+      load-balancers.pools.edit.pools:
+        description: Load Balancers operations
+      load-balancers.pools.health:
+        description: Load Balancers operations
+      load-balancers.pools.preview:
+        description: Load Balancers operations
+      load-balancers.pools.references:
+        description: Load Balancers operations
+      load-balancers.preview:
+        description: Load Balancers operations
+      load-balancing-analytics.events:
+        description: Load Balancing Analytics operations
+      subscriptions:
+        description: View and manage zone-level plan subscriptions owned by your user
+      tenants:
+        description: Tenants operations
+      tokens:
+        description: Create and manage personal API tokens scoped to your user for programmatic API access
+  user.analytics:
+    description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
+  waiting-rooms:
+    description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
+    groups:
+      account-waiting-rooms:
+        description: Account-scoped waiting room listing
+      events:
+        description: Scheduled events that temporarily override waiting room settings for sales, launches, etc.
+      page:
+        description: Custom HTML waiting page templates and preview rendering
+      rules:
+        description: Rules that bypass or modify waiting room behavior for specific request patterns
+      settings:
+        description: Zone-level waiting room defaults and cookie configuration
+      statuses:
+        description: Real-time queue status showing active users, queued users, and estimated wait times
+  workflows:
+    description: Durable, multi-step workflows that run on Workers with automatic retries and state persistence
+    groups:
+      instances:
+        description: Workflow instance operations
+      versions:
+        description: Workflow version operations
+  zaraz:
+    description: Server-side tag manager — load third-party tools (analytics, pixels, etc.) from Cloudflare's edge without client-side JS
+    groups:
+      config:
+        description: Full Zaraz configuration including tools, triggers, and variables for the zone
+      default:
+        description: Default Zaraz configuration template used as a starting point for new zones
+      export:
+        description: Export the current Zaraz configuration as a portable JSON document
+      history:
+        description: Configuration version history — browse and restore previous Zaraz configurations
+      publish:
+        description: Publish pending Zaraz configuration changes to make them live on the zone
+      workflow:
+        description: Workflow state for Zaraz configuration changes (draft vs. published)
+  zero-trust:
+    description: Cloudflare's SASE platform — secure access, device posture, DLP, tunnels, gateway policies, and network segmentation
+    groups:
+      dex:
+        description: Digital Experience Monitoring — synthetic tests, fleet-wide device metrics, and network path diagnostics
+      dlp.custom-prompt-topics:
+        description: Data Loss Prevention - manage custom prompt topics for AI-based content detection
+      dlp.data-classes:
+        description: Data Loss Prevention - manage data classes used to classify sensitive information
+      dlp.data-tag-categories:
+        description: Data Loss Prevention - manage categories that organize data tags
+      dlp.data-tag-category-templates:
+        description: Data Loss Prevention - browse templates for creating data tag categories
+      dlp.data-tags:
+        description: Data Loss Prevention - manage tags used to classify and organize sensitive data
+      dlp.datasets:
+        description: Data Loss Prevention - manage datasets, versions, and uploads
+      dlp.document-fingerprints:
+        description: Data Loss Prevention - manage document fingerprints for detecting matching documents
+      dlp.email.account-mapping:
+        description: Data Loss Prevention - configure account mappings for outbound email scanning
+      dlp.email.rules:
+        description: Data Loss Prevention - manage outbound email scanning rules and their priorities
+      dlp.entries:
+        description: Data Loss Prevention - list and manage detection entries
+      dlp.limits:
+        description: Data Loss Prevention - view account limits and resource quotas
+      dlp.patterns:
+        description: Data Loss Prevention - validate regular expressions used for content detection
+      dlp.profiles:
+        description: Data Loss Prevention - list and retrieve profiles
+      dlp.profiles.custom:
+        description: Data Loss Prevention - manage custom profiles
+      dlp.profiles.predefined:
+        description: Data Loss Prevention - manage predefined profiles
+      dlp.sensitivity-group-templates:
+        description: Data Loss Prevention - browse templates for creating sensitivity groups
+      dlp.sensitivity-groups:
+        description: Data Loss Prevention - manage sensitivity groups and their level ordering
+      dlp.sensitivity-levels:
+        description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
+      dlp.settings:
+        description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.integrations:
+        description: User Risk Scoring - manage integrations that provide risk score signals
+      risk-scoring.integrations.references:
+        description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
+  zones:
+    description: Zones are domains on Cloudflare — list, create, and configure domain settings
+    groups:
+      aegis:
+        description: Aegis operations
+      fonts:
+        description: Fonts operations
+      origin-h2-max-streams:
+        description: Origin H2 Max Streams operations
+      origin-max-http-version:
+        description: Origin Max Http Version operations
+      origin-tls-compliance-modes:
+        description: Manage zone Origin TLS Compliance Modes setting
+      rum:
+        description: Rum operations
+      speed-brain:
+        description: Speed Brain operations

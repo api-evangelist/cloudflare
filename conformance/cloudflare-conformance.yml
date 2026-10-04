@@ -1,0 +1,36 @@
+generated: '2026-10-03'
+method: searched
+generator: extract-docs-artifacts.py (local)
+source: https://developers.cloudflare.com/fundamentals/security/pci-scans/
+sources:
+- https://developers.cloudflare.com/fundamentals/security/pci-scans/
+- https://developers.cloudflare.com/client-side-security/llms.txt
+- https://developers.cloudflare.com/security-center/llms.txt
+- https://developers.cloudflare.com/privacy-pass/llms.txt
+standards:
+- id: pci-dss
+  conforms: true
+  evidence: Cloudflare is PCI certified as a Data Processor.
+- id: openapi-3.0
+  conforms: true
+  evidence: the document declares 3.0.3
+- id: openapi-3.2
+  conforms: true
+  evidence: the document declares 3.2.0
+- id: oauth2
+  conforms: false
+  evidence: 'securitySchemes: apiKeyAuth (apiKey), api_email (apiKey), api_key (apiKey), api_token (http), bearerAuth (http), user_service_key
+    (apiKey)'
+- id: rfc9457
+  conforms: false
+  evidence: no response declares application/problem+json
+- id: idempotency
+  conforms: true
+  evidence: Idempotency-Key declared on 6 of 2680 mutating operations (partial)
+- id: pagination
+  conforms: true
+  evidence: list operations take cursor, custom_page_id, limit, next_cursor, offset, page
+- id: ratelimit-headers
+  conforms: true
+  evidence: responses declare Retry-After
+docs: https://developers.cloudflare.com/fundamentals/security/pci-scans/

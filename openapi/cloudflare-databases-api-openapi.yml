@@ -231,7 +231,45 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
+  parameters:
+    DatabaseId:
+      name: database_id
+      in: path
+      required: true
+      description: The unique identifier of the D1 database.
+      schema:
+        type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
   schemas:
+    D1DatabaseListResponse:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/D1Database'
+          example: []
+        success:
+          type: boolean
+          example: true
+        result_info:
+          type: object
+          properties:
+            page:
+              type: integer
+            per_page:
+              type: integer
+            count:
+              type: integer
+            total_count:
+              type: integer
+          example: example_value
     D1Database:
       type: object
       properties:
@@ -278,44 +316,6 @@ components:
           items:
             type: object
           example: []
-    D1DatabaseListResponse:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: '#/components/schemas/D1Database'
-          example: []
-        success:
-          type: boolean
-          example: true
-        result_info:
-          type: object
-          properties:
-            page:
-              type: integer
-            per_page:
-              type: integer
-            count:
-              type: integer
-            total_count:
-              type: integer
-          example: example_value
-  parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
-    DatabaseId:
-      name: database_id
-      in: path
-      required: true
-      description: The unique identifier of the D1 database.
-      schema:
-        type: string
   securitySchemes:
     bearerAuth:
       type: http

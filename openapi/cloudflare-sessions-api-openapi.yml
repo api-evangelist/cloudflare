@@ -1,0 +1,2501 @@
+openapi: 3.2.0
+info:
+  description: Welcome to Cloudflare's API documentation site.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  title: Cloudflare Sessions API
+  version: 4.0.0
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Sessions
+paths:
+  /accounts/{account_id}/realtime/kit/{app_id}/sessions:
+    get:
+      operationId: GetSessions
+      summary: Fetch all sessions of an App
+      description: Returns details of all sessions of an App.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      - $ref: '#/components/parameters/realtimekit_pageNo'
+      - $ref: '#/components/parameters/realtimekit_perPage'
+      - $ref: '#/components/parameters/realtimekit_sortBy'
+      - $ref: '#/components/parameters/realtimekit_sortOrder'
+      - $ref: '#/components/parameters/realtimekit_startTime'
+      - $ref: '#/components/parameters/realtimekit_endTime'
+      - $ref: '#/components/parameters/realtimekit_participants'
+      - $ref: '#/components/parameters/realtimekit_status'
+      - name: search
+        in: query
+        description: Search string that matches sessions based on meeting title, meeting ID, and session ID
+        schema:
+          type: string
+      - name: associated_id
+        in: query
+        description: ID of the meeting that sessions should be associated with
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/realtimekit_GetSessions'
+      security:
+      - api_token: []
+      tags:
+      - Sessions
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.sessions
+      x-fern-sdk-method-name: list
+  /accounts/{account_id}/realtime/kit/{app_id}/sessions/peer-report/{peer_id}:
+    get:
+      operationId: GetParticipantDataFromPeerId
+      summary: Fetch details of peer
+      description: Returns participant details for the given peer ID along with call statistics.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      - name: filters
+        in: query
+        description: Filter to apply to the peer report.
+        schema:
+          type: string
+          example: device_info
+          enum:
+          - device_info
+          - ip_information
+          - precall_network_information
+          - events
+          - quality_stats
+      - name: include_peer_events
+        in: query
+        description: if true, response includes all the peer events of participant.
+        schema:
+          type: boolean
+          default: false
+      - name: peer_id
+        in: path
+        description: ID of the peer
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/realtimekit_GetParticipantDataFromPeerId'
+      security:
+      - api_token: []
+      tags:
+      - Sessions
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.sessions.peers
+      x-fern-sdk-method-name: get
+  /accounts/{account_id}/realtime/kit/{app_id}/sessions/{session_id}:
+    get:
+      operationId: GetSessionDetails
+      summary: Fetch details of a session
+      description: Returns data of the given session ID including recording details.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      - name: include_breakout_rooms
+        in: query
+        description: List all breakout rooms
+        schema:
+          type: boolean
+          default: false
+      - name: session_id
+        in: path
+        description: ID of the session
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/realtimekit_GetSessionDetails'
+      security:
+      - api_token: []
+      tags:
+      - Sessions
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.sessions
+      x-fern-sdk-method-name: get
+  /accounts/{account_id}/realtime/kit/{app_id}/sessions/{session_id}/chat:
+    get:
+      operationId: GetSessionChat
+      summary: Fetch all chat messages of a session
+      description: Returns a URL to download all chat messages of the session ID in CSV format.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      - name: session_id
+        in: path
+        description: ID of the session
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/realtimekit_GetSessionChat'
+      security:
+      - api_token: []
+      tags:
+      - Sessions
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.sessions.chat
+      x-fern-sdk-method-name: export
+  /accounts/{account_id}/realtime/kit/{app_id}/sessions/{session_id}/participants:
+    get:
+      operationId: GetSessionParticipants
+      summary: Fetch participants list of a session
+      description: Returns a list of participants for the given session ID.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      - name: search
+        in: query
+        description: The search query string. You can search using participant ID, custom participant ID, or display name.
+        schema:
+          type: string
+      - $ref: '#/components/parameters/realtimekit_pageNo'
+      - name: per_page
+        in: query
+        description: Number of results per page.
+        schema:
+          type: integer
+          default: 25
+          maximum: 200
+          minimum: 1
+      - $ref: '#/components/parameters/realtimekit_sortOrder'
+      - $ref: '#/components/parameters/realtimekit_participantsSortBy'
+      - name: include_peer_events
+        in: query
+        description: if true, response includes all the peer events of participants.
+        schema:
+          type: boolean
+          default: false
+      - name: view
+        in: query
+        description: In breakout room sessions, the view parameter can be set to `raw` for session specific duration for participants or `consolidated` to accumulate breakout room durations.
+        schema:
+          type: string
+          default: raw
+          enum:
+          - raw
+          - consolidated
+      - name: session_id
+        in: path
+        description: ID of the session
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/realtimekit_GetSessionParticipants'
+      security:
+      - api_token: []
+      tags:
+      - Sessions
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.sessions.participants
+      x-fern-sdk-method-name: list
+  /accounts/{account_id}/realtime/kit/{app_id}/sessions/{session_id}/participants/{participant_id}:
+    get:
+      operationId: GetParticipantDetails
+      summary: Fetch details of a participant
+      description: Returns details of the given participant ID for the given session ID. Use the peer report endpoint to retrieve call statistics.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      - name: include_peer_events
+        in: query
+        description: if true, response includes all the peer events of participant.
+        schema:
+          type: boolean
+          default: false
+      - name: participant_id
+        in: path
+        description: ID of the participant
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: session_id
+        in: path
+        description: ID of the session
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/realtimekit_GetParticipantDetails'
+      security:
+      - api_token: []
+      tags:
+      - Sessions
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.sessions.participants
+      x-fern-sdk-method-name: get
+  /accounts/{account_id}/realtime/kit/{app_id}/sessions/{session_id}/summary:
+    get:
+      operationId: GetSessionSummary
+      summary: Fetch summary of transcripts for a session
+      description: Returns a Summary URL to download the Summary of Transcripts for the session ID as plain text.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/realtimekit_GetSessionTranscriptSummary'
+      security:
+      - api_token: []
+      tags:
+      - Sessions
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.sessions.summaries
+      x-fern-sdk-method-name: export
+    post:
+      operationId: post-sessions-session_id-summary
+      summary: Generate summary of Transcripts for the session
+      description: Trigger Summary generation of Transcripts for the session ID.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      session_id:
+                        type: string
+                        format: uuid
+                      status:
+                        type: string
+                  success:
+                    type: boolean
+      security:
+      - api_token: []
+      tags:
+      - Sessions
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.sessions.summaries
+      x-fern-sdk-method-name: generate
+  /accounts/{account_id}/realtime/kit/{app_id}/sessions/{session_id}/transcript:
+    get:
+      operationId: GetSessionTranscript
+      summary: Fetch the complete transcript for a session
+      description: Returns a URL to download the transcript for the session ID in CSV format.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      - name: session_id
+        in: path
+        description: ID of the session
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: format
+        in: query
+        description: Transcript file format to fetch.
+        schema:
+          type: string
+          default: CSV
+          enum:
+          - SRT
+          - VTT
+          - JSON
+          - CSV
+      responses:
+        '200':
+          $ref: '#/components/responses/realtimekit_GetSessionTranscript'
+      security:
+      - api_token: []
+      tags:
+      - Sessions
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.sessions.transcripts
+      x-fern-sdk-method-name: export
+components:
+  parameters:
+    realtimekit_status:
+      in: query
+      name: status
+      schema:
+        type: string
+        enum:
+        - LIVE
+        - ENDED
+    realtimekit_startTime:
+      description: The start time range for which you want to retrieve the meetings. The time must be specified in ISO format.
+      in: query
+      name: start_time
+      schema:
+        type: string
+        format: date-time
+    realtimekit_perPage:
+      allowEmptyValue: true
+      description: Number of results per page
+      in: query
+      name: per_page
+      schema:
+        type: number
+        minimum: 0
+    realtimekit_endTime:
+      description: The end time range for which you want to retrieve the meetings. The time must be specified in ISO format.
+      in: query
+      name: end_time
+      schema:
+        type: string
+        format: date-time
+    realtimekit_sortBy:
+      in: query
+      name: sort_by
+      schema:
+        type: string
+        enum:
+        - minutesConsumed
+        - createdAt
+    realtimekit_sortOrder:
+      in: query
+      name: sort_order
+      schema:
+        type: string
+        enum:
+        - ASC
+        - DESC
+    realtimekit_participants:
+      examples:
+        default:
+          value: '1:10'
+      in: query
+      name: participants
+      schema:
+        type: string
+        example: '1:10'
+    realtimekit_participantsSortBy:
+      in: query
+      name: sort_by
+      schema:
+        type: string
+        enum:
+        - joinedAt
+        - duration
+    realtimekit_pageNo:
+      allowEmptyValue: true
+      description: The page number from which you want your page search results to be displayed.
+      in: query
+      name: page_no
+      schema:
+        type: number
+        minimum: 0
+  schemas:
+    realtimekit_PeerReportMetadata:
+      description: Connection and device metadata for the participant.
+      type: object
+      properties:
+        audio_devices_updates:
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_PeerReportDeviceUpdate'
+        browser_metadata:
+          type: object
+          properties:
+            browser:
+              type: string
+            browser_version:
+              type: string
+            engine:
+              type: string
+            user_agent:
+              type: string
+            webgl_support:
+              type:
+              - boolean
+              - 'null'
+        candidate_pairs:
+          type: object
+          properties:
+            consuming_transport:
+              type: array
+              items:
+                $ref: '#/components/schemas/realtimekit_CandidatePairStats'
+            producing_transport:
+              type: array
+              items:
+                $ref: '#/components/schemas/realtimekit_CandidatePairStats'
+        device_info:
+          type: object
+          properties:
+            cpus:
+              type: number
+            is_mobile:
+              type: boolean
+            os:
+              type: string
+            os_version:
+              type: string
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_PeerReportEvent'
+        ip_information:
+          type: object
+          properties:
+            asn:
+              type: object
+              properties:
+                asn:
+                  type: string
+                domain:
+                  type: string
+                name:
+                  type: string
+                route:
+                  type: string
+                type:
+                  type: string
+            city:
+              type: string
+            country:
+              type: string
+            ipv4:
+              type: string
+            org:
+              type: string
+            region:
+              type: string
+            timezone:
+              type: string
+        native_metadata:
+          type: object
+          properties:
+            audio_encoder:
+              type: string
+            video_encoder:
+              type: string
+        pc_metadata:
+          type: array
+          items:
+            properties:
+              effective_network_type:
+                type: string
+              reflexive_connectivity:
+                type: boolean
+              relay_connectivity:
+                type: boolean
+              sdp:
+                type: array
+                items:
+                  type: string
+              timestamp:
+                type: string
+              turn_connectivity:
+                type: boolean
+            type: object
+        room_view_type:
+          type: string
+        sdk_name:
+          type: string
+        sdk_type:
+          type: string
+        sdk_version:
+          type: string
+        selected_device_updates:
+          type: array
+          items:
+            properties:
+              device:
+                $ref: '#/components/schemas/realtimekit_PeerReportDevice'
+              timestamp:
+                type: string
+            type: object
+        speaker_devices_updates:
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_PeerReportDeviceUpdate'
+        video_devices_updates:
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_PeerReportDeviceUpdate'
+    realtimekit_PeerReportDeviceUpdate:
+      description: A change to the set of available devices at a point in time.
+      type: object
+      properties:
+        added:
+          description: Devices that became available.
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_PeerReportDevice'
+        removed:
+          description: Devices that became unavailable.
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_PeerReportDevice'
+        timestamp:
+          description: Timestamp of the device update.
+          type: string
+    realtimekit_LatencyCumulative:
+      description: Cumulative latency distribution (milliseconds-based thresholds).
+      type: object
+      properties:
+        100ms_or_greater_event_fraction:
+          type: number
+        250ms_or_greater_event_fraction:
+          type: number
+        500ms_or_greater_event_fraction:
+          type: number
+        avg:
+          type: number
+    realtimekit_PeerReportQuality:
+      description: Media quality statistics for the participant.
+      type: object
+      properties:
+        audio_consumer:
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_AudioConsumerStats'
+        audio_consumer_cumulative:
+          $ref: '#/components/schemas/realtimekit_AudioConsumerStatsCumulative'
+        audio_producer:
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_AudioProducerStats'
+        audio_producer_cumulative:
+          $ref: '#/components/schemas/realtimekit_AudioProducerStatsCumulative'
+        screenshare_audio_consumer:
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_AudioConsumerStats'
+        screenshare_audio_consumer_cumulative:
+          $ref: '#/components/schemas/realtimekit_AudioConsumerStatsCumulative'
+        screenshare_audio_producer:
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_AudioProducerStats'
+        screenshare_audio_producer_cumulative:
+          $ref: '#/components/schemas/realtimekit_AudioProducerStatsCumulative'
+        screenshare_video_consumer:
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_VideoConsumerStats'
+        screenshare_video_consumer_cumulative:
+          $ref: '#/components/schemas/realtimekit_VideoConsumerStatsCumulative'
+        screenshare_video_producer:
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_VideoProducerStats'
+        screenshare_video_producer_cumulative:
+          $ref: '#/components/schemas/realtimekit_VideoProducerStatsCumulative'
+        video_consumer:
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_VideoConsumerStats'
+        video_consumer_cumulative:
+          $ref: '#/components/schemas/realtimekit_VideoConsumerStatsCumulative'
+        video_producer:
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_VideoProducerStats'
+        video_producer_cumulative:
+          $ref: '#/components/schemas/realtimekit_VideoProducerStatsCumulative'
+    realtimekit_VideoConsumerStats:
+      description: Per-sample inbound (consumer) video statistics.
+      type: object
+      properties:
+        bytes_received:
+          type: number
+        consumer_id:
+          type: string
+        fir_count:
+          type: number
+        frame_height:
+          type: number
+        frame_width:
+          type: number
+        frames_decoded:
+          type: number
+        frames_dropped:
+          type: number
+        frames_per_second:
+          type: number
+        jitter:
+          type: number
+        jitter_buffer_delay:
+          type: number
+        jitter_buffer_emitted_count:
+          type: number
+        key_frames_decoded:
+          type: number
+        mid:
+          type: string
+        mos_quality:
+          type: number
+        packets_lost:
+          type: number
+        packets_received:
+          type: number
+        peer_id:
+          type: string
+        producer_id:
+          type: string
+        ssrc:
+          type: number
+        timestamp:
+          type: string
+    realtimekit_PeerReportDevice:
+      description: A media device (camera, microphone, or speaker).
+      type: object
+      properties:
+        device_id:
+          description: ID of the device.
+          type: string
+        kind:
+          description: Kind of device, for example audioinput or videoinput.
+          type: string
+        label:
+          description: Human-readable label of the device.
+          type: string
+    realtimekit_PeerEvent:
+      description: A connection lifecycle event recorded for a participant's peer.
+      type: object
+      properties:
+        created_at:
+          description: Timestamp when this peer event was created.
+          type: string
+        event_name:
+          description: Name of the peer event.
+          type: string
+          enum:
+          - PEER_CREATED
+          - PEER_JOINING
+          - PEER_LEAVING
+        id:
+          description: ID of the peer event.
+          type: string
+        minutes_consumed:
+          description: Minutes consumed attributed to this event.
+          type: number
+        participant_id:
+          description: ID of the participant this event belongs to.
+          type:
+          - string
+          - 'null'
+        peer_id:
+          description: Peer ID this event belongs to.
+          type: string
+        preset_view_type:
+          description: View type of the preset associated with the peer.
+          type:
+          - string
+          - 'null'
+          enum:
+          - GROUP_CALL
+          - WEBINAR
+          - AUDIO_ROOM
+          - LIVESTREAM
+          - CHAT
+        session_id:
+          description: ID of the session this event belongs to.
+          type:
+          - string
+          - 'null'
+        socket_session_id:
+          description: ID of the socket session associated with this event.
+          type:
+          - string
+          - 'null'
+        updated_at:
+          description: Timestamp when this peer event was last updated.
+          type: string
+    realtimekit_AudioProducerStats:
+      description: Per-sample outbound (producer) audio statistics.
+      type: object
+      properties:
+        bytes_sent:
+          type: number
+        jitter:
+          type: number
+        mid:
+          type: string
+        mos_quality:
+          type: number
+        packets_lost:
+          type: number
+        packets_sent:
+          type: number
+        producer_id:
+          type: string
+        rtt:
+          type: number
+        ssrc:
+          type: number
+        timestamp:
+          type: string
+    realtimekit_VideoProducerStatsCumulative:
+      description: Aggregated outbound (producer) video statistics for the session.
+      type: object
+      properties:
+        frame_per_second:
+          $ref: '#/components/schemas/realtimekit_PercentileStats'
+        frame_width:
+          $ref: '#/components/schemas/realtimekit_PercentileStats'
+        high_negative_feedback_fraction:
+          type: number
+        issues:
+          type: object
+          properties:
+            bandwidth_quality_limitation_fraction:
+              type: number
+            cpu_quality_limitation_fraction:
+              type: number
+            no_video_fraction:
+              type: number
+            poor_resolution_fraction:
+              type: number
+            quality_limitation_fraction:
+              type: number
+        key_frames_encoded_fraction:
+          type: number
+        packet_loss:
+          $ref: '#/components/schemas/realtimekit_PacketLossCumulative'
+        quality_mos:
+          $ref: '#/components/schemas/realtimekit_PercentileStats'
+        rtt:
+          $ref: '#/components/schemas/realtimekit_LatencyCumulative'
+    realtimekit_VideoConsumerStatsCumulative:
+      description: Aggregated inbound (consumer) video statistics for the session.
+      type: object
+      properties:
+        frame_per_second:
+          $ref: '#/components/schemas/realtimekit_PercentileStats'
+        frame_width:
+          $ref: '#/components/schemas/realtimekit_PercentileStats'
+        issues:
+          type: object
+          properties:
+            lag_fraction:
+              type: number
+            no_video_fraction:
+              type: number
+            poor_resolution_fraction:
+              type: number
+        jitter_buffer_delay:
+          $ref: '#/components/schemas/realtimekit_LatencyCumulative'
+        key_frames_decoded_fraction:
+          type: number
+        packet_loss:
+          $ref: '#/components/schemas/realtimekit_PacketLossCumulative'
+        quality_mos:
+          $ref: '#/components/schemas/realtimekit_PercentileStats'
+    realtimekit_AudioConsumerStatsCumulative:
+      description: Aggregated inbound (consumer) audio statistics for the session.
+      type: object
+      properties:
+        jitter_buffer_delay:
+          $ref: '#/components/schemas/realtimekit_LatencyCumulative'
+        packet_loss:
+          $ref: '#/components/schemas/realtimekit_PacketLossCumulative'
+        quality_mos:
+          $ref: '#/components/schemas/realtimekit_PercentileStats'
+    realtimekit_CandidatePairStats:
+      description: ICE candidate pair statistics for a transport.
+      type: object
+      properties:
+        available_incoming_bitrate:
+          type: number
+        available_outgoing_bitrate:
+          type: number
+        bytes_discarded_on_send:
+          type: number
+        bytes_received:
+          type: number
+        bytes_sent:
+          type: number
+        current_round_trip_time:
+          type: number
+        last_packet_received_timestamp:
+          description: Epoch milliseconds when the last packet was received.
+          type: number
+        last_packet_sent_timestamp:
+          description: Epoch milliseconds when the last packet was sent.
+          type: number
+        local_candidate_address:
+          type: string
+        local_candidate_id:
+          type: string
+        local_candidate_network_type:
+          type: string
+        local_candidate_port:
+          type: number
+        local_candidate_protocol:
+          type: string
+        local_candidate_related_address:
+          type: string
+        local_candidate_related_port:
+          type: number
+        local_candidate_type:
+          type: string
+        local_candidate_url:
+          type: string
+        nominated:
+          type: boolean
+        packets_discarded_on_send:
+          type: number
+        packets_received:
+          type: number
+        packets_sent:
+          type: number
+        remote_candidate_address:
+          type: string
+        remote_candidate_id:
+          type: string
+        remote_candidate_port:
+          type: number
+        remote_candidate_protocol:
+          type: string
+        remote_candidate_type:
+          type: string
+        remote_candidate_url:
+          type: string
+        total_round_trip_time:
+          type: number
+    realtimekit_AudioProducerStatsCumulative:
+      description: Aggregated outbound (producer) audio statistics for the session.
+      type: object
+      properties:
+        packet_loss:
+          $ref: '#/components/schemas/realtimekit_PacketLossCumulative'
+        quality_mos:
+          $ref: '#/components/schemas/realtimekit_PercentileStats'
+        rtt:
+          $ref: '#/components/schemas/realtimekit_LatencyCumulative'
+    realtimekit_account_identifier:
+      description: The account identifier tag.
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      x-auditable: true
+    realtimekit_TranscriptSummary:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        summaryDownloadUrl:
+          description: URL where the summary of transcripts can be downloaded
+          type: string
+        summaryDownloadUrlExpiry:
+          description: Time of Expiry before when you need to download the csv file.
+          type: string
+      required:
+      - sessionId
+      - summaryDownloadUrl
+      - summaryDownloadUrlExpiry
+      title: TranscriptSummary
+    realtimekit_PercentileStats:
+      description: Distribution summary with average and percentiles.
+      type: object
+      properties:
+        avg:
+          type: number
+        p50:
+          type: number
+        p75:
+          type: number
+        p90:
+          type: number
+    realtimekit_AudioConsumerStats:
+      description: Per-sample inbound (consumer) audio statistics.
+      type: object
+      properties:
+        bytes_received:
+          type: number
+        concealment_events:
+          type: number
+        consumer_id:
+          type: string
+        jitter:
+          type: number
+        jitter_buffer_delay:
+          type: number
+        jitter_buffer_emitted_count:
+          type: number
+        mid:
+          type: string
+        mos_quality:
+          type: number
+        packets_lost:
+          type: number
+        packets_received:
+          type: number
+        peer_id:
+          type: string
+        producer_id:
+          type: string
+        ssrc:
+          type: number
+        timestamp:
+          type: string
+    realtimekit_ActiveSession:
+      type: object
+      properties:
+        associated_id:
+          description: ID of the meeting this session is associated with. In the case of V2 meetings, it is always a UUID. In V1 meetings, it is a room name of the form `abcdef-ghijkl`
+          type: string
+        breakout_rooms:
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_ActiveSession'
+          readOnly: true
+        created_at:
+          description: timestamp when session created
+          type: string
+        ended_at:
+          description: timestamp when session ended
+          type: string
+        id:
+          description: ID of the session
+          type: string
+          readOnly: true
+        live_participants:
+          description: number of participants currently in the session
+          type: number
+        max_concurrent_participants:
+          description: number of maximum participants that were in the session
+          type: number
+        meeting_display_name:
+          description: Title of the meeting this session belongs to
+          type: string
+        minutes_consumed:
+          description: number of minutes consumed since the session started
+          type: number
+        organization_id:
+          description: App id that hosted this session
+          type: string
+        started_at:
+          description: timestamp when session started
+          type: string
+        status:
+          description: current status of session
+          type: string
+          enum:
+          - LIVE
+          - ENDED
+        type:
+          description: type of session
+          type: string
+          enum:
+          - meeting
+          - livestream
+          - participant
+        updated_at:
+          description: timestamp when session was last updated
+          type: string
+      required:
+      - id
+      - associated_id
+      - meeting_display_name
+      - type
+      - status
+      - live_participants
+      - max_concurrent_participants
+      - minutes_consumed
+      - organization_id
+      - started_at
+      - created_at
+      - updated_at
+    realtimekit_ParticipantsList:
+      type: object
+      properties:
+        created_at:
+          description: timestamp when this participant was created.
+          type: string
+        custom_participant_id:
+          description: ID passed by client to create this participant.
+          type: string
+        display_name:
+          description: Display name of participant when joining the session.
+          type: string
+        duration:
+          description: number of minutes for which the participant was in the session.
+          type: number
+        id:
+          description: Participant ID. This maps to the corresponding peerId.
+          type: string
+        joined_at:
+          description: timestamp at which participant joined the session.
+          type: string
+        left_at:
+          description: timestamp at which participant left the session.
+          type: string
+        peer_events:
+          description: Connection lifecycle events for the participant's peer. Only included when `include_peer_events` is true.
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_PeerEvent'
+        preset_name:
+          description: Name of the preset associated with the participant.
+          type: string
+        updated_at:
+          description: timestamp when this participant's data was last updated.
+          type: string
+        user_id:
+          description: User id for this participant.
+          type: string
+    realtimekit_PeerParticipantDetails:
+      type: object
+      properties:
+        created_at:
+          description: timestamp when this participant was created.
+          type: string
+        custom_participant_id:
+          description: ID passed by client to create this participant.
+          type: string
+        display_name:
+          description: Display name of participant when joining the session.
+          type: string
+        duration:
+          description: number of minutes for which the participant was in the session.
+          type: number
+        id:
+          description: ID of the participant.
+          type: string
+          format: uuid
+        joined_at:
+          description: timestamp at which participant joined the session.
+          type: string
+        left_at:
+          description: timestamp at which participant left the session.
+          type: string
+        peer_events:
+          description: Connection lifecycle events for the participant's peer.
+          type: array
+          items:
+            $ref: '#/components/schemas/realtimekit_PeerEvent'
+        peer_report:
+          $ref: '#/components/schemas/realtimekit_PeerReport'
+        role:
+          description: Name of the preset associated with the participant.
+          type: string
+        session_id:
+          type: string
+          format: uuid
+        updated_at:
+          description: timestamp when this participant's data was last updated.
+          type: string
+        user_id:
+          description: User id for this participant.
+          type: string
+    realtimekit_PeerReportEvent:
+      description: A timestamped event recorded during the participant's connection.
+      type: object
+      properties:
+        metadata:
+          description: Event-specific metadata. Keys vary per event; values are primitive scalars (string, number, boolean, or null).
+          type: object
+          additionalProperties:
+            oneOf:
+            - type: string
+            - type: number
+            - type: boolean
+        name:
+          description: Name of the event.
+          type: string
+        timestamp:
+          description: Timestamp when the event occurred.
+          type: string
+    realtimekit_PeerReport:
+      description: Peer call statistics report.
+      type: object
+      properties:
+        metadata:
+          $ref: '#/components/schemas/realtimekit_PeerReportMetadata'
+        quality:
+          $ref: '#/components/schemas/realtimekit_PeerReportQuality'
+    realtimekit_Transcript:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        transcript_download_url:
+          description: URL where the transcript can be downloaded
+          type: string
+        transcript_download_url_expiry:
+          description: Time when the download URL will expire
+          type: string
+      required:
+      - sessionId
+      - transcript_download_url
+      - transcript_download_url_expiry
+    realtimekit_VideoProducerStats:
+      description: Per-sample outbound (producer) video statistics.
+      type: object
+      properties:
+        bytes_sent:
+          type: number
+        fir_count:
+          type: number
+        frame_height:
+          type: number
+        frame_width:
+          type: number
+        frames_encoded:
+          type: number
+        frames_per_second:
+          type: number
+        jitter:
+          type: number
+        key_frames_encoded:
+          type: number
+        mid:
+          type: string
+        mos_quality:
+          type: number
+        packets_lost:
+          type: number
+        packets_sent:
+          type: number
+        pli_count:
+          type: number
+        producer_id:
+          type: string
+        quality_limitation_durations:
+          type: object
+          properties:
+            bandwidth:
+              type: number
+            cpu:
+              type: number
+            none:
+              type: number
+            other:
+              type: number
+        quality_limitation_reason:
+          type: string
+          enum:
+          - cpu
+          - bandwidth
+          - none
+          - other
+        quality_limitation_resolution_changes:
+          type: number
+        rtt:
+          type: number
+        ssrc:
+          type: number
+        timestamp:
+          type: string
+    realtimekit_PacketLossCumulative:
+      description: Cumulative packet loss distribution.
+      type: object
+      properties:
+        10_or_greater_event_fraction:
+          type: number
+        25_or_greater_event_fraction:
+          type: number
+        50_or_greater_event_fraction:
+          type: number
+        5_or_greater_event_fraction:
+          type: number
+        avg:
+          type: number
+    realtimekit_app_id:
+      description: The app identifier tag.
+      type: string
+      example: 14a396e7-ca44-4937-bf1f-050a69118543
+    realtimekit_ChatMessage:
+      type: object
+      properties:
+        chat_download_url:
+          description: URL where the chat logs can be downloaded
+          type: string
+        chat_download_url_expiry:
+          description: Time when the download URL will expire
+          type: string
+      required:
+      - chat_download_url
+      - chat_download_url_expiry
+  responses:
+    realtimekit_GetSessions:
+      description: Get all sessions success response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  sessions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/realtimekit_ActiveSession'
+              paging:
+                type: object
+                properties:
+                  end_offset:
+                    type: number
+                  start_offset:
+                    type: number
+                  total_count:
+                    type: number
+                    minimum: 0
+              success:
+                type: boolean
+    realtimekit_GetSessionDetails:
+      description: Get details about a particular session
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/realtimekit_ActiveSession'
+              success:
+                type: boolean
+    realtimekit_GetSessionParticipants:
+      description: Get participants list of a particular session
+      content:
+        application/json:
+          examples:
+            ParticipantListSuccess:
+              $ref: '#/components/examples/realtimekit_ParticipantListSuccess'
+            ParticipantListWithPeerStatsSuccess:
+              $ref: '#/components/examples/realtimekit_ParticipantListWithPeerEventSucces'
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  participants:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/realtimekit_ParticipantsList'
+              success:
+                type: boolean
+    realtimekit_GetSessionChat:
+      description: Returns all chat messages of a session.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/realtimekit_ChatMessage'
+              success:
+                type: boolean
+    realtimekit_GetSessionTranscriptSummary:
+      description: Returns a complete summary of transcripts of a session.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/realtimekit_TranscriptSummary'
+              success:
+                type: boolean
+    realtimekit_GetParticipantDataFromPeerId:
+      description: Returns details of a participant using peer ID, including the peer report.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  participant:
+                    $ref: '#/components/schemas/realtimekit_PeerParticipantDetails'
+              success:
+                type: boolean
+    realtimekit_GetParticipantDetails:
+      description: Returns details of a participant.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  participant:
+                    $ref: '#/components/schemas/realtimekit_ParticipantsList'
+              success:
+                type: boolean
+    realtimekit_GetSessionTranscript:
+      description: Returns the complete transcript of a session.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/realtimekit_Transcript'
+              success:
+                type: boolean
+  examples:
+    realtimekit_ParticipantListSuccess:
+      summary: success response for session's participants list
+      value:
+        data:
+          paging:
+            end_offset: 2
+            start_offset: 1
+            total_count: 123
+          participants:
+          - created_at: '2023-02-01T10:51:08.039Z'
+            custom_participant_id: 83qi0i
+            display_name: Mark
+            duration: 5.8097
+            id: 005f4e0c-4d08-4d4e-a391-a76be75cd296
+            joined_at: '2023-02-01T10:51:08.03Z'
+            left_at: '2023-02-01T10:56:56.612Z'
+            preset_name: webinar_participant
+            updated_at: '2023-02-01T10:56:56.618Z'
+            user_id: 0a08343d-a9dc-45f0-9feb-6a64afcc4f81
+          - created_at: '2023-02-01T10:50:36.853Z'
+            custom_participant_id: 3uggr
+            display_name: Henry
+            duration: 6.9263
+            id: 51fdf95f-d893-471a-922b-7db7adb14453
+            joined_at: 2023-02-01T10:50:36.846Z"
+            left_at: '2023-02-01T10:57:32.424Z'
+            preset_name: webinar_participant
+            updated_at: '2023-02-01T10:57:32.431Z'
+            user_id: 85e7f0fd-7c16-45e9-9d68-f17ef007c4eb
+        success: true
+    realtimekit_ParticipantListWithPeerEventSucces:
+      summary: success response for sessions participants list with peer events
+      value:
+        data:
+          paging:
+            end_offset: 2
+            start_offset: 1
+            total_count: 123
+          participants:
+          - created_at: '2023-02-01T10:51:08.039Z'
+            custom_participant_id: 83qi0i
+            display_name: Mark
+            duration: 5.8097
+            id: 005f4e0c-4d08-4d4e-a391-a76be75cd296
+            joined_at: '2023-02-01T10:51:08.03Z'
+            left_at: '2023-02-01T10:56:56.612Z'
+            peer_events:
+            - created_at: '2023-02-01T10:51:50.786Z'
+              event_name: PEER_JOINING
+              id: 94af3bac-f30b-40b9-ab45-4b9e6eff191a
+              peer_id: 79d87ca5-7e47-452a-b3c1-b6842ad84bf5
+              updated_at: '2023-02-01T10:51:50.792Z'
+            - created_at: '2023-02-01T10:56:50.786Z'
+              event_name: PEER_LEAVING
+              id: 94af3bac-f30b-40b9-ab45-4b9e6eff191b
+              peer_id: 79d87ca5-7e47-452a-b3c1-b6842ad84bf5
+              updated_at: '2023-02-01T10:56:50.792Z'
+            preset_name: webinar_participant
+            updated_at: '2023-02-01T10:56:56.618Z'
+            user_id: 0a08343d-a9dc-45f0-9feb-6a64afcc4f81
+          - created_at: '2023-02-01T10:50:36.853Z'
+            custom_participant_id: 3uggr
+            display_name: Henry
+            duration: 6.9263
+            id: 51fdf95f-d893-471a-922b-7db7adb14453
+            joined_at: 2023-02-01T10:50:36.846Z"
+            left_at: '2023-02-01T10:57:32.424Z'
+            peer_events:
+            - created_at: '2023-02-01T10:51:50.786Z'
+              event_name: PEER_JOINING
+              id: 94af3bac-f30b-40b9-ab45-4b9e6eff191a
+              peer_id: 51fdf95f-d893-471a-922b-7db7adb14453
+              updated_at: '2023-02-01T10:51:50.792Z'
+            - created_at: '2023-02-01T10:56:50.786Z'
+              event_name: PEER_LEAVING
+              id: 94af3bac-f30b-40b9-ab45-4b9e6eff191b
+              peer_id: 51fdf95f-d893-471a-922b-7db7adb14453
+              updated_at: '2023-02-01T10:56:50.792Z'
+            preset_name: webinar_participant
+            updated_at: '2023-02-01T10:57:32.431Z'
+            user_id: 85e7f0fd-7c16-45e9-9d68-f17ef007c4eb
+        success: true
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-forge-commands:
+  abuse-reports:
+    description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
+    groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
+      emails:
+        description: Emails sent for abuse reports
+      mitigations:
+        description: Mitigation actions taken in response to abuse reports
+  accounts:
+    description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
+    groups:
+      applications:
+        description: Applications operations
+      categories:
+        description: Categories operations
+      organizations:
+        description: Move accounts between organizations
+      profile:
+        description: View and manage the profile for a Cloudflare account
+      roles:
+        description: View the roles available for assigning to account members, each defining a set of permissions
+      subscriptions:
+        description: View and manage plan subscriptions attached to this account
+      tokens:
+        description: Create and manage scoped API tokens for programmatic access to the Cloudflare API
+  ai-gateway:
+    description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
+    groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
+      datasets:
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
+      dynamic-routing:
+        description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
+      evaluation-types:
+        description: 'Deprecated: list the evaluator types that evaluations can use'
+      evaluations:
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
+      logs:
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
+  ai-search:
+    description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
+    groups:
+      items:
+        description: Content indexed by AI Search instances
+      jobs:
+        description: Indexing job lifecycle for AI Search instances
+      namespace:
+        description: Logical groupings for organizing AI Search instances
+      tokens:
+        description: Credentials used by AI Search instances
+  ai-security:
+    description: Detect prompt injection, PII, and unsafe topics in traffic to your AI applications
+    groups:
+      custom-topics:
+        description: Organization-specific topic categories used by AI Security for Apps content detection
+  analytics:
+    description: Zone-level traffic analytics — dashboard summaries, per-colo breakdowns, and Argo latency metrics
+    groups:
+      colo:
+        description: Per-data-center (colo) traffic analytics breakdown for the zone
+      dashboard:
+        description: Aggregated zone dashboard analytics — requests, bandwidth, threats, and page views
+      latency:
+        description: Argo Smart Routing latency analytics showing time-to-first-byte improvements
+  argo:
+    description: Network optimization features that speed up and improve reliability of traffic to your origins
+    groups:
+      smart-routing:
+        description: Route traffic through the fastest network paths to your origin using real-time latency data
+      tiered-caching:
+        description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  billing:
+    description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
+    groups:
+      profiles:
+        description: Billing profile with payment method, address, and invoice preferences
+      usage:
+        description: Metered usage data for billed services — requests, bandwidth, and feature consumption
+  botnet-feed:
+    description: Botnet threat intelligence feeds — IP and ASN-level data on known command-and-control infrastructure
+    groups:
+      asn:
+        description: ASN-level botnet activity data showing networks with known C2 infrastructure
+      configs:
+        description: Botnet feed subscription configuration and notification preferences
+  builds:
+    description: Build and deploy Workers from connected repositories, then inspect build status and logs.
+    groups:
+      deploy-hooks:
+        description: Manage branch-specific HTTP hooks that start builds.
+      limits:
+        description: View build-minute availability and refresh information.
+      logs:
+        description: Retrieve build logs.
+      repos:
+        description: Manage source repository connections for Workers Builds.
+      tokens:
+        description: Manage credentials used by Workers Builds to deploy Workers.
+      triggers:
+        description: Configure how repository changes build and deploy Workers.
+      versions:
+        description: Find builds associated with Worker versions.
+      workers:
+        description: Manage repository-backed build configuration for Workers.
+  cache:
+    description: Purge cached content and configure Cache Reserve, tiered caching, and variant serving
+    groups:
+      origin-cloud-regions:
+        description: Manage Origin Cloud Regions routing and failover configurations
+      settings:
+        description: Configure Cache Reserve, tiered caching, and variant serving
+      settings.regional-tiered-cache:
+        description: Restrict tiered cache topology to data centers within a specific geographic region
+      settings.reserve:
+        description: Persistent storage tier that keeps cached assets even after eviction from edge caches
+      settings.smart-tiered-cache:
+        description: Automatically determine the best upper-tier data centers for tiered cache topology
+      settings.variants:
+        description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
+  client-side-security:
+    description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
+    groups:
+      connections:
+        description: Third-party connections made by scripts on your pages — track data exfiltration risks
+      cookies:
+        description: Cookies set by your pages with classification and same-site attribute tracking
+      policies:
+        description: Content Security Policies that control which scripts and connections are allowed on your pages
+      scripts:
+        description: JavaScript files detected on your pages with change tracking and malicious code detection
+      settings:
+        description: Fine tune Client-Side Security behaviors
+  cloud-connector:
+    description: Route traffic from Cloudflare directly to cloud provider services (AWS, Azure, GCP) without origin servers
+    groups:
+      rules:
+        description: Routing rules that map request patterns to cloud provider endpoints
+  cloudforce-one:
+    description: Detection rule management APIs
+    groups:
+      binary-storage:
+        description: Upload and retrieve malware samples and suspicious binaries for analysis
+      requests:
+        description: Additional request operations — priority listing and asset creation
+      rules:
+        description: Rule management operations
+        groups:
+          approvals:
+            description: Approval workflow operations
+          email:
+            description: Email rule operations
+          exemptions:
+            description: Exemption rule operations
+          managed:
+            description: Managed rule operations
+          stats:
+            description: Rule statistics operations
+          tree:
+            description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
+  containers:
+    description: Deploy and manage Containers applications on Cloudflare's global network
+    groups:
+      applications:
+        description: Manage Containers applications
+      applications.instances:
+        description: Inspect Containers instances belonging to applications
+      applications.rollouts:
+        description: Manage rollouts for scheduler-backed applications
+      applications.versions:
+        description: Inspect versions of scheduler-backed applications
+      registries:
+        description: Manage Containers image registries
+      registries.credentials:
+        description: Generate image registry credentials
+  content-scan:
+    description: Malicious uploads detection, scan uploaded content in HTTP requests for malware and malicious payloads
+    groups:
+      expressions:
+        description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
+  custom-pages:
+    description: Manage custom error and challenge pages and their assets for accounts and zones
+    groups:
+      account-custom-pages:
+        description: Manage account-level custom pages
+      account-custom-pages.preview-tokens:
+        description: Preview tokens for account-level custom pages
+      assets:
+        description: Manage account- and zone-level custom assets
+      zone-custom-pages:
+        description: Manage zone-level custom pages
+      zone-custom-pages.preview-tokens:
+        description: Preview tokens for zone-level custom pages
+  d1:
+    description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
+    groups:
+      time-travel:
+        description: use specific point-in-time backups of your D1 database
+        x-forge-epilogue: For more information about Time Travel, see https://developers.cloudflare.com/d1/reference/time-travel
+  diagnostics:
+    description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
+    groups:
+      endpoint-healthchecks:
+        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+      traceroutes:
+        description: Run traceroutes from Cloudflare data centers to diagnose network path issues
+  email-routing:
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
+    groups:
+      addresses:
+        description: Verified destination email addresses that can receive forwarded mail
+      dns:
+        description: Inspect or unlock the DNS records required by Email Routing
+      rules:
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
+  email-security:
+    description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
+    groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
+      investigate:
+        description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
+      phishguard:
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
+      settings:
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
+      submissions:
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
+  email-sending:
+    description: Send transactional email and manage sending subdomains and their DNS configuration
+    groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
+      subdomains:
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
+  filters:
+    description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
+  firewall:
+    description: Legacy firewall rules, zone lockdowns, access rules, user-agent blocking, and WAF packages
+    groups:
+      access-rules:
+        description: IP-based access rules that allow, block, challenge, or whitelist traffic globally or per-zone
+      lockdowns:
+        description: Zone lockdown rules that restrict access to URLs by IP address or range
+      rules:
+        description: Legacy firewall rules with filter expressions — prefer Rulesets for new configurations
+      ua-rules:
+        description: Block or challenge requests based on the User-Agent header string
+      waf:
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
+      zone-access-rules:
+        description: Zone-scoped IP access rules for blocking or allowing traffic
+  google-tag-gateway:
+    description: Google Tag Gateway operations
+    groups:
+      config:
+        description: Google Tag Gateway config operations
+  healthchecks:
+    description: Standalone health checks that monitor origin server availability from Cloudflare's edge
+    groups:
+      previews:
+        description: Test a health check configuration before deploying it to production
+  hyperdrive:
+    description: Accelerate access to existing databases by caching queries and pooling connections at the edge
+  iam:
+    description: Identity and access management — permission groups, resource groups, user groups, and SSO connectors
+    groups:
+      permission-groups:
+        description: View the permission groups that can be assigned to API tokens and policies
+      resource-groups:
+        description: Define scopes that limit which account resources a policy or token can access
+      sso:
+        description: Configure single sign-on connectors to authenticate account members through an external identity provider
+      user-groups:
+        description: Organize account members into groups for easier permission assignment
+  images:
+    description: Store, resize, and deliver optimized images globally — variants, signing keys, and direct uploads
+    groups:
+      flows:
+        description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
+      keys:
+        description: Manage signing keys for generating private image URLs
+      variants:
+        description: Manage named resize variants for transforming images on delivery
+  intel:
+    description: Threat intelligence lookups — IP reputation, domain info, ASN details, WHOIS, and indicator feeds
+    groups:
+      asn:
+        description: ASN intelligence — ownership, geolocation, and subnet details for autonomous systems
+      attack-surface-report:
+        description: Attack surface intelligence — exposed assets, vulnerabilities, and infrastructure mapping
+      dns:
+        description: Passive DNS data showing historical DNS resolution records for domains
+      domain-history:
+        description: Historical domain registration and categorization changes over time
+      domains:
+        description: Domain intelligence — risk scores, categories, and associated infrastructure
+      indicator-feeds:
+        description: Threat indicator feeds — subscribe to and manage curated lists of malicious IPs, domains, and URLs
+      ip-lists:
+        description: Curated IP lists used for threat detection and policy enforcement
+      ips:
+        description: IP address intelligence — geolocation, risk assessment, and hosting provider details
+      miscategorizations:
+        description: Report and track domain miscategorization corrections
+      whois:
+        description: WHOIS registration data for domains including registrant, registrar, and nameservers
+  k2:
+    description: Durable, ordered event streams that you produce records to and consume from with subscriptions
+    groups:
+      streams:
+        description: K2 streams, their retention, and the HTTP and Workers binding inputs used to produce records
+      streams.subscriptions:
+        description: Subscriptions that consume a K2 stream, with committed-position lag
+  leaked-credential-checks:
+    description: Detect compromised credentials in login requests by checking against known breach databases
+    groups:
+      detections:
+        description: Custom detection locations that tell the WAF where to find usernames and passwords in requests
+  load-balancers:
+    description: Distribute traffic across origin pools with health monitoring, geo-steering, and failover
+    groups:
+      monitor-groups:
+        description: Group monitors together for shared configuration and bulk management
+      monitor-groups.references:
+        description: List references to monitor groups used by load balancer pools
+      monitors:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.previews:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.references:
+        description: Health check configurations that probe origin servers and determine pool availability
+      pools:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.health:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.references:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      previews:
+        description: Preview the result of a health check monitor configuration before applying it
+      regions:
+        description: Geographic regions used for regional pool steering and traffic policies
+      searches:
+        description: Search across all load balancer resources (pools, monitors, load balancers) by name or reference
+  logs:
+    description: Log control, retention, and raw log access — CMB config, ray ID lookups, and received fields
+    groups:
+      control:
+        description: Log control operations
+      received:
+        description: Received log operations
+  magic-network-monitoring:
+    description: Flow-based network traffic monitoring with configurable alerting rules and VPC flow ingestion
+    groups:
+      configs:
+        description: Account-level monitoring configuration — sampling rates, thresholds, and notification settings
+      rules:
+        description: Monitoring rules that define traffic thresholds and trigger alerts or prefix advertisements
+      vpc-flows:
+        description: Ingest VPC flow logs from cloud providers for network visibility and anomaly detection
+  magic-transit:
+    description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
+    groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
+      apps:
+        description: Application-aware traffic policies for Magic WAN that steer traffic by app type
+      bgp-filter-profiles:
+        description: BGP filter profiles for controlling which routes are allowed or denied on Magic Transit tunnels
+      bgp-settings:
+        description: BGP settings for controlling default ASN and route redistribution on Magic Transit tunnels
+      cf-interconnects:
+        description: Cloudflare Network Interconnect (CNI) links for direct physical or virtual peering
+      gre-tunnels:
+        description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
+      ipsec-tunnels:
+        description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
+      routes:
+        description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
+      sites:
+        description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
+  mcp:
+    description: Manage MCP portals and upstream MCP servers for Cloudflare Access AI controls
+    groups:
+      portals:
+        description: Manage MCP portals, attached servers, and Code Mode settings
+      servers:
+        description: Manage upstream MCP servers, credentials, capabilities, and sync state
+  network-interconnects:
+    description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
+    groups:
+      cnis:
+        description: Cloud Network Interconnect (CNI) connections — private links from cloud providers to Cloudflare
+      interconnects:
+        description: Physical cross-connect and partner interconnect sessions with LOA and status tracking
+      settings:
+        description: Account-level interconnect settings and default configurations
+      slots:
+        description: Available interconnect facility slots showing port capacity at Cloudflare data centers
+  organizations:
+    description: Multi-user organizations that group accounts, members, and shared settings under a single entity
+    groups:
+      account-organizations:
+        description: List organizations associated with a specific account
+      accounts:
+        description: Accounts operations
+      members:
+        description: Members operations
+      members-batch-create:
+        description: Members Batch Create operations
+      organization-profile:
+        description: View and update the public profile information for an organization
+      shares:
+        description: Shares operations
+  origin-post-quantum-encryption:
+    description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
+  pages:
+    description: Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains
+    groups:
+      projects:
+        description: Pages projects, deployments, build logs, and custom domain bindings
+  pipelines:
+    description: Ingest, transform, and route event streams into R2, analytics, or other destinations in real time
+    groups:
+      sinks:
+        description: Destinations where pipeline data is written — R2 buckets, HTTP endpoints, or other storage
+      streams:
+        description: Inbound data streams that feed events into a pipeline for processing
+  precursor:
+    description: Precursor settings for a zone
+  queues:
+    description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
+    groups:
+      consumers:
+        description: Workers that automatically receive and process messages from a queue
+      messages:
+        description: Push messages to a queue and pull or acknowledge them from consumers
+      purge:
+        description: Remove all pending messages from a queue
+      subscriptions:
+        description: Manage queue subscriptions for event-driven message routing
+  r2:
+    description: S3-compatible object storage with zero egress fees — buckets, lifecycle rules, event notifications, and data migration
+    groups:
+      buckets:
+        description: Create and configure R2 buckets including CORS, lifecycle, custom domains, event notifications, and object locks
+      buckets.jobs:
+        description: Create and inspect background jobs for an R2 bucket
+      buckets.local-uploads:
+        description: R2 bucket local upload configuration
+      super-slurper:
+        description: Migrate data from external S3-compatible storage into R2 buckets with resumable transfer jobs
+      temporary-credentials:
+        description: Generate short-lived S3-compatible credentials scoped to specific buckets and operations
+  r2-data-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  radar:
+    description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
+    groups:
+      agent-readiness:
+        description: Agent readiness summary statistics across the Cloudflare network
+      ai:
+        description: AI inference trends and model usage statistics across the Cloudflare network
+      annotations:
+        description: Radar annotations marking significant Internet events (outages, cable cuts, etc.)
+      as112:
+        description: AS112 DNS sinkhole statistics — reverse DNS query volumes for private address space
+      attacks:
+        description: DDoS and application-layer attack trends, vectors, and target analysis
+      bgp:
+        description: BGP routing data — prefix announcements, AS-level stats, route leaks, and hijack events
+      bots:
+        description: Internet-wide bot traffic trends, categories, and distribution statistics
+      ct:
+        description: Certificate Transparency log monitoring and newly-issued certificate discovery
+      datasets:
+        description: Downloadable Radar datasets for offline analysis and research
+      dns:
+        description: Global DNS query trends — top domains, resolver stats, and DNSSEC adoption
+      email:
+        description: Email security trends — DMARC/SPF/DKIM adoption, spam, and phishing statistics
+      entities:
+        description: Look up ASNs, IPs, domains, and locations with metadata and traffic summaries
+      geolocations:
+        description: Geographic location metadata used for regional traffic analysis
+      http:
+        description: HTTP protocol trends — TLS versions, HTTP versions, browser share, and OS distribution
+      leaked-credentials:
+        description: Leaked credential detection trends and exposure statistics
+      netflows:
+        description: Network-layer traffic flow data and volumetric trend analysis
+      origins:
+        description: Cloud and hosting origin providers (e.g. Amazon, by region) and their traffic metrics
+      post-quantum:
+        description: Post-quantum encryption adoption and deployment trends across the Internet
+      quality:
+        description: Internet connection quality metrics — speed, latency, and jitter by geography and ASN
+      ranking:
+        description: Top domain rankings based on DNS query popularity across the Cloudflare network
+      robots-txt:
+        description: Robots.txt adoption and crawler directive trends across the web
+      search:
+        description: Search Radar data across IPs, ASNs, domains, and locations
+      tcp-resets-timeouts:
+        description: TCP connection reset and timeout statistics indicating network health issues
+      tlds:
+        description: Top-level domain (TLD) metadata and performance trends
+      traffic-anomalies:
+        description: Detected traffic anomalies and unusual patterns in Internet traffic flows
+      verified-bots:
+        description: Catalog of known good bots (Googlebot, Bingbot, etc.) and their traffic patterns
+  rate-limits:
+    description: Legacy per-zone rate limiting rules — prefer Advanced Rate Limiting in Rulesets for new configurations
+  realtime:
+    description: Real-time audio, video, and data services on Cloudflare's global network
+    groups:
+      kit:
+        description: SDK-backed meetings, participants, recordings, livestreams, and webhooks
+      kit.analytics:
+        description: Usage and livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams:
+        description: Livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams.daily:
+        description: Daily livestream analytics for RealtimeKit applications
+      kit.analytics.usage:
+        description: Usage analytics for RealtimeKit applications
+      kit.apps:
+        description: RealtimeKit applications that group meetings, sessions, and configuration
+      kit.livestreams:
+        description: Independent and meeting-based livestreams and their sessions
+      kit.livestreams.sessions:
+        description: Sessions for RealtimeKit livestreams
+      kit.meetings:
+        description: Meetings, participants, access tokens, and meeting livestreams
+      kit.meetings.active:
+        description: Live meeting state and participant controls
+      kit.meetings.active.polls:
+        description: Polls for active meeting sessions
+      kit.meetings.livestream:
+        description: Livestream operations associated with RealtimeKit meetings
+      kit.meetings.participants:
+        description: Participants in RealtimeKit meetings
+      kit.meetings.participants.tokens:
+        description: Access tokens for RealtimeKit meeting participants
+      kit.presets:
+        description: Reusable meeting configuration for media, permissions, and interface behavior
+      kit.recordings:
+        description: Meeting and participant-track recordings and recording controls
+      kit.recordings.active:
+        description: Active recordings for RealtimeKit meetings
+      kit.recordings.tracks:
+        description: Participant-track recordings for RealtimeKit meetings
+      kit.sessions:
+        description: Historical session data, participants, chat, transcripts, and summaries
+      kit.sessions.chat:
+        description: Chat messages from historical RealtimeKit sessions
+      kit.sessions.livestreams:
+        description: Livestreams associated with historical RealtimeKit sessions
+      kit.sessions.participants:
+        description: Participants in historical RealtimeKit sessions
+      kit.sessions.peers:
+        description: Peer details from historical RealtimeKit sessions
+      kit.sessions.summaries:
+        description: Summaries of historical RealtimeKit sessions
+      kit.sessions.transcripts:
+        description: Transcripts from historical RealtimeKit sessions
+      kit.webhooks:
+        description: Webhook endpoints and supported events for RealtimeKit notifications
+      kit.webhooks.events:
+        description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
+  request-tracers:
+    description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
+    groups:
+      traces:
+        description: Simulate request processing to debug rule matches, transforms, and routing decisions
+  resource-sharing:
+    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    groups:
+      recipients:
+        description: Update share recipients
+      resources:
+        description: Individual resources (zones, configs) that have been shared with recipients
+  rules:
+    description: Resources used by Cloudflare rules and rulesets
+    groups:
+      lists:
+        description: Custom account-level lists of IPs, hostnames, ASNs, or redirects used in rule expressions
+  rum:
+    description: Real User Measurement (Web Analytics) — track page loads, Core Web Vitals, and visitor metrics
+    groups:
+      rules:
+        description: Rules that control which pages and paths are tracked by Web Analytics
+      site-info:
+        description: Web Analytics sites — register domains and get the JavaScript beacon snippet
+  scim:
+    description: SCIM 2.0 provisioning — manage users, groups, and identity provider sync for your account
+    groups:
+      groups:
+        description: Groups operations
+      resource-types:
+        description: Resource Types operations
+      schemas:
+        description: Schemas operations
+      service-provider-config:
+        description: Service Provider Config operations
+      users:
+        description: Users operations
+  secrets-store:
+    description: Centralized secret management — store API keys, tokens, and credentials for use across Workers and other products
+    groups:
+      quota:
+        description: Account quota limits for secrets stores, secrets count, and storage capacity
+      secrets:
+        description: Encrypted key-value secrets within a store. Pass --store-id to scope.
+      stores:
+        description: Secret stores that hold encrypted key-value secrets accessible by Workers and services
+  security-center:
+    description: Security posture dashboard — view and manage security insights, misconfigurations, and vulnerabilities
+    groups:
+      insights:
+        description: Security findings and recommendations across your account — DNS, SSL, WAF misconfigurations, etc.
+      zone-insights:
+        description: Zone-scoped security insights — counts by class, severity, type, and dismissal
+  security-txt:
+    description: Manage the /.well-known/security.txt file that tells security researchers how to report vulnerabilities
+  smart-shield:
+    description: Smart Shield settings, health checks, and cache reserve management
+    groups:
+      cache-reserve-clear:
+        description: Cache Reserve Clear operations
+      health-checks:
+        description: Health checks operations
+  spectrum:
+    description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
+    groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
+      apps:
+        description: Spectrum application configurations that map protocols and ports to origin servers
+  speed:
+    description: Observatory speed tests — run Lighthouse audits, track performance trends, and schedule recurring tests
+    groups:
+      availabilities:
+        description: Check which speed test regions and configurations are available for your zone
+      pages:
+        description: Tested pages with their performance history, trends, and individual test results
+      schedule:
+        description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
+  stream:
+    description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
+    groups:
+      audio-tracks:
+        description: Add, edit, or remove additional audio tracks on a video
+      captions:
+        description: Upload, generate, or retrieve captions and subtitles for videos in multiple languages
+      clip:
+        description: Create a new video clip from an existing video by specifying start and end times
+      copy:
+        description: Import a video from a URL into Stream for processing and delivery
+      direct-upload:
+        description: Generate a tokenized URL that lets end-users upload video directly to Stream
+      downloads:
+        description: Create downloadable MP4 renditions of a video for offline viewing
+      embed:
+        description: Retrieve the HTML embed code snippet for a video
+      keys:
+        description: Signing keys used to generate short-lived signed URLs for private video playback
+      live-inputs:
+        description: Enable and disable live input streams
+      token:
+        description: Generate short-lived signed URL tokens for secure private video playback
+      typed-downloads:
+        description: Type-specific stream download creation and deletion
+      videos:
+        description: Aggregate video storage usage statistics for the account
+      watermarks:
+        description: Watermark profiles that overlay an image on every video in the account
+      webhooks:
+        description: Webhook notifications for video lifecycle events (ready, error, etc.)
+  tenants:
+    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    groups:
+      account-types:
+        description: Account Types operations
+      accounts:
+        description: Accounts operations
+      entitlements:
+        description: Entitlements operations
+      memberships:
+        description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
+  url-scanner:
+    description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
+    groups:
+      response:
+        description: Response operations
+      responses:
+        description: Raw HTTP response data captured during URL scans
+      scan:
+        description: Scan operations
+      scans:
+        description: URL scan requests and results — submit URLs for analysis and retrieve threat verdicts
+  user:
+    description: Your Cloudflare user profile, invitations, organizations, billing, and personal API tokens
+    groups:
+      billing:
+        description: View billing history and payment profile for your user (deprecated — prefer account-level billing)
+      firewall:
+        description: Firewall operations
+      load-balancers.monitors:
+        description: Load Balancers operations
+      load-balancers.monitors.preview:
+        description: Load Balancers operations
+      load-balancers.monitors.references:
+        description: Load Balancers operations
+      load-balancers.pools:
+        description: Load Balancers operations
+      load-balancers.pools.edit.pools:
+        description: Load Balancers operations
+      load-balancers.pools.health:
+        description: Load Balancers operations
+      load-balancers.pools.preview:
+        description: Load Balancers operations
+      load-balancers.pools.references:
+        description: Load Balancers operations
+      load-balancers.preview:
+        description: Load Balancers operations
+      load-balancing-analytics.events:
+        description: Load Balancing Analytics operations
+      subscriptions:
+        description: View and manage zone-level plan subscriptions owned by your user
+      tenants:
+        description: Tenants operations
+      tokens:
+        description: Create and manage personal API tokens scoped to your user for programmatic API access
+  user.analytics:
+    description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
+  waiting-rooms:
+    description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
+    groups:
+      account-waiting-rooms:
+        description: Account-scoped waiting room listing
+      events:
+        description: Scheduled events that temporarily override waiting room settings for sales, launches, etc.
+      page:
+        description: Custom HTML waiting page templates and preview rendering
+      rules:
+        description: Rules that bypass or modify waiting room behavior for specific request patterns
+      settings:
+        description: Zone-level waiting room defaults and cookie configuration
+      statuses:
+        description: Real-time queue status showing active users, queued users, and estimated wait times
+  workflows:
+    description: Durable, multi-step workflows that run on Workers with automatic retries and state persistence
+    groups:
+      instances:
+        description: Workflow instance operations
+      versions:
+        description: Workflow version operations
+  zaraz:
+    description: Server-side tag manager — load third-party tools (analytics, pixels, etc.) from Cloudflare's edge without client-side JS
+    groups:
+      config:
+        description: Full Zaraz configuration including tools, triggers, and variables for the zone
+      default:
+        description: Default Zaraz configuration template used as a starting point for new zones
+      export:
+        description: Export the current Zaraz configuration as a portable JSON document
+      history:
+        description: Configuration version history — browse and restore previous Zaraz configurations
+      publish:
+        description: Publish pending Zaraz configuration changes to make them live on the zone
+      workflow:
+        description: Workflow state for Zaraz configuration changes (draft vs. published)
+  zero-trust:
+    description: Cloudflare's SASE platform — secure access, device posture, DLP, tunnels, gateway policies, and network segmentation
+    groups:
+      dex:
+        description: Digital Experience Monitoring — synthetic tests, fleet-wide device metrics, and network path diagnostics
+      dlp.custom-prompt-topics:
+        description: Data Loss Prevention - manage custom prompt topics for AI-based content detection
+      dlp.data-classes:
+        description: Data Loss Prevention - manage data classes used to classify sensitive information
+      dlp.data-tag-categories:
+        description: Data Loss Prevention - manage categories that organize data tags
+      dlp.data-tag-category-templates:
+        description: Data Loss Prevention - browse templates for creating data tag categories
+      dlp.data-tags:
+        description: Data Loss Prevention - manage tags used to classify and organize sensitive data
+      dlp.datasets:
+        description: Data Loss Prevention - manage datasets, versions, and uploads
+      dlp.document-fingerprints:
+        description: Data Loss Prevention - manage document fingerprints for detecting matching documents
+      dlp.email.account-mapping:
+        description: Data Loss Prevention - configure account mappings for outbound email scanning
+      dlp.email.rules:
+        description: Data Loss Prevention - manage outbound email scanning rules and their priorities
+      dlp.entries:
+        description: Data Loss Prevention - list and manage detection entries
+      dlp.limits:
+        description: Data Loss Prevention - view account limits and resource quotas
+      dlp.patterns:
+        description: Data Loss Prevention - validate regular expressions used for content detection
+      dlp.profiles:
+        description: Data Loss Prevention - list and retrieve profiles
+      dlp.profiles.custom:
+        description: Data Loss Prevention - manage custom profiles
+      dlp.profiles.predefined:
+        description: Data Loss Prevention - manage predefined profiles
+      dlp.sensitivity-group-templates:
+        description: Data Loss Prevention - browse templates for creating sensitivity groups
+      dlp.sensitivity-groups:
+        description: Data Loss Prevention - manage sensitivity groups and their level ordering
+      dlp.sensitivity-levels:
+        description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
+      dlp.settings:
+        description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.integrations:
+        description: User Risk Scoring - manage integrations that provide risk score signals
+      risk-scoring.integrations.references:
+        description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
+  zones:
+    description: Zones are domains on Cloudflare — list, create, and configure domain settings
+    groups:
+      aegis:
+        description: Aegis operations
+      fonts:
+        description: Fonts operations
+      origin-h2-max-streams:
+        description: Origin H2 Max Streams operations
+      origin-max-http-version:
+        description: Origin Max Http Version operations
+      origin-tls-compliance-modes:
+        description: Manage zone Origin TLS Compliance Modes setting
+      rum:
+        description: Rum operations
+      speed-brain:
+        description: Speed Brain operations

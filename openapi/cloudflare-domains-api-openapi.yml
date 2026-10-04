@@ -1,17 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare Workers Domains API
-  description: Cloudflare Workers allows developers to deploy serverless code to Cloudflare's global network. The Workers API provides endpoints for managing worker scripts, versions, deployments, routes, custom domains, secrets, cron triggers, and configuration including bindings.
-  version: '4.0'
-  contact:
-    name: Cloudflare Support
-    url: https://support.cloudflare.com/
-  termsOfService: https://www.cloudflare.com/terms/
+  title: Cloudflare Domains API
+  version: '1.0'
+  description: 'Operations tagged Domains across 2 of this provider''s published API definitions: cloudflare-workers-openapi.yml, cloudflare-openapi.json. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.cloudflare.com/client/v4
   description: Cloudflare API v4 Production Server
-security:
-- bearerAuth: []
 tags:
 - name: Domains
   description: Attach and detach custom domains to Worker scripts.
@@ -33,6 +27,8 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
     put:
       operationId: attachDomain
       summary: Cloudflare Attach Custom Domain
@@ -49,6 +45,110 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.cloudflare.com/client/v4
+      description: Cloudflare API v4 Production Server
+  /accounts/{account_id}/workers/domains/{domain_id}:
+    delete:
+      operationId: workers.domains.delete
+      summary: Detach Worker Domain
+      description: Detaches a domain from a Worker. Both the Worker and all of its previews are no longer routable using this domain.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers_identifier'
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          description: ID of the domain.
+          type: string
+          example: dbe10b4bc17c295377eabd600e1787fd
+      responses:
+        '200':
+          description: Detach domain response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common'
+        4XX:
+          description: Detach domain failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Domains
+      x-api-token-group:
+      - Workers Scripts Write
+      x-fern-audiences:
+      - sdk
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: workers.domains
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This will stop routing traffic on this domain to the Worker.
+    get:
+      operationId: workers.domains.get
+      summary: Get Worker Domain
+      description: Gets information about a Worker domain.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers_identifier'
+      - name: domain_id
+        in: path
+        required: true
+        schema:
+          description: ID of the domain.
+          type: string
+          example: dbe10b4bc17c295377eabd600e1787fd
+      responses:
+        '200':
+          description: Get domain response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers_api-response-common'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/workers_Domain'
+                  required:
+                  - result
+                  type: object
+        4XX:
+          description: Get domain failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Domains
+      x-api-token-group:
+      - Workers Scripts Write
+      - Workers Scripts Read
+      x-fern-audiences:
+      - sdk
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: workers.domains
+      x-fern-sdk-method-name: get
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
 components:
   parameters:
     AccountId:
@@ -58,11 +158,185 @@ components:
       description: The unique identifier of the Cloudflare account.
       schema:
         type: string
+  schemas:
+    workers_api-response-common-failure:
+      type: object
+      properties:
+        errors:
+          example:
+          - code: 7003
+            message: No route for the URI
+          allOf:
+          - $ref: '#/components/schemas/workers_messages'
+          minLength: 1
+        messages:
+          example: []
+          allOf:
+          - $ref: '#/components/schemas/workers_messages'
+        result:
+          type:
+          - object
+          - 'null'
+          enum:
+          - null
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: false
+          enum:
+          - false
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    workers_api-response-common:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/workers_messages'
+        messages:
+          $ref: '#/components/schemas/workers_messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: true
+          enum:
+          - true
+      required:
+      - success
+      - errors
+      - messages
+    workers_Domain:
+      type: object
+      properties:
+        cert_id:
+          description: ID of the TLS certificate issued for the domain.
+          type: string
+          format: uuid
+          example: 9fdf92c8-64c2-4a3d-b1af-e15304961145
+          readOnly: true
+          x-auditable: true
+        environment:
+          description: Worker environment associated with the domain.
+          type: string
+          example: production
+          deprecated: true
+          readOnly: true
+          x-auditable: true
+        hostname:
+          description: Hostname of the domain. Can be either the zone apex or a subdomain of the zone. Requests to this hostname will be routed to the configured Worker.
+          type: string
+          example: app.example.com
+          x-auditable: true
+        id:
+          description: Immutable ID of the domain.
+          type: string
+          example: dbe10b4bc17c295377eabd600e1787fd
+          readOnly: true
+          x-auditable: true
+        service:
+          description: Name of the Worker associated with the domain. Requests to the configured hostname will be routed to this Worker.
+          type: string
+          example: my-worker
+          x-auditable: true
+        zone_id:
+          description: ID of the zone containing the domain hostname.
+          type: string
+          example: 593c9c94de529bbbfaac7c53ced0447d
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        zone_name:
+          description: Name of the zone containing the domain hostname.
+          type: string
+          example: example.com
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+      required:
+      - id
+      - cert_id
+      - environment
+      - zone_id
+      - zone_name
+      - hostname
+      - service
+    workers_identifier:
+      description: Identifier.
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      x-auditable: true
+    workers_messages:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          documentation_url:
+            type: string
+          message:
+            type: string
+          source:
+            type: object
+            properties:
+              pointer:
+                type: string
+        required:
+        - code
+        - message
+        type: object
+        uniqueItems: true
+      example: []
+    workers_api-response-collection:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/workers_api-response-common'
+      - properties:
+          result_info:
+            type: object
+            properties:
+              count:
+                description: Total number of results for the requested service.
+                type: number
+                example: 1
+              page:
+                description: Current page within paginated list of results.
+                type: number
+                example: 1
+              per_page:
+                description: Number of results per page of results.
+                type: number
+                example: 20
+              total_count:
+                description: Total results available without any search parameters.
+                type: number
+                example: 2000
+              total_pages:
+                description: The number of total pages in the entire result set.
+                type: number
+                example: 100
+        type: object
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       description: API token authentication with Workers permissions.
-externalDocs:
-  description: Cloudflare Workers API Documentation
-  url: https://developers.cloudflare.com/api/resources/workers/
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+x-refined-from:
+- cloudflare-workers-openapi.yml
+- cloudflare-openapi.json

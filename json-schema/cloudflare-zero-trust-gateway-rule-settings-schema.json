@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-zero-trust-gateway-rule-settings-schema.json",
+  "title": "zero-trust-gateway_rule-settings",
+  "description": "Additional settings that modify the rule's action.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-accounts-api-openapi.yml#/components/schemas/zero-trust-gateway_rule-settings",
+  "type": "object",
+  "properties": {
+    "add_headers": {
+      "type": "object",
+      "description": "Add custom headers to allowed requests, in the form of key-value pairs. Keys are header names, pointing to an array with its header value(s)."
+    },
+    "allow_child_bypass": {
+      "type": "boolean",
+      "description": "Set by parent MSP accounts to enable their children to bypass this rule."
+    },
+    "audit_ssh": {
+      "type": "object",
+      "description": "Settings for the Audit SSH action.",
+      "properties": {
+        "command_logging": {
+          "type": "boolean",
+          "description": "Enable to turn on SSH command logging."
+        }
+      }
+    },
+    "biso_admin_controls": {
+      "type": "object",
+      "description": "Configure how browser isolation behaves.",
+      "properties": {
+        "dcp": {
+          "type": "boolean",
+          "description": "Set to true to enable copy-pasting."
+        },
+        "dd": {
+          "type": "boolean",
+          "description": "Set to true to enable downloading."
+        },
+        "dk": {
+          "type": "boolean",
+          "description": "Set to true to enable keyboard usage."
+        },
+        "dp": {
+          "type": "boolean",
+          "description": "Set to true to enable printing."
+        },
+        "du": {
+          "type": "boolean",
+          "description": "Set to true to enable uploading."
+        }
+      }
+    },
+    "block_page_enabled": {
+      "type": "boolean",
+      "description": "Enable the custom block page."
+    },
+    "block_reason": {
+      "type": "string",
+      "description": "The text describing why this block occurred, displayed on the custom block page (if enabled)."
+    },
+    "bypass_parent_rule": {
+      "type": "boolean",
+      "description": "Set by children MSP accounts to bypass their parent's rules."
+    },
+    "check_session": {
+      "type": "object",
+      "description": "Configure how session check behaves.",
+      "properties": {
+        "duration": {
+          "type": "string",
+          "description": "Configure how fresh the session needs to be to be considered valid."
+        },
+        "enforce": {
+          "type": "boolean",
+          "description": "Set to true to enable session enforcement."
+        }
+      }
+    },
+    "dns_resolvers": {
+      "type": "object",
+      "description": "Add your own custom resolvers to route queries that match the resolver policy. Cannot be used when resolve_dns_through_cloudflare is set. DNS queries will route to the address closest to their origin.",
+      "properties": {
+        "ipv4": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/zero-trust-gateway_dns_resolver_settings"
+          }
+        },
+        "ipv6": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/zero-trust-gateway_dns_resolver_settings"
+          }
+        }
+      }
+    },
+    "egress": {
+      "type": "object",
+      "description": "Configure how Gateway Proxy traffic egresses. You can enable this setting for rules with Egress actions and filters, or omit it to indicate local egress via WARP IPs.",
+      "properties": {
+        "ipv4": {
+          "type": "string",
+          "description": "The IPv4 address to be used for egress."
+        },
+        "ipv4_fallback": {
+          "type": "string",
+          "description": "The fallback IPv4 address to be used for egress in the event of an error egressing with the primary IPv4. Can be '0.0.0.0' to indicate local egress via WARP IPs."
+        },
+        "ipv6": {
+          "type": "string",
+          "description": "The IPv6 range to be used for egress."
+        }
+      }
+    },
+    "insecure_disable_dnssec_validation": {
+      "type": "boolean",
+      "description": "INSECURE - disable DNSSEC validation (for Allow actions)."
+    },
+    "ip_categories": {
+      "type": "boolean",
+      "description": "Set to true to enable IPs in DNS resolver category blocks. By default categories only block based on domain names."
+    },
+    "ip_indicator_feeds": {
+      "type": "boolean",
+      "description": "Set to true to include IPs in DNS resolver indicator feed blocks. By default indicator feeds only block based on domain names."
+    },
+    "l4override": {
+      "type": "object",
+      "description": "Send matching traffic to the supplied destination IP address and port.",
+      "properties": {
+        "ip": {
+          "type": "string",
+          "description": "IPv4 or IPv6 address."
+        },
+        "port": {
+          "type": "integer",
+          "description": "A port number to use for TCP/UDP overrides."
+        }
+      }
+    },
+    "notification_settings": {
+      "type": "object",
+      "description": "Configure a notification to display on the user's device when this rule is matched.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Set notification on"
+        },
+        "msg": {
+          "type": "string",
+          "description": "Customize the message shown in the notification."
+        },
+        "support_url": {
+          "type": "string",
+          "description": "Optional URL to direct users to additional information. If not set, the notification will open a block page."
+        }
+      }
+    },
+    "override_host": {
+      "type": "string",
+      "description": "Override matching DNS queries with a hostname."
+    },
+    "override_ips": {
+      "type": "array",
+      "description": "Override matching DNS queries with an IP or set of IPs.",
+      "items": {
+        "type": "string",
+        "description": "IPv4 or IPv6 address."
+      }
+    },
+    "payload_log": {
+      "type": "object",
+      "description": "Configure DLP payload logging.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Set to true to enable DLP payload logging for this rule."
+        }
+      }
+    },
+    "resolve_dns_through_cloudflare": {
+      "type": "boolean",
+      "description": "Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot be set when dns_resolvers are specified."
+    },
+    "untrusted_cert": {
+      "type": "object",
+      "description": "Configure behavior when an upstream cert is invalid or an SSL error occurs.",
+      "properties": {
+        "action": {
+          "type": "string",
+          "description": "The action performed when an untrusted certificate is seen. The default action is an error with HTTP code 526.",
+          "enum": [
+            "pass_through",
+            "block",
+            "error"
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "zero-trust-gateway_dns_resolver_settings": {
+      "type": "object",
+      "required": [
+        "ip"
+      ],
+      "properties": {
+        "ip": {
+          "type": "string",
+          "description": "IP address of upstream resolver."
+        },
+        "port": {
+          "type": "integer",
+          "description": "A port number to use for upstream resolver."
+        },
+        "route_through_private_network": {
+          "type": "boolean",
+          "description": "Whether to connect to this resolver over a private network. Must be set when vnet_id is set."
+        },
+        "vnet_id": {
+          "type": "string",
+          "description": "Optionally specify a virtual network for this resolver. Uses default virtual network id if omitted."
+        }
+      }
+    }
+  }
+}

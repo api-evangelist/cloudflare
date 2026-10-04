@@ -1,0 +1,3495 @@
+openapi: 3.2.0
+info:
+  description: Welcome to Cloudflare's API documentation site.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  title: Cloudflare Worker Versions API
+  version: 4.0.0
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Worker Versions
+paths:
+  /accounts/{account_id}/workers/scripts/{script_name}/versions:
+    get:
+      operationId: worker-versions-list-versions
+      summary: List Versions
+      description: List of Worker Versions. The first version in the list is the latest version.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers_identifier'
+      - name: script_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers_script_name-2'
+      - name: deployable
+        in: query
+        description: Only return versions that can be used in a deployment. Ignores pagination.
+        schema:
+          type: boolean
+          default: false
+      - name: page
+        in: query
+        description: Current page.
+        schema:
+          type: integer
+          default: 1
+      - name: per_page
+        in: query
+        description: Items per-page.
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: List Versions response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_versions-list-response'
+        4XX:
+          description: List Versions response failure.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers_versions-list-response'
+                - $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Worker Versions
+      x-api-token-group:
+      - Workers Tail Read
+      - Workers Scripts Write
+      - Workers Scripts Read
+      x-fern-audiences:
+      - sdk
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: workers.legacy.scripts.versions
+      x-fern-sdk-method-name: list
+    post:
+      operationId: worker-versions-upload-version
+      summary: Upload Version
+      description: 'Upload a Worker Version without deploying to Cloudflare''s network. You can find more about the multipart metadata on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/.'
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers_identifier'
+      - name: script_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers_script_name-2'
+      - name: bindings_inherit
+        in: query
+        description: When set to "strict", the upload will fail if any `inherit` type bindings cannot be resolved against the previous version of the Worker. Without this, unresolvable inherit bindings are silently dropped.
+        schema:
+          type: string
+          enum:
+          - strict
+      requestBody:
+        $ref: '#/components/requestBodies/workers_version-post'
+      responses:
+        '200':
+          description: Upload Version response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_versions-upload-response'
+        4XX:
+          description: 'Upload Version response failure. When the upload uses the
+
+            declarative `exports` field and one or more entries fail
+
+            reconciliation, the response is the exports reconciliation
+
+            error envelope (error code 100402) with per-class detail in
+
+            `errors[].meta.details`.
+
+            '
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - allOf:
+                  - $ref: '#/components/schemas/workers_versions-upload-response'
+                  - $ref: '#/components/schemas/workers_api-response-common-failure'
+                - $ref: '#/components/schemas/workers_exports_reconciliation_error_response'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Worker Versions
+      x-api-token-group:
+      - Workers Scripts Write
+      x-fern-audiences:
+      - sdk
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: workers.legacy.scripts.versions
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/workers/scripts/{script_name}/versions/{version_id}:
+    get:
+      operationId: worker-versions-get-version-detail
+      summary: Get Worker Script Version
+      description: Retrieves detailed information about a specific version of a Worker script.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers_identifier'
+      - name: script_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers_script_name-2'
+      - name: version_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/workers_version_identifier'
+      responses:
+        '200':
+          description: Get Version Detail response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/workers_versions-single-response'
+        4XX:
+          description: Get Version Detail response failure.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/workers_versions-single-response'
+                - $ref: '#/components/schemas/workers_api-response-common-failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Worker Versions
+      x-api-token-group:
+      - Workers Tail Read
+      - Workers Scripts Write
+      - Workers Scripts Read
+      x-fern-audiences:
+      - sdk
+      x-fern-availability: deprecated
+      x-fern-sdk-group-name: workers.legacy.scripts.versions
+      x-fern-sdk-method-name: get
+components:
+  schemas:
+    workers_version_identifier:
+      type: string
+      example: bcf48806-b317-4351-9ee7-36e7d557d4de
+      maxLength: 36
+      readOnly: true
+    workers_binding_kind_secrets_store_secret:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        secret_name:
+          description: Name of the secret in the store.
+          type: string
+          example: my_secret
+          x-auditable: true
+        store_id:
+          description: ID of the store containing the secret.
+          type: string
+          example: 8c8b1387108e49be85669169793e7bd2
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - secrets_store_secret
+          x-auditable: true
+      required:
+      - name
+      - type
+      - store_id
+      - secret_name
+    workers_binding_kind_data_blob:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        part:
+          description: The name of the file containing the data content. Only accepted for `service worker syntax` Workers.
+          type: string
+          example: my-module.bin
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - data_blob
+          deprecated: true
+          x-auditable: true
+      required:
+      - name
+      - type
+      - part
+    workers_versions-list-response:
+      allOf:
+      - $ref: '#/components/schemas/workers_api-response-common'
+      - properties:
+          result:
+            type: object
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/workers_version-item-short'
+        required:
+        - result
+        type: object
+    workers_durable_object_export:
+      description: 'A live Durable Object export (`state: created`, the default). The
+
+        platform auto-provisions the namespace on first deploy, matches it
+
+        on subsequent deploys, and never mutates or deletes it as a side
+
+        effect of a code-only change. `storage` is required; `renamed_to`,
+
+        `transferred_to` and `transfer_from` are not allowed on a live
+
+        entry.
+
+        '
+      type: object
+      properties:
+        container:
+          description: 'Name of the container (declared in the upload''s
+
+            `metadata.containers`) that backs this Durable Object. When
+
+            set, the namespace is container-enabled. Valid only on live
+
+            entries.
+
+            '
+          type: string
+          example: my-container
+          maxLength: 128
+        state:
+          description: Live export. May be omitted; defaults to `created`.
+          type: string
+          default: created
+          enum:
+          - created
+        storage:
+          $ref: '#/components/schemas/workers_export_storage'
+        type:
+          description: Marks this entry as a Durable Object export.
+          type: string
+          enum:
+          - durable-object
+      additionalProperties: false
+      required:
+      - type
+      - storage
+    workers_usage_model:
+      description: Usage model for the Worker invocations.
+      type: string
+      example: standard
+      default: standard
+      enum:
+      - standard
+      - bundled
+      - unbound
+      x-auditable: true
+    workers_binding_kind_ratelimit:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        namespace_id:
+          description: Identifier of the rate limit namespace to bind to.
+          type: string
+          example: '1234'
+          x-auditable: true
+        simple:
+          description: The rate limit configuration.
+          type: object
+          properties:
+            limit:
+              description: The limit (requests per period).
+              type: number
+              example: 100
+              x-auditable: true
+            mitigation_timeout:
+              description: 'Duration in seconds to apply the mitigation action after the rate limit is exceeded. Valid values are 0 (disabled), 10, or multiples of 60 up to 86400. Must be greater than or equal to the period when non-zero.
+
+                '
+              type: integer
+              example: 60
+              x-auditable: true
+            period:
+              description: The period in seconds.
+              type: integer
+              example: 60
+              x-auditable: true
+          required:
+          - limit
+          - period
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - ratelimit
+          x-auditable: true
+      required:
+      - name
+      - type
+      - namespace_id
+      - simple
+    workers_binding_kind_assets:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - assets
+          x-auditable: true
+      required:
+      - name
+      - type
+    workers_binding_kind_vectorize:
+      type: object
+      properties:
+        index_name:
+          description: Name of the Vectorize index to bind to.
+          type: string
+          example: my-index-name
+          x-auditable: true
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - vectorize
+          x-auditable: true
+      required:
+      - name
+      - type
+      - index_name
+    workers_binding_kind_inherit:
+      type: object
+      properties:
+        name:
+          description: The name of the inherited binding.
+          type: string
+          example: MY_BINDING
+          x-auditable: true
+        old_name:
+          description: The old name of the inherited binding. If set, the binding will be renamed from `old_name` to `name` in the new version. If not set, the binding will keep the same name between versions.
+          type: string
+          example: MY_OLD_BINDING
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - inherit
+          x-auditable: true
+        version_id:
+          description: Identifier for the version to inherit the binding from, which can be the version ID or the literal "latest" to inherit from the latest version. Defaults to inheriting the binding from the latest version.
+          type: string
+          example: 8969331f-7192-434c-9938-6aea24ed58bf
+          default: latest
+          x-auditable: true
+      required:
+      - name
+      - type
+    workers_exports_config_map:
+      description: 'Declarative exports for the Worker, keyed by export name. Worker
+
+        entrypoint entries (`type: worker`) carry cache configuration for
+
+        that entrypoint. Durable Object entries (`type: durable-object`)
+
+        are also configured here and drive namespace reconciliation. At
+
+        most 100 entries; class names are at most 128 characters.
+
+        '
+      type: object
+      example:
+        Admin:
+          cache:
+            enabled: true
+          type: worker
+        Counter:
+          storage: sqlite
+          type: durable-object
+        OldCounter:
+          renamed_to: Counter
+          state: renamed
+          type: durable-object
+        default:
+          cache:
+            enabled: false
+          type: worker
+      additionalProperties:
+        $ref: '#/components/schemas/workers_export_config'
+      maxProperties: 100
+    workers_binding_name:
+      description: A JavaScript variable name for the binding.
+      type: string
+      example: myBinding
+      x-auditable: true
+    workers_exports_reconciliation_result:
+      description: 'Summary of what the declarative exports reconciliation did on this
+
+        upload. Present only on uploads that included an `exports` block.
+
+        Reconciliation acts on Durable Object entries; `type: worker`
+
+        entries in the same map do not participate. Every array is always
+
+        present (possibly empty) so clients can iterate unconditionally.
+
+        Clients should surface `warnings` prominently, render `info` at
+
+        lower visibility, and use `removable_entries` as the "safe to
+
+        delete from your config" hint.
+
+        '
+      type: object
+      properties:
+        created:
+          description: Class names for which a new namespace was provisioned.
+          type: array
+          items:
+            type: string
+        deleted:
+          description: Class names whose namespace was deleted by a `deleted` tombstone.
+          type: array
+          items:
+            type: string
+        info:
+          description: 'Non-blocking info entries (stale tombstones, tombstone applied
+
+            with class still in code). See `exports_reconciliation_info`.
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/workers_exports_reconciliation_info'
+        removable_entries:
+          description: 'Source class names whose tombstone entry is now stale and safe
+
+            to delete from `exports` (no remaining referencing scripts).
+
+            '
+          type: array
+          items:
+            type: string
+        renamed:
+          description: Applied `renamed` tombstones.
+          type: array
+          items:
+            $ref: '#/components/schemas/workers_exports_reconciliation_rename'
+        transfer_pending:
+          description: Phase-1 transfer hints recorded on the target side.
+          type: array
+          items:
+            $ref: '#/components/schemas/workers_exports_reconciliation_transfer_pending'
+        transferred:
+          description: Committed `transferred` tombstones (phase-2).
+          type: array
+          items:
+            $ref: '#/components/schemas/workers_exports_reconciliation_transfer'
+        updated:
+          description: Class names whose provisioned namespace was mutated in place.
+          type: array
+          items:
+            type: string
+        warnings:
+          description: Non-blocking warnings. See `exports_reconciliation_warning`.
+          type: array
+          items:
+            $ref: '#/components/schemas/workers_exports_reconciliation_warning'
+      readOnly: true
+      required:
+      - created
+      - updated
+      - deleted
+      - renamed
+      - transferred
+      - transfer_pending
+      - warnings
+      - info
+      - removable_entries
+    workers_binding_item:
+      description: A binding to allow the Worker to communicate with resources.
+      type: object
+      discriminator:
+        mapping:
+          ai: '#/components/schemas/workers_binding_kind_ai'
+          ai_search: '#/components/schemas/workers_binding_kind_ai_search'
+          ai_search_namespace: '#/components/schemas/workers_binding_kind_ai_search_namespace'
+          analytics_engine: '#/components/schemas/workers_binding_kind_analytics_engine'
+          artifacts: '#/components/schemas/workers_binding_kind_artifacts'
+          assets: '#/components/schemas/workers_binding_kind_assets'
+          browser: '#/components/schemas/workers_binding_kind_browser'
+          d1: '#/components/schemas/workers_binding_kind_d1'
+          data_blob: '#/components/schemas/workers_binding_kind_data_blob'
+          dispatch_namespace: '#/components/schemas/workers_binding_kind_dispatch_namespace'
+          durable_object_namespace: '#/components/schemas/workers_binding_kind_durable_object_namespace'
+          flagship: '#/components/schemas/workers_binding_kind_flagship'
+          hyperdrive: '#/components/schemas/workers_binding_kind_hyperdrive'
+          images: '#/components/schemas/workers_binding_kind_images'
+          inherit: '#/components/schemas/workers_binding_kind_inherit'
+          json: '#/components/schemas/workers_binding_kind_json'
+          k2: '#/components/schemas/workers_binding_kind_k2'
+          kv_namespace: '#/components/schemas/workers_binding_kind_kv_namespace'
+          media: '#/components/schemas/workers_binding_kind_media'
+          messaging: '#/components/schemas/workers_binding_kind_messaging'
+          mtls_certificate: '#/components/schemas/workers_binding_kind_mtls_certificate'
+          pipelines: '#/components/schemas/workers_binding_kind_pipelines'
+          plain_text: '#/components/schemas/workers_binding_kind_plain_text'
+          queue: '#/components/schemas/workers_binding_kind_queue'
+          r2_bucket: '#/components/schemas/workers_binding_kind_r2_bucket'
+          ratelimit: '#/components/schemas/workers_binding_kind_ratelimit'
+          secret_key: '#/components/schemas/workers_binding_kind_secret_key'
+          secret_text: '#/components/schemas/workers_binding_kind_secret_text'
+          secrets_store_secret: '#/components/schemas/workers_binding_kind_secrets_store_secret'
+          send_email: '#/components/schemas/workers_binding_kind_send_email'
+          service: '#/components/schemas/workers_binding_kind_service'
+          text_blob: '#/components/schemas/workers_binding_kind_text_blob'
+          vectorize: '#/components/schemas/workers_binding_kind_vectorize'
+          version_metadata: '#/components/schemas/workers_binding_kind_version_metadata'
+          vpc_network: '#/components/schemas/workers_binding_kind_vpc_network'
+          vpc_service: '#/components/schemas/workers_binding_kind_vpc_service'
+          wasm_module: '#/components/schemas/workers_binding_kind_wasm_module'
+          workflow: '#/components/schemas/workers_binding_kind_workflow'
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/workers_binding_kind_ai'
+      - $ref: '#/components/schemas/workers_binding_kind_ai_search'
+      - $ref: '#/components/schemas/workers_binding_kind_ai_search_namespace'
+      - $ref: '#/components/schemas/workers_binding_kind_messaging'
+      - $ref: '#/components/schemas/workers_binding_kind_analytics_engine'
+      - $ref: '#/components/schemas/workers_binding_kind_artifacts'
+      - $ref: '#/components/schemas/workers_binding_kind_assets'
+      - $ref: '#/components/schemas/workers_binding_kind_browser'
+      - $ref: '#/components/schemas/workers_binding_kind_d1'
+      - $ref: '#/components/schemas/workers_binding_kind_data_blob'
+      - $ref: '#/components/schemas/workers_binding_kind_dispatch_namespace'
+      - $ref: '#/components/schemas/workers_binding_kind_durable_object_namespace'
+      - $ref: '#/components/schemas/workers_binding_kind_hyperdrive'
+      - $ref: '#/components/schemas/workers_binding_kind_inherit'
+      - $ref: '#/components/schemas/workers_binding_kind_images'
+      - $ref: '#/components/schemas/workers_binding_kind_json'
+      - $ref: '#/components/schemas/workers_binding_kind_kv_namespace'
+      - $ref: '#/components/schemas/workers_binding_kind_media'
+      - $ref: '#/components/schemas/workers_binding_kind_mtls_certificate'
+      - $ref: '#/components/schemas/workers_binding_kind_plain_text'
+      - $ref: '#/components/schemas/workers_binding_kind_pipelines'
+      - $ref: '#/components/schemas/workers_binding_kind_k2'
+      - $ref: '#/components/schemas/workers_binding_kind_queue'
+      - $ref: '#/components/schemas/workers_binding_kind_ratelimit'
+      - $ref: '#/components/schemas/workers_binding_kind_r2_bucket'
+      - $ref: '#/components/schemas/workers_binding_kind_secret_text'
+      - $ref: '#/components/schemas/workers_binding_kind_send_email'
+      - $ref: '#/components/schemas/workers_binding_kind_service'
+      - $ref: '#/components/schemas/workers_binding_kind_text_blob'
+      - $ref: '#/components/schemas/workers_binding_kind_vectorize'
+      - $ref: '#/components/schemas/workers_binding_kind_version_metadata'
+      - $ref: '#/components/schemas/workers_binding_kind_secrets_store_secret'
+      - $ref: '#/components/schemas/workers_binding_kind_flagship'
+      - $ref: '#/components/schemas/workers_binding_kind_secret_key'
+      - $ref: '#/components/schemas/workers_binding_kind_workflow'
+      - $ref: '#/components/schemas/workers_binding_kind_wasm_module'
+      - $ref: '#/components/schemas/workers_binding_kind_vpc_service'
+      - $ref: '#/components/schemas/workers_binding_kind_vpc_network'
+    workers_binding_kind_ai_search:
+      type: object
+      properties:
+        instance_name:
+          description: The user-chosen instance name. Must exist at deploy time. The worker can search, chat, update, and manage items/jobs on this instance.
+          type: string
+          example: cloudflare-blog
+          x-auditable: true
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        namespace:
+          description: The namespace the instance belongs to. Defaults to "default" if omitted. Customers who don't use namespaces can simply omit this field.
+          type: string
+          example: production
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - ai_search
+          x-auditable: true
+      required:
+      - name
+      - type
+      - instance_name
+    workers_binding_kind_secret_key:
+      type: object
+      properties:
+        algorithm:
+          description: Algorithm-specific key parameters. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#algorithm).
+          type: object
+          x-auditable: true
+        format:
+          description: Data format of the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#format).
+          type: string
+          example: raw
+          enum:
+          - raw
+          - pkcs8
+          - spki
+          - jwk
+          x-auditable: true
+        key_base64:
+          description: Base64-encoded key data. Required if `format` is "raw", "pkcs8", or "spki".
+          type: string
+          writeOnly: true
+          x-sensitive: true
+        key_jwk:
+          description: Key data in [JSON Web Key](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#json_web_key) format. Required if `format` is "jwk".
+          type: object
+          writeOnly: true
+          x-sensitive: true
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - secret_key
+          x-auditable: true
+        usages:
+          description: Allowed operations with the key. [Learn more](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#keyUsages).
+          type: array
+          items:
+            enum:
+            - encrypt
+            - decrypt
+            - sign
+            - verify
+            - deriveKey
+            - deriveBits
+            - wrapKey
+            - unwrapKey
+            type: string
+          example:
+          - encrypt
+          - decrypt
+          x-auditable: true
+          x-stainless-collection-type: set
+      required:
+      - name
+      - type
+      - format
+      - algorithm
+      - usages
+    workers_namespace_identifier:
+      description: Namespace identifier tag.
+      type: string
+      example: 0f2ac74b498b48028cb68387c421e279
+      maxLength: 32
+      x-auditable: true
+    workers_binding_kind_dispatch_namespace:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        namespace:
+          description: The name of the dispatch namespace.
+          type: string
+          example: my-namespace
+          x-auditable: true
+        outbound:
+          description: Outbound worker.
+          type: object
+          properties:
+            params:
+              description: Pass information from the Dispatch Worker to the Outbound Worker through the parameters.
+              type: array
+              items:
+                properties:
+                  name:
+                    description: Name of the parameter.
+                    type: string
+                    example: customer_name
+                    x-auditable: true
+                required:
+                - name
+                type: object
+            worker:
+              description: Outbound worker.
+              type: object
+              properties:
+                entrypoint:
+                  description: Entrypoint to invoke on the outbound worker.
+                  type: string
+                  x-auditable: true
+                environment:
+                  description: Environment of the outbound worker.
+                  type: string
+                  x-auditable: true
+                service:
+                  description: Name of the outbound worker.
+                  type: string
+                  x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - dispatch_namespace
+          x-auditable: true
+      required:
+      - name
+      - type
+      - namespace
+    workers_exports_reconciliation_scenario:
+      description: 'Stable, machine-readable tag identifying which reconciliation
+
+        scenario produced an error, warning, or info entry. Clients may
+
+        branch on this value instead of parsing `message`.
+
+        '
+      type: string
+      enum:
+      - code_class_not_in_exports
+      - provisioned_class_missing_from_config
+      - config_export_not_in_code
+      - config_references_nonexistent_class
+      - orphaned_provisioned_namespace
+      - storage_type_mismatch
+      - free_tier_requires_sqlite
+      - invalid_export
+      - tombstone_delete_class_still_in_code
+      - tombstone_delete_blocked_by_external_bindings
+      - tombstone_renamed_to_occupied
+      - transferred_pending_not_found
+      - transferred_target_missing
+      - transferred_target_mismatch
+      - phase_one_transfer_source_missing
+      - phase_one_transfer_source_namespace_missing
+      - phase_one_transfer_target_class_provisioned
+      - phase_one_transfer_after_commit_mismatch
+      - phase_one_transfer_duplicate
+      - phase_one_transfer_target_in_dispatch_namespace
+      - phase_one_transfer_source_in_dispatch_namespace
+      - transferred_source_in_dispatch_namespace
+      - transferred_target_in_dispatch_namespace
+      - container_undeclared_reference
+      - container_class_not_durable_object
+      - container_wiring_inconsistent
+      - container_multiple_durable_objects
+      - transfer_container_parity_mismatch
+      - transfer_container_parity_mismatch_on_commit
+      - tombstone_class_still_in_code
+      - stale_tombstone
+      - transfer_receive_already_applied
+      - transfer_receive_cleanup_complete
+    workers_identifier:
+      description: Identifier.
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      x-auditable: true
+    workers_binding_kind_hyperdrive:
+      type: object
+      properties:
+        id:
+          description: Identifier of the Hyperdrive connection to bind to.
+          type: string
+          example: 57b7076f58be42419276f058a8968187
+          x-auditable: true
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - hyperdrive
+          x-auditable: true
+      required:
+      - name
+      - type
+      - id
+    workers_exports_reconciliation_error_response:
+      description: 'The v4 error envelope returned with HTTP 400 when one or more
+
+        declared `exports` entries fail reconciliation (error code
+
+        100402). The top-level error `message` aggregates the per-class
+
+        failures as human-readable prose; the structured per-class payload
+
+        is carried in `errors[].meta.details`, sorted by class name.
+
+        '
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            properties:
+              code:
+                type: integer
+                example: 100402
+                enum:
+                - 100402
+              message:
+                description: 'Aggregate, multi-line, human-readable summary of every
+
+                  per-class reconciliation failure.
+
+                  '
+                type: string
+              meta:
+                type: object
+                properties:
+                  details:
+                    description: 'Structured per-class reconciliation failures, sorted
+
+                      by class name.
+
+                      '
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/workers_exports_reconciliation_error'
+                required:
+                - details
+            required:
+            - code
+            - message
+            - meta
+            type: object
+        messages:
+          $ref: '#/components/schemas/workers_messages'
+        result:
+          type:
+          - object
+          - 'null'
+          enum:
+          - null
+        success:
+          type: boolean
+          example: false
+          enum:
+          - false
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    workers_binding_kind_text_blob:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        part:
+          description: The name of the file containing the text content. Only accepted for `service worker syntax` Workers.
+          type: string
+          example: my-module.txt
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - text_blob
+          deprecated: true
+          x-auditable: true
+      required:
+      - name
+      - type
+      - part
+    workers_bindings:
+      description: 'List of bindings attached to a Worker. You can find more about bindings on our docs: https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/#bindings.'
+      type: array
+      items:
+        $ref: '#/components/schemas/workers_binding_item'
+      example:
+      - name: MY_ENV_VAR
+        text: my_data
+        type: plain_text
+    workers_compatibility_flag:
+      description: Flag that enables or disables a specific feature in the Workers runtime.
+      type: string
+      example: nodejs_compat
+      x-auditable: true
+    workers_binding_kind_flagship:
+      type: object
+      properties:
+        app_id:
+          description: ID of the Flagship app to bind to for feature flag evaluation.
+          type: string
+          example: app-12345678-1234-1234-1234-123456789012
+          maxLength: 128
+          x-auditable: true
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - flagship
+          x-auditable: true
+      required:
+      - name
+      - type
+      - app_id
+    workers_exports_reconciliation_warning:
+      description: 'A non-blocking reconciliation warning. Reserved: no scenario
+
+        populates this array today (`code_class_not_in_exports` is
+
+        surfaced as info and `provisioned_class_missing_from_config` is a
+
+        hard error). Clients should still surface any entries that appear.
+
+        '
+      type: object
+      properties:
+        class:
+          description: The class name the warning is about.
+          type: string
+        message:
+          description: Human-readable explanation of the warning.
+          type: string
+        namespace_id:
+          description: The provisioned namespace the warning relates to, when applicable.
+          type: string
+          format: uuid
+        scenario:
+          $ref: '#/components/schemas/workers_exports_reconciliation_scenario'
+      required:
+      - class
+      - scenario
+      - message
+    workers_binding_kind_wasm_module:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        part:
+          description: The name of the file containing the WebAssembly module content. Only accepted for `service worker syntax` Workers.
+          type: string
+          example: my-module.wasm
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - wasm_module
+          deprecated: true
+          x-auditable: true
+      required:
+      - name
+      - type
+      - part
+    workers_compatibility_flags:
+      description: Flags that enable or disable certain features in the Workers runtime. Used to enable upcoming features or opt in or out of specific changes not included in a `compatibility_date`.
+      type: array
+      items:
+        $ref: '#/components/schemas/workers_compatibility_flag'
+      example:
+      - nodejs_compat
+      default: []
+      x-stainless-collection-type: set
+    workers_binding_kind_browser:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - browser
+          x-auditable: true
+      required:
+      - name
+      - type
+    workers_durable_object_transferred_export:
+      description: 'A `transferred` tombstone (source side of a two-phase transfer):
+
+        hands ownership of the provisioned namespace to another script in
+
+        the same account, named by `transferred_to`. The target must have
+
+        already deployed a matching `expecting-transfer` entry. The source
+
+        class may stay in code during the rollout window (an info notice
+
+        is emitted). `storage`, `renamed_to` and `transfer_from` are not
+
+        allowed.
+
+        '
+      type: object
+      properties:
+        state:
+          description: Tombstone that transfers the namespace to another script.
+          type: string
+          enum:
+          - transferred
+        transferred_to:
+          description: 'The destination script name. Must be in the same account and
+
+            the same dispatch-namespace context (or both non-dispatch).
+
+            Cross-dispatch-namespace transfers are rejected. Write-only:
+
+            never present in GET responses.
+
+            '
+          type: string
+          example: target-worker
+          maxLength: 128
+          writeOnly: true
+        type:
+          description: Marks this entry as a Durable Object export.
+          type: string
+          enum:
+          - durable-object
+      additionalProperties: false
+      required:
+      - type
+      - state
+      - transferred_to
+    workers_binding_kind_ai_search_namespace:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        namespace:
+          description: The user-chosen namespace name. Must exist before deploy -- Wrangler handles auto-creation on deploy failure (R2 bucket pattern). The "default" namespace is auto-created by config-api for new accounts. Grants full access (CRUD + search + chat) to all instances within the namespace.
+          type: string
+          example: production
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - ai_search_namespace
+          x-auditable: true
+      required:
+      - name
+      - type
+      - namespace
+    workers_versions-upload-response:
+      allOf:
+      - $ref: '#/components/schemas/workers_api-response-common'
+      - properties:
+          result:
+            $ref: '#/components/schemas/workers_version-item-uploaded'
+        required:
+        - result
+        type: object
+    workers_messages:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          documentation_url:
+            type: string
+          message:
+            type: string
+          source:
+            type: object
+            properties:
+              pointer:
+                type: string
+        required:
+        - code
+        - message
+        type: object
+        uniqueItems: true
+      example: []
+    workers_export_storage:
+      description: 'Durable Object storage backend. `sqlite` is the recommended (and
+
+        only) backend for new namespaces. `legacy-kv` is accepted only for
+
+        a class whose namespace already exists as KV-backed; the `exports`
+
+        flow never provisions a new `legacy-kv` namespace.
+
+        '
+      type: string
+      enum:
+      - sqlite
+      - legacy-kv
+    workers_api-response-common-failure:
+      type: object
+      properties:
+        errors:
+          example:
+          - code: 7003
+            message: No route for the URI
+          allOf:
+          - $ref: '#/components/schemas/workers_messages'
+          minLength: 1
+        messages:
+          example: []
+          allOf:
+          - $ref: '#/components/schemas/workers_messages'
+        result:
+          type:
+          - object
+          - 'null'
+          enum:
+          - null
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: false
+          enum:
+          - false
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    workers_binding_kind_images:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - images
+          x-auditable: true
+      required:
+      - name
+      - type
+    workers_binding_kind_secret_text:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        text:
+          description: The secret value to use.
+          type: string
+          example: My secret.
+          writeOnly: true
+          x-sensitive: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - secret_text
+          x-auditable: true
+      required:
+      - name
+      - type
+      - text
+    workers_binding_kind_workflow:
+      type: object
+      properties:
+        class_name:
+          description: Class name of the Workflow. Should only be provided if the Workflow belongs to this script.
+          type: string
+          example: my-workflow
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        script_name:
+          description: Script name that contains the Workflow. If not provided, defaults to this script name.
+          type: string
+          example: my-workflow
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - workflow
+        workflow_name:
+          description: Name of the Workflow to bind to.
+          type: string
+          example: my-workflow
+      required:
+      - name
+      - type
+      - workflow_name
+    workers_binding_kind_send_email:
+      type: object
+      properties:
+        allowed_destination_addresses:
+          description: List of allowed destination addresses.
+          type: array
+          items:
+            format: email
+            type: string
+          example:
+          - user1@example.com
+          - user2@example.com
+          x-auditable: true
+        allowed_sender_addresses:
+          description: List of allowed sender addresses.
+          type: array
+          items:
+            format: email
+            type: string
+          example:
+          - user1@example.com
+          - user2@example.com
+          x-auditable: true
+        destination_address:
+          description: Destination address for the email.
+          type: string
+          format: email
+          example: user@example.com
+          x-auditable: true
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - send_email
+          x-auditable: true
+      required:
+      - name
+      - type
+    workers_binding_kind_vpc_service:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        service_id:
+          description: Identifier of the VPC service to bind to.
+          type: string
+          example: 8c8b1387108e49be85669169793e7bd2
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - vpc_service
+          x-auditable: true
+      required:
+      - name
+      - type
+      - service_id
+    workers_durable_object_deleted_export:
+      description: 'A `deleted` tombstone: retires the provisioned namespace for this
+
+        class and all of its data. The class must be absent from the
+
+        uploaded code and no other Worker in the account may bind to the
+
+        namespace, otherwise the deploy is rejected. No other fields are
+
+        allowed. Deletion is irreversible.
+
+        '
+      type: object
+      properties:
+        state:
+          description: Tombstone that deletes the namespace.
+          type: string
+          enum:
+          - deleted
+        type:
+          description: Marks this entry as a Durable Object export.
+          type: string
+          enum:
+          - durable-object
+      additionalProperties: false
+      required:
+      - type
+      - state
+    workers_durable_object_renamed_export:
+      description: 'A `renamed` tombstone: rewrites the provisioned namespace''s class
+
+        name from this map key to `renamed_to`. The source class may stay
+
+        in code during the rollout window (an info notice is emitted).
+
+        `storage`, `transferred_to` and `transfer_from` are not allowed.
+
+        '
+      type: object
+      properties:
+        renamed_to:
+          description: 'The destination class name. Must differ from the source class
+
+            (the map key) and must be declared as a live (`created`) entry
+
+            in the same `exports` map. Write-only: never present in GET
+
+            responses.
+
+            '
+          type: string
+          example: NewName
+          maxLength: 128
+          writeOnly: true
+        state:
+          description: Tombstone that renames the namespace's class.
+          type: string
+          enum:
+          - renamed
+        type:
+          description: Marks this entry as a Durable Object export.
+          type: string
+          enum:
+          - durable-object
+      additionalProperties: false
+      required:
+      - type
+      - state
+      - renamed_to
+    workers_binding_kind_d1:
+      type: object
+      properties:
+        database_id:
+          description: Identifier of the D1 database to bind to.
+          type: string
+          example: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+          x-auditable: true
+        id:
+          description: Identifier of the D1 database to bind to.
+          type: string
+          example: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+          deprecated: true
+          x-auditable: true
+          x-stainless-deprecation-message: This property has been renamed to `database_id`.
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - d1
+          x-auditable: true
+      required:
+      - name
+      - type
+      - database_id
+    workers_binding_kind_analytics_engine:
+      type: object
+      properties:
+        dataset:
+          description: The name of the dataset to bind to.
+          type: string
+          example: some_dataset
+          x-auditable: true
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - analytics_engine
+          x-auditable: true
+      required:
+      - name
+      - type
+      - dataset
+    workers_binding_kind_json:
+      type: object
+      properties:
+        json:
+          description: JSON data to use.
+          type: object
+          x-stainless-any: true
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - json
+          x-auditable: true
+      required:
+      - name
+      - type
+      - json
+    workers_exports_reconciliation_transfer:
+      description: A single committed `transferred` tombstone (phase-2 commit).
+      type: object
+      properties:
+        class:
+          description: The source class name that was transferred.
+          type: string
+        phase:
+          description: The transfer phase. Currently always `committed`.
+          type: string
+          example: committed
+          enum:
+          - committed
+        to:
+          description: The destination script that now owns the namespace.
+          type: string
+      required:
+      - class
+      - to
+      - phase
+    workers_cache_options:
+      description: 'Global CacheW configuration for the Worker. When caching is on,
+
+        the platform provisions a `cloudflare.app` zone for the Worker.
+
+        A `type: worker` entry in the `exports` map can override this
+
+        value for a single entrypoint.
+
+        '
+      type: object
+      properties:
+        cross_version_cache:
+          description: 'Whether cached responses are shared across Worker version
+
+            uploads. This is independent of `enabled`. It can stay true
+
+            while caching is off, so the preference survives turning
+
+            caching off and back on.
+
+            '
+          type: boolean
+          example: true
+          default: false
+          x-auditable: true
+        enabled:
+          description: Whether caching is enabled for this Worker.
+          type: boolean
+          example: true
+          default: false
+          x-auditable: true
+      additionalProperties: false
+      required:
+      - enabled
+    workers_export_config:
+      description: 'A single entry in the `exports` map, keyed by export name (a
+
+        `WorkerEntrypoint` class name, a Durable Object class name, or
+
+        `default` for the Worker''s default export). The `type`
+
+        discriminator selects the top-level shape: `worker` entrypoint
+
+        entries may carry `cache` configuration, while `durable-object`
+
+        entries are further refined by the optional `state` field
+
+        (default `created`). Tombstone states (`deleted`, `renamed`,
+
+        `transferred`) express destructive lifecycle operations
+
+        declaratively; `expecting-transfer` is the live target side of a
+
+        transfer. The server validates the exact per-(type, state) field
+
+        combinations; fields not listed for a variant are rejected.
+
+        '
+      discriminator:
+        mapping:
+          durable-object: '#/components/schemas/workers_durable_object_export_variants'
+          worker: '#/components/schemas/workers_worker_export'
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/workers_worker_export'
+      - $ref: '#/components/schemas/workers_durable_object_export_variants'
+    workers_binding_kind_mtls_certificate:
+      type: object
+      properties:
+        certificate_id:
+          description: Identifier of the certificate to bind to.
+          type: string
+          example: efwu2n6s-q69d-2kr9-184j-4913e8h391k6
+          x-auditable: true
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - mtls_certificate
+          x-auditable: true
+      required:
+      - name
+      - type
+      - certificate_id
+    workers_version-item-short:
+      type: object
+      properties:
+        id:
+          description: Unique identifier for the version.
+          type: string
+          example: 18f97339-c287-4872-9bdd-e2135c07ec12
+          readOnly: true
+          x-auditable: true
+        metadata:
+          type: object
+          example:
+            author_email: user@example.com
+            author_id: 408cbcdfd4dda4617efef40b04d168a1
+            created_on: '2022-11-08T17:19:29.176266Z'
+            modified_on: '2022-11-08T17:19:29.176266Z'
+            source: api
+          properties:
+            author_email:
+              description: Email of the user who created the version.
+              type: string
+              example: user@example.com
+              readOnly: true
+              x-auditable: true
+            author_id:
+              description: Identifier of the user who created the version.
+              type: string
+              example: 408cbcdfd4dda4617efef40b04d168a1
+              readOnly: true
+              x-auditable: true
+            created_on:
+              description: When the version was created.
+              type: string
+              example: '2022-11-08T17:19:29.176266Z'
+              readOnly: true
+              x-auditable: true
+            hasPreview:
+              description: Whether the version can be previewed.
+              type: boolean
+              readOnly: true
+            modified_on:
+              description: When the version was last modified.
+              type: string
+              example: '2022-11-08T17:19:29.176266Z'
+              readOnly: true
+              x-auditable: true
+            source:
+              description: The source of the version upload.
+              type: string
+              example: api
+              enum:
+              - unknown
+              - api
+              - wrangler
+              - terraform
+              - dash
+              - cf_cli
+              - dash_template
+              - integration
+              - quick_editor
+              - playground
+              - workersci
+              readOnly: true
+              x-auditable: true
+          readOnly: true
+        number:
+          description: Sequential version number.
+          type: number
+          example: 1
+          readOnly: true
+          x-auditable: true
+    workers_binding_kind_durable_object_namespace:
+      type: object
+      properties:
+        class_name:
+          description: The exported class name of the Durable Object.
+          type: string
+          example: MyDurableObject
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        dispatch_namespace:
+          description: The dispatch namespace the Durable Object script belongs to.
+          type: string
+          example: my-dispatch-namespace
+          x-auditable: true
+        environment:
+          description: The environment of the script_name to bind to.
+          type: string
+          example: production
+          x-auditable: true
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        namespace_id:
+          allOf:
+          - $ref: '#/components/schemas/workers_namespace_identifier'
+          - type: string
+            x-auditable: true
+            x-stainless-terraform-configurability: computed_optional
+        script_name:
+          description: The script where the Durable Object is defined, if it is external to this Worker.
+          type: string
+          example: my-other-worker
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - durable_object_namespace
+          x-auditable: true
+      required:
+      - name
+      - type
+    workers_binding_kind_plain_text:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        text:
+          description: The text value to use.
+          type: string
+          example: Hello, world!
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - plain_text
+          x-auditable: true
+      required:
+      - name
+      - type
+      - text
+    workers_worker_export:
+      description: 'A named Worker entrypoint export (`type: worker`). Worker
+
+        entrypoints are always live (`state: created`) and carry no
+
+        storage or lifecycle fields. The optional `cache` block overrides
+
+        the Worker''s global `cache_options.enabled` for this entrypoint.
+
+        '
+      type: object
+      properties:
+        cache:
+          description: 'Cache override for this entrypoint. Overrides the Worker''s
+
+            global `cache_options.enabled` for this entrypoint only.
+
+            '
+          allOf:
+          - $ref: '#/components/schemas/workers_entrypoint_cache_options'
+        state:
+          description: Live export. May be omitted; defaults to `created`.
+          type: string
+          default: created
+          enum:
+          - created
+        type:
+          description: Marks this entry as a Worker entrypoint export.
+          type: string
+          enum:
+          - worker
+      additionalProperties: false
+      required:
+      - type
+    workers_binding_kind_r2_bucket:
+      type: object
+      properties:
+        bucket_name:
+          description: R2 bucket to bind to.
+          type: string
+          example: my-r2-bucket
+          x-auditable: true
+        jurisdiction:
+          description: The [jurisdiction](https://developers.cloudflare.com/r2/reference/data-location/#jurisdictional-restrictions) of the R2 bucket.
+          type: string
+          example: eu
+          enum:
+          - eu
+          - fedramp
+          - fedramp-high
+          - us
+          x-auditable: true
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - r2_bucket
+          x-auditable: true
+      required:
+      - name
+      - type
+      - bucket_name
+    workers_compatibility_date:
+      description: Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
+      type: string
+      example: '2021-01-01T00:00:00Z'
+      x-auditable: true
+    workers_durable_object_expecting_transfer_export:
+      description: 'The target side of a two-phase transfer (`state:
+
+        expecting-transfer`). Declares that this script expects to receive
+
+        a namespace for this class from the `transfer_from` script. This
+
+        is a live entry, not a tombstone: bindings resolve through the
+
+        source''s namespace until the source commits with a `transferred`
+
+        tombstone. `storage` and `transfer_from` are required; `renamed_to`
+
+        and `transferred_to` are not allowed.
+
+        '
+      type: object
+      properties:
+        container:
+          description: 'Name of the container (declared in the upload''s
+
+            `metadata.containers`) that backs this Durable Object once the
+
+            transfer settles. Valid only on live entries.
+
+            '
+          type: string
+          example: my-container
+          maxLength: 128
+        state:
+          description: Target side of a two-phase transfer.
+          type: string
+          enum:
+          - expecting-transfer
+        storage:
+          $ref: '#/components/schemas/workers_export_storage'
+        transfer_from:
+          description: 'The source script name to receive the namespace from. Must be
+
+            in the same account and dispatch-namespace context. Present on
+
+            reads for `expecting-transfer` entries.
+
+            '
+          type: string
+          example: source-worker
+          maxLength: 128
+        type:
+          description: Marks this entry as a Durable Object export.
+          type: string
+          enum:
+          - durable-object
+      additionalProperties: false
+      required:
+      - type
+      - state
+      - storage
+      - transfer_from
+    workers_script_name-2:
+      description: Name of the script.
+      type: string
+      example: this-is_my_script-01
+      pattern: ^[a-z0-9_][a-z0-9-_]*$
+    workers_api-response-common:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/workers_messages'
+        messages:
+          $ref: '#/components/schemas/workers_messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: true
+          enum:
+          - true
+      required:
+      - success
+      - errors
+      - messages
+    workers_exports_reconciliation_transfer_pending:
+      description: 'A single phase-1 transfer hint recorded on the target side (a live
+
+        `expecting-transfer` entry).
+
+        '
+      type: object
+      properties:
+        class:
+          description: The target-side class name awaiting transfer.
+          type: string
+        from:
+          description: The source script the namespace will be transferred from.
+          type: string
+      required:
+      - class
+      - from
+    workers_exports_reconciliation_rename:
+      description: A single applied `renamed` tombstone.
+      type: object
+      properties:
+        from:
+          description: The original (source) class name.
+          type: string
+        to:
+          description: The new class name (`renamed_to`).
+          type: string
+      required:
+      - from
+      - to
+    workers_binding_kind_messaging:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        namespace:
+          description: The Messaging namespace to bind to.
+          type: string
+          example: production
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - messaging
+          x-auditable: true
+      required:
+      - name
+      - type
+      - namespace
+    workers_durable_object_export_variants:
+      description: 'Any Durable Object export entry (`type: durable-object`), across
+
+        all lifecycle states. The optional `state` field selects the
+
+        variant (default `created`); the tombstone states (`deleted`,
+
+        `renamed`, `transferred`) and the live transfer target
+
+        (`expecting-transfer`) are the alternatives. The server validates
+
+        the exact per-state field combinations; fields not listed for a
+
+        variant are rejected.
+
+        '
+      oneOf:
+      - $ref: '#/components/schemas/workers_durable_object_export'
+      - $ref: '#/components/schemas/workers_durable_object_deleted_export'
+      - $ref: '#/components/schemas/workers_durable_object_renamed_export'
+      - $ref: '#/components/schemas/workers_durable_object_transferred_export'
+      - $ref: '#/components/schemas/workers_durable_object_expecting_transfer_export'
+    workers_binding_kind_k2:
+      description: A K2 stream binding. Available only to accounts enabled for K2.
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        stream:
+          description: ID of a K2 stream owned by the account deploying the Worker.
+          type: string
+          example: 0123456789abcdef0123456789abcdef
+          pattern: ^[a-f0-9]{32}$
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - k2
+          x-auditable: true
+      required:
+      - name
+      - type
+      - stream
+    workers_entrypoint_cache_options:
+      description: 'CacheW configuration for a single `type: worker` entrypoint.
+
+        When present it overrides the Worker''s global
+
+        `cache_options.enabled` for that entrypoint, so a Worker can turn
+
+        caching on globally and opt one entrypoint out, or the reverse.
+
+        '
+      type: object
+      properties:
+        enabled:
+          description: Whether caching is enabled for this entrypoint.
+          type: boolean
+          example: true
+          x-auditable: true
+      additionalProperties: false
+      required:
+      - enabled
+    workers_exports_reconciliation_error:
+      description: 'A single blocking reconciliation error. Returned in the v4 error
+
+        envelope under `meta.details` on the exports reconciliation
+
+        failure error (code 100402). All per-class failures are reported
+
+        together, sorted by class name.
+
+        '
+      type: object
+      properties:
+        class:
+          description: The class name the error is about.
+          type: string
+        message:
+          description: Human-readable explanation.
+          type: string
+        namespace_id:
+          description: The provisioned namespace the error relates to, when applicable.
+          type: string
+          format: uuid
+        referencing_scripts:
+          description: 'Other Workers in the account whose bindings block the
+
+            operation (e.g. a `deleted` tombstone blocked by external
+
+            bindings).
+
+            '
+          type: array
+          items:
+            type: string
+        scenario:
+          $ref: '#/components/schemas/workers_exports_reconciliation_scenario'
+        suggestion:
+          description: An actionable hint for resolving the error, when available.
+          type: string
+      required:
+      - class
+      - scenario
+      - message
+    workers_binding_kind_ai:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - ai
+          x-auditable: true
+      required:
+      - name
+      - type
+    workers_binding_kind_vpc_network:
+      type: object
+      properties:
+        identity:
+          description: 'Enables Gateway identity for the binding. Requires network_id to be "cf1:network" and cannot be combined with tunnel_id.
+
+            '
+          type: string
+          enum:
+          - runtime-email-alpha
+          x-auditable: true
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        network_id:
+          description: 'Identifier of the network to bind to. Only "cf1:network" is currently supported. Mutually exclusive with tunnel_id.
+
+            '
+          type: string
+          example: cf1:network
+          x-auditable: true
+        tunnel_id:
+          description: 'UUID of the Cloudflare Tunnel to bind to. Mutually exclusive with network_id.
+
+            '
+          type: string
+          example: abcd1234-5678-90ef-ghij-klmnopqrstuv
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - vpc_network
+          x-auditable: true
+      required:
+      - name
+      - type
+    workers_binding_kind_media:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - media
+          x-auditable: true
+      required:
+      - name
+      - type
+    workers_version-item-full:
+      allOf:
+      - $ref: '#/components/schemas/workers_version-item-short'
+      - properties:
+          resources:
+            type: object
+            example:
+              bindings:
+              - json: example_binding
+                name: JSON_VAR
+                type: json
+              script:
+                etag: 13a3240e8fb414561b0366813b0b8f42b3e6cfa0d9e70e99835dae83d0d8a794
+                handlers:
+                - fetch
+                last_deployed_from: api
+              script_runtime:
+                usage_model: standard
+            properties:
+              bindings:
+                type: array
+                items:
+                  $ref: '#/components/schemas/workers_binding_item'
+                allOf:
+                - $ref: '#/components/schemas/workers_bindings'
+                - items:
+                    $ref: '#/components/schemas/workers_binding_item'
+                  readOnly: true
+                  type: array
+              script:
+                type: object
+                example:
+                  etag: 13a3240e8fb414561b0366813b0b8f42b3e6cfa0d9e70e99835dae83d0d8a794
+                  handlers:
+                  - fetch
+                  last_deployed_from: api
+                  named_handlers:
+                  - handlers:
+                    - fetch
+                    name: MyClass
+                properties:
+                  etag:
+                    description: Hashed script content
+                    type: string
+                    example: 13a3240e8fb414561b0366813b0b8f42b3e6cfa0d9e70e99835dae83d0d8a794
+                    readOnly: true
+                    x-auditable: true
+                  handlers:
+                    description: The names of handlers exported as part of the default export.
+                    type: array
+                    items:
+                      example: fetch
+                      readOnly: true
+                      type: string
+                    example:
+                    - fetch
+                    readOnly: true
+                    x-stainless-collection-type: set
+                  last_deployed_from:
+                    description: The client most recently used to deploy this Worker.
+                    type: string
+                    example: api
+                    readOnly: true
+                    x-auditable: true
+                  named_handlers:
+                    description: Named exports, such as Durable Object class implementations and named entrypoints.
+                    type: array
+                    items:
+                      example:
+                        handlers:
+                        - fetch
+                        name: MyClass
+                      properties:
+                        handlers:
+                          description: The names of handlers exported as part of the named export.
+                          type: array
+                          items:
+                            example: fetch
+                            readOnly: true
+                            type: string
+                          example:
+                          - fetch
+                          readOnly: true
+                          x-stainless-collection-type: set
+                        name:
+                          description: The name of the exported class or entrypoint.
+                          type: string
+                          example: MyClass
+                          readOnly: true
+                      readOnly: true
+                      type: object
+                    example:
+                    - handlers:
+                      - fetch
+                      name: MyClass
+                    readOnly: true
+                    x-stainless-collection-type: set
+                readOnly: true
+              script_runtime:
+                description: Runtime configuration for the Worker.
+                type: object
+                properties:
+                  compatibility_date:
+                    description: Date indicating targeted support in the Workers runtime. Backwards incompatible fixes to the runtime following this date will not affect this Worker.
+                    type: string
+                    example: '2022-11-08T00:00:00Z'
+                    readOnly: true
+                    x-auditable: true
+                  compatibility_flags:
+                    description: Flags that enable or disable certain features in the Workers runtime.
+                    type: array
+                    items:
+                      example: x
+                      readOnly: true
+                      type: string
+                    readOnly: true
+                    x-stainless-collection-type: set
+                  exports:
+                    description: 'Declarative exports for this version, including
+
+                      Durable Object classes (with their `storage`
+
+                      backend) and named Worker entrypoints. Tombstoned
+
+                      lifecycle entries are omitted, so only live exports
+
+                      (`created` and `expecting-transfer`) are returned.
+
+                      '
+                    allOf:
+                    - $ref: '#/components/schemas/workers_exports_config_map'
+                    readOnly: true
+                  limits:
+                    description: Resource limits for the Worker.
+                    type: object
+                    example:
+                      cpu_ms: 50
+                    properties:
+                      cpu_ms:
+                        description: The amount of CPU time this Worker can use in milliseconds.
+                        type: integer
+                        example: 50
+                        readOnly: true
+                    readOnly: true
+                  migration_tag:
+                    description: The tag of the Durable Object migration that was most recently applied for this Worker.
+                    type: string
+                    example: v1
+                    readOnly: true
+                    x-auditable: true
+                  usage_model:
+                    description: Usage model for the Worker invocations.
+                    type: string
+                    example: standard
+                    enum:
+                    - bundled
+                    - unbound
+                    - standard
+                    readOnly: true
+                    x-auditable: true
+                readOnly: true
+            readOnly: true
+        required:
+        - resources
+        type: object
+    workers_versions-single-response:
+      allOf:
+      - $ref: '#/components/schemas/workers_api-response-common'
+      - properties:
+          result:
+            $ref: '#/components/schemas/workers_version-item-full'
+        required:
+        - result
+        type: object
+    workers_binding_kind_queue:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        queue_name:
+          description: Name of the Queue to bind to.
+          type: string
+          example: my-queue
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - queue
+          x-auditable: true
+      required:
+      - name
+      - type
+      - queue_name
+    workers_binding_kind_version_metadata:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - version_metadata
+          x-auditable: true
+      required:
+      - name
+      - type
+    workers_exports_reconciliation_info:
+      description: 'A non-blocking reconciliation info entry. Emitted for stale
+
+        tombstones (a no-op on this deploy) and for tombstones applied
+
+        with the source class still in code (the supported zero-downtime
+
+        rollout pattern).
+
+        '
+      type: object
+      properties:
+        class:
+          description: The class name the info entry is about.
+          type: string
+        message:
+          description: Human-readable explanation.
+          type: string
+        namespace_id:
+          description: The provisioned namespace the entry relates to, when applicable.
+          type: string
+          format: uuid
+        referencing_scripts:
+          description: 'Other Workers in the account that still bind to the affected
+
+            class. Advisory: while non-empty the tombstone is not yet safe
+
+            to remove — redeploy these Workers with bindings re-pointed
+
+            first.
+
+            '
+          type: array
+          items:
+            type: string
+        scenario:
+          $ref: '#/components/schemas/workers_exports_reconciliation_scenario'
+      required:
+      - class
+      - scenario
+      - message
+    workers_binding_kind_service:
+      type: object
+      properties:
+        entrypoint:
+          description: Entrypoint to invoke on the target Worker.
+          type: string
+          example: MyHandler
+          x-auditable: true
+        environment:
+          description: Optional environment if the Worker utilizes one.
+          type: string
+          example: production
+          default: production
+          x-auditable: true
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        service:
+          description: Name of Worker to bind to.
+          type: string
+          example: my-worker
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - service
+          x-auditable: true
+      required:
+      - name
+      - type
+      - service
+    workers_version-item-uploaded:
+      allOf:
+      - $ref: '#/components/schemas/workers_version-item-full'
+      - properties:
+          exports_reconciliation:
+            description: 'Summary of the declarative exports reconciliation that
+
+              ran on this upload. Populated only when the uploaded
+
+              metadata included an `exports` block. Durable Object
+
+              entries drive reconciliation; `type: worker` entries do
+
+              not contribute to this summary.
+
+              '
+            allOf:
+            - $ref: '#/components/schemas/workers_exports_reconciliation_result'
+          startup_time_ms:
+            description: Time in milliseconds spent on [Worker startup](https://developers.cloudflare.com/workers/platform/limits/#worker-startup-time).
+            type: integer
+            example: 10
+        required:
+        - resources
+        type: object
+    workers_binding_kind_kv_namespace:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        namespace_id:
+          $ref: '#/components/schemas/workers_namespace_identifier'
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - kv_namespace
+          x-auditable: true
+      required:
+      - name
+      - type
+      - namespace_id
+    workers_binding_kind_pipelines:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        pipeline:
+          description: Name of the Pipeline to bind to.
+          type: string
+          example: my-pipeline
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - pipelines
+          x-auditable: true
+      required:
+      - name
+      - type
+      - pipeline
+    workers_binding_kind_artifacts:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/workers_binding_name'
+        namespace:
+          description: The Artifacts namespace exposed to the Worker in the Worker's account. Must be 2-63 characters, start with an ASCII alphanumeric character, contain only ASCII alphanumeric characters, dots, underscores, and hyphens, and must not end with a hyphen. The namespace does not need to be created before binding it.
+          type: string
+          example: agent-workspace
+          maxLength: 63
+          minLength: 2
+          pattern: ^[a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9._])?$
+          x-auditable: true
+        type:
+          description: The kind of resource that the binding provides.
+          type: string
+          enum:
+          - artifacts
+          x-auditable: true
+      required:
+      - name
+      - type
+      - namespace
+  requestBodies:
+    workers_version-post:
+      content:
+        multipart/form-data:
+          encoding:
+            files:
+              contentType: application/javascript+module, text/javascript+module, application/javascript, text/javascript, `text/x-python`, text/x-python-requirement, application/wasm, text/plain, application/octet-stream, application/source-map
+            metadata:
+              contentType: application/json
+          schema:
+            type: object
+            properties:
+              files:
+                description: 'An array of modules (often JavaScript files) comprising a Worker script. At least one module must be present and referenced in the metadata as `main_module` or `body_part` by filename.<br/>Possible Content-Type(s) are: `application/javascript+module`, `text/javascript+module`, `application/javascript`, `text/javascript`, `text/x-python`, `text/x-python-requirement`, `application/wasm`, `text/plain`, `application/octet-stream`, `application/source-map`.'
+                type: array
+                items:
+                  format: binary
+                  type: string
+                x-stainless-collection-type: set
+              metadata:
+                description: JSON-encoded metadata about the uploaded parts and Worker configuration.
+                type: object
+                properties:
+                  annotations:
+                    type: object
+                    properties:
+                      workers/alias:
+                        description: Associated alias for a version.
+                        type: string
+                        example: staging
+                        maxLength: 63
+                      workers/commit_sha:
+                        description: Full commit SHA associated with the version, detected from the CI environment. Maximum 64 bytes.
+                        type: string
+                        example: 8b6aeb38455e2f92e170deb46313b90166ccc1e5
+                        maxLength: 64
+                      workers/message:
+                        description: Human-readable message about the version. Truncated to 1000 bytes if longer.
+                        type: string
+                        example: Fixed worker code.
+                        maxLength: 1000
+                      workers/pull_request_number:
+                        description: Number of the pull or merge request associated with the version, detected from the CI environment. Maximum 20 bytes.
+                        type: string
+                        example: '14966'
+                        maxLength: 20
+                      workers/pull_request_title:
+                        description: Title of the pull or merge request associated with the version, detected from the CI environment. Maximum 512 bytes.
+                        type: string
+                        example: Add a cool new feature
+                        maxLength: 512
+                      workers/pull_request_url:
+                        description: URL of the pull or merge request associated with the version, detected from the CI environment. Maximum 512 bytes.
+                        type: string
+                        example: https://github.com/cloudflare/workers-sdk/pull/14966
+                        maxLength: 512
+                      workers/repository_url:
+                        description: URL of the source repository the version was built from, detected from the CI environment. Maximum 512 bytes.
+                        type: string
+                        example: https://github.com/cloudflare/workers-sdk
+                        maxLength: 512
+                      workers/tag:
+                        description: User-provided identifier for the version. Maximum 100 bytes.
+                        type: string
+                        example: any-identifier-from-external-system
+                        maxLength: 100
+                  bindings:
+                    $ref: '#/components/schemas/workers_bindings'
+                  cache_options:
+                    $ref: '#/components/schemas/workers_cache_options'
+                  compatibility_date:
+                    $ref: '#/components/schemas/workers_compatibility_date'
+                  compatibility_flags:
+                    $ref: '#/components/schemas/workers_compatibility_flags'
+                  exports:
+                    description: 'Declarative exports for this version. Worker
+
+                      entrypoint entries (`type: worker`) carry cache
+
+                      configuration for that entrypoint.
+
+                      '
+                    allOf:
+                    - $ref: '#/components/schemas/workers_exports_config_map'
+                    writeOnly: true
+                  keep_bindings:
+                    description: List of binding types to keep from previous_upload.
+                    type: array
+                    items:
+                      type: string
+                    x-stainless-collection-type: set
+                  main_module:
+                    description: Name of the uploaded file that contains the main module (e.g. the file exporting a `fetch` handler). Indicates a `module syntax` Worker, which is required for Version Upload.
+                    type: string
+                    example: worker.js
+                  package_dependencies:
+                    description: 'The list of npm packages that were installed and used when this Worker
+
+                      version was built.
+
+                      '
+                    type: array
+                    items:
+                      properties:
+                        installedVersion:
+                          description: The exact version that was resolved and installed by the package manager.
+                          type: string
+                          example: 4.17.22
+                        name:
+                          description: The npm package name.
+                          type: string
+                          example: lodash
+                        packageJsonVersion:
+                          description: The version constraint as written in package.json.
+                          type: string
+                          example: ^4.17.21
+                      required:
+                      - name
+                      - packageJsonVersion
+                      - installedVersion
+                      type: object
+                    x-auditable: true
+                  usage_model:
+                    $ref: '#/components/schemas/workers_usage_model'
+                required:
+                - main_module
+            required:
+            - metadata
+      required: true
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-forge-commands:
+  abuse-reports:
+    description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
+    groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
+      emails:
+        description: Emails sent for abuse reports
+      mitigations:
+        description: Mitigation actions taken in response to abuse reports
+  accounts:
+    description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
+    groups:
+      applications:
+        description: Applications operations
+      categories:
+        description: Categories operations
+      organizations:
+        description: Move accounts between organizations
+      profile:
+        description: View and manage the profile for a Cloudflare account
+      roles:
+        description: View the roles available for assigning to account members, each defining a set of permissions
+      subscriptions:
+        description: View and manage plan subscriptions attached to this account
+      tokens:
+        description: Create and manage scoped API tokens for programmatic access to the Cloudflare API
+  ai-gateway:
+    description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
+    groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
+      datasets:
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
+      dynamic-routing:
+        description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
+      evaluation-types:
+        description: 'Deprecated: list the evaluator types that evaluations can use'
+      evaluations:
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
+      logs:
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
+  ai-search:
+    description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
+    groups:
+      items:
+        description: Content indexed by AI Search instances
+      jobs:
+        description: Indexing job lifecycle for AI Search instances
+      namespace:
+        description: Logical groupings for organizing AI Search instances
+      tokens:
+        description: Credentials used by AI Search instances
+  ai-security:
+    description: Detect prompt injection, PII, and unsafe topics in traffic to your AI applications
+    groups:
+      custom-topics:
+        description: Organization-specific topic categories used by AI Security for Apps content detection
+  analytics:
+    description: Zone-level traffic analytics — dashboard summaries, per-colo breakdowns, and Argo latency metrics
+    groups:
+      colo:
+        description: Per-data-center (colo) traffic analytics breakdown for the zone
+      dashboard:
+        description: Aggregated zone dashboard analytics — requests, bandwidth, threats, and page views
+      latency:
+        description: Argo Smart Routing latency analytics showing time-to-first-byte improvements
+  argo:
+    description: Network optimization features that speed up and improve reliability of traffic to your origins
+    groups:
+      smart-routing:
+        description: Route traffic through the fastest network paths to your origin using real-time latency data
+      tiered-caching:
+        description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  billing:
+    description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
+    groups:
+      profiles:
+        description: Billing profile with payment method, address, and invoice preferences
+      usage:
+        description: Metered usage data for billed services — requests, bandwidth, and feature consumption
+  botnet-feed:
+    description: Botnet threat intelligence feeds — IP and ASN-level data on known command-and-control infrastructure
+    groups:
+      asn:
+        description: ASN-level botnet activity data showing networks with known C2 infrastructure
+      configs:
+        description: Botnet feed subscription configuration and notification preferences
+  builds:
+    description: Build and deploy Workers from connected repositories, then inspect build status and logs.
+    groups:
+      deploy-hooks:
+        description: Manage branch-specific HTTP hooks that start builds.
+      limits:
+        description: View build-minute availability and refresh information.
+      logs:
+        description: Retrieve build logs.
+      repos:
+        description: Manage source repository connections for Workers Builds.
+      tokens:
+        description: Manage credentials used by Workers Builds to deploy Workers.
+      triggers:
+        description: Configure how repository changes build and deploy Workers.
+      versions:
+        description: Find builds associated with Worker versions.
+      workers:
+        description: Manage repository-backed build configuration for Workers.
+  cache:
+    description: Purge cached content and configure Cache Reserve, tiered caching, and variant serving
+    groups:
+      origin-cloud-regions:
+        description: Manage Origin Cloud Regions routing and failover configurations
+      settings:
+        description: Configure Cache Reserve, tiered caching, and variant serving
+      settings.regional-tiered-cache:
+        description: Restrict tiered cache topology to data centers within a specific geographic region
+      settings.reserve:
+        description: Persistent storage tier that keeps cached assets even after eviction from edge caches
+      settings.smart-tiered-cache:
+        description: Automatically determine the best upper-tier data centers for tiered cache topology
+      settings.variants:
+        description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
+  client-side-security:
+    description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
+    groups:
+      connections:
+        description: Third-party connections made by scripts on your pages — track data exfiltration risks
+      cookies:
+        description: Cookies set by your pages with classification and same-site attribute tracking
+      policies:
+        description: Content Security Policies that control which scripts and connections are allowed on your pages
+      scripts:
+        description: JavaScript files detected on your pages with change tracking and malicious code detection
+      settings:
+        description: Fine tune Client-Side Security behaviors
+  cloud-connector:
+    description: Route traffic from Cloudflare directly to cloud provider services (AWS, Azure, GCP) without origin servers
+    groups:
+      rules:
+        description: Routing rules that map request patterns to cloud provider endpoints
+  cloudforce-one:
+    description: Detection rule management APIs
+    groups:
+      binary-storage:
+        description: Upload and retrieve malware samples and suspicious binaries for analysis
+      requests:
+        description: Additional request operations — priority listing and asset creation
+      rules:
+        description: Rule management operations
+        groups:
+          approvals:
+            description: Approval workflow operations
+          email:
+            description: Email rule operations
+          exemptions:
+            description: Exemption rule operations
+          managed:
+            description: Managed rule operations
+          stats:
+            description: Rule statistics operations
+          tree:
+            description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
+  containers:
+    description: Deploy and manage Containers applications on Cloudflare's global network
+    groups:
+      applications:
+        description: Manage Containers applications
+      applications.instances:
+        description: Inspect Containers instances belonging to applications
+      applications.rollouts:
+        description: Manage rollouts for scheduler-backed applications
+      applications.versions:
+        description: Inspect versions of scheduler-backed applications
+      registries:
+        description: Manage Containers image registries
+      registries.credentials:
+        description: Generate image registry credentials
+  content-scan:
+    description: Malicious uploads detection, scan uploaded content in HTTP requests for malware and malicious payloads
+    groups:
+      expressions:
+        description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
+  custom-pages:
+    description: Manage custom error and challenge pages and their assets for accounts and zones
+    groups:
+      account-custom-pages:
+        description: Manage account-level custom pages
+      account-custom-pages.preview-tokens:
+        description: Preview tokens for account-level custom pages
+      assets:
+        description: Manage account- and zone-level custom assets
+      zone-custom-pages:
+        description: Manage zone-level custom pages
+      zone-custom-pages.preview-tokens:
+        description: Preview tokens for zone-level custom pages
+  d1:
+    description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
+    groups:
+      time-travel:
+        description: use specific point-in-time backups of your D1 database
+        x-forge-epilogue: For more information about Time Travel, see https://developers.cloudflare.com/d1/reference/time-travel
+  diagnostics:
+    description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
+    groups:
+      endpoint-healthchecks:
+        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+      traceroutes:
+        description: Run traceroutes from Cloudflare data centers to diagnose network path issues
+  email-routing:
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
+    groups:
+      addresses:
+        description: Verified destination email addresses that can receive forwarded mail
+      dns:
+        description: Inspect or unlock the DNS records required by Email Routing
+      rules:
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
+  email-security:
+    description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
+    groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
+      investigate:
+        description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
+      phishguard:
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
+      settings:
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
+      submissions:
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
+  email-sending:
+    description: Send transactional email and manage sending subdomains and their DNS configuration
+    groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
+      subdomains:
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
+  filters:
+    description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
+  firewall:
+    description: Legacy firewall rules, zone lockdowns, access rules, user-agent blocking, and WAF packages
+    groups:
+      access-rules:
+        description: IP-based access rules that allow, block, challenge, or whitelist traffic globally or per-zone
+      lockdowns:
+        description: Zone lockdown rules that restrict access to URLs by IP address or range
+      rules:
+        description: Legacy firewall rules with filter expressions — prefer Rulesets for new configurations
+      ua-rules:
+        description: Block or challenge requests based on the User-Agent header string
+      waf:
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
+      zone-access-rules:
+        description: Zone-scoped IP access rules for blocking or allowing traffic
+  google-tag-gateway:
+    description: Google Tag Gateway operations
+    groups:
+      config:
+        description: Google Tag Gateway config operations
+  healthchecks:
+    description: Standalone health checks that monitor origin server availability from Cloudflare's edge
+    groups:
+      previews:
+        description: Test a health check configuration before deploying it to production
+  hyperdrive:
+    description: Accelerate access to existing databases by caching queries and pooling connections at the edge
+  iam:
+    description: Identity and access management — permission groups, resource groups, user groups, and SSO connectors
+    groups:
+      permission-groups:
+        description: View the permission groups that can be assigned to API tokens and policies
+      resource-groups:
+        description: Define scopes that limit which account resources a policy or token can access
+      sso:
+        description: Configure single sign-on connectors to authenticate account members through an external identity provider
+      user-groups:
+        description: Organize account members into groups for easier permission assignment
+  images:
+    description: Store, resize, and deliver optimized images globally — variants, signing keys, and direct uploads
+    groups:
+      flows:
+        description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
+      keys:
+        description: Manage signing keys for generating private image URLs
+      variants:
+        description: Manage named resize variants for transforming images on delivery
+  intel:
+    description: Threat intelligence lookups — IP reputation, domain info, ASN details, WHOIS, and indicator feeds
+    groups:
+      asn:
+        description: ASN intelligence — ownership, geolocation, and subnet details for autonomous systems
+      attack-surface-report:
+        description: Attack surface intelligence — exposed assets, vulnerabilities, and infrastructure mapping
+      dns:
+        description: Passive DNS data showing historical DNS resolution records for domains
+      domain-history:
+        description: Historical domain registration and categorization changes over time
+      domains:
+        description: Domain intelligence — risk scores, categories, and associated infrastructure
+      indicator-feeds:
+        description: Threat indicator feeds — subscribe to and manage curated lists of malicious IPs, domains, and URLs
+      ip-lists:
+        description: Curated IP lists used for threat detection and policy enforcement
+      ips:
+        description: IP address intelligence — geolocation, risk assessment, and hosting provider details
+      miscategorizations:
+        description: Report and track domain miscategorization corrections
+      whois:
+        description: WHOIS registration data for domains including registrant, registrar, and nameservers
+  k2:
+    description: Durable, ordered event streams that you produce records to and consume from with subscriptions
+    groups:
+      streams:
+        description: K2 streams, their retention, and the HTTP and Workers binding inputs used to produce records
+      streams.subscriptions:
+        description: Subscriptions that consume a K2 stream, with committed-position lag
+  leaked-credential-checks:
+    description: Detect compromised credentials in login requests by checking against known breach databases
+    groups:
+      detections:
+        description: Custom detection locations that tell the WAF where to find usernames and passwords in requests
+  load-balancers:
+    description: Distribute traffic across origin pools with health monitoring, geo-steering, and failover
+    groups:
+      monitor-groups:
+        description: Group monitors together for shared configuration and bulk management
+      monitor-groups.references:
+        description: List references to monitor groups used by load balancer pools
+      monitors:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.previews:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.references:
+        description: Health check configurations that probe origin servers and determine pool availability
+      pools:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.health:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.references:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      previews:
+        description: Preview the result of a health check monitor configuration before applying it
+      regions:
+        description: Geographic regions used for regional pool steering and traffic policies
+      searches:
+        description: Search across all load balancer resources (pools, monitors, load balancers) by name or reference
+  logs:
+    description: Log control, retention, and raw log access — CMB config, ray ID lookups, and received fields
+    groups:
+      control:
+        description: Log control operations
+      received:
+        description: Received log operations
+  magic-network-monitoring:
+    description: Flow-based network traffic monitoring with configurable alerting rules and VPC flow ingestion
+    groups:
+      configs:
+        description: Account-level monitoring configuration — sampling rates, thresholds, and notification settings
+      rules:
+        description: Monitoring rules that define traffic thresholds and trigger alerts or prefix advertisements
+      vpc-flows:
+        description: Ingest VPC flow logs from cloud providers for network visibility and anomaly detection
+  magic-transit:
+    description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
+    groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
+      apps:
+        description: Application-aware traffic policies for Magic WAN that steer traffic by app type
+      bgp-filter-profiles:
+        description: BGP filter profiles for controlling which routes are allowed or denied on Magic Transit tunnels
+      bgp-settings:
+        description: BGP settings for controlling default ASN and route redistribution on Magic Transit tunnels
+      cf-interconnects:
+        description: Cloudflare Network Interconnect (CNI) links for direct physical or virtual peering
+      gre-tunnels:
+        description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
+      ipsec-tunnels:
+        description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
+      routes:
+        description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
+      sites:
+        description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
+  mcp:
+    description: Manage MCP portals and upstream MCP servers for Cloudflare Access AI controls
+    groups:
+      portals:
+        description: Manage MCP portals, attached servers, and Code Mode settings
+      servers:
+        description: Manage upstream MCP servers, credentials, capabilities, and sync state
+  network-interconnects:
+    description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
+    groups:
+      cnis:
+        description: Cloud Network Interconnect (CNI) connections — private links from cloud providers to Cloudflare
+      interconnects:
+        description: Physical cross-connect and partner interconnect sessions with LOA and status tracking
+      settings:
+        description: Account-level interconnect settings and default configurations
+      slots:
+        description: Available interconnect facility slots showing port capacity at Cloudflare data centers
+  organizations:
+    description: Multi-user organizations that group accounts, members, and shared settings under a single entity
+    groups:
+      account-organizations:
+        description: List organizations associated with a specific account
+      accounts:
+        description: Accounts operations
+      members:
+        description: Members operations
+      members-batch-create:
+        description: Members Batch Create operations
+      organization-profile:
+        description: View and update the public profile information for an organization
+      shares:
+        description: Shares operations
+  origin-post-quantum-encryption:
+    description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
+  pages:
+    description: Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains
+    groups:
+      projects:
+        description: Pages projects, deployments, build logs, and custom domain bindings
+  pipelines:
+    description: Ingest, transform, and route event streams into R2, analytics, or other destinations in real time
+    groups:
+      sinks:
+        description: Destinations where pipeline data is written — R2 buckets, HTTP endpoints, or other storage
+      streams:
+        description: Inbound data streams that feed events into a pipeline for processing
+  precursor:
+    description: Precursor settings for a zone
+  queues:
+    description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
+    groups:
+      consumers:
+        description: Workers that automatically receive and process messages from a queue
+      messages:
+        description: Push messages to a queue and pull or acknowledge them from consumers
+      purge:
+        description: Remove all pending messages from a queue
+      subscriptions:
+        description: Manage queue subscriptions for event-driven message routing
+  r2:
+    description: S3-compatible object storage with zero egress fees — buckets, lifecycle rules, event notifications, and data migration
+    groups:
+      buckets:
+        description: Create and configure R2 buckets including CORS, lifecycle, custom domains, event notifications, and object locks
+      buckets.jobs:
+        description: Create and inspect background jobs for an R2 bucket
+      buckets.local-uploads:
+        description: R2 bucket local upload configuration
+      super-slurper:
+        description: Migrate data from external S3-compatible storage into R2 buckets with resumable transfer jobs
+      temporary-credentials:
+        description: Generate short-lived S3-compatible credentials scoped to specific buckets and operations
+  r2-data-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  radar:
+    description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
+    groups:
+      agent-readiness:
+        description: Agent readiness summary statistics across the Cloudflare network
+      ai:
+        description: AI inference trends and model usage statistics across the Cloudflare network
+      annotations:
+        description: Radar annotations marking significant Internet events (outages, cable cuts, etc.)
+      as112:
+        description: AS112 DNS sinkhole statistics — reverse DNS query volumes for private address space
+      attacks:
+        description: DDoS and application-layer attack trends, vectors, and target analysis
+      bgp:
+        description: BGP routing data — prefix announcements, AS-level stats, route leaks, and hijack events
+      bots:
+        description: Internet-wide bot traffic trends, categories, and distribution statistics
+      ct:
+        description: Certificate Transparency log monitoring and newly-issued certificate discovery
+      datasets:
+        description: Downloadable Radar datasets for offline analysis and research
+      dns:
+        description: Global DNS query trends — top domains, resolver stats, and DNSSEC adoption
+      email:
+        description: Email security trends — DMARC/SPF/DKIM adoption, spam, and phishing statistics
+      entities:
+        description: Look up ASNs, IPs, domains, and locations with metadata and traffic summaries
+      geolocations:
+        description: Geographic location metadata used for regional traffic analysis
+      http:
+        description: HTTP protocol trends — TLS versions, HTTP versions, browser share, and OS distribution
+      leaked-credentials:
+        description: Leaked credential detection trends and exposure statistics
+      netflows:
+        description: Network-layer traffic flow data and volumetric trend analysis
+      origins:
+        description: Cloud and hosting origin providers (e.g. Amazon, by region) and their traffic metrics
+      post-quantum:
+        description: Post-quantum encryption adoption and deployment trends across the Internet
+      quality:
+        description: Internet connection quality metrics — speed, latency, and jitter by geography and ASN
+      ranking:
+        description: Top domain rankings based on DNS query popularity across the Cloudflare network
+      robots-txt:
+        description: Robots.txt adoption and crawler directive trends across the web
+      search:
+        description: Search Radar data across IPs, ASNs, domains, and locations
+      tcp-resets-timeouts:
+        description: TCP connection reset and timeout statistics indicating network health issues
+      tlds:
+        description: Top-level domain (TLD) metadata and performance trends
+      traffic-anomalies:
+        description: Detected traffic anomalies and unusual patterns in Internet traffic flows
+      verified-bots:
+        description: Catalog of known good bots (Googlebot, Bingbot, etc.) and their traffic patterns
+  rate-limits:
+    description: Legacy per-zone rate limiting rules — prefer Advanced Rate Limiting in Rulesets for new configurations
+  realtime:
+    description: Real-time audio, video, and data services on Cloudflare's global network
+    groups:
+      kit:
+        description: SDK-backed meetings, participants, recordings, livestreams, and webhooks
+      kit.analytics:
+        description: Usage and livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams:
+        description: Livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams.daily:
+        description: Daily livestream analytics for RealtimeKit applications
+      kit.analytics.usage:
+        description: Usage analytics for RealtimeKit applications
+      kit.apps:
+        description: RealtimeKit applications that group meetings, sessions, and configuration
+      kit.livestreams:
+        description: Independent and meeting-based livestreams and their sessions
+      kit.livestreams.sessions:
+        description: Sessions for RealtimeKit livestreams
+      kit.meetings:
+        description: Meetings, participants, access tokens, and meeting livestreams
+      kit.meetings.active:
+        description: Live meeting state and participant controls
+      kit.meetings.active.polls:
+        description: Polls for active meeting sessions
+      kit.meetings.livestream:
+        description: Livestream operations associated with RealtimeKit meetings
+      kit.meetings.participants:
+        description: Participants in RealtimeKit meetings
+      kit.meetings.participants.tokens:
+        description: Access tokens for RealtimeKit meeting participants
+      kit.presets:
+        description: Reusable meeting configuration for media, permissions, and interface behavior
+      kit.recordings:
+        description: Meeting and participant-track recordings and recording controls
+      kit.recordings.active:
+        description: Active recordings for RealtimeKit meetings
+      kit.recordings.tracks:
+        description: Participant-track recordings for RealtimeKit meetings
+      kit.sessions:
+        description: Historical session data, participants, chat, transcripts, and summaries
+      kit.sessions.chat:
+        description: Chat messages from historical RealtimeKit sessions
+      kit.sessions.livestreams:
+        description: Livestreams associated with historical RealtimeKit sessions
+      kit.sessions.participants:
+        description: Participants in historical RealtimeKit sessions
+      kit.sessions.peers:
+        description: Peer details from historical RealtimeKit sessions
+      kit.sessions.summaries:
+        description: Summaries of historical RealtimeKit sessions
+      kit.sessions.transcripts:
+        description: Transcripts from historical RealtimeKit sessions
+      kit.webhooks:
+        description: Webhook endpoints and supported events for RealtimeKit notifications
+      kit.webhooks.events:
+        description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
+  request-tracers:
+    description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
+    groups:
+      traces:
+        description: Simulate request processing to debug rule matches, transforms, and routing decisions
+  resource-sharing:
+    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    groups:
+      recipients:
+        description: Update share recipients
+      resources:
+        description: Individual resources (zones, configs) that have been shared with recipients
+  rules:
+    description: Resources used by Cloudflare rules and rulesets
+    groups:
+      lists:
+        description: Custom account-level lists of IPs, hostnames, ASNs, or redirects used in rule expressions
+  rum:
+    description: Real User Measurement (Web Analytics) — track page loads, Core Web Vitals, and visitor metrics
+    groups:
+      rules:
+        description: Rules that control which pages and paths are tracked by Web Analytics
+      site-info:
+        description: Web Analytics sites — register domains and get the JavaScript beacon snippet
+  scim:
+    description: SCIM 2.0 provisioning — manage users, groups, and identity provider sync for your account
+    groups:
+      groups:
+        description: Groups operations
+      resource-types:
+        description: Resource Types operations
+      schemas:
+        description: Schemas operations
+      service-provider-config:
+        description: Service Provider Config operations
+      users:
+        description: Users operations
+  secrets-store:
+    description: Centralized secret management — store API keys, tokens, and credentials for use across Workers and other products
+    groups:
+      quota:
+        description: Account quota limits for secrets stores, secrets count, and storage capacity
+      secrets:
+        description: Encrypted key-value secrets within a store. Pass --store-id to scope.
+      stores:
+        description: Secret stores that hold encrypted key-value secrets accessible by Workers and services
+  security-center:
+    description: Security posture dashboard — view and manage security insights, misconfigurations, and vulnerabilities
+    groups:
+      insights:
+        description: Security findings and recommendations across your account — DNS, SSL, WAF misconfigurations, etc.
+      zone-insights:
+        description: Zone-scoped security insights — counts by class, severity, type, and dismissal
+  security-txt:
+    description: Manage the /.well-known/security.txt file that tells security researchers how to report vulnerabilities
+  smart-shield:
+    description: Smart Shield settings, health checks, and cache reserve management
+    groups:
+      cache-reserve-clear:
+        description: Cache Reserve Clear operations
+      health-checks:
+        description: Health checks operations
+  spectrum:
+    description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
+    groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
+      apps:
+        description: Spectrum application configurations that map protocols and ports to origin servers
+  speed:
+    description: Observatory speed tests — run Lighthouse audits, track performance trends, and schedule recurring tests
+    groups:
+      availabilities:
+        description: Check which speed test regions and configurations are available for your zone
+      pages:
+        description: Tested pages with their performance history, trends, and individual test results
+      schedule:
+        description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
+  stream:
+    description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
+    groups:
+      audio-tracks:
+        description: Add, edit, or remove additional audio tracks on a video
+      captions:
+        description: Upload, generate, or retrieve captions and subtitles for videos in multiple languages
+      clip:
+        description: Create a new video clip from an existing video by specifying start and end times
+      copy:
+        description: Import a video from a URL into Stream for processing and delivery
+      direct-upload:
+        description: Generate a tokenized URL that lets end-users upload video directly to Stream
+      downloads:
+        description: Create downloadable MP4 renditions of a video for offline viewing
+      embed:
+        description: Retrieve the HTML embed code snippet for a video
+      keys:
+        description: Signing keys used to generate short-lived signed URLs for private video playback
+      live-inputs:
+        description: Enable and disable live input streams
+      token:
+        description: Generate short-lived signed URL tokens for secure private video playback
+      typed-downloads:
+        description: Type-specific stream download creation and deletion
+      videos:
+        description: Aggregate video storage usage statistics for the account
+      watermarks:
+        description: Watermark profiles that overlay an image on every video in the account
+      webhooks:
+        description: Webhook notifications for video lifecycle events (ready, error, etc.)
+  tenants:
+    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    groups:
+      account-types:
+        description: Account Types operations
+      accounts:
+        description: Accounts operations
+      entitlements:
+        description: Entitlements operations
+      memberships:
+        description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
+  url-scanner:
+    description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
+    groups:
+      response:
+        description: Response operations
+      responses:
+        description: Raw HTTP response data captured during URL scans
+      scan:
+        description: Scan operations
+      scans:
+        description: URL scan requests and results — submit URLs for analysis and retrieve threat verdicts
+  user:
+    description: Your Cloudflare user profile, invitations, organizations, billing, and personal API tokens
+    groups:
+      billing:
+        description: View billing history and payment profile for your user (deprecated — prefer account-level billing)
+      firewall:
+        description: Firewall operations
+      load-balancers.monitors:
+        description: Load Balancers operations
+      load-balancers.monitors.preview:
+        description: Load Balancers operations
+      load-balancers.monitors.references:
+        description: Load Balancers operations
+      load-balancers.pools:
+        description: Load Balancers operations
+      load-balancers.pools.edit.pools:
+        description: Load Balancers operations
+      load-balancers.pools.health:
+        description: Load Balancers operations
+      load-balancers.pools.preview:
+        description: Load Balancers operations
+      load-balancers.pools.references:
+        description: Load Balancers operations
+      load-balancers.preview:
+        description: Load Balancers operations
+      load-balancing-analytics.events:
+        description: Load Balancing Analytics operations
+      subscriptions:
+        description: View and manage zone-level plan subscriptions owned by your user
+      tenants:
+        description: Tenants operations
+      tokens:
+        description: Create and manage personal API tokens scoped to your user for programmatic API access
+  user.analytics:
+    description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
+  waiting-rooms:
+    description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
+    groups:
+      account-waiting-rooms:
+        description: Account-scoped waiting room listing
+      events:
+        description: Scheduled events that temporarily override waiting room settings for sales, launches, etc.
+      page:
+        description: Custom HTML waiting page templates and preview rendering
+      rules:
+        description: Rules that bypass or modify waiting room behavior for specific request patterns
+      settings:
+        description: Zone-level waiting room defaults and cookie configuration
+      statuses:
+        description: Real-time queue status showing active users, queued users, and estimated wait times
+  workflows:
+    description: Durable, multi-step workflows that run on Workers with automatic retries and state persistence
+    groups:
+      instances:
+        description: Workflow instance operations
+      versions:
+        description: Workflow version operations
+  zaraz:
+    description: Server-side tag manager — load third-party tools (analytics, pixels, etc.) from Cloudflare's edge without client-side JS
+    groups:
+      config:
+        description: Full Zaraz configuration including tools, triggers, and variables for the zone
+      default:
+        description: Default Zaraz configuration template used as a starting point for new zones
+      export:
+        description: Export the current Zaraz configuration as a portable JSON document
+      history:
+        description: Configuration version history — browse and restore previous Zaraz configurations
+      publish:
+        description: Publish pending Zaraz configuration changes to make them live on the zone
+      workflow:
+        description: Workflow state for Zaraz configuration changes (draft vs. published)
+  zero-trust:
+    description: Cloudflare's SASE platform — secure access, device posture, DLP, tunnels, gateway policies, and network segmentation
+    groups:
+      dex:
+        description: Digital Experience Monitoring — synthetic tests, fleet-wide device metrics, and network path diagnostics
+      dlp.custom-prompt-topics:
+        description: Data Loss Prevention - manage custom prompt topics for AI-based content detection
+      dlp.data-classes:
+        description: Data Loss Prevention - manage data classes used to classify sensitive information
+      dlp.data-tag-categories:
+        description: Data Loss Prevention - manage categories that organize data tags
+      dlp.data-tag-category-templates:
+        description: Data Loss Prevention - browse templates for creating data tag categories
+      dlp.data-tags:
+        description: Data Loss Prevention - manage tags used to classify and organize sensitive data
+      dlp.datasets:
+        description: Data Loss Prevention - manage datasets, versions, and uploads
+      dlp.document-fingerprints:
+        description: Data Loss Prevention - manage document fingerprints for detecting matching documents
+      dlp.email.account-mapping:
+        description: Data Loss Prevention - configure account mappings for outbound email scanning
+      dlp.email.rules:
+        description: Data Loss Prevention - manage outbound email scanning rules and their priorities
+      dlp.entries:
+        description: Data Loss Prevention - list and manage detection entries
+      dlp.limits:
+        description: Data Loss Prevention - view account limits and resource quotas
+      dlp.patterns:
+        description: Data Loss Prevention - validate regular expressions used for content detection
+      dlp.profiles:
+        description: Data Loss Prevention - list and retrieve profiles
+      dlp.profiles.custom:
+        description: Data Loss Prevention - manage custom profiles
+      dlp.profiles.predefined:
+        description: Data Loss Prevention - manage predefined profiles
+      dlp.sensitivity-group-templates:
+        description: Data Loss Prevention - browse templates for creating sensitivity groups
+      dlp.sensitivity-groups:
+        description: Data Loss Prevention - manage sensitivity groups and their level ordering
+      dlp.sensitivity-levels:
+        description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
+      dlp.settings:
+        description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.integrations:
+        description: User Risk Scoring - manage integrations that provide risk score signals
+      risk-scoring.integrations.references:
+        description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
+  zones:
+    description: Zones are domains on Cloudflare — list, create, and configure domain settings
+    groups:
+      aegis:
+        description: Aegis operations
+      fonts:
+        description: Fonts operations
+      origin-h2-max-streams:
+        description: Origin H2 Max Streams operations
+      origin-max-http-version:
+        description: Origin Max Http Version operations
+      origin-tls-compliance-modes:
+        description: Manage zone Origin TLS Compliance Modes setting
+      rum:
+        description: Rum operations
+      speed-brain:
+        description: Speed Brain operations

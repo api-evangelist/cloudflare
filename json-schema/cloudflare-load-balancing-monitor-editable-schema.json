@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-load-balancing-monitor-editable-schema.json",
+  "title": "load-balancing_monitor-editable",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-user-api-openapi.yml#/components/schemas/load-balancing_monitor-editable",
+  "type": "object",
+  "properties": {
+    "allow_insecure": {
+      "$ref": "#/$defs/load-balancing_allow_insecure"
+    },
+    "consecutive_down": {
+      "$ref": "#/$defs/load-balancing_consecutive_down"
+    },
+    "consecutive_up": {
+      "$ref": "#/$defs/load-balancing_consecutive_up"
+    },
+    "description": {
+      "$ref": "#/$defs/load-balancing_description"
+    },
+    "expected_body": {
+      "$ref": "#/$defs/load-balancing_expected_body"
+    },
+    "expected_codes": {
+      "$ref": "#/$defs/load-balancing_expected_codes"
+    },
+    "follow_redirects": {
+      "$ref": "#/$defs/load-balancing_follow_redirects"
+    },
+    "header": {
+      "$ref": "#/$defs/load-balancing_header"
+    },
+    "interval": {
+      "$ref": "#/$defs/load-balancing_interval"
+    },
+    "method": {
+      "$ref": "#/$defs/load-balancing_method"
+    },
+    "path": {
+      "$ref": "#/$defs/load-balancing_path"
+    },
+    "port": {
+      "$ref": "#/$defs/load-balancing_port"
+    },
+    "probe_zone": {
+      "$ref": "#/$defs/load-balancing_probe_zone"
+    },
+    "retries": {
+      "$ref": "#/$defs/load-balancing_retries"
+    },
+    "timeout": {
+      "$ref": "#/$defs/load-balancing_timeout"
+    },
+    "type": {
+      "$ref": "#/$defs/load-balancing_type"
+    }
+  },
+  "$defs": {
+    "load-balancing_allow_insecure": {
+      "type": "boolean",
+      "description": "Do not validate the certificate when monitor use HTTPS. This parameter is currently only valid for HTTP and HTTPS monitors.",
+      "default": false
+    },
+    "load-balancing_consecutive_down": {
+      "type": "integer",
+      "description": "To be marked unhealthy the monitored origin must fail this healthcheck N consecutive times.",
+      "default": 0
+    },
+    "load-balancing_consecutive_up": {
+      "type": "integer",
+      "description": "To be marked healthy the monitored origin must pass this healthcheck N consecutive times.",
+      "default": 0
+    },
+    "load-balancing_description": {
+      "type": "string",
+      "description": "Object description."
+    },
+    "load-balancing_expected_body": {
+      "type": "string",
+      "description": "A case-insensitive sub-string to look for in the response body. If this string is not found, the origin will be marked as unhealthy. This parameter is only valid for HTTP and HTTPS monitors."
+    },
+    "load-balancing_expected_codes": {
+      "type": "string",
+      "description": "The expected HTTP response code or code range of the health check. This parameter is only valid for HTTP and HTTPS monitors.",
+      "default": "200"
+    },
+    "load-balancing_follow_redirects": {
+      "type": "boolean",
+      "description": "Follow redirects if returned by the origin. This parameter is only valid for HTTP and HTTPS monitors.",
+      "default": false
+    },
+    "load-balancing_header": {
+      "type": "object",
+      "description": "The HTTP request headers to send in the health check. It is recommended you set a Host header by default. The User-Agent header cannot be overridden. This parameter is only valid for HTTP and HTTPS monitors."
+    },
+    "load-balancing_interval": {
+      "type": "integer",
+      "description": "The interval between each health check. Shorter intervals may improve failover time, but will increase load on the origins as we check from multiple locations.",
+      "default": 60
+    },
+    "load-balancing_method": {
+      "type": "string",
+      "description": "The method to use for the health check. This defaults to 'GET' for HTTP/HTTPS based checks and 'connection_established' for TCP based health checks.",
+      "default": "GET"
+    },
+    "load-balancing_path": {
+      "type": "string",
+      "description": "The endpoint path you want to conduct a health check against. This parameter is only valid for HTTP and HTTPS monitors.",
+      "default": "/"
+    },
+    "load-balancing_port": {
+      "type": "integer",
+      "description": "The port number to connect to for the health check. Required for TCP, UDP, and SMTP checks. HTTP and HTTPS checks should only define the port when using a non-standard port (HTTP: default 80, HTTPS: default 443).",
+      "default": 0
+    },
+    "load-balancing_probe_zone": {
+      "type": "string",
+      "description": "Assign this monitor to emulate the specified zone while probing. This parameter is only valid for HTTP and HTTPS monitors."
+    },
+    "load-balancing_retries": {
+      "type": "integer",
+      "description": "The number of retries to attempt in case of a timeout before marking the origin as unhealthy. Retries are attempted immediately.",
+      "default": 2
+    },
+    "load-balancing_timeout": {
+      "type": "integer",
+      "description": "The timeout (in seconds) before marking the health check as failed.",
+      "default": 5
+    },
+    "load-balancing_type": {
+      "type": "string",
+      "description": "The protocol to use for the health check. Currently supported protocols are 'HTTP','HTTPS', 'TCP', 'ICMP-PING', 'UDP-ICMP', and 'SMTP'.",
+      "enum": [
+        "http",
+        "https",
+        "tcp",
+        "udp_icmp",
+        "icmp_ping",
+        "smtp"
+      ],
+      "default": "http"
+    }
+  }
+}

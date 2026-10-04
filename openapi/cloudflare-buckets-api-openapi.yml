@@ -202,24 +202,20 @@ paths:
         dispatcher: FALLBACK
 components:
   schemas:
-    BucketResponse:
+    BucketListResponse:
       type: object
       properties:
         result:
-          $ref: '#/components/schemas/Bucket'
+          type: object
+          properties:
+            buckets:
+              type: array
+              items:
+                $ref: '#/components/schemas/Bucket'
+          example: example_value
         success:
           type: boolean
           example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
     Bucket:
       type: object
       properties:
@@ -240,33 +236,37 @@ components:
           type: string
           description: Default storage class for the bucket.
           example: example_value
-    BucketListResponse:
+    BucketResponse:
       type: object
       properties:
         result:
-          type: object
-          properties:
-            buckets:
-              type: array
-              items:
-                $ref: '#/components/schemas/Bucket'
-          example: example_value
+          $ref: '#/components/schemas/Bucket'
         success:
           type: boolean
           example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
   parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
     BucketName:
       name: bucket_name
       in: path
       required: true
       description: The name of the R2 bucket.
+      schema:
+        type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
       schema:
         type: string
   securitySchemes:

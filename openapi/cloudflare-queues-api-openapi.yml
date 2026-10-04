@@ -234,18 +234,40 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    QueueId:
+      name: queue_id
+      in: path
+      required: true
+      description: The unique identifier of the queue.
+      schema:
+        type: string
   schemas:
-    QueueListResponse:
+    QueueResponse:
       type: object
       properties:
         result:
-          type: array
-          items:
-            $ref: '#/components/schemas/Queue'
-          example: []
+          $ref: '#/components/schemas/Queue'
         success:
           type: boolean
           example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
     Queue:
       type: object
       properties:
@@ -275,39 +297,17 @@ components:
           type: integer
           description: Number of consumers attached.
           example: 10
-    QueueResponse:
+    QueueListResponse:
       type: object
       properties:
         result:
-          $ref: '#/components/schemas/Queue'
+          type: array
+          items:
+            $ref: '#/components/schemas/Queue'
+          example: []
         success:
           type: boolean
           example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
-  parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
-    QueueId:
-      name: queue_id
-      in: path
-      required: true
-      description: The unique identifier of the queue.
-      schema:
-        type: string
   securitySchemes:
     bearerAuth:
       type: http

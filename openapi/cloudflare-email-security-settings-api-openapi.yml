@@ -1,0 +1,4841 @@
+openapi: 3.2.0
+info:
+  description: Welcome to Cloudflare's API documentation site.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  title: Cloudflare Email Security Settings API
+  version: 4.0.0
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Email Security Settings
+paths:
+  /accounts/{account_id}/email-security/settings/allow_policies:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    get:
+      operationId: email_security_list_allow_policies
+      summary: List email allow policies
+      description: Returns a paginated list of email allow policies. These policies exempt matching emails from security detection, allowing them to bypass disposition actions. Supports filtering by pattern type and policy attributes.
+      parameters:
+      - $ref: '#/components/parameters/email-security_page'
+      - $ref: '#/components/parameters/email-security_per_page'
+      - $ref: '#/components/parameters/email-security_search'
+      - name: order
+        in: query
+        description: Field to sort by.
+        schema:
+          type: string
+          enum:
+          - pattern
+          - created_at
+      - $ref: '#/components/parameters/email-security_direction'
+      - name: is_exempt_recipient
+        in: query
+        description: Filter to show only policies where messages to the recipient bypass all detections.
+        schema:
+          type: boolean
+      - name: is_trusted_sender
+        in: query
+        description: Filter to show only policies where messages from the sender bypass all detections and link following.
+        schema:
+          type: boolean
+      - name: is_acceptable_sender
+        in: query
+        description: Filter to show only policies where messages from the sender are exempted from Spam, Spoof, and Bulk dispositions (not Malicious or Suspicious).
+        schema:
+          type: boolean
+      - name: verify_sender
+        in: query
+        description: Filter to show only policies that enforce DMARC, SPF, or DKIM authentication.
+        schema:
+          type: boolean
+      - name: pattern_type
+        in: query
+        description: Filter by pattern type.
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/email-security_PatternType'
+      - name: pattern
+        in: query
+        description: Filter by exact pattern value.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of allow policies.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-collection'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_AllowPolicyList'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.allow-policies
+      x-fern-sdk-method-name: list
+      x-stability: beta
+    post:
+      operationId: email_security_create_allow_policy
+      summary: Create email allow policy
+      description: Creates a new allow policy that exempts matching emails from security detections. Use with caution as this bypasses email security scanning. Policies can match on sender patterns and apply to specific detections or all detections.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_CreateAllowPolicy'
+      responses:
+        '201':
+          description: Created allow policy.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_AllowPolicy'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.allow-policies
+      x-fern-sdk-method-name: create
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/allow_policies/batch:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    post:
+      operationId: email_security_batch_allow_policies
+      summary: Batch allow policy operations
+      description: 'Executes multiple allow policy operations atomically: delete, partially update,
+
+        replace, and create allow policies in a single request. All four operation arrays
+
+        (deletes, patches, puts, posts) are required and executed in order.
+
+        Send empty arrays for unused operations.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deletes:
+                  description: IDs of the allow policies to delete.
+                  type: array
+                  items:
+                    properties:
+                      id:
+                        $ref: '#/components/schemas/email-security_AllowPolicyId'
+                    required:
+                    - id
+                    type: object
+                  maxItems: 1000
+                patches:
+                  description: Partial updates to apply — each entry carries the policy's ID and only the fields to change.
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/email-security_UpdateAllowPolicy'
+                    - properties:
+                        id:
+                          allOf:
+                          - $ref: '#/components/schemas/email-security_AllowPolicyId'
+                      required:
+                      - id
+                      type: object
+                  maxItems: 1000
+                posts:
+                  description: Allow policies to create.
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/email-security_CreateAllowPolicy'
+                  maxItems: 1000
+                puts:
+                  description: Full replacements to apply — each entry carries the policy's ID and every field of its new value.
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/email-security_CreateAllowPolicy'
+                    - properties:
+                        id:
+                          allOf:
+                          - $ref: '#/components/schemas/email-security_AllowPolicyId'
+                      required:
+                      - id
+                      type: object
+                  maxItems: 1000
+              required:
+              - deletes
+              - patches
+              - puts
+              - posts
+      responses:
+        '200':
+          description: Batch operation results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      type: object
+                      properties:
+                        deletes:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/email-security_DeletedAllowPolicy'
+                        patches:
+                          $ref: '#/components/schemas/email-security_AllowPolicyList'
+                        posts:
+                          $ref: '#/components/schemas/email-security_AllowPolicyList'
+                        puts:
+                          $ref: '#/components/schemas/email-security_AllowPolicyList'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.allow-policies
+      x-fern-sdk-method-name: batch
+      x-forge-require-confirmation: This operation may delete the selected allow policies and restore normal security scanning and disposition actions for matching emails.
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/allow_policies/{policy_id}:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    - name: policy_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/email-security_AllowPolicyId'
+    delete:
+      operationId: email_security_delete_allow_policy
+      summary: Delete an email allow policy
+      description: Removes an allow policy. After deletion, emails matching this pattern will be subject to normal security scanning and disposition actions.
+      responses:
+        '200':
+          description: Deleted allow policy.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_DeletedAllowPolicy'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.allow-policies
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the allow policy and restores normal security scanning and disposition actions for matching emails.
+      x-stability: beta
+    get:
+      operationId: email_security_get_allow_policy
+      summary: Get an email allow policy
+      description: Retrieves details for a specific allow policy including its pattern, dispositions that are exempted, and whether it applies to all detections.
+      responses:
+        '200':
+          description: Allow policy details.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_AllowPolicy'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.allow-policies
+      x-fern-sdk-method-name: get
+      x-stability: beta
+    patch:
+      operationId: email_security_update_allow_policy
+      summary: Update an email allow policy
+      description: Updates an existing allow policy. Only provided fields will be modified. Changes take effect for new emails matching the pattern.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_UpdateAllowPolicy'
+      responses:
+        '200':
+          description: Updated allow policy.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_AllowPolicy'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.allow-policies
+      x-fern-sdk-method-name: edit
+      x-stability: beta
+    put:
+      operationId: email_security_replace_allow_policy
+      summary: Replace an email allow policy
+      description: Replaces an existing allow policy in full. Unlike PATCH, every field is taken from the request body, so optional fields that are omitted are reset rather than left untouched. Use this when managing policies declaratively.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_CreateAllowPolicy'
+      responses:
+        '200':
+          description: Replaced allow policy.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_AllowPolicy'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.allow-policies
+      x-fern-sdk-method-name: update
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/block_senders:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    get:
+      operationId: email_security_list_blocked_senders
+      summary: List blocked email senders
+      description: Returns a paginated list of blocked email sender patterns. These patterns prevent emails from matching senders from being delivered. Supports filtering by pattern type and searching across patterns.
+      parameters:
+      - $ref: '#/components/parameters/email-security_page'
+      - $ref: '#/components/parameters/email-security_per_page'
+      - $ref: '#/components/parameters/email-security_search'
+      - name: order
+        in: query
+        description: Field to sort by.
+        schema:
+          type: string
+          enum:
+          - pattern
+          - created_at
+      - $ref: '#/components/parameters/email-security_direction'
+      - name: pattern_type
+        in: query
+        description: Filter by pattern type.
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/email-security_PatternType'
+      - name: pattern
+        in: query
+        description: Filter by pattern value.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of blocked senders.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-collection'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_BlockedSenderList'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.block-senders
+      x-fern-sdk-method-name: list
+      x-stability: beta
+    post:
+      operationId: email_security_create_blocked_sender
+      summary: Create blocked email sender
+      description: Creates a new blocked sender pattern. Emails matching this pattern will be blocked from delivery. Patterns can be email addresses, domains, or IP addresses, and support regular expressions.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_CreateBlockedSender'
+      responses:
+        '201':
+          description: Created blocked sender.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_BlockedSender'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.block-senders
+      x-fern-sdk-method-name: create
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/block_senders/batch:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    post:
+      operationId: email_security_batch_blocked_senders
+      summary: Batch blocked sender operations
+      description: 'Executes multiple blocked sender operations atomically: delete, partially update,
+
+        replace, and create blocked sender patterns in a single request. All four operation
+
+        arrays (deletes, patches, puts, posts) are required and executed in order.
+
+        Send empty arrays for unused operations.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deletes:
+                  description: IDs of the blocked sender patterns to delete.
+                  type: array
+                  items:
+                    properties:
+                      id:
+                        $ref: '#/components/schemas/email-security_BlockedSenderId'
+                    required:
+                    - id
+                    type: object
+                  maxItems: 1000
+                patches:
+                  description: Partial updates to apply — each entry carries the pattern's ID and only the fields to change.
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/email-security_UpdateBlockedSender'
+                    - properties:
+                        id:
+                          allOf:
+                          - $ref: '#/components/schemas/email-security_BlockedSenderId'
+                      required:
+                      - id
+                      type: object
+                  maxItems: 1000
+                posts:
+                  description: Blocked sender patterns to create.
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/email-security_CreateBlockedSender'
+                  maxItems: 1000
+                puts:
+                  description: Full replacements to apply — each entry carries the pattern's ID and every field of its new value.
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/email-security_CreateBlockedSender'
+                    - properties:
+                        id:
+                          allOf:
+                          - $ref: '#/components/schemas/email-security_BlockedSenderId'
+                      required:
+                      - id
+                      type: object
+                  maxItems: 1000
+              required:
+              - deletes
+              - patches
+              - puts
+              - posts
+      responses:
+        '200':
+          description: Batch operation results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      type: object
+                      properties:
+                        deletes:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/email-security_DeletedBlockedSender'
+                        patches:
+                          $ref: '#/components/schemas/email-security_BlockedSenderList'
+                        posts:
+                          $ref: '#/components/schemas/email-security_BlockedSenderList'
+                        puts:
+                          $ref: '#/components/schemas/email-security_BlockedSenderList'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.block-senders
+      x-fern-sdk-method-name: batch
+      x-forge-require-confirmation: This operation may delete the selected blocked sender patterns and stop automatically blocking matching emails based on those rules.
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/block_senders/{pattern_id}:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    - name: pattern_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/email-security_BlockedSenderId'
+    delete:
+      operationId: email_security_delete_blocked_sender
+      summary: Delete a blocked email sender
+      description: Removes a blocked sender pattern. After deletion, emails from this sender will no longer be automatically blocked based on this rule.
+      responses:
+        '200':
+          description: Deleted blocked sender.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_DeletedBlockedSender'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.block-senders
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the blocked sender pattern and stops automatically blocking matching emails based on this rule.
+      x-stability: beta
+    get:
+      operationId: email_security_get_blocked_sender
+      summary: Get a blocked email sender
+      description: Retrieves details for a specific blocked sender pattern including its pattern type, value, and metadata.
+      responses:
+        '200':
+          description: Blocked sender details.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_BlockedSender'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.block-senders
+      x-fern-sdk-method-name: get
+      x-stability: beta
+    patch:
+      operationId: email_security_update_blocked_sender
+      summary: Update a blocked email sender
+      description: Updates an existing blocked sender pattern. Only provided fields will be modified. The pattern will continue blocking emails until deleted.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_UpdateBlockedSender'
+      responses:
+        '200':
+          description: Updated blocked sender.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_BlockedSender'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.block-senders
+      x-fern-sdk-method-name: edit
+      x-stability: beta
+    put:
+      operationId: email_security_replace_blocked_sender
+      summary: Replace a blocked email sender
+      description: Replaces an existing blocked sender pattern in full. Unlike PATCH, every field is taken from the request body, so optional fields that are omitted are reset rather than left untouched. Use this when managing blocked senders declaratively.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_CreateBlockedSender'
+      responses:
+        '200':
+          description: Replaced blocked sender.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_BlockedSender'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.block-senders
+      x-fern-sdk-method-name: update
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/content_policies:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    get:
+      operationId: email_security_list_content_policies
+      summary: List content policies
+      description: Returns a paginated list of content policies. These policies match against the subject or body of emails using a pattern. Supports filtering by name or enabled status, and searching across name and pattern fields.
+      parameters:
+      - $ref: '#/components/parameters/email-security_page'
+      - $ref: '#/components/parameters/email-security_per_page'
+      - $ref: '#/components/parameters/email-security_search'
+      - name: order
+        in: query
+        description: Field to sort by.
+        schema:
+          type: string
+          enum:
+          - name
+          - created_at
+      - $ref: '#/components/parameters/email-security_direction'
+      - name: enabled
+        in: query
+        description: Filter by enabled status.
+        schema:
+          type: boolean
+      - name: name
+        in: query
+        description: Filter by exact policy name.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of content policies.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-collection'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_ContentPolicyList'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.content-policies
+      x-fern-sdk-method-name: list
+      x-stability: beta
+    post:
+      operationId: email_security_create_content_policy
+      summary: Create a content policy
+      description: Creates a new content policy. Emails whose subject or body matches the pattern will be subject to the configured action.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_CreateContentPolicy'
+      responses:
+        '201':
+          description: Created content policy.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_ContentPolicy'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.content-policies
+      x-fern-sdk-method-name: create
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/content_policies/batch:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    post:
+      operationId: email_security_batch_content_policies
+      summary: Batch content policy operations
+      description: 'Executes multiple content policy operations atomically: delete, partially update,
+
+        replace, and create content policies in a single request. All four operation arrays
+
+        (deletes, patches, puts, posts) are required and executed in order.
+
+        Send empty arrays for unused operations.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deletes:
+                  description: IDs of the content policies to delete.
+                  type: array
+                  items:
+                    properties:
+                      id:
+                        $ref: '#/components/schemas/email-security_ContentPolicyId'
+                    required:
+                    - id
+                    type: object
+                  maxItems: 1000
+                patches:
+                  description: Partial updates to apply — each entry carries the policy's ID and only the fields to change.
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/email-security_UpdateContentPolicy'
+                    - properties:
+                        id:
+                          allOf:
+                          - $ref: '#/components/schemas/email-security_ContentPolicyId'
+                      required:
+                      - id
+                      type: object
+                  maxItems: 1000
+                posts:
+                  description: Content policies to create.
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/email-security_CreateContentPolicy'
+                  maxItems: 1000
+                puts:
+                  description: Full replacements to apply — each entry carries the policy's ID and every field of its new value.
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/email-security_CreateContentPolicy'
+                    - properties:
+                        id:
+                          allOf:
+                          - $ref: '#/components/schemas/email-security_ContentPolicyId'
+                      required:
+                      - id
+                      type: object
+                  maxItems: 1000
+              required:
+              - deletes
+              - patches
+              - puts
+              - posts
+      responses:
+        '200':
+          description: Batch operation results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      type: object
+                      properties:
+                        deletes:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/email-security_DeletedContentPolicy'
+                        patches:
+                          $ref: '#/components/schemas/email-security_ContentPolicyList'
+                        posts:
+                          $ref: '#/components/schemas/email-security_ContentPolicyList'
+                        puts:
+                          $ref: '#/components/schemas/email-security_ContentPolicyList'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.content-policies
+      x-fern-sdk-method-name: batch
+      x-forge-require-confirmation: This operation may delete the selected content policies and stop evaluating emails against their patterns.
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/content_policies/{policy_id}:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    - name: policy_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/email-security_ContentPolicyId'
+    delete:
+      operationId: email_security_delete_content_policy
+      summary: Delete a content policy
+      description: Removes a content policy. After deletion, emails will no longer be evaluated against this pattern.
+      responses:
+        '200':
+          description: Deleted content policy.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_DeletedContentPolicy'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.content-policies
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the content policy and stops evaluating emails against its pattern.
+      x-stability: beta
+    get:
+      operationId: email_security_get_content_policy
+      summary: Get a content policy
+      description: Retrieves details for a specific content policy including its pattern, targets, and metadata.
+      responses:
+        '200':
+          description: Content policy details.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_ContentPolicy'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.content-policies
+      x-fern-sdk-method-name: get
+      x-stability: beta
+    patch:
+      operationId: email_security_update_content_policy
+      summary: Update a content policy
+      description: Updates an existing content policy. Only provided fields will be modified.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_UpdateContentPolicy'
+      responses:
+        '200':
+          description: Updated content policy.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_ContentPolicy'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.content-policies
+      x-fern-sdk-method-name: edit
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/domains:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    delete:
+      operationId: email_security_delete_domains
+      summary: Unprotect multiple email domains
+      description: Removes protection from multiple email domains. Deprecated; use the batch endpoint instead.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                properties:
+                  id:
+                    $ref: '#/components/schemas/email-security_DomainId'
+                required:
+                - id
+                type: object
+              minItems: 1
+      responses:
+        '200':
+          description: Deleted domains.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/email-security_DeletedDomain'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      deprecated: true
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: deprecated
+      x-fern-ignore: true
+      x-fern-sdk-group-name: email-security.domains
+      x-fern-sdk-method-name: bulk-delete
+      x-forge-require-confirmation: This operation permanently deletes protection for the selected email domains. Emails for these domains will no longer be processed by Email Security.
+      x-stability: beta
+    get:
+      operationId: email_security_list_domains
+      summary: List protected email domains
+      description: Returns a paginated list of email domains protected by Email Security. Includes domain configuration, delivery modes, and authorization status. Supports filtering by delivery mode and integration ID.
+      parameters:
+      - $ref: '#/components/parameters/email-security_page'
+      - $ref: '#/components/parameters/email-security_per_page'
+      - $ref: '#/components/parameters/email-security_search'
+      - name: order
+        in: query
+        description: Field to sort by.
+        schema:
+          type: string
+          enum:
+          - domain
+          - created_at
+      - $ref: '#/components/parameters/email-security_direction'
+      - name: allowed_delivery_mode
+        in: query
+        description: Delivery mode to filter by.
+        schema:
+          $ref: '#/components/schemas/email-security_DeliveryMode'
+      - name: domain
+        in: query
+        description: Domain names to filter by.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: active_delivery_mode
+        in: query
+        description: Currently active delivery mode to filter by.
+        schema:
+          $ref: '#/components/schemas/email-security_DeliveryMode'
+      - name: integration_id
+        in: query
+        description: Integration ID to filter by.
+        schema:
+          type: string
+          format: uuid
+      - name: status
+        in: query
+        description: Filters response to domains with the provided status.
+        schema:
+          $ref: '#/components/schemas/email-security_DomainStatus'
+      responses:
+        '200':
+          description: List of domains.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-collection'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_DomainList'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.domains
+      x-fern-sdk-method-name: list
+      x-stability: beta
+    post:
+      operationId: email_security_create_domains
+      summary: Add a new email domain
+      description: Protects a new email domain by adding it to Email Security. Accepts a flat configuration object covering all delivery modes. Returns the newly created domain configuration.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_CreateDomain'
+      responses:
+        '201':
+          description: Created domain.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_Domain'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.domains
+      x-fern-sdk-method-name: create
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/domains/batch:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    post:
+      operationId: email_security_batch_domains
+      summary: Batch domain operations
+      description: 'Executes multiple domain operations in a single request. All four operation arrays
+
+        (deletes, patches, puts, posts) are required and executed in order.
+
+        Send empty arrays for unused operations.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deletes:
+                  description: IDs of the domains to remove protection from.
+                  type: array
+                  items:
+                    properties:
+                      id:
+                        $ref: '#/components/schemas/email-security_DomainId'
+                    required:
+                    - id
+                    type: object
+                  maxItems: 1000
+                patches:
+                  description: Partial updates to apply — each entry carries the domain's ID and only the fields to change.
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/email-security_UpdateDomain'
+                    - properties:
+                        id:
+                          $ref: '#/components/schemas/email-security_DomainId'
+                      required:
+                      - id
+                      type: object
+                  maxItems: 1000
+                posts:
+                  description: Domains to add protection for.
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/email-security_CreateDomain'
+                  maxItems: 1000
+                puts:
+                  description: Full replacements to apply — each entry carries the domain's ID and every field of its new value.
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/email-security_ReplaceDomain'
+                    - properties:
+                        id:
+                          $ref: '#/components/schemas/email-security_DomainId'
+                      required:
+                      - id
+                      type: object
+                  maxItems: 1000
+              required:
+              - deletes
+              - patches
+              - puts
+              - posts
+      responses:
+        '200':
+          description: Batch operation results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      type: object
+                      properties:
+                        deletes:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/email-security_DeletedDomain'
+                        patches:
+                          $ref: '#/components/schemas/email-security_DomainList'
+                        posts:
+                          $ref: '#/components/schemas/email-security_DomainList'
+                        puts:
+                          $ref: '#/components/schemas/email-security_DomainList'
+                      required:
+                      - deletes
+                      - patches
+                      - puts
+                      - posts
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.domains
+      x-fern-sdk-method-name: batch
+      x-forge-require-confirmation: This operation may permanently delete protection for the selected email domains. Emails for those domains will no longer be processed by Email Security.
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/domains/{domain_id}:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    - name: domain_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/email-security_DomainId'
+    delete:
+      operationId: email_security_delete_domain
+      summary: Unprotect an email domain
+      description: Removes email security protection from a domain. After deletion, emails for this domain will no longer be processed by Email Security. This action cannot be undone.
+      responses:
+        '200':
+          description: Deleted domain.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_DeletedDomain'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.domains
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation permanently deletes protection for the email domain. Emails for this domain will no longer be processed by Email Security.
+      x-stability: beta
+    get:
+      operationId: email_security_get_domain
+      summary: Get an email domain
+      description: Retrieves detailed information for a specific protected email domain including its delivery configuration, SPF/DMARC status, and authorization state.
+      responses:
+        '200':
+          description: Domain details.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_Domain'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.domains
+      x-fern-sdk-method-name: get
+      x-stability: beta
+    patch:
+      operationId: email_security_update_domain
+      summary: Update an email domain
+      description: Updates configuration for a protected email domain. Only provided fields will be modified. Changes affect delivery mode, security settings, and regional processing.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_UpdateDomain'
+      responses:
+        '200':
+          description: Updated domain.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_Domain'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.domains
+      x-fern-sdk-method-name: edit
+      x-stability: beta
+    put:
+      operationId: email_security_replace_domain
+      summary: Replace an email domain
+      description: Replaces all mutable fields of a protected email domain in a single atomic operation. Unlike PATCH, all non-computed fields are required.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_ReplaceDomain'
+      responses:
+        '200':
+          description: Replaced domain.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_Domain'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.domains
+      x-fern-sdk-method-name: update
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/domains/{domain_id}/verification:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    - name: domain_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/email-security_DomainId'
+    get:
+      operationId: email_security_get_domain_verification
+      summary: Get domain verification details
+      description: 'Returns the DNS TXT record information when the domain ownership isn''t
+
+        verified through Cloudflare zone ownership or CASB integration.'
+      responses:
+        '200':
+          description: DNS TXT verification details.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_DomainVerificationInfo'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.domains.verification
+      x-fern-sdk-method-name: get
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/impersonation_registry:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    get:
+      operationId: email_security_list_impersonation_registry
+      summary: List impersonation registry entries
+      description: Returns a paginated list of protected identities in the impersonation registry. These entries define identities and email addresses to protect from impersonation attacks. Can be manually added or automatically synced from directory integrations.
+      parameters:
+      - $ref: '#/components/parameters/email-security_page'
+      - $ref: '#/components/parameters/email-security_per_page'
+      - $ref: '#/components/parameters/email-security_search'
+      - name: order
+        in: query
+        description: Field to sort by.
+        schema:
+          type: string
+          enum:
+          - name
+          - email
+          - created_at
+      - $ref: '#/components/parameters/email-security_direction'
+      - name: provenance
+        in: query
+        schema:
+          $ref: '#/components/schemas/email-security_Provenance'
+      responses:
+        '200':
+          description: List of impersonation registry entries.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-collection'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_ImpersonationRegistryList'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.impersonation-registry
+      x-fern-sdk-method-name: list
+      x-stability: beta
+    post:
+      operationId: email_security_create_impersonation_registry
+      summary: Create impersonation registry entry
+      description: Creates a new entry in the impersonation registry to protect against impersonation. Emails attempting to impersonate this identity will be flagged. Supports regex patterns for flexible email matching.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_CreateImpersonationRegistry'
+      responses:
+        '201':
+          description: Created impersonation registry entry.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_ImpersonationRegistry'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.impersonation-registry
+      x-fern-sdk-method-name: create
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/impersonation_registry/{impersonation_registry_id}:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    - name: impersonation_registry_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/email-security_ImpersonationRegistryId'
+    delete:
+      operationId: email_security_delete_impersonation_registry
+      summary: Delete an impersonation registry entry
+      description: Removes an entry from the impersonation registry. After deletion, this identity will no longer be protected from impersonation.
+      responses:
+        '200':
+          description: Deleted impersonation registry entry.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_DeletedImpersonationRegistry'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.impersonation-registry
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the impersonation registry entry and stops protecting the identity from impersonation.
+      x-stability: beta
+    get:
+      operationId: email_security_get_impersonation_registry
+      summary: Get an impersonation registry entry
+      description: Retrieves details for a specific impersonation registry entry including the protected identity, email pattern, and synchronization source if directory-synced.
+      responses:
+        '200':
+          description: Impersonation registry entry details.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_ImpersonationRegistry'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.impersonation-registry
+      x-fern-sdk-method-name: get
+      x-stability: beta
+    patch:
+      operationId: email_security_update_impersonation_registry
+      summary: Update an impersonation registry entry
+      description: Updates an existing impersonation registry entry. Only provided fields will be modified. Directory-synced entries can't be updated.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_UpdateImpersonationRegistry'
+      responses:
+        '200':
+          description: Updated impersonation registry entry.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_ImpersonationRegistry'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.impersonation-registry
+      x-fern-sdk-method-name: edit
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/sending_domain_restrictions:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    get:
+      operationId: email_security_list_sending_domain_restrictions
+      summary: List sending domain restrictions
+      description: Returns a paginated list of sending domain restrictions. These restrictions enforce TLS requirements for emails from specific domains. Mail without TLS from restricted domains will be dropped unless the subdomain is in the exclude list. Supports sorting and searching.
+      parameters:
+      - $ref: '#/components/parameters/email-security_page'
+      - $ref: '#/components/parameters/email-security_per_page'
+      - $ref: '#/components/parameters/email-security_search'
+      - name: order
+        in: query
+        description: Field to sort by.
+        schema:
+          type: string
+          enum:
+          - domain
+          - created_at
+      - $ref: '#/components/parameters/email-security_direction'
+      responses:
+        '200':
+          description: List of sending domain restrictions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-collection'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_SendingDomainRestrictionList'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.sending-domain-restrictions
+      x-fern-sdk-method-name: list
+      x-stability: beta
+    post:
+      operationId: email_security_create_sending_domain_restriction
+      summary: Create a sending domain restriction
+      description: Creates a new sending domain restriction to enforce TLS requirements for a domain. Emails without TLS from this domain will be dropped unless the subdomain is in the exclude list.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_CreateSendingDomainRestriction'
+      responses:
+        '201':
+          description: Created sending domain restriction.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_SendingDomainRestriction'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.sending-domain-restrictions
+      x-fern-sdk-method-name: create
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/sending_domain_restrictions/batch:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    post:
+      operationId: email_security_batch_sending_domain_restrictions
+      summary: Batch sending domain restriction operations
+      description: Executes multiple delete operations on sending domain restrictions atomically. All operations succeed or fail together as a transaction. Currently only supports batch deletion. Removes TLS enforcement requirements for the specified domains.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deletes:
+                  description: IDs of the sending domain restrictions to delete.
+                  type: array
+                  items:
+                    properties:
+                      id:
+                        $ref: '#/components/schemas/email-security_SendingDomainRestrictionId'
+                    required:
+                    - id
+                    type: object
+                  maxItems: 1000
+              required:
+              - deletes
+      responses:
+        '200':
+          description: Batch operation results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      type: object
+                      properties:
+                        deletes:
+                          type: array
+                          items:
+                            properties:
+                              id:
+                                $ref: '#/components/schemas/email-security_SendingDomainRestrictionId'
+                            required:
+                            - id
+                            type: object
+                      required:
+                      - deletes
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-ignore: true
+      x-fern-sdk-group-name: email-security.sending-domain-restrictions
+      x-fern-sdk-method-name: batch
+      x-forge-require-confirmation: This operation deletes the selected sending domain restrictions and removes TLS enforcement for the specified domains.
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/sending_domain_restrictions/{sending_domain_restriction_id}:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    - name: sending_domain_restriction_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/email-security_SendingDomainRestrictionId'
+    delete:
+      operationId: email_security_delete_sending_domain_restriction
+      summary: Delete a sending domain restriction
+      description: Removes a sending domain restriction. After deletion, TLS will no longer be enforced for emails from this domain.
+      responses:
+        '200':
+          description: Deleted sending domain restriction.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_DeletedSendingDomainRestriction'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.sending-domain-restrictions
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the sending domain restriction and removes TLS enforcement for emails from this domain.
+      x-stability: beta
+    get:
+      operationId: email_security_get_sending_domain_restriction
+      summary: Get a sending domain restriction
+      description: Retrieves details for a specific sending domain restriction including the domain requiring TLS and any excluded subdomains exempt from the TLS requirement.
+      responses:
+        '200':
+          description: Sending domain restriction details.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_SendingDomainRestriction'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.sending-domain-restrictions
+      x-fern-sdk-method-name: get
+      x-stability: beta
+    patch:
+      operationId: email_security_update_sending_domain_restriction
+      summary: Update a sending domain restriction
+      description: Updates an existing sending domain restriction. Only provided fields will be modified. Changes affect which domains require TLS and which subdomains are excluded.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_UpdateSendingDomainRestriction'
+      responses:
+        '200':
+          description: Updated sending domain restriction.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_SendingDomainRestriction'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.sending-domain-restrictions
+      x-fern-sdk-method-name: edit
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/trusted_domains:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    get:
+      operationId: email_security_list_trusted_domains
+      summary: List trusted email domains
+      description: Returns a paginated list of trusted domain patterns. Trusted domains prevent false positives for recently registered domains and lookalike domain detections. Patterns can use regular expressions for flexible matching.
+      parameters:
+      - $ref: '#/components/parameters/email-security_page'
+      - $ref: '#/components/parameters/email-security_per_page'
+      - $ref: '#/components/parameters/email-security_search'
+      - name: order
+        in: query
+        description: Field to sort by.
+        schema:
+          type: string
+          enum:
+          - pattern
+          - created_at
+      - $ref: '#/components/parameters/email-security_direction'
+      - name: is_recent
+        in: query
+        description: Filter to show only recently registered domains that are trusted to prevent triggering Suspicious or Malicious dispositions.
+        schema:
+          type: boolean
+      - name: is_similarity
+        in: query
+        description: Filter to show only proximity domains (partner or approved domains with similar spelling to connected domains) that prevent Spoof dispositions.
+        schema:
+          type: boolean
+      - name: pattern
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of trusted domains.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-collection'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_TrustedDomainList'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.trusted-domains
+      x-fern-sdk-method-name: list
+      x-stability: beta
+    post:
+      operationId: email_security_create_trusted_domain
+      summary: Create trusted email domain
+      description: Creates a new trusted domain pattern. Use for partner domains or approved senders that should bypass recent domain registration and similarity checks. Configure whether it prevents recent domain or spoof dispositions.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_CreateTrustedDomain'
+      responses:
+        '201':
+          description: Created trusted domain.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_TrustedDomain'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.trusted-domains
+      x-fern-sdk-method-name: create
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/trusted_domains/batch:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    post:
+      operationId: email_security_batch_trusted_domains
+      summary: Batch trusted domain operations
+      description: 'Executes multiple trusted domain operations atomically: delete, partially update,
+
+        replace, and create trusted domain patterns in a single request. All four operation
+
+        arrays (deletes, patches, puts, posts) are required and executed in order.
+
+        Send empty arrays for unused operations.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deletes:
+                  description: IDs of the trusted domain patterns to delete.
+                  type: array
+                  items:
+                    properties:
+                      id:
+                        $ref: '#/components/schemas/email-security_TrustedDomainId'
+                    required:
+                    - id
+                    type: object
+                  maxItems: 1000
+                patches:
+                  description: Partial updates to apply — each entry carries the pattern's ID and only the fields to change.
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/email-security_UpdateTrustedDomain'
+                    - properties:
+                        id:
+                          allOf:
+                          - $ref: '#/components/schemas/email-security_TrustedDomainId'
+                      required:
+                      - id
+                      type: object
+                  maxItems: 1000
+                posts:
+                  description: Trusted domain patterns to create.
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/email-security_CreateTrustedDomain'
+                  maxItems: 1000
+                puts:
+                  description: Full replacements to apply — each entry carries the pattern's ID and every field of its new value.
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/email-security_CreateTrustedDomain'
+                    - properties:
+                        id:
+                          allOf:
+                          - $ref: '#/components/schemas/email-security_TrustedDomainId'
+                      required:
+                      - id
+                      type: object
+                  maxItems: 1000
+              required:
+              - deletes
+              - patches
+              - puts
+              - posts
+      responses:
+        '200':
+          description: Batch operation results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      type: object
+                      properties:
+                        deletes:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/email-security_DeletedTrustedDomain'
+                        patches:
+                          $ref: '#/components/schemas/email-security_TrustedDomainList'
+                        posts:
+                          $ref: '#/components/schemas/email-security_TrustedDomainList'
+                        puts:
+                          $ref: '#/components/schemas/email-security_TrustedDomainList'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.trusted-domains
+      x-fern-sdk-method-name: batch
+      x-forge-require-confirmation: This operation may delete the selected trusted domain patterns and restore normal recent domain and similarity checks for matching emails.
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/trusted_domains/{trusted_domain_id}:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    - name: trusted_domain_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/email-security_TrustedDomainId'
+    delete:
+      operationId: email_security_delete_trusted_domain
+      summary: Delete a trusted email domain
+      description: Removes a trusted domain pattern. After deletion, emails from this domain will be subject to normal recent domain and similarity checks.
+      responses:
+        '200':
+          description: Deleted trusted domain.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_DeletedTrustedDomain'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.trusted-domains
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the trusted domain pattern and restores normal recent domain and similarity checks for matching emails.
+      x-stability: beta
+    get:
+      operationId: email_security_get_trusted_domain
+      summary: Get a trusted email domain
+      description: Retrieves details for a specific trusted domain pattern including its pattern value, whether it uses regex matching, and which detection types it affects.
+      responses:
+        '200':
+          description: Trusted domain details.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_TrustedDomain'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.trusted-domains
+      x-fern-sdk-method-name: get
+      x-stability: beta
+    patch:
+      operationId: email_security_update_trusted_domain
+      summary: Update a trusted email domain
+      description: Updates an existing trusted domain pattern. Only provided fields will be modified. Changes take effect for new emails matching the pattern.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_UpdateTrustedDomain'
+      responses:
+        '200':
+          description: Updated trusted domain.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_TrustedDomain'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.trusted-domains
+      x-fern-sdk-method-name: edit
+      x-stability: beta
+    put:
+      operationId: email_security_replace_trusted_domain
+      summary: Replace a trusted email domain
+      description: Replaces an existing trusted domain in full. Unlike PATCH, every field is taken from the request body, so optional fields that are omitted are reset rather than left untouched. Use this when managing trusted domains declaratively.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_CreateTrustedDomain'
+      responses:
+        '200':
+          description: Replaced trusted domain.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_TrustedDomain'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.trusted-domains
+      x-fern-sdk-method-name: update
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/url_ignore_patterns:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    get:
+      operationId: email_security_list_url_ignore_patterns
+      summary: List URL ignore patterns
+      description: Returns a paginated list of URL rewrite ignore patterns for the account. URLs matching these patterns will not be rewritten.
+      parameters:
+      - $ref: '#/components/parameters/email-security_page'
+      - $ref: '#/components/parameters/email-security_per_page'
+      responses:
+        '200':
+          description: List of URL ignore patterns for the provided account.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-collection'
+                - properties:
+                    result:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/email-security_UrlIgnorePattern'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.url-ignore-patterns
+      x-fern-sdk-method-name: list
+      x-stability: beta
+    post:
+      operationId: email_security_create_url_ignore_pattern
+      summary: Create a URL ignore pattern
+      description: Creates a new URL rewrite ignore pattern. URLs matching this pattern will not be rewritten.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_CreateUrlIgnorePattern'
+      responses:
+        '201':
+          description: Created URL ignore pattern.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_UrlIgnorePattern'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.url-ignore-patterns
+      x-fern-sdk-method-name: create
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/url_ignore_patterns/batch:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    post:
+      operationId: email_security_batch_url_ignore_patterns
+      summary: Batch URL ignore pattern operations
+      description: 'Executes multiple operations atomically. All four operation arrays
+
+        (deletes, patches, puts, posts) are required and executed in order.
+
+        Send empty arrays for unused operations.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deletes:
+                  description: IDs of the URL ignore patterns to delete.
+                  type: array
+                  items:
+                    properties:
+                      id:
+                        $ref: '#/components/schemas/email-security_UrlIgnorePatternId'
+                    required:
+                    - id
+                    type: object
+                  maxItems: 1000
+                patches:
+                  description: Partial updates to apply — each entry carries the pattern's ID and only the fields to change.
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/email-security_UpdateUrlIgnorePattern'
+                    - properties:
+                        id:
+                          allOf:
+                          - $ref: '#/components/schemas/email-security_UrlIgnorePatternId'
+                      required:
+                      - id
+                      type: object
+                  maxItems: 1000
+                posts:
+                  description: URL ignore patterns to create.
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/email-security_CreateUrlIgnorePattern'
+                  maxItems: 1000
+                puts:
+                  description: Full replacements to apply — each entry carries the pattern's ID and every field of its new value.
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/email-security_CreateUrlIgnorePattern'
+                    - properties:
+                        id:
+                          allOf:
+                          - $ref: '#/components/schemas/email-security_UrlIgnorePatternId'
+                      required:
+                      - id
+                      type: object
+                  maxItems: 1000
+              required:
+              - deletes
+              - patches
+              - puts
+              - posts
+      responses:
+        '200':
+          description: Batch operation results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-common'
+                - properties:
+                    result:
+                      type: object
+                      properties:
+                        deletes:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/email-security_DeletedUrlIgnorePattern'
+                        patches:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/email-security_UrlIgnorePattern'
+                        posts:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/email-security_UrlIgnorePattern'
+                        puts:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/email-security_UrlIgnorePattern'
+                      required:
+                      - deletes
+                      - patches
+                      - puts
+                      - posts
+                  required:
+                  - result
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.url-ignore-patterns
+      x-fern-sdk-method-name: batch
+      x-forge-require-confirmation: This operation may delete the selected URL rewrite ignore patterns and cause matching URLs to be rewritten again.
+      x-stability: beta
+  /accounts/{account_id}/email-security/settings/url_ignore_patterns/{pattern_id}:
+    parameters:
+    - $ref: '#/components/parameters/email-security_account_id'
+    - name: pattern_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/email-security_UrlIgnorePatternId'
+    delete:
+      operationId: email_security_delete_url_ignore_pattern
+      summary: Delete a URL ignore pattern
+      description: Removes a URL rewrite ignore pattern. After deletion, URLs matching this pattern will be rewritten again.
+      responses:
+        '200':
+          description: Deleted URL ignore pattern.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_DeletedUrlIgnorePattern'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.url-ignore-patterns
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation deletes the URL rewrite ignore pattern and causes matching URLs to be rewritten again.
+      x-stability: beta
+    get:
+      operationId: email_security_get_url_ignore_pattern
+      summary: Get a URL ignore pattern
+      description: Returns a single URL rewrite ignore pattern by its identifier.
+      responses:
+        '200':
+          description: URL ignore pattern.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_UrlIgnorePattern'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      - 'Cloud Email Security: Read'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.url-ignore-patterns
+      x-fern-sdk-method-name: get
+      x-stability: beta
+    patch:
+      operationId: email_security_update_url_ignore_pattern
+      summary: Update a URL ignore pattern
+      description: Updates an existing URL rewrite ignore pattern. Only provided fields will be modified.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/email-security_UpdateUrlIgnorePattern'
+      responses:
+        '200':
+          description: Updated URL ignore pattern.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/email-security_api-response-single'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/email-security_UrlIgnorePattern'
+                  type: object
+        4XX:
+          $ref: '#/components/responses/email-security_ClientError'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Email Security Settings
+      x-api-token-group:
+      - 'Cloud Email Security: Write'
+      x-fern-availability: beta
+      x-fern-sdk-group-name: email-security.url-ignore-patterns
+      x-fern-sdk-method-name: edit
+      x-stability: beta
+components:
+  schemas:
+    email-security_UpdateDomain:
+      type: object
+      properties:
+        allowed_delivery_modes:
+          description: Delivery modes to onboard the domain through.
+          type: array
+          items:
+            $ref: '#/components/schemas/email-security_DeliveryMode'
+          x-stainless-collection-type: set
+        drop_dispositions:
+          description: Dispositions to drop instead of delivering, e.g. `["MALICIOUS", "SPAM"]`.
+          type: array
+          items:
+            $ref: '#/components/schemas/email-security_DispositionLabel'
+          x-stainless-collection-type: set
+        folder:
+          description: The mailbox folder to scan, for API-scanning domains.
+          allOf:
+          - $ref: '#/components/schemas/email-security_ScannableFolder'
+          x-stainless-terraform-configurability: computed_optional
+        integration_id:
+          description: Identifier of the CASB integration that authorizes this domain. The integration also enables API scanning, post-delivery actions, and directory sync.
+          type:
+          - string
+          - 'null'
+          format: uuid
+          x-auditable: true
+        ip_restrictions:
+          description: Source IP ranges mail is accepted from. Any other source is rejected.
+          type: array
+          items:
+            type: string
+            x-auditable: true
+          example:
+          - 192.0.2.0/24
+          - 2001:db8::/32
+          x-stainless-collection-type: set
+        lookback_hops:
+          description: Number of hops to trace back through received headers when reconstructing the original message (1-20).
+          type: integer
+          maximum: 20
+          minimum: 1
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        regions:
+          description: Regions that process messages for this domain, e.g. `["GLOBAL"]` or `["US"]`.
+          type: array
+          items:
+            $ref: '#/components/schemas/email-security_Region'
+          x-stainless-collection-type: set
+        require_tls_inbound:
+          description: Require TLS on inbound connections.
+          type: boolean
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        require_tls_outbound:
+          description: Require TLS on outbound connections.
+          type: boolean
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        transport:
+          description: The mail transport hostname for MX/Inline delivery — the MX record Cloudflare delivers email to (e.g. `mx.example.com`).
+          type: string
+          x-auditable: true
+    email-security_DeletedBlockedSender:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/email-security_BlockedSenderId'
+      required:
+      - id
+    email-security_Region:
+      description: The region that processes messages for this domain.
+      type: string
+      enum:
+      - GLOBAL
+      - AU
+      - DE
+      - IN
+      - US
+    email-security_SendingDomainRestrictionList:
+      type: array
+      items:
+        $ref: '#/components/schemas/email-security_SendingDomainRestriction'
+    email-security_AllowPolicy:
+      description: An email allow policy.
+      type: object
+      properties:
+        comments:
+          type:
+          - string
+          - 'null'
+          example: Trust all messages send from test@example.com
+          maxLength: 1024
+        created_at:
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          readOnly: true
+        id:
+          allOf:
+          - $ref: '#/components/schemas/email-security_AllowPolicyId'
+          readOnly: true
+        is_acceptable_sender:
+          description: Exempts messages from this sender from Spam, Spoof and Bulk dispositions only; Malicious and Suspicious dispositions still apply.
+          type: boolean
+          example: false
+          x-auditable: true
+        is_exempt_recipient:
+          description: Bypasses all detections for messages to this recipient.
+          type: boolean
+          example: false
+          x-auditable: true
+        is_recipient:
+          description: 'Deprecated as of July 1, 2025. Use `is_exempt_recipient` instead. End of life: July 1, 2026.'
+          type: boolean
+          example: false
+          deprecated: true
+          x-auditable: true
+          x-stainless-deprecation-message: Use `is_exempt_recipient` instead.
+        is_regex:
+          type: boolean
+          example: false
+          x-auditable: true
+        is_sender:
+          description: 'Deprecated as of July 1, 2025. Use `is_trusted_sender` instead. End of life: July 1, 2026.'
+          type: boolean
+          example: true
+          deprecated: true
+          x-auditable: true
+          x-stainless-deprecation-message: Use `is_trusted_sender` instead.
+        is_spoof:
+          description: 'Deprecated as of July 1, 2025. Use `is_acceptable_sender` instead. End of life: July 1, 2026.'
+          type: boolean
+          example: false
+          deprecated: true
+          x-auditable: true
+          x-stainless-deprecation-message: Use `is_acceptable_sender` instead.
+        is_trusted_sender:
+          description: Bypasses all detections and link following for messages from this sender.
+          type: boolean
+          example: true
+          x-auditable: true
+        last_modified:
+          description: 'Deprecated, use `modified_at` instead. End of life: November 1, 2026.'
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          deprecated: true
+          readOnly: true
+          x-stainless-deprecation-message: Use `modified_at` instead.
+        modified_at:
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          readOnly: true
+        pattern:
+          description: 'The pattern value to match. The format depends on `pattern_type`: a valid email address for EMAIL (e.g. `user@example.com`), a valid domain name for DOMAIN (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g. `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the API rejects private or unique-local, loopback, link-local, unspecified, and IPv4 broadcast addresses, including their IPv4-mapped IPv6 equivalents.'
+          type: string
+          example: test@example.com
+          maxLength: 1024
+          minLength: 1
+          x-auditable: true
+        pattern_type:
+          $ref: '#/components/schemas/email-security_PatternType'
+        verify_sender:
+          description: Enforce DMARC, SPF or DKIM authentication. When on, Email Security only honors policies that pass authentication.
+          type: boolean
+          example: true
+          x-auditable: true
+      required:
+      - id
+      - created_at
+      - last_modified
+    email-security_CreateImpersonationRegistry:
+      description: Create an impersonation registry entry.
+      allOf:
+      - $ref: '#/components/schemas/email-security_ImpersonationRegistry'
+      required:
+      - name
+      - email
+      - is_email_regex
+    email-security_TrustedDomainId:
+      description: Trusted domain identifier.
+      type: string
+      format: uuid
+      example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+      x-auditable: true
+    email-security_BlockedSenderId:
+      description: Blocked sender pattern identifier.
+      type: string
+      format: uuid
+      example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+      x-auditable: true
+    email-security_UpdateSendingDomainRestriction:
+      description: Update a sending domain restriction.
+      allOf:
+      - $ref: '#/components/schemas/email-security_SendingDomainRestriction'
+      minProperties: 1
+    email-security_ContentPolicyTarget:
+      description: The part of the email to match the pattern against.
+      type: string
+      example: SUBJECT
+      enum:
+      - SUBJECT
+      - BODY
+    email-security_DeletedContentPolicy:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/email-security_ContentPolicyId'
+      required:
+      - id
+    email-security_DeliveryMode:
+      type: string
+      enum:
+      - DIRECT
+      - BCC
+      - JOURNAL
+      - API
+      - RETRO_SCAN
+    email-security_DeletedImpersonationRegistry:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/email-security_ImpersonationRegistryId'
+      required:
+      - id
+    email-security_CreateContentPolicy:
+      description: Create a content policy.
+      allOf:
+      - $ref: '#/components/schemas/email-security_ContentPolicy'
+      required:
+      - name
+      - pattern
+      - targets
+      - enabled
+    email-security_UpdateTrustedDomain:
+      description: Update a trusted domain.
+      allOf:
+      - $ref: '#/components/schemas/email-security_TrustedDomain'
+      minProperties: 1
+    email-security_UpdateAllowPolicy:
+      description: Update an allow policy.
+      allOf:
+      - $ref: '#/components/schemas/email-security_AllowPolicy'
+      minProperties: 1
+    email-security_CreateAllowPolicy:
+      description: Create an allow policy.
+      allOf:
+      - $ref: '#/components/schemas/email-security_AllowPolicy'
+      required:
+      - is_exempt_recipient
+      - is_trusted_sender
+      - is_acceptable_sender
+      - pattern
+      - is_regex
+      - verify_sender
+      - pattern_type
+    email-security_DmarcStatus:
+      type:
+      - string
+      - 'null'
+      enum:
+      - none
+      - good
+      - invalid
+      - null
+    email-security_identifier:
+      description: Identifier.
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      x-auditable: true
+    email-security_BlockedSender:
+      description: A blocked sender pattern.
+      type: object
+      properties:
+        comments:
+          type:
+          - string
+          - 'null'
+          example: Block sender with email test@example.com
+          maxLength: 1024
+        created_at:
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          readOnly: true
+        id:
+          allOf:
+          - $ref: '#/components/schemas/email-security_BlockedSenderId'
+          readOnly: true
+        is_regex:
+          description: Whether `pattern` is a regular expression instead of a literal value.
+          type: boolean
+          example: false
+          x-auditable: true
+        last_modified:
+          description: 'Deprecated, use `modified_at` instead. End of life: November 1, 2026.'
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          deprecated: true
+          readOnly: true
+          x-stainless-deprecation-message: Use `modified_at` instead.
+        modified_at:
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          readOnly: true
+        pattern:
+          description: 'The pattern value to match. The format depends on `pattern_type`: a valid email address for EMAIL (e.g. `user@example.com`), a valid domain name for DOMAIN (e.g. `example.com`), or a plain IPv4 or IPv6 address or CIDR block for IP (e.g. `1.2.3.4`, `1.2.3.0/24`, `2606:4700:4700::1111`, or `2606:4700:4700::/48`); the API rejects private or unique-local, loopback, link-local, unspecified, and IPv4 broadcast addresses, including their IPv4-mapped IPv6 equivalents.'
+          type: string
+          example: test@example.com
+          maxLength: 1024
+          minLength: 1
+          x-auditable: true
+        pattern_type:
+          $ref: '#/components/schemas/email-security_PatternType'
+    email-security_DeletedAllowPolicy:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/email-security_AllowPolicyId'
+      required:
+      - id
+    email-security_api-response-collection:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/email-security_api-response-common'
+      - properties:
+          result_info:
+            type: object
+            properties:
+              count:
+                description: Total number of results for the requested service.
+                type: number
+                example: 1
+              page:
+                description: Current page within paginated list of results.
+                type: number
+                example: 1
+              per_page:
+                description: Number of results per page of results.
+                type: number
+                example: 20
+              total_count:
+                description: Total results available without any search parameters.
+                type: number
+                example: 2000
+        type: object
+    email-security_SendingDomainRestriction:
+      description: A sending domain restriction that enforces TLS (Transport Layer Security) requirements for emails from specific domains. If TLS is required, the system drops mail without TLS from the specified domain.
+      type: object
+      properties:
+        comments:
+          type:
+          - string
+          - 'null'
+          example: Enforce TLS for all mail from this domain
+          maxLength: 1024
+        created_at:
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          readOnly: true
+        domain:
+          description: Domain that requires TLS enforcement.
+          type: string
+          example: example.com
+          x-auditable: true
+        exclude:
+          description: Subdomains to exempt from TLS requirements.
+          type: array
+          items:
+            type: string
+          example:
+          - subdomain.example.com
+          x-auditable: true
+        id:
+          allOf:
+          - $ref: '#/components/schemas/email-security_SendingDomainRestrictionId'
+          readOnly: true
+        last_modified:
+          description: 'Deprecated, use `modified_at` instead. End of life: November 1, 2026.'
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          deprecated: true
+          readOnly: true
+          x-stainless-deprecation-message: Use `modified_at` instead.
+        modified_at:
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          readOnly: true
+    email-security_PatternType:
+      description: 'Type of pattern matching.
+
+        - EMAIL: matches a full email address (e.g. `user@example.com`)
+
+        - DOMAIN: matches a domain name (e.g. `example.com`)
+
+        - IP: matches a plain IPv4 or IPv6 address (e.g. `1.2.3.4` or `2606:4700:4700::1111`) or CIDR block (e.g. `1.2.3.0/24` or `2606:4700:4700::/48`). The API rejects private or unique-local, loopback, link-local, unspecified, and IPv4 broadcast addresses, including their IPv4-mapped IPv6 equivalents.
+
+        - UNKNOWN: deprecated; you cannot use this when creating or updating policies, but it may appear on existing entries.
+
+        '
+      type: string
+      example: EMAIL
+      enum:
+      - EMAIL
+      - DOMAIN
+      - IP
+      - UNKNOWN
+      x-auditable: true
+    email-security_UrlIgnorePatternId:
+      description: URL ignore pattern identifier.
+      type: string
+      format: uuid
+      example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+      title: identifier
+      x-auditable: true
+    email-security_messages:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          documentation_url:
+            type: string
+          message:
+            type: string
+          source:
+            type: object
+            properties:
+              pointer:
+                type: string
+        required:
+        - code
+        - message
+        type: object
+        uniqueItems: true
+      example: []
+    email-security_ReplaceDomain:
+      description: 'Request body for replacing an email domain. The `domain` field is intentionally
+
+        absent — the domain name is immutable after creation.
+
+        '
+      type: object
+      properties:
+        allowed_delivery_modes:
+          description: Delivery modes to onboard the domain through.
+          type: array
+          items:
+            $ref: '#/components/schemas/email-security_DeliveryMode'
+          maxItems: 10
+          minItems: 1
+          x-stainless-collection-type: set
+        drop_dispositions:
+          description: Dispositions to drop instead of delivering, e.g. `["MALICIOUS", "SPAM"]`.
+          type: array
+          items:
+            $ref: '#/components/schemas/email-security_DispositionLabel'
+          maxItems: 10
+          x-stainless-collection-type: set
+        folder:
+          description: The mailbox folder to scan, for API-scanning domains.
+          allOf:
+          - $ref: '#/components/schemas/email-security_ScannableFolder'
+          x-stainless-terraform-configurability: computed_optional
+        integration_id:
+          description: Identifier of the CASB integration that authorizes this domain. The integration also enables API scanning, post-delivery actions, and directory sync.
+          type:
+          - string
+          - 'null'
+          format: uuid
+          x-auditable: true
+        ip_restrictions:
+          description: Source IP ranges mail is accepted from. Any other source is rejected.
+          type: array
+          items:
+            type: string
+            x-auditable: true
+          example:
+          - 192.0.2.0/24
+          - 2001:db8::/32
+          maxItems: 100
+          x-stainless-collection-type: set
+        lookback_hops:
+          description: Number of hops to trace back through received headers when reconstructing the original message (1-20).
+          type:
+          - integer
+          - 'null'
+          maximum: 20
+          minimum: 1
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        regions:
+          description: Regions that process messages for this domain, e.g. `["GLOBAL"]` or `["US"]`.
+          type: array
+          items:
+            $ref: '#/components/schemas/email-security_Region'
+          maxItems: 10
+          minItems: 1
+          x-stainless-collection-type: set
+        require_tls_inbound:
+          description: Require TLS on inbound connections.
+          type:
+          - boolean
+          - 'null'
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        require_tls_outbound:
+          description: Require TLS on outbound connections.
+          type:
+          - boolean
+          - 'null'
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        transport:
+          description: The mail transport hostname for MX/Inline delivery — the MX record Cloudflare delivers email to (e.g. `mx.example.com`).
+          type:
+          - string
+          - 'null'
+          x-auditable: true
+      required:
+      - allowed_delivery_modes
+      - ip_restrictions
+      - drop_dispositions
+      - regions
+    email-security_ContentPolicyList:
+      type: array
+      items:
+        $ref: '#/components/schemas/email-security_ContentPolicy'
+    email-security_CreateTrustedDomain:
+      description: Create a trusted domain.
+      allOf:
+      - $ref: '#/components/schemas/email-security_TrustedDomain'
+      required:
+      - pattern
+      - is_regex
+      - is_recent
+      - is_similarity
+    email-security_UrlIgnorePattern:
+      description: A URL ignore pattern that exempts matching URLs from Email Security's URL rewriting.
+      type: object
+      properties:
+        comments:
+          description: Optional note describing the reason for the ignore pattern.
+          type:
+          - string
+          - 'null'
+          example: Trusted internal redirect service
+          maxLength: 1024
+          x-auditable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          x-auditable: true
+        id:
+          allOf:
+          - $ref: '#/components/schemas/email-security_UrlIgnorePatternId'
+          readOnly: true
+        last_modified:
+          description: 'Deprecated, use `modified_at` instead. End of life: November 1, 2026.'
+          type: string
+          format: date-time
+          deprecated: true
+          readOnly: true
+          x-auditable: true
+          x-stainless-deprecation-message: Use `modified_at` instead.
+        modified_at:
+          type: string
+          format: date-time
+          readOnly: true
+          x-auditable: true
+        pattern:
+          description: Regular expression identifying URLs to exempt from rewriting.
+          type: string
+          example: https://example\.com/.*
+          maxLength: 1024
+          minLength: 1
+          x-auditable: true
+      required:
+      - id
+      - created_at
+      - pattern
+    email-security_EmailsProcessed:
+      type:
+      - object
+      - 'null'
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          readOnly: true
+        total_emails_processed:
+          type: integer
+          minimum: 0
+        total_emails_processed_previous:
+          type: integer
+          minimum: 0
+      required:
+      - total_emails_processed
+      - total_emails_processed_previous
+      - timestamp
+    email-security_AllowPolicyId:
+      description: Allow policy identifier.
+      type: string
+      format: uuid
+      example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+      x-auditable: true
+    email-security_Domain:
+      type: object
+      properties:
+        allowed_delivery_modes:
+          type: array
+          items:
+            $ref: '#/components/schemas/email-security_DeliveryMode'
+          x-stainless-collection-type: set
+        authorization:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/email-security_DomainAuthorization'
+        created_at:
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          readOnly: true
+        dmarc_status:
+          $ref: '#/components/schemas/email-security_DmarcStatus'
+        domain:
+          type: string
+          example: example.com
+          x-auditable: true
+        drop_dispositions:
+          type: array
+          items:
+            $ref: '#/components/schemas/email-security_DispositionLabel'
+          x-stainless-collection-type: set
+        emails_processed:
+          type:
+          - object
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/email-security_EmailsProcessed'
+        folder:
+          allOf:
+          - $ref: '#/components/schemas/email-security_ScannableFolder'
+          x-stainless-terraform-configurability: computed_optional
+        id:
+          $ref: '#/components/schemas/email-security_DomainId'
+        inbox_provider:
+          type:
+          - string
+          - 'null'
+          enum:
+          - Microsoft
+          - Google
+          - null
+        integration_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        ip_restrictions:
+          type: array
+          items:
+            type: string
+          example:
+          - 192.0.2.0/24
+          - 2001:db8::/32
+          x-stainless-collection-type: set
+        last_modified:
+          description: 'Deprecated, use `modified_at` instead. End of life: November 1, 2026.'
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          deprecated: true
+          readOnly: true
+          x-stainless-deprecation-message: Use `modified_at` instead.
+        lookback_hops:
+          type: integer
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        modified_at:
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          readOnly: true
+        o365_tenant_id:
+          type:
+          - string
+          - 'null'
+        regions:
+          type: array
+          items:
+            $ref: '#/components/schemas/email-security_Region'
+          x-stainless-collection-type: set
+        require_tls_inbound:
+          type:
+          - boolean
+          - 'null'
+          x-stainless-terraform-configurability: computed_optional
+        require_tls_outbound:
+          type:
+          - boolean
+          - 'null'
+          x-stainless-terraform-configurability: computed_optional
+        spf_status:
+          $ref: '#/components/schemas/email-security_SpfStatus'
+        status:
+          $ref: '#/components/schemas/email-security_DomainStatus'
+        transport:
+          type: string
+          x-auditable: true
+    email-security_ContentPolicy:
+      description: A content policy pattern that matches against the subject or body of an email.
+      type: object
+      properties:
+        created_at:
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          readOnly: true
+        enabled:
+          description: Whether the policy is active.
+          type: boolean
+          example: true
+          x-auditable: true
+        id:
+          allOf:
+          - $ref: '#/components/schemas/email-security_ContentPolicyId'
+          readOnly: true
+        modified_at:
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          readOnly: true
+        name:
+          description: Human-readable name of the policy.
+          type: string
+          example: Block phishing keywords
+          maxLength: 256
+          minLength: 1
+          x-auditable: true
+        notes:
+          description: Optional note describing the purpose of the policy.
+          type:
+          - string
+          - 'null'
+          example: Blocks common phishing subject lines
+          maxLength: 4096
+        pattern:
+          description: Regular expression the policy matches against.
+          type: string
+          example: urgent.*verify.*account
+          maxLength: 2048
+          minLength: 1
+          x-auditable: true
+        targets:
+          description: Parts of the email the pattern is matched against.
+          type: array
+          items:
+            $ref: '#/components/schemas/email-security_ContentPolicyTarget'
+          example:
+          - SUBJECT
+          minItems: 1
+          x-auditable: true
+    email-security_TrustedDomain:
+      description: A trusted email domain.
+      type: object
+      properties:
+        comments:
+          type:
+          - string
+          - 'null'
+          example: Trusted partner domain
+          maxLength: 1024
+        created_at:
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          readOnly: true
+        id:
+          allOf:
+          - $ref: '#/components/schemas/email-security_TrustedDomainId'
+          readOnly: true
+        is_recent:
+          description: Select to prevent recently registered domains from triggering a Suspicious or Malicious disposition.
+          type: boolean
+          example: true
+          x-auditable: true
+        is_regex:
+          description: Whether `pattern` is a regular expression instead of a literal domain.
+          type: boolean
+          example: false
+          x-auditable: true
+        is_similarity:
+          description: Select for partner or other approved domains that have similar spelling to your connected domains. Prevents listed domains from triggering a Spoof disposition.
+          type: boolean
+          example: false
+          x-auditable: true
+        last_modified:
+          description: 'Deprecated, use `modified_at` instead. End of life: November 1, 2026.'
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          deprecated: true
+          readOnly: true
+          x-stainless-deprecation-message: Use `modified_at` instead.
+        modified_at:
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          readOnly: true
+        pattern:
+          description: The domain pattern to trust, e.g. `example.com`.
+          type: string
+          example: example.com
+          maxLength: 1024
+          minLength: 1
+          x-auditable: true
+    email-security_TrustedDomainList:
+      type: array
+      items:
+        $ref: '#/components/schemas/email-security_TrustedDomain'
+    email-security_UpdateImpersonationRegistry:
+      description: Update an impersonation registry entry.
+      allOf:
+      - $ref: '#/components/schemas/email-security_ImpersonationRegistry'
+      minProperties: 1
+    email-security_DeletedTrustedDomain:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/email-security_TrustedDomainId'
+      required:
+      - id
+    email-security_api-response-common-failure:
+      type: object
+      properties:
+        errors:
+          example:
+          - code: 7003
+            message: No route for the URI
+          allOf:
+          - $ref: '#/components/schemas/email-security_messages'
+          minLength: 1
+        messages:
+          example: []
+          allOf:
+          - $ref: '#/components/schemas/email-security_messages'
+        result:
+          type:
+          - object
+          - 'null'
+          enum:
+          - null
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: false
+          enum:
+          - false
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    email-security_DeletedUrlIgnorePattern:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/email-security_UrlIgnorePatternId'
+      required:
+      - id
+    email-security_UpdateContentPolicy:
+      description: Update a content policy.
+      allOf:
+      - $ref: '#/components/schemas/email-security_ContentPolicy'
+      minProperties: 1
+    email-security_DomainList:
+      type: array
+      items:
+        $ref: '#/components/schemas/email-security_Domain'
+    email-security_ImpersonationRegistry:
+      description: An impersonation registry entry.
+      type: object
+      properties:
+        comments:
+          description: Optional note describing the entry.
+          type:
+          - string
+          - 'null'
+        created_at:
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          readOnly: true
+        directory_id:
+          description: Identifier of the directory the entry was synced from, when directory-synced.
+          type:
+          - integer
+          - 'null'
+        directory_node_id:
+          description: Identifier of the directory node the entry was synced from, when directory-synced.
+          type:
+          - integer
+          - 'null'
+        email:
+          description: Email address (or pattern) of the protected identity.
+          type: string
+          example: john.doe@example.com
+          x-auditable: true
+        external_directory_node_id:
+          description: Deprecated. External identifier of the directory node.
+          type:
+          - string
+          - 'null'
+          deprecated: true
+          x-stainless-deprecation-message: This field is deprecated.
+        id:
+          allOf:
+          - $ref: '#/components/schemas/email-security_ImpersonationRegistryId'
+          readOnly: true
+        is_email_regex:
+          description: Whether `email` is a regular expression instead of a literal address.
+          type: boolean
+          example: false
+          x-auditable: true
+        last_modified:
+          description: 'Deprecated, use `modified_at` instead. End of life: November 1, 2026.'
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          deprecated: true
+          readOnly: true
+          x-stainless-deprecation-message: Use `modified_at` instead.
+        modified_at:
+          allOf:
+          - $ref: '#/components/schemas/email-security_timestamp'
+          readOnly: true
+        name:
+          description: Display name of the protected identity.
+          type: string
+          example: John Doe
+          maxLength: 1024
+          x-auditable: true
+        provenance:
+          description: Source the entry was created from.
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/email-security_Provenance'
+    email-security_DispositionLabel:
+      description: The verdict Email Security assigns to a message.
+      type: string
+      enum:
+      - MALICIOUS
+      - MALICIOUS-BEC
+      - SUSPICIOUS
+      - SPOOF
+      - SPAM
+      - BULK
+      - ENCRYPTED
+      - EXTERNAL
+      - UNKNOWN
+      - NONE
+    email-security_BlockedSenderList:
+      type: array
+      items:
+        $ref: '#/components/schemas/email-security_BlockedSender'
+    email-security_UpdateUrlIgnorePattern:
+      description: Updates a URL rewrite ignore pattern; modifies only the provided fields.
+      type: object
+      properties:
+        comments:
+          description: Optional note describing the reason for the ignore pattern.
+          type:
+          - string
+          - 'null'
+          example: Trusted internal redirect service
+          maxLength: 1024
+          x-auditable: true
+        pattern:
+          description: Regular expression identifying URLs to exempt from rewriting.
+          type: string
+          example: https://example\.com/.*
+          maxLength: 1024
+          minLength: 1
+          x-auditable: true
+      additionalProperties: false
+      minProperties: 1
+    email-security_DomainAuthorization:
+      type:
+      - object
+      - 'null'
+      properties:
+        authorized:
+          type: boolean
+        status_message:
+          type:
+          - string
+          - 'null'
+        timestamp:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - authorized
+      - timestamp
+    email-security_api-response-common:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/email-security_messages'
+        messages:
+          $ref: '#/components/schemas/email-security_messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: true
+          enum:
+          - true
+      required:
+      - success
+      - errors
+      - messages
+    email-security_api-response-single:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/email-security_api-response-common'
+    email-security_CreateDomain:
+      type: object
+      properties:
+        allowed_delivery_modes:
+          description: Delivery modes to onboard the domain through.
+          type: array
+          items:
+            $ref: '#/components/schemas/email-security_DeliveryMode'
+          maxItems: 10
+          minItems: 1
+          x-stainless-collection-type: set
+        domain:
+          description: The email domain to protect.
+          type: string
+          x-auditable: true
+        drop_dispositions:
+          description: Dispositions to drop instead of delivering, e.g. `["MALICIOUS", "SPAM"]`.
+          type: array
+          items:
+            $ref: '#/components/schemas/email-security_DispositionLabel'
+          maxItems: 10
+          x-stainless-collection-type: set
+        folder:
+          description: The mailbox folder to scan, for API-scanning domains.
+          allOf:
+          - $ref: '#/components/schemas/email-security_ScannableFolder'
+          x-stainless-terraform-configurability: computed_optional
+        integration_id:
+          description: Identifier of the CASB integration that authorizes this domain. The integration also enables API scanning, post-delivery actions, and directory sync.
+          type:
+          - string
+          - 'null'
+          format: uuid
+          x-auditable: true
+        ip_restrictions:
+          description: Source IP ranges mail is accepted from. Any other source is rejected.
+          type: array
+          items:
+            type: string
+            x-auditable: true
+          example:
+          - 192.0.2.0/24
+          - 2001:db8::/32
+          maxItems: 100
+          x-stainless-collection-type: set
+        lookback_hops:
+          description: Number of hops to trace back through received headers when reconstructing the original message (1-20).
+          type:
+          - integer
+          - 'null'
+          maximum: 20
+          minimum: 1
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        regions:
+          description: Regions that process messages for this domain, e.g. `["GLOBAL"]` or `["US"]`.
+          type: array
+          items:
+            $ref: '#/components/schemas/email-security_Region'
+          maxItems: 10
+          minItems: 1
+          x-stainless-collection-type: set
+        require_tls_inbound:
+          description: Require TLS on inbound connections.
+          type:
+          - boolean
+          - 'null'
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        require_tls_outbound:
+          description: Require TLS on outbound connections.
+          type:
+          - boolean
+          - 'null'
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        transport:
+          description: The mail transport hostname for MX/Inline delivery — the MX record Cloudflare delivers email to (e.g. `mx.example.com`).
+          type:
+          - string
+          - 'null'
+          x-auditable: true
+      additionalProperties: false
+      required:
+      - domain
+      - allowed_delivery_modes
+      - ip_restrictions
+      - drop_dispositions
+      - regions
+    email-security_SpfStatus:
+      type:
+      - string
+      - 'null'
+      enum:
+      - none
+      - good
+      - neutral
+      - open
+      - invalid
+      - null
+    email-security_DomainStatus:
+      type:
+      - string
+      - 'null'
+      enum:
+      - PENDING
+      - ACTIVE
+      - FAILED
+      - TIMEOUT
+      - null
+    email-security_Provenance:
+      type: string
+      enum:
+      - A1S_INTERNAL
+      - SNOOPY-CASB_OFFICE_365
+      - SNOOPY-OFFICE_365
+      - SNOOPY-GOOGLE_DIRECTORY
+    email-security_DomainId:
+      description: Domain identifier.
+      type: string
+      format: uuid
+      example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+      x-auditable: true
+    email-security_DomainVerificationInfo:
+      type: object
+      properties:
+        last_checked_at:
+          description: When the last DNS TXT check was attempted, if any.
+          type:
+          - string
+          - 'null'
+          format: date-time
+        status:
+          $ref: '#/components/schemas/email-security_DomainStatus'
+        txt_record_name:
+          description: Full DNS TXT record name (e.g. `_cf-email-sec-challenge.example.com`).
+          type: string
+        txt_record_value:
+          description: Token value to publish in the TXT record.
+          type: string
+      required:
+      - status
+    email-security_CreateBlockedSender:
+      description: Create a blocked sender pattern.
+      allOf:
+      - $ref: '#/components/schemas/email-security_BlockedSender'
+      required:
+      - pattern
+      - is_regex
+      - pattern_type
+    email-security_DeletedDomain:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/email-security_DomainId'
+      required:
+      - id
+    email-security_UpdateBlockedSender:
+      description: Update a blocked sender pattern.
+      allOf:
+      - $ref: '#/components/schemas/email-security_BlockedSender'
+      minProperties: 1
+    email-security_ContentPolicyId:
+      description: Content policy identifier.
+      type: string
+      format: uuid
+      example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+      x-auditable: true
+    email-security_timestamp:
+      type: string
+      format: date-time
+      example: '2014-01-01T05:20:00.12345Z'
+      x-auditable: true
+    email-security_SendingDomainRestrictionId:
+      description: Sending domain restriction identifier.
+      type: string
+      format: uuid
+      example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+      title: identifier
+      x-auditable: true
+    email-security_CreateUrlIgnorePattern:
+      description: Creates a URL ignore pattern that exempts matching URLs from rewriting.
+      type: object
+      properties:
+        comments:
+          description: Optional note describing the reason for the ignore pattern.
+          type:
+          - string
+          - 'null'
+          example: Trusted internal redirect service
+          maxLength: 1024
+          x-auditable: true
+        pattern:
+          description: Regular expression identifying URLs to exempt from rewriting.
+          type: string
+          example: https://example\.com/.*
+          maxLength: 1024
+          minLength: 1
+          x-auditable: true
+      additionalProperties: false
+      required:
+      - pattern
+    email-security_ImpersonationRegistryList:
+      type: array
+      items:
+        $ref: '#/components/schemas/email-security_ImpersonationRegistry'
+    email-security_DeletedSendingDomainRestriction:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/email-security_SendingDomainRestrictionId'
+      required:
+      - id
+    email-security_AllowPolicyList:
+      type: array
+      items:
+        $ref: '#/components/schemas/email-security_AllowPolicy'
+    email-security_CreateSendingDomainRestriction:
+      description: Create a sending domain restriction.
+      allOf:
+      - $ref: '#/components/schemas/email-security_SendingDomainRestriction'
+      required:
+      - domain
+      - exclude
+    email-security_ImpersonationRegistryId:
+      description: Impersonation registry entry identifier.
+      type: string
+      format: uuid
+      example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+      title: identifier
+      x-auditable: true
+    email-security_ScannableFolder:
+      description: The mailbox folder to scan, for API-scanning domains.
+      type:
+      - string
+      - 'null'
+      enum:
+      - AllItems
+      - Inbox
+      - null
+  parameters:
+    email-security_page:
+      description: Current page within paginated list of results.
+      in: query
+      name: page
+      schema:
+        type: integer
+        example: 1
+        default: 1
+        minimum: 1
+    email-security_per_page:
+      description: The number of results per page. Maximum value is 1000.
+      in: query
+      name: per_page
+      schema:
+        type: integer
+        example: 20
+        default: 20
+        maximum: 1000
+        minimum: 1
+    email-security_account_id:
+      description: Account identifier tag.
+      in: path
+      name: account_id
+      required: true
+      schema:
+        $ref: '#/components/schemas/email-security_identifier'
+    email-security_direction:
+      description: The sorting direction.
+      in: query
+      name: direction
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
+    email-security_search:
+      description: Search term for filtering records. Behavior may change.
+      in: query
+      name: search
+      schema:
+        type: string
+  responses:
+    email-security_ClientError:
+      description: Client error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/email-security_api-response-common-failure'
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-forge-commands:
+  abuse-reports:
+    description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
+    groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
+      emails:
+        description: Emails sent for abuse reports
+      mitigations:
+        description: Mitigation actions taken in response to abuse reports
+  accounts:
+    description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
+    groups:
+      applications:
+        description: Applications operations
+      categories:
+        description: Categories operations
+      organizations:
+        description: Move accounts between organizations
+      profile:
+        description: View and manage the profile for a Cloudflare account
+      roles:
+        description: View the roles available for assigning to account members, each defining a set of permissions
+      subscriptions:
+        description: View and manage plan subscriptions attached to this account
+      tokens:
+        description: Create and manage scoped API tokens for programmatic access to the Cloudflare API
+  ai-gateway:
+    description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
+    groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
+      datasets:
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
+      dynamic-routing:
+        description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
+      evaluation-types:
+        description: 'Deprecated: list the evaluator types that evaluations can use'
+      evaluations:
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
+      logs:
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
+  ai-search:
+    description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
+    groups:
+      items:
+        description: Content indexed by AI Search instances
+      jobs:
+        description: Indexing job lifecycle for AI Search instances
+      namespace:
+        description: Logical groupings for organizing AI Search instances
+      tokens:
+        description: Credentials used by AI Search instances
+  ai-security:
+    description: Detect prompt injection, PII, and unsafe topics in traffic to your AI applications
+    groups:
+      custom-topics:
+        description: Organization-specific topic categories used by AI Security for Apps content detection
+  analytics:
+    description: Zone-level traffic analytics — dashboard summaries, per-colo breakdowns, and Argo latency metrics
+    groups:
+      colo:
+        description: Per-data-center (colo) traffic analytics breakdown for the zone
+      dashboard:
+        description: Aggregated zone dashboard analytics — requests, bandwidth, threats, and page views
+      latency:
+        description: Argo Smart Routing latency analytics showing time-to-first-byte improvements
+  argo:
+    description: Network optimization features that speed up and improve reliability of traffic to your origins
+    groups:
+      smart-routing:
+        description: Route traffic through the fastest network paths to your origin using real-time latency data
+      tiered-caching:
+        description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  billing:
+    description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
+    groups:
+      profiles:
+        description: Billing profile with payment method, address, and invoice preferences
+      usage:
+        description: Metered usage data for billed services — requests, bandwidth, and feature consumption
+  botnet-feed:
+    description: Botnet threat intelligence feeds — IP and ASN-level data on known command-and-control infrastructure
+    groups:
+      asn:
+        description: ASN-level botnet activity data showing networks with known C2 infrastructure
+      configs:
+        description: Botnet feed subscription configuration and notification preferences
+  builds:
+    description: Build and deploy Workers from connected repositories, then inspect build status and logs.
+    groups:
+      deploy-hooks:
+        description: Manage branch-specific HTTP hooks that start builds.
+      limits:
+        description: View build-minute availability and refresh information.
+      logs:
+        description: Retrieve build logs.
+      repos:
+        description: Manage source repository connections for Workers Builds.
+      tokens:
+        description: Manage credentials used by Workers Builds to deploy Workers.
+      triggers:
+        description: Configure how repository changes build and deploy Workers.
+      versions:
+        description: Find builds associated with Worker versions.
+      workers:
+        description: Manage repository-backed build configuration for Workers.
+  cache:
+    description: Purge cached content and configure Cache Reserve, tiered caching, and variant serving
+    groups:
+      origin-cloud-regions:
+        description: Manage Origin Cloud Regions routing and failover configurations
+      settings:
+        description: Configure Cache Reserve, tiered caching, and variant serving
+      settings.regional-tiered-cache:
+        description: Restrict tiered cache topology to data centers within a specific geographic region
+      settings.reserve:
+        description: Persistent storage tier that keeps cached assets even after eviction from edge caches
+      settings.smart-tiered-cache:
+        description: Automatically determine the best upper-tier data centers for tiered cache topology
+      settings.variants:
+        description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
+  client-side-security:
+    description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
+    groups:
+      connections:
+        description: Third-party connections made by scripts on your pages — track data exfiltration risks
+      cookies:
+        description: Cookies set by your pages with classification and same-site attribute tracking
+      policies:
+        description: Content Security Policies that control which scripts and connections are allowed on your pages
+      scripts:
+        description: JavaScript files detected on your pages with change tracking and malicious code detection
+      settings:
+        description: Fine tune Client-Side Security behaviors
+  cloud-connector:
+    description: Route traffic from Cloudflare directly to cloud provider services (AWS, Azure, GCP) without origin servers
+    groups:
+      rules:
+        description: Routing rules that map request patterns to cloud provider endpoints
+  cloudforce-one:
+    description: Detection rule management APIs
+    groups:
+      binary-storage:
+        description: Upload and retrieve malware samples and suspicious binaries for analysis
+      requests:
+        description: Additional request operations — priority listing and asset creation
+      rules:
+        description: Rule management operations
+        groups:
+          approvals:
+            description: Approval workflow operations
+          email:
+            description: Email rule operations
+          exemptions:
+            description: Exemption rule operations
+          managed:
+            description: Managed rule operations
+          stats:
+            description: Rule statistics operations
+          tree:
+            description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
+  containers:
+    description: Deploy and manage Containers applications on Cloudflare's global network
+    groups:
+      applications:
+        description: Manage Containers applications
+      applications.instances:
+        description: Inspect Containers instances belonging to applications
+      applications.rollouts:
+        description: Manage rollouts for scheduler-backed applications
+      applications.versions:
+        description: Inspect versions of scheduler-backed applications
+      registries:
+        description: Manage Containers image registries
+      registries.credentials:
+        description: Generate image registry credentials
+  content-scan:
+    description: Malicious uploads detection, scan uploaded content in HTTP requests for malware and malicious payloads
+    groups:
+      expressions:
+        description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
+  custom-pages:
+    description: Manage custom error and challenge pages and their assets for accounts and zones
+    groups:
+      account-custom-pages:
+        description: Manage account-level custom pages
+      account-custom-pages.preview-tokens:
+        description: Preview tokens for account-level custom pages
+      assets:
+        description: Manage account- and zone-level custom assets
+      zone-custom-pages:
+        description: Manage zone-level custom pages
+      zone-custom-pages.preview-tokens:
+        description: Preview tokens for zone-level custom pages
+  d1:
+    description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
+    groups:
+      time-travel:
+        description: use specific point-in-time backups of your D1 database
+        x-forge-epilogue: For more information about Time Travel, see https://developers.cloudflare.com/d1/reference/time-travel
+  diagnostics:
+    description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
+    groups:
+      endpoint-healthchecks:
+        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+      traceroutes:
+        description: Run traceroutes from Cloudflare data centers to diagnose network path issues
+  email-routing:
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
+    groups:
+      addresses:
+        description: Verified destination email addresses that can receive forwarded mail
+      dns:
+        description: Inspect or unlock the DNS records required by Email Routing
+      rules:
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
+  email-security:
+    description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
+    groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
+      investigate:
+        description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
+      phishguard:
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
+      settings:
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
+      submissions:
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
+  email-sending:
+    description: Send transactional email and manage sending subdomains and their DNS configuration
+    groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
+      subdomains:
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
+  filters:
+    description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
+  firewall:
+    description: Legacy firewall rules, zone lockdowns, access rules, user-agent blocking, and WAF packages
+    groups:
+      access-rules:
+        description: IP-based access rules that allow, block, challenge, or whitelist traffic globally or per-zone
+      lockdowns:
+        description: Zone lockdown rules that restrict access to URLs by IP address or range
+      rules:
+        description: Legacy firewall rules with filter expressions — prefer Rulesets for new configurations
+      ua-rules:
+        description: Block or challenge requests based on the User-Agent header string
+      waf:
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
+      zone-access-rules:
+        description: Zone-scoped IP access rules for blocking or allowing traffic
+  google-tag-gateway:
+    description: Google Tag Gateway operations
+    groups:
+      config:
+        description: Google Tag Gateway config operations
+  healthchecks:
+    description: Standalone health checks that monitor origin server availability from Cloudflare's edge
+    groups:
+      previews:
+        description: Test a health check configuration before deploying it to production
+  hyperdrive:
+    description: Accelerate access to existing databases by caching queries and pooling connections at the edge
+  iam:
+    description: Identity and access management — permission groups, resource groups, user groups, and SSO connectors
+    groups:
+      permission-groups:
+        description: View the permission groups that can be assigned to API tokens and policies
+      resource-groups:
+        description: Define scopes that limit which account resources a policy or token can access
+      sso:
+        description: Configure single sign-on connectors to authenticate account members through an external identity provider
+      user-groups:
+        description: Organize account members into groups for easier permission assignment
+  images:
+    description: Store, resize, and deliver optimized images globally — variants, signing keys, and direct uploads
+    groups:
+      flows:
+        description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
+      keys:
+        description: Manage signing keys for generating private image URLs
+      variants:
+        description: Manage named resize variants for transforming images on delivery
+  intel:
+    description: Threat intelligence lookups — IP reputation, domain info, ASN details, WHOIS, and indicator feeds
+    groups:
+      asn:
+        description: ASN intelligence — ownership, geolocation, and subnet details for autonomous systems
+      attack-surface-report:
+        description: Attack surface intelligence — exposed assets, vulnerabilities, and infrastructure mapping
+      dns:
+        description: Passive DNS data showing historical DNS resolution records for domains
+      domain-history:
+        description: Historical domain registration and categorization changes over time
+      domains:
+        description: Domain intelligence — risk scores, categories, and associated infrastructure
+      indicator-feeds:
+        description: Threat indicator feeds — subscribe to and manage curated lists of malicious IPs, domains, and URLs
+      ip-lists:
+        description: Curated IP lists used for threat detection and policy enforcement
+      ips:
+        description: IP address intelligence — geolocation, risk assessment, and hosting provider details
+      miscategorizations:
+        description: Report and track domain miscategorization corrections
+      whois:
+        description: WHOIS registration data for domains including registrant, registrar, and nameservers
+  k2:
+    description: Durable, ordered event streams that you produce records to and consume from with subscriptions
+    groups:
+      streams:
+        description: K2 streams, their retention, and the HTTP and Workers binding inputs used to produce records
+      streams.subscriptions:
+        description: Subscriptions that consume a K2 stream, with committed-position lag
+  leaked-credential-checks:
+    description: Detect compromised credentials in login requests by checking against known breach databases
+    groups:
+      detections:
+        description: Custom detection locations that tell the WAF where to find usernames and passwords in requests
+  load-balancers:
+    description: Distribute traffic across origin pools with health monitoring, geo-steering, and failover
+    groups:
+      monitor-groups:
+        description: Group monitors together for shared configuration and bulk management
+      monitor-groups.references:
+        description: List references to monitor groups used by load balancer pools
+      monitors:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.previews:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.references:
+        description: Health check configurations that probe origin servers and determine pool availability
+      pools:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.health:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.references:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      previews:
+        description: Preview the result of a health check monitor configuration before applying it
+      regions:
+        description: Geographic regions used for regional pool steering and traffic policies
+      searches:
+        description: Search across all load balancer resources (pools, monitors, load balancers) by name or reference
+  logs:
+    description: Log control, retention, and raw log access — CMB config, ray ID lookups, and received fields
+    groups:
+      control:
+        description: Log control operations
+      received:
+        description: Received log operations
+  magic-network-monitoring:
+    description: Flow-based network traffic monitoring with configurable alerting rules and VPC flow ingestion
+    groups:
+      configs:
+        description: Account-level monitoring configuration — sampling rates, thresholds, and notification settings
+      rules:
+        description: Monitoring rules that define traffic thresholds and trigger alerts or prefix advertisements
+      vpc-flows:
+        description: Ingest VPC flow logs from cloud providers for network visibility and anomaly detection
+  magic-transit:
+    description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
+    groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
+      apps:
+        description: Application-aware traffic policies for Magic WAN that steer traffic by app type
+      bgp-filter-profiles:
+        description: BGP filter profiles for controlling which routes are allowed or denied on Magic Transit tunnels
+      bgp-settings:
+        description: BGP settings for controlling default ASN and route redistribution on Magic Transit tunnels
+      cf-interconnects:
+        description: Cloudflare Network Interconnect (CNI) links for direct physical or virtual peering
+      gre-tunnels:
+        description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
+      ipsec-tunnels:
+        description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
+      routes:
+        description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
+      sites:
+        description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
+  mcp:
+    description: Manage MCP portals and upstream MCP servers for Cloudflare Access AI controls
+    groups:
+      portals:
+        description: Manage MCP portals, attached servers, and Code Mode settings
+      servers:
+        description: Manage upstream MCP servers, credentials, capabilities, and sync state
+  network-interconnects:
+    description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
+    groups:
+      cnis:
+        description: Cloud Network Interconnect (CNI) connections — private links from cloud providers to Cloudflare
+      interconnects:
+        description: Physical cross-connect and partner interconnect sessions with LOA and status tracking
+      settings:
+        description: Account-level interconnect settings and default configurations
+      slots:
+        description: Available interconnect facility slots showing port capacity at Cloudflare data centers
+  organizations:
+    description: Multi-user organizations that group accounts, members, and shared settings under a single entity
+    groups:
+      account-organizations:
+        description: List organizations associated with a specific account
+      accounts:
+        description: Accounts operations
+      members:
+        description: Members operations
+      members-batch-create:
+        description: Members Batch Create operations
+      organization-profile:
+        description: View and update the public profile information for an organization
+      shares:
+        description: Shares operations
+  origin-post-quantum-encryption:
+    description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
+  pages:
+    description: Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains
+    groups:
+      projects:
+        description: Pages projects, deployments, build logs, and custom domain bindings
+  pipelines:
+    description: Ingest, transform, and route event streams into R2, analytics, or other destinations in real time
+    groups:
+      sinks:
+        description: Destinations where pipeline data is written — R2 buckets, HTTP endpoints, or other storage
+      streams:
+        description: Inbound data streams that feed events into a pipeline for processing
+  precursor:
+    description: Precursor settings for a zone
+  queues:
+    description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
+    groups:
+      consumers:
+        description: Workers that automatically receive and process messages from a queue
+      messages:
+        description: Push messages to a queue and pull or acknowledge them from consumers
+      purge:
+        description: Remove all pending messages from a queue
+      subscriptions:
+        description: Manage queue subscriptions for event-driven message routing
+  r2:
+    description: S3-compatible object storage with zero egress fees — buckets, lifecycle rules, event notifications, and data migration
+    groups:
+      buckets:
+        description: Create and configure R2 buckets including CORS, lifecycle, custom domains, event notifications, and object locks
+      buckets.jobs:
+        description: Create and inspect background jobs for an R2 bucket
+      buckets.local-uploads:
+        description: R2 bucket local upload configuration
+      super-slurper:
+        description: Migrate data from external S3-compatible storage into R2 buckets with resumable transfer jobs
+      temporary-credentials:
+        description: Generate short-lived S3-compatible credentials scoped to specific buckets and operations
+  r2-data-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  radar:
+    description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
+    groups:
+      agent-readiness:
+        description: Agent readiness summary statistics across the Cloudflare network
+      ai:
+        description: AI inference trends and model usage statistics across the Cloudflare network
+      annotations:
+        description: Radar annotations marking significant Internet events (outages, cable cuts, etc.)
+      as112:
+        description: AS112 DNS sinkhole statistics — reverse DNS query volumes for private address space
+      attacks:
+        description: DDoS and application-layer attack trends, vectors, and target analysis
+      bgp:
+        description: BGP routing data — prefix announcements, AS-level stats, route leaks, and hijack events
+      bots:
+        description: Internet-wide bot traffic trends, categories, and distribution statistics
+      ct:
+        description: Certificate Transparency log monitoring and newly-issued certificate discovery
+      datasets:
+        description: Downloadable Radar datasets for offline analysis and research
+      dns:
+        description: Global DNS query trends — top domains, resolver stats, and DNSSEC adoption
+      email:
+        description: Email security trends — DMARC/SPF/DKIM adoption, spam, and phishing statistics
+      entities:
+        description: Look up ASNs, IPs, domains, and locations with metadata and traffic summaries
+      geolocations:
+        description: Geographic location metadata used for regional traffic analysis
+      http:
+        description: HTTP protocol trends — TLS versions, HTTP versions, browser share, and OS distribution
+      leaked-credentials:
+        description: Leaked credential detection trends and exposure statistics
+      netflows:
+        description: Network-layer traffic flow data and volumetric trend analysis
+      origins:
+        description: Cloud and hosting origin providers (e.g. Amazon, by region) and their traffic metrics
+      post-quantum:
+        description: Post-quantum encryption adoption and deployment trends across the Internet
+      quality:
+        description: Internet connection quality metrics — speed, latency, and jitter by geography and ASN
+      ranking:
+        description: Top domain rankings based on DNS query popularity across the Cloudflare network
+      robots-txt:
+        description: Robots.txt adoption and crawler directive trends across the web
+      search:
+        description: Search Radar data across IPs, ASNs, domains, and locations
+      tcp-resets-timeouts:
+        description: TCP connection reset and timeout statistics indicating network health issues
+      tlds:
+        description: Top-level domain (TLD) metadata and performance trends
+      traffic-anomalies:
+        description: Detected traffic anomalies and unusual patterns in Internet traffic flows
+      verified-bots:
+        description: Catalog of known good bots (Googlebot, Bingbot, etc.) and their traffic patterns
+  rate-limits:
+    description: Legacy per-zone rate limiting rules — prefer Advanced Rate Limiting in Rulesets for new configurations
+  realtime:
+    description: Real-time audio, video, and data services on Cloudflare's global network
+    groups:
+      kit:
+        description: SDK-backed meetings, participants, recordings, livestreams, and webhooks
+      kit.analytics:
+        description: Usage and livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams:
+        description: Livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams.daily:
+        description: Daily livestream analytics for RealtimeKit applications
+      kit.analytics.usage:
+        description: Usage analytics for RealtimeKit applications
+      kit.apps:
+        description: RealtimeKit applications that group meetings, sessions, and configuration
+      kit.livestreams:
+        description: Independent and meeting-based livestreams and their sessions
+      kit.livestreams.sessions:
+        description: Sessions for RealtimeKit livestreams
+      kit.meetings:
+        description: Meetings, participants, access tokens, and meeting livestreams
+      kit.meetings.active:
+        description: Live meeting state and participant controls
+      kit.meetings.active.polls:
+        description: Polls for active meeting sessions
+      kit.meetings.livestream:
+        description: Livestream operations associated with RealtimeKit meetings
+      kit.meetings.participants:
+        description: Participants in RealtimeKit meetings
+      kit.meetings.participants.tokens:
+        description: Access tokens for RealtimeKit meeting participants
+      kit.presets:
+        description: Reusable meeting configuration for media, permissions, and interface behavior
+      kit.recordings:
+        description: Meeting and participant-track recordings and recording controls
+      kit.recordings.active:
+        description: Active recordings for RealtimeKit meetings
+      kit.recordings.tracks:
+        description: Participant-track recordings for RealtimeKit meetings
+      kit.sessions:
+        description: Historical session data, participants, chat, transcripts, and summaries
+      kit.sessions.chat:
+        description: Chat messages from historical RealtimeKit sessions
+      kit.sessions.livestreams:
+        description: Livestreams associated with historical RealtimeKit sessions
+      kit.sessions.participants:
+        description: Participants in historical RealtimeKit sessions
+      kit.sessions.peers:
+        description: Peer details from historical RealtimeKit sessions
+      kit.sessions.summaries:
+        description: Summaries of historical RealtimeKit sessions
+      kit.sessions.transcripts:
+        description: Transcripts from historical RealtimeKit sessions
+      kit.webhooks:
+        description: Webhook endpoints and supported events for RealtimeKit notifications
+      kit.webhooks.events:
+        description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
+  request-tracers:
+    description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
+    groups:
+      traces:
+        description: Simulate request processing to debug rule matches, transforms, and routing decisions
+  resource-sharing:
+    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    groups:
+      recipients:
+        description: Update share recipients
+      resources:
+        description: Individual resources (zones, configs) that have been shared with recipients
+  rules:
+    description: Resources used by Cloudflare rules and rulesets
+    groups:
+      lists:
+        description: Custom account-level lists of IPs, hostnames, ASNs, or redirects used in rule expressions
+  rum:
+    description: Real User Measurement (Web Analytics) — track page loads, Core Web Vitals, and visitor metrics
+    groups:
+      rules:
+        description: Rules that control which pages and paths are tracked by Web Analytics
+      site-info:
+        description: Web Analytics sites — register domains and get the JavaScript beacon snippet
+  scim:
+    description: SCIM 2.0 provisioning — manage users, groups, and identity provider sync for your account
+    groups:
+      groups:
+        description: Groups operations
+      resource-types:
+        description: Resource Types operations
+      schemas:
+        description: Schemas operations
+      service-provider-config:
+        description: Service Provider Config operations
+      users:
+        description: Users operations
+  secrets-store:
+    description: Centralized secret management — store API keys, tokens, and credentials for use across Workers and other products
+    groups:
+      quota:
+        description: Account quota limits for secrets stores, secrets count, and storage capacity
+      secrets:
+        description: Encrypted key-value secrets within a store. Pass --store-id to scope.
+      stores:
+        description: Secret stores that hold encrypted key-value secrets accessible by Workers and services
+  security-center:
+    description: Security posture dashboard — view and manage security insights, misconfigurations, and vulnerabilities
+    groups:
+      insights:
+        description: Security findings and recommendations across your account — DNS, SSL, WAF misconfigurations, etc.
+      zone-insights:
+        description: Zone-scoped security insights — counts by class, severity, type, and dismissal
+  security-txt:
+    description: Manage the /.well-known/security.txt file that tells security researchers how to report vulnerabilities
+  smart-shield:
+    description: Smart Shield settings, health checks, and cache reserve management
+    groups:
+      cache-reserve-clear:
+        description: Cache Reserve Clear operations
+      health-checks:
+        description: Health checks operations
+  spectrum:
+    description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
+    groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
+      apps:
+        description: Spectrum application configurations that map protocols and ports to origin servers
+  speed:
+    description: Observatory speed tests — run Lighthouse audits, track performance trends, and schedule recurring tests
+    groups:
+      availabilities:
+        description: Check which speed test regions and configurations are available for your zone
+      pages:
+        description: Tested pages with their performance history, trends, and individual test results
+      schedule:
+        description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
+  stream:
+    description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
+    groups:
+      audio-tracks:
+        description: Add, edit, or remove additional audio tracks on a video
+      captions:
+        description: Upload, generate, or retrieve captions and subtitles for videos in multiple languages
+      clip:
+        description: Create a new video clip from an existing video by specifying start and end times
+      copy:
+        description: Import a video from a URL into Stream for processing and delivery
+      direct-upload:
+        description: Generate a tokenized URL that lets end-users upload video directly to Stream
+      downloads:
+        description: Create downloadable MP4 renditions of a video for offline viewing
+      embed:
+        description: Retrieve the HTML embed code snippet for a video
+      keys:
+        description: Signing keys used to generate short-lived signed URLs for private video playback
+      live-inputs:
+        description: Enable and disable live input streams
+      token:
+        description: Generate short-lived signed URL tokens for secure private video playback
+      typed-downloads:
+        description: Type-specific stream download creation and deletion
+      videos:
+        description: Aggregate video storage usage statistics for the account
+      watermarks:
+        description: Watermark profiles that overlay an image on every video in the account
+      webhooks:
+        description: Webhook notifications for video lifecycle events (ready, error, etc.)
+  tenants:
+    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    groups:
+      account-types:
+        description: Account Types operations
+      accounts:
+        description: Accounts operations
+      entitlements:
+        description: Entitlements operations
+      memberships:
+        description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
+  url-scanner:
+    description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
+    groups:
+      response:
+        description: Response operations
+      responses:
+        description: Raw HTTP response data captured during URL scans
+      scan:
+        description: Scan operations
+      scans:
+        description: URL scan requests and results — submit URLs for analysis and retrieve threat verdicts
+  user:
+    description: Your Cloudflare user profile, invitations, organizations, billing, and personal API tokens
+    groups:
+      billing:
+        description: View billing history and payment profile for your user (deprecated — prefer account-level billing)
+      firewall:
+        description: Firewall operations
+      load-balancers.monitors:
+        description: Load Balancers operations
+      load-balancers.monitors.preview:
+        description: Load Balancers operations
+      load-balancers.monitors.references:
+        description: Load Balancers operations
+      load-balancers.pools:
+        description: Load Balancers operations
+      load-balancers.pools.edit.pools:
+        description: Load Balancers operations
+      load-balancers.pools.health:
+        description: Load Balancers operations
+      load-balancers.pools.preview:
+        description: Load Balancers operations
+      load-balancers.pools.references:
+        description: Load Balancers operations
+      load-balancers.preview:
+        description: Load Balancers operations
+      load-balancing-analytics.events:
+        description: Load Balancing Analytics operations
+      subscriptions:
+        description: View and manage zone-level plan subscriptions owned by your user
+      tenants:
+        description: Tenants operations
+      tokens:
+        description: Create and manage personal API tokens scoped to your user for programmatic API access
+  user.analytics:
+    description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
+  waiting-rooms:
+    description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
+    groups:
+      account-waiting-rooms:
+        description: Account-scoped waiting room listing
+      events:
+        description: Scheduled events that temporarily override waiting room settings for sales, launches, etc.
+      page:
+        description: Custom HTML waiting page templates and preview rendering
+      rules:
+        description: Rules that bypass or modify waiting room behavior for specific request patterns
+      settings:
+        description: Zone-level waiting room defaults and cookie configuration
+      statuses:
+        description: Real-time queue status showing active users, queued users, and estimated wait times
+  workflows:
+    description: Durable, multi-step workflows that run on Workers with automatic retries and state persistence
+    groups:
+      instances:
+        description: Workflow instance operations
+      versions:
+        description: Workflow version operations
+  zaraz:
+    description: Server-side tag manager — load third-party tools (analytics, pixels, etc.) from Cloudflare's edge without client-side JS
+    groups:
+      config:
+        description: Full Zaraz configuration including tools, triggers, and variables for the zone
+      default:
+        description: Default Zaraz configuration template used as a starting point for new zones
+      export:
+        description: Export the current Zaraz configuration as a portable JSON document
+      history:
+        description: Configuration version history — browse and restore previous Zaraz configurations
+      publish:
+        description: Publish pending Zaraz configuration changes to make them live on the zone
+      workflow:
+        description: Workflow state for Zaraz configuration changes (draft vs. published)
+  zero-trust:
+    description: Cloudflare's SASE platform — secure access, device posture, DLP, tunnels, gateway policies, and network segmentation
+    groups:
+      dex:
+        description: Digital Experience Monitoring — synthetic tests, fleet-wide device metrics, and network path diagnostics
+      dlp.custom-prompt-topics:
+        description: Data Loss Prevention - manage custom prompt topics for AI-based content detection
+      dlp.data-classes:
+        description: Data Loss Prevention - manage data classes used to classify sensitive information
+      dlp.data-tag-categories:
+        description: Data Loss Prevention - manage categories that organize data tags
+      dlp.data-tag-category-templates:
+        description: Data Loss Prevention - browse templates for creating data tag categories
+      dlp.data-tags:
+        description: Data Loss Prevention - manage tags used to classify and organize sensitive data
+      dlp.datasets:
+        description: Data Loss Prevention - manage datasets, versions, and uploads
+      dlp.document-fingerprints:
+        description: Data Loss Prevention - manage document fingerprints for detecting matching documents
+      dlp.email.account-mapping:
+        description: Data Loss Prevention - configure account mappings for outbound email scanning
+      dlp.email.rules:
+        description: Data Loss Prevention - manage outbound email scanning rules and their priorities
+      dlp.entries:
+        description: Data Loss Prevention - list and manage detection entries
+      dlp.limits:
+        description: Data Loss Prevention - view account limits and resource quotas
+      dlp.patterns:
+        description: Data Loss Prevention - validate regular expressions used for content detection
+      dlp.profiles:
+        description: Data Loss Prevention - list and retrieve profiles
+      dlp.profiles.custom:
+        description: Data Loss Prevention - manage custom profiles
+      dlp.profiles.predefined:
+        description: Data Loss Prevention - manage predefined profiles
+      dlp.sensitivity-group-templates:
+        description: Data Loss Prevention - browse templates for creating sensitivity groups
+      dlp.sensitivity-groups:
+        description: Data Loss Prevention - manage sensitivity groups and their level ordering
+      dlp.sensitivity-levels:
+        description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
+      dlp.settings:
+        description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.integrations:
+        description: User Risk Scoring - manage integrations that provide risk score signals
+      risk-scoring.integrations.references:
+        description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
+  zones:
+    description: Zones are domains on Cloudflare — list, create, and configure domain settings
+    groups:
+      aegis:
+        description: Aegis operations
+      fonts:
+        description: Fonts operations
+      origin-h2-max-streams:
+        description: Origin H2 Max Streams operations
+      origin-max-http-version:
+        description: Origin Max Http Version operations
+      origin-tls-compliance-modes:
+        description: Manage zone Origin TLS Compliance Modes setting
+      rum:
+        description: Rum operations
+      speed-brain:
+        description: Speed Brain operations

@@ -1,0 +1,3482 @@
+openapi: 3.2.0
+info:
+  description: Welcome to Cloudflare's API documentation site.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  title: Cloudflare Tseng Abuse Complaint Processor Other API
+  version: 4.0.0
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: tseng-abuse-complaint-processor_other
+paths:
+  /accounts/{account_id}/abuse-reports:
+    get:
+      operationId: ListAbuseReports
+      summary: List abuse reports against the account
+      description: List abuse reports made against domains or other content associated with the account. To list reports that the account submitted, use the submitted abuse reports endpoint instead.
+      parameters:
+      - name: account_id
+        in: path
+        description: Cloudflare Account ID
+        required: true
+        schema:
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+          maxLength: 32
+      - name: page
+        in: query
+        description: Where in pagination to start listing abuse reports
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: How many abuse reports per page to list
+        schema:
+          type: integer
+      - name: sort
+        in: query
+        description: A property to sort by, followed by the order (id, cdate, domain, type, status)
+        schema:
+          type: string
+        example: cdate,desc
+      - name: domain
+        in: query
+        description: Filter by domain name related to the abuse report
+        schema:
+          type: string
+        example: example.com
+      - name: created_before
+        in: query
+        description: Returns reports created before the specified date
+        schema:
+          description: Time in RFC 3339 format (https://www.rfc-editor.org/rfc/rfc3339.html)
+          type: string
+          example: '2009-11-10T23:00:00Z'
+        example: '2009-11-10T23:00:00Z'
+      - name: created_after
+        in: query
+        description: Returns reports created after the specified date
+        schema:
+          description: Time in RFC 3339 format (https://www.rfc-editor.org/rfc/rfc3339.html)
+          type: string
+          example: '2009-11-10T23:00:00Z'
+        example: '2009-11-10T23:00:00Z'
+      - name: status
+        in: query
+        description: Filter by the status of the report.
+        schema:
+          $ref: '#/components/schemas/abuse-reports_ReportStatus'
+        example: denied
+      - name: type
+        in: query
+        description: Filter by the type of the report.
+        schema:
+          $ref: '#/components/schemas/abuse-reports_ReportType'
+        example: denied
+      - name: mitigation_status
+        in: query
+        description: Filter reports that have any mitigations in the given status.
+        schema:
+          $ref: '#/components/schemas/abuse-reports_MitigationStatus'
+        example: active
+      responses:
+        '200':
+          description: Abuse report list successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  result:
+                    type: object
+                    properties:
+                      reports:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/abuse-reports_AbuseReport'
+                    required:
+                    - reports
+                  result_info:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+                      page:
+                        type: number
+                      per_page:
+                        type: number
+                      total_count:
+                        type: number
+                      total_pages:
+                        type: number
+                    required:
+                    - page
+                    - per_page
+                    - count
+                    - total_count
+                    - total_pages
+                  success:
+                    type: boolean
+                required:
+                - success
+        '401':
+          description: 'The request is not authorized. Missing or invalid credentials may be
+
+            rejected with the standard Cloudflare API authentication error. If
+
+            credentials are valid, the API token does not have the
+
+            `Trust and Safety Read` or `Trust and Safety Write` permission for
+
+            this account.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: 'Cloudflare''s API layer rejected the request because the API token or
+
+            OAuth grant does not have the required Trust and Safety permission for
+
+            this account. The response uses error code `10000`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
+        '500':
+          description: Failed to retrieve abuse reports
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  success:
+                    type: boolean
+                required:
+                - success
+      security:
+      - api_token: []
+      tags:
+      - tseng-abuse-complaint-processor_other
+      x-api-token-group:
+      - Trust and Safety Write
+      - Trust and Safety Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: abuse-reports
+      x-fern-sdk-method-name: list
+  /accounts/{account_id}/abuse-reports/submitted:
+    get:
+      operationId: ListSubmittedAbuseReports
+      summary: List submitted abuse reports
+      description: List abuse reports submitted by the account.
+      parameters:
+      - name: account_id
+        in: path
+        description: Cloudflare Account ID
+        required: true
+        schema:
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+          maxLength: 32
+      - name: page
+        in: query
+        description: Page of submitted reports to return.
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+      - name: per_page
+        in: query
+        description: Number of submitted reports per page.
+        schema:
+          type: integer
+          default: 100
+          maximum: 200
+          minimum: 1
+      - name: sort
+        in: query
+        description: A property and direction to sort by (id, cdate, domain, type, status).
+        schema:
+          type: string
+        example: cdate,desc
+      - name: id
+        in: query
+        description: Filter by report code.
+        schema:
+          type: string
+      - name: domain
+        in: query
+        description: Filter by reported domain. This parameter can be specified multiple times.
+        schema:
+          type: array
+          items:
+            type: string
+        explode: true
+        style: form
+      - name: created_before
+        in: query
+        description: Return reports submitted before this time.
+        schema:
+          type: string
+          format: date-time
+      - name: created_after
+        in: query
+        description: Return reports submitted after this time.
+        schema:
+          type: string
+          format: date-time
+      - name: status
+        in: query
+        description: Filter by submitter-facing status. This parameter can be specified multiple times.
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportStatus'
+        explode: true
+        style: form
+      - name: type
+        in: query
+        description: Filter by report type. This parameter can be specified multiple times.
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_ReportType'
+        explode: true
+        style: form
+      responses:
+        '200':
+          description: Submitted abuse reports listed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportListResponse'
+        '400':
+          description: Invalid account or query parameters.
+        '401':
+          description: 'The request is not authorized to read abuse reports for this account.
+
+            The API token needs the `Trust and Safety Read` or
+
+            `Trust and Safety Write` permission.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: 'Cloudflare''s API layer rejected the request because the API token or
+
+            OAuth grant does not have the required Trust and Safety permission for
+
+            this account. The response uses error code `10000`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
+        '500':
+          description: Failed to retrieve submitted abuse reports.
+      security:
+      - api_token: []
+      tags:
+      - tseng-abuse-complaint-processor_other
+      x-api-token-group:
+      - Trust and Safety Write
+      - Trust and Safety Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: abuse-reports
+      x-fern-sdk-method-name: list-submitted
+  /accounts/{account_id}/abuse-reports/submitted/{report_id}:
+    get:
+      operationId: GetSubmittedAbuseReport
+      summary: Get a submitted abuse report
+      description: Retrieve a report submitted by the account.
+      parameters:
+      - name: account_id
+        in: path
+        description: Cloudflare Account ID
+        required: true
+        schema:
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+          maxLength: 32
+      - name: report_id
+        in: path
+        description: Public report code.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Submitted abuse report found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportDetailResponse'
+        '400':
+          description: Invalid account or report code.
+        '401':
+          description: 'The request is not authorized to read abuse reports for this account.
+
+            The API token needs the `Trust and Safety Read` or
+
+            `Trust and Safety Write` permission.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: 'Cloudflare''s API layer rejected the request because the API token or
+
+            OAuth grant does not have the required Trust and Safety permission for
+
+            this account. The response uses error code `10000`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
+        '404':
+          description: No matching submitted report was found for the account.
+        '500':
+          description: Failed to retrieve the submitted abuse report.
+      security:
+      - api_token: []
+      tags:
+      - tseng-abuse-complaint-processor_other
+      x-api-token-group:
+      - Trust and Safety Write
+      - Trust and Safety Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: abuse-reports
+      x-fern-sdk-method-name: get-submitted
+  /accounts/{account_id}/abuse-reports/submitted/{report_id}/emails:
+    get:
+      operationId: ListSubmittedAbuseReportEmails
+      summary: List emails sent to an abuse report submitter
+      description: List successful emails sent to the submitter of a report submitted by the account. Does not include emails sent to customers or hosts.
+      parameters:
+      - name: account_id
+        in: path
+        description: Cloudflare Account ID
+        required: true
+        schema:
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+          maxLength: 32
+      - name: report_id
+        in: path
+        description: Public report code.
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page number to retrieve (default 1).
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: Number of emails per page (default 20, max 100).
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Submitted abuse report emails listed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_EmailListResponse'
+        '400':
+          description: Invalid account, report, or query parameters.
+        '401':
+          description: 'The request is not authorized to read abuse reports for this account.
+
+            The API token needs the `Trust and Safety Read` or
+
+            `Trust and Safety Write` permission.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: 'Cloudflare''s API layer rejected the request because the API token or
+
+            OAuth grant does not have the required Trust and Safety permission for
+
+            this account. The response uses error code `10000`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
+        '404':
+          description: Submitted abuse report not found for the selected account.
+        '500':
+          description: Failed to retrieve submitted abuse report emails.
+      security:
+      - api_token: []
+      tags:
+      - tseng-abuse-complaint-processor_other
+      x-api-token-group:
+      - Trust and Safety Write
+      - Trust and Safety Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: abuse-reports.emails
+      x-fern-sdk-method-name: list-submitted
+  /accounts/{account_id}/abuse-reports/{report_id}/appeals/eligibility:
+    get:
+      operationId: CheckAppealEligibility
+      summary: Check whether a report can be appealed
+      description: 'Returns whether the report is currently appealable, along with the signals behind that decision: whether it already has an open appeal, how many appeals have been submitted against it, and whether it has at least one mitigation that an appeal could reverse.
+
+        Report-level appeals are currently available only for DMCA (copyright) reports. For other report types this operation returns the same `404 Report not found` response as a report that does not exist for the account.'
+      parameters:
+      - name: account_id
+        in: path
+        description: Cloudflare Account ID
+        required: true
+        schema:
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+          maxLength: 32
+      - name: report_id
+        in: path
+        description: Abuse Report ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Appeal eligibility for the report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  result:
+                    $ref: '#/components/schemas/abuse-reports_AppealEligibility'
+                  success:
+                    type: boolean
+                required:
+                - success
+        '401':
+          description: 'The request is not authorized. Missing or invalid credentials may be
+
+            rejected with the standard Cloudflare API authentication error. If
+
+            credentials are valid, the API token does not have the
+
+            `Trust and Safety Read` or `Trust and Safety Write` permission for
+
+            this account.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: 'Cloudflare''s API layer rejected the request because the API token or
+
+            OAuth grant does not have the required Trust and Safety permission for
+
+            this account. The response uses error code `10000`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
+        '404':
+          description: The report was not found for this account, or its type does not support report-level appeals (currently DMCA reports only).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  success:
+                    type: boolean
+                required:
+                - success
+        '500':
+          description: Failed to check appeal eligibility.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  success:
+                    type: boolean
+                required:
+                - success
+      security:
+      - api_token: []
+      tags:
+      - tseng-abuse-complaint-processor_other
+      x-api-token-group:
+      - Trust and Safety Write
+      - Trust and Safety Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: abuse-reports.appeals
+      x-fern-sdk-method-name: eligibility
+  /accounts/{account_id}/abuse-reports/{report_id}/emails:
+    get:
+      operationId: ListEmails
+      summary: List abuse report emails
+      description: List emails sent to the customer for an abuse report. Returns all successful customer emails sent for the specified abuse report. Does not include emails sent to hosts or submitters.
+      parameters:
+      - name: account_id
+        in: path
+        description: Cloudflare Account ID
+        required: true
+        schema:
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+          maxLength: 32
+      - name: report_id
+        in: path
+        description: Abuse Report ID
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page number to retrieve (default 1)
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: Number of emails per page (default 20, max 100)
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: List abuse report emails successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  result:
+                    type: object
+                    properties:
+                      emails:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/abuse-reports_EmailListItem'
+                    required:
+                    - emails
+                  result_info:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+                      page:
+                        type: number
+                      per_page:
+                        type: number
+                      total_count:
+                        type: number
+                      total_pages:
+                        type: number
+                    required:
+                    - page
+                    - per_page
+                    - count
+                    - total_count
+                    - total_pages
+                  success:
+                    type: boolean
+                required:
+                - success
+        '400':
+          description: Bad request - invalid parameters or report not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  success:
+                    type: boolean
+                required:
+                - success
+        '401':
+          description: 'The request is not authorized. Missing or invalid credentials may be
+
+            rejected with the standard Cloudflare API authentication error. If
+
+            credentials are valid, the API token does not have the
+
+            `Trust and Safety Read` or `Trust and Safety Write` permission for
+
+            this account.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: 'Cloudflare''s API layer rejected the request because the API token or
+
+            OAuth grant does not have the required Trust and Safety permission for
+
+            this account. The response uses error code `10000`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
+        '500':
+          description: Failed to list abuse report emails
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  success:
+                    type: boolean
+                required:
+                - success
+      security:
+      - api_token: []
+      tags:
+      - tseng-abuse-complaint-processor_other
+      x-api-token-group:
+      - Trust and Safety Write
+      - Trust and Safety Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: abuse-reports.emails
+      x-fern-sdk-method-name: list
+  /accounts/{account_id}/abuse-reports/{report_id}/mitigations:
+    get:
+      operationId: ListMitigations
+      summary: List abuse report mitigations
+      description: List mitigations done to remediate the abuse report.
+      parameters:
+      - name: account_id
+        in: path
+        description: Cloudflare Account ID
+        required: true
+        schema:
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+          maxLength: 32
+      - name: report_id
+        in: path
+        description: Abuse Report ID
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Where in pagination to start listing abuse reports
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: How many abuse reports per page to list
+        schema:
+          type: integer
+      - name: sort
+        in: query
+        description: A property to sort by, followed by the order
+        schema:
+          type: string
+          enum:
+          - type,asc
+          - type,desc
+          - effective_date,asc
+          - effective_date,desc
+          - status,asc
+          - status,desc
+          - entity_type,asc
+          - entity_type,desc
+        example: type,desc
+      - name: type
+        in: query
+        description: Filter by the type of mitigation. This filter parameter can be specified multiple times to include multiple types of mitigations in the result set.
+        schema:
+          $ref: '#/components/schemas/abuse-reports_MitigationType'
+      - name: effective_before
+        in: query
+        description: Returns mitigations that were dispatched before the given date
+        schema:
+          description: Time in RFC 3339 format (https://www.rfc-editor.org/rfc/rfc3339.html)
+          type: string
+          example: '2009-11-10T23:00:00Z'
+        example: '2009-11-10T23:00:00Z'
+      - name: effective_after
+        in: query
+        description: Returns mitigation that were dispatched after the given date
+        schema:
+          description: Time in RFC 3339 format (https://www.rfc-editor.org/rfc/rfc3339.html)
+          type: string
+          example: '2009-11-10T23:00:00Z'
+        example: '2009-11-10T23:00:00Z'
+      - name: status
+        in: query
+        description: Filter by the status of the mitigation.
+        schema:
+          $ref: '#/components/schemas/abuse-reports_MitigationStatus'
+      - name: entity_type
+        in: query
+        description: Filter by the type of entity the mitigation impacts.
+        schema:
+          $ref: '#/components/schemas/abuse-reports_MitigatedEntityType'
+      responses:
+        '200':
+          description: List abuse report mitigations successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  result:
+                    type: object
+                    properties:
+                      mitigations:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/abuse-reports_MitigationListItem'
+                    required:
+                    - mitigations
+                  result_info:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+                      page:
+                        type: number
+                      per_page:
+                        type: number
+                      total_count:
+                        type: number
+                      total_pages:
+                        type: number
+                    required:
+                    - page
+                    - per_page
+                    - count
+                    - total_count
+                    - total_pages
+                  success:
+                    type: boolean
+                required:
+                - success
+        '401':
+          description: 'The request is not authorized. Missing or invalid credentials may be
+
+            rejected with the standard Cloudflare API authentication error. If
+
+            credentials are valid, the API token does not have the
+
+            `Trust and Safety Read` or `Trust and Safety Write` permission for
+
+            this account.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: 'Cloudflare''s API layer rejected the request because the API token or
+
+            OAuth grant does not have the required Trust and Safety permission for
+
+            this account. The response uses error code `10000`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
+        '500':
+          description: Failed to list abuse report mitigations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  success:
+                    type: boolean
+                required:
+                - success
+      security:
+      - api_token: []
+      tags:
+      - tseng-abuse-complaint-processor_other
+      x-api-token-group:
+      - Trust and Safety Write
+      - Trust and Safety Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: abuse-reports.mitigations
+      x-fern-sdk-method-name: list
+  /accounts/{account_id}/abuse-reports/{report_id}/mitigations/appeal:
+    post:
+      operationId: RequestReview
+      summary: Request review on mitigations
+      description: 'Request a review of mitigations applied because of an abuse report, or submit a report-level appeal.
+
+
+        - To request a review of specific mitigations, send `appeals` with the mitigation IDs and reasons. Repeating a request for a mitigation with an unresolved appeal is idempotent and returns that mitigation in the in-review state.
+
+        - To submit a report-level appeal, send `type` and, for a `counter_notice`, the counter-notice details in `data`. Report-level appeals are currently available only for DMCA (copyright) reports.'
+      parameters:
+      - name: account_id
+        in: path
+        description: Cloudflare Account ID
+        required: true
+        schema:
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+          maxLength: 32
+      - name: report_id
+        in: path
+        description: Abuse Report ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/abuse-reports_MitigationAppealRequest'
+      responses:
+        '200':
+          description: Mitigation appeals received, including idempotent replays of unresolved appeals.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_MitigationAppealResult'
+        '207':
+          description: Some mitigation appeals were accepted while others were invalid or cannot be appealed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_MitigationAppealResult'
+        '401':
+          description: 'The request is not authorized. Missing or invalid credentials may be
+
+            rejected with the standard Cloudflare API authentication error. If
+
+            credentials are valid, the API token does not have the
+
+            `Trust and Safety Write` permission for this account.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: 'Cloudflare''s API layer rejected the request because the API token or
+
+            OAuth grant does not have the required Trust and Safety permission for
+
+            this account. The response uses error code `10000`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
+        '500':
+          description: Failed to request review on delayed action.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  success:
+                    type: boolean
+                required:
+                - success
+      security:
+      - api_token: []
+      tags:
+      - tseng-abuse-complaint-processor_other
+      x-api-token-group:
+      - Trust and Safety Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: abuse-reports.mitigations
+      x-fern-sdk-method-name: review
+  /accounts/{account_id}/abuse-reports/{report_param}:
+    get:
+      operationId: GetAbuseReport
+      summary: Get an abuse report against the account
+      description: Retrieve the details of an abuse report made against a domain or other content associated with the account. To retrieve a report that the account submitted, use the submitted abuse report endpoint instead.
+      parameters:
+      - name: account_id
+        in: path
+        description: Cloudflare Account ID
+        required: true
+        schema:
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+          maxLength: 32
+      - name: report_param
+        in: path
+        description: Public report ID.
+        required: true
+        schema:
+          type: string
+        x-fern-parameter-name: report-id
+      responses:
+        '200':
+          description: Abuse report found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_ErrorMessage'
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  result:
+                    $ref: '#/components/schemas/abuse-reports_AbuseReport'
+                  success:
+                    type: boolean
+                required:
+                - success
+                - result
+        '400':
+          description: Report submitted with an error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_ErrorMessage'
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  result:
+                    $ref: '#/components/schemas/abuse-reports_AbuseReport'
+                  success:
+                    type: boolean
+                required:
+                - success
+                - errors
+        '401':
+          description: 'The request is not authorized. Missing or invalid credentials may be
+
+            rejected with the standard Cloudflare API authentication error. If
+
+            credentials are valid, the API token does not have the
+
+            `Trust and Safety Read` or `Trust and Safety Write` permission for
+
+            this account.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: 'Cloudflare''s API layer rejected the request because the API token or
+
+            OAuth grant does not have the required Trust and Safety permission for
+
+            this account. The response uses error code `10000`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
+        '500':
+          description: Report submitted with an error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_ErrorMessage'
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/abuse-reports_Message'
+                  result:
+                    $ref: '#/components/schemas/abuse-reports_AbuseReport'
+                  success:
+                    type: boolean
+                required:
+                - success
+                - errors
+      security:
+      - api_token: []
+      tags:
+      - tseng-abuse-complaint-processor_other
+      x-api-token-group:
+      - Trust and Safety Write
+      - Trust and Safety Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: abuse-reports
+      x-fern-sdk-method-name: get
+    post:
+      operationId: SubmitAbuseReport
+      summary: Submit an abuse report
+      description: 'Submit an abuse report of a particular type.
+
+
+        Requires the abuse-reports entitlement on the account (Enterprise
+
+        accounts have it by default; other accounts must request access) and an
+
+        API token with the `Trust and Safety Write` permission. If the account
+
+        is not entitled, the request is rejected with an HTTP `401` response
+
+        (see below).'
+      parameters:
+      - name: account_id
+        in: path
+        description: Cloudflare Account ID
+        required: true
+        schema:
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+          maxLength: 32
+      - name: report_param
+        in: path
+        description: 'The report type to be submitted. Example: abuse_general'
+        required: true
+        schema:
+          $ref: '#/components/schemas/abuse-reports_SubmissionReportType'
+        x-fern-parameter-name: report-type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/abuse-reports_SubmitReportRequest'
+      responses:
+        '200':
+          description: Report submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_SubmitReportResponse'
+        '400':
+          description: Report submitted with an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_SubmitErrorResponse'
+        '401':
+          description: 'The request is not authorized to submit abuse reports. Missing or
+
+            invalid credentials may be rejected with the standard Cloudflare API
+
+            authentication error. If credentials are valid, this is most commonly
+
+            because the account does not have the abuse-reports entitlement
+
+            (Enterprise accounts have it by default; other accounts must request
+
+            access), or because the API token is missing the
+
+            `Trust and Safety Write` permission. Entitlement failures
+
+            return the message `Not entitled to use feature: Abuse Report API`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_UnauthorizedErrorResponse'
+        '403':
+          description: 'Cloudflare''s API layer rejected the request because the API token or
+
+            OAuth grant does not have the required Trust and Safety permission for
+
+            this account. The response uses error code `10000`.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
+        '500':
+          description: Report submitted with an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/abuse-reports_SubmitErrorResponse'
+      security:
+      - api_token: []
+      tags:
+      - tseng-abuse-complaint-processor_other
+      x-api-token-group:
+      - Trust and Safety Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: abuse-reports
+      x-fern-sdk-method-name: create
+components:
+  schemas:
+    abuse-reports_NCSEIReport:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/abuse-reports_BaseReportFields'
+      - properties:
+          act:
+            type: string
+            enum:
+            - abuse_ncsei
+          country:
+            description: 'Text not exceeding 255 characters. This field may be released by Cloudflare to third parties such as the Lumen Database (https://lumendatabase.org/).
+
+              '
+            type: string
+            maxLength: 255
+            minLength: 1
+          host_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+            - send-anon
+          ncsei_subject_representation:
+            description: If the submitter is the target of NCSEI in the URLs of the abuse report.
+            type: boolean
+          owner_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+            - send-anon
+            - none
+        required:
+        - host_notification
+        - ncsei_subject_representation
+        - owner_notification
+        title: NCSEI Report
+        type: object
+    abuse-reports_ReportStatus:
+      description: An enum value that represents the status of an abuse record
+      type: string
+      enum:
+      - accepted
+      - in_review
+    abuse-reports_SubmittedAbuseReportStatus:
+      description: Status visible to the account that submitted the report.
+      type: string
+      enum:
+      - submitted
+      - accepted
+      - denied
+    abuse-reports_DBError:
+      description: 'Failed while reading from database Failed while writing to the database This service error will trigger an alert for Cloudflare engineers to investigate the cause resolve it.
+
+        '
+      type: string
+    abuse-reports_NoAgreeError:
+      description: Must acknowledge that you are bound by 512(f), that you have a good faith belief about the material, and that you have the authority to act
+      type: string
+    abuse-reports_SubmittedAbuseReportDetailResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_ErrorMessage'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_Message'
+        result:
+          $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportDetail'
+        success:
+          type: boolean
+      required:
+      - success
+      - result
+    abuse-reports_UnauthorizedErrorResponse:
+      description: For HTTP 401 responses, use one of these error shapes. Cloudflare's API layer rejects requests with missing or invalid credentials before they reach the Abuse Reports API and returns the standard Cloudflare API error envelope. The Abuse Reports API returns its authorization error shape when valid credentials fail the Trust and Safety permission check or the submission entitlement check.
+      oneOf:
+      - $ref: '#/components/schemas/abuse-reports_CloudflareAPIErrorResponse'
+      - $ref: '#/components/schemas/abuse-reports_AuthErrorResponse'
+    abuse-reports_AppealType:
+      description: The type of appeal being submitted.
+      type: string
+      example: counter_notice
+      enum:
+      - counter_notice
+      - content_removed
+    abuse-reports_InvalidNotifyError:
+      description: Invalid value for notification preference
+      type: string
+    abuse-reports_MitigationSummary:
+      description: A summary of the mitigations related to this report.
+      type: object
+      properties:
+        accepted_url_count:
+          description: How many of the reported URLs were confirmed as abusive.
+          type: integer
+        active_count:
+          description: How many mitigations are active.
+          type: integer
+        external_host_notified:
+          description: Whether the report has been forwarded to an external hosting provider.
+          type: boolean
+        in_review_count:
+          description: How many mitigations are under review.
+          type: integer
+        pending_count:
+          description: How many mitigations are pending their effective date.
+          type: integer
+      required:
+      - accepted_url_count
+      - pending_count
+      - active_count
+      - in_review_count
+      - external_host_notified
+    abuse-reports_DedupeError:
+      description: You have already submitted this URL in the last 7 days
+      type: string
+    abuse-reports_BadAddressError:
+      description: Provided value has invalid size
+      type: string
+    abuse-reports_RegistrarWhoIsFields:
+      description: RDP-mandated fields for registrar WHOIS data disclosure requests.
+      type: object
+      properties:
+        reg_who_authorization_statement:
+          description: Optional authorization statement or power of attorney per RDP 10.2.1.3.
+          type: string
+          maxLength: 5000
+        reg_who_good_faith_affirmation:
+          description: Affirmation that the request is made in good faith per RDP 10.2.4. Must be true.
+          type: boolean
+        reg_who_lawful_processing_agreement:
+          description: Agreement to process data lawfully per RDP 10.2.5. Must be true.
+          type: boolean
+        reg_who_legal_basis:
+          description: Legal rights and rationale for the request per RDP 10.2.3. Required for all WHOIS requests.
+          type: string
+          maxLength: 5000
+        reg_who_request_type:
+          description: The type of WHOIS data request per RDP procedure.
+          type: string
+          enum:
+          - disclosure
+          - invalid_whois
+        reg_who_requested_data_elements:
+          description: The specific WHOIS data elements being requested per RDP 10.2.2. Required for all WHOIS requests.
+          type: array
+          items:
+            enum:
+            - registrant_name
+            - registrant_organization
+            - registrant_email
+            - registrant_phone
+            - registrant_address
+            - registrant_address_country
+            - registrant_address_postal_code
+            - admin_name
+            - admin_organization
+            - admin_email
+            - admin_phone
+            - admin_address
+            - tech_name
+            - tech_organization
+            - tech_email
+            - tech_phone
+            - tech_address
+            type: string
+          maxItems: 17
+          minItems: 1
+        reg_who_requestor_type:
+          description: The nature of the requestor per RDP 10.2.1.2.
+          type: string
+          enum:
+          - government
+          - corporation
+          - individual
+      required:
+      - reg_who_request_type
+      - reg_who_requested_data_elements
+      - reg_who_legal_basis
+      - reg_who_good_faith_affirmation
+      - reg_who_lawful_processing_agreement
+    abuse-reports_UnknownError:
+      description: An unexpected error occurred
+      type: string
+    abuse-reports_MitigatedEntityType:
+      description: The type of entity targeted by a mitigation.
+      type: string
+      enum:
+      - url_pattern
+      - account
+      - zone
+      - custom_expression
+    abuse-reports_BadCityError:
+      description: Provided value has invalid size
+      type: string
+    abuse-reports_EmailListResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_ErrorMessage'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_Message'
+        result:
+          type: object
+          properties:
+            emails:
+              type: array
+              items:
+                $ref: '#/components/schemas/abuse-reports_EmailListItem'
+          required:
+          - emails
+        result_info:
+          $ref: '#/components/schemas/abuse-reports_ResultInfo'
+        success:
+          type: boolean
+      required:
+      - success
+      - result
+    abuse-reports_MaxIPsError:
+      description: Provided value has invalid size
+      type: string
+    abuse-reports_PortsProtocolError:
+      description: Provided value has invalid size
+      type: string
+    abuse-reports_EmailListItem:
+      description: An email sent to the customer for an abuse report.
+      type: object
+      properties:
+        body:
+          description: Body content of the email.
+          type: string
+        id:
+          description: Unique identifier of the email.
+          type: string
+        recipient:
+          description: Email address of the recipient.
+          type: string
+        sent_at:
+          description: When the email was sent. Time in RFC 3339 format (https://www.rfc-editor.org/rfc/rfc3339.html)
+          type: string
+          example: '2009-11-10T23:00:00Z'
+        subject:
+          description: Subject line of the email.
+          type: string
+      required:
+      - id
+      - subject
+      - body
+      - recipient
+      - sent_at
+    abuse-reports_BadJustError:
+      description: Please provide a more detailed description of the infringement between 1 and 5000 characters
+      type: string
+    abuse-reports_BadAgentNameError:
+      description: Provided value has invalid size
+      type: string
+    abuse-reports_UrlNotvalidError:
+      description: You have entered URLs that contain more than 1 unique hostname. A single report may only include 1 unique hostname (i.e, www.example.com). To report URLs related to another hostname (i.e. other.example.com) you'll need to file a separate report.
+      type: string
+    abuse-reports_BadUrlsError:
+      description: 'Invalid URL (http://example.com/) Invalid URL Scheme (http or https) Missing hostname in url Missing a required field Could not determine encoding of field
+
+        '
+      type: string
+    abuse-reports_BadIPError:
+      description: Invalid IP passed to api
+      type: string
+    abuse-reports_BadEmailError:
+      description: Provided email was invalid
+      type: string
+    abuse-reports_SubmitReportRequest:
+      discriminator:
+        mapping:
+          abuse_children: '#/components/schemas/abuse-reports_CSAMReport'
+          abuse_dmca: '#/components/schemas/abuse-reports_DMCAReport'
+          abuse_general: '#/components/schemas/abuse-reports_GeneralReport'
+          abuse_ncsei: '#/components/schemas/abuse-reports_NCSEIReport'
+          abuse_phishing: '#/components/schemas/abuse-reports_PhishingReport'
+          abuse_registrar_whois: '#/components/schemas/abuse-reports_RegistrarWhoisReport'
+          abuse_threat: '#/components/schemas/abuse-reports_ThreatReport'
+          abuse_trademark: '#/components/schemas/abuse-reports_TrademarkReport'
+        propertyName: act
+      oneOf:
+      - $ref: '#/components/schemas/abuse-reports_DMCAReport'
+      - $ref: '#/components/schemas/abuse-reports_TrademarkReport'
+      - $ref: '#/components/schemas/abuse-reports_GeneralReport'
+      - $ref: '#/components/schemas/abuse-reports_PhishingReport'
+      - $ref: '#/components/schemas/abuse-reports_CSAMReport'
+      - $ref: '#/components/schemas/abuse-reports_ThreatReport'
+      - $ref: '#/components/schemas/abuse-reports_RegistrarWhoisReport'
+      - $ref: '#/components/schemas/abuse-reports_NCSEIReport'
+    abuse-reports_UrlNotOrangeError:
+      description: A URL contains a domain that is not active on Cloudflare
+      type: string
+    abuse-reports_InternalError:
+      description: Failed to translate email
+      type: string
+    abuse-reports_DMCAReport:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/abuse-reports_BaseReportFields'
+      - properties:
+          act:
+            type: string
+            enum:
+            - abuse_dmca
+          address1:
+            description: Text not exceeding 100 characters. This field may be released by Cloudflare to third parties such as the Lumen Database (https://lumendatabase.org/).
+            type: string
+            maxLength: 100
+            minLength: 1
+          agent_name:
+            description: The name of the copyright holder. Text not exceeding 60 characters. This field may be released by Cloudflare to third parties such as the Lumen Database (https://lumendatabase.org/).
+            type: string
+            maxLength: 60
+            minLength: 1
+          agree:
+            description: 'Can be `0` for false or `1` for true. Must be value: 1 for DMCA reports'
+            type: integer
+            enum:
+            - 1
+          city:
+            description: Text not exceeding 255 characters. This field may be released by Cloudflare to third parties such as the Lumen Database (https://lumendatabase.org/).
+            type: string
+            maxLength: 255
+            minLength: 1
+          country:
+            description: 'Text not exceeding 255 characters. This field may be released by Cloudflare to third parties such as the Lumen Database (https://lumendatabase.org/).
+
+              '
+            type: string
+            maxLength: 255
+            minLength: 1
+          host_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+          original_work:
+            description: 'Text not exceeding 255 characters. This field may be released by Cloudflare to third parties such as the Lumen Database (https://lumendatabase.org/).
+
+              '
+            type: string
+            maxLength: 255
+            minLength: 1
+          owner_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+          signature:
+            description: Required for DMCA reports, should be same as Name. An affirmation that all information in the report is true and accurate while agreeing to the policies of Cloudflare's abuse reports
+            type: string
+          state:
+            description: Text not exceeding 255 characters. This field may be released by Cloudflare to third parties such as the Lumen Database (https://lumendatabase.org/).
+            type: string
+            maxLength: 255
+            minLength: 1
+        required:
+        - address1
+        - agent_name
+        - agree
+        - city
+        - country
+        - host_notification
+        - original_work
+        - owner_notification
+        - signature
+        - state
+        title: DMCA Report
+        type: object
+    abuse-reports_UnexpectedActError:
+      description: Report has the wrong type
+      type: string
+    abuse-reports_ReportType:
+      description: The abuse report type
+      type: string
+      enum:
+      - PHISH
+      - GEN
+      - THREAT
+      - DMCA
+      - EMER
+      - TM
+      - REG_WHO
+      - NCSEI
+      - NETWORK
+    abuse-reports_ResultInfo:
+      type: object
+      properties:
+        count:
+          type: number
+        page:
+          type: number
+        per_page:
+          type: number
+        total_count:
+          type: number
+        total_pages:
+          type: number
+      required:
+      - page
+      - per_page
+      - count
+      - total_count
+      - total_pages
+    abuse-reports_MitigationType:
+      description: The type of mitigation applied to a reported entity.
+      type: string
+    abuse-reports_MitigationAppealResult:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_Message'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_Message'
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_MitigationListItem'
+        result_info:
+          type: object
+          properties:
+            count:
+              type: number
+            page:
+              type: number
+            per_page:
+              type: number
+            total_count:
+              type: number
+            total_pages:
+              type: number
+          required:
+          - page
+          - per_page
+          - count
+          - total_count
+          - total_pages
+        success:
+          type: boolean
+      required:
+      - success
+      - result_info
+    abuse-reports_ErrorCode:
+      type: string
+      oneOf:
+      - $ref: '#/components/schemas/abuse-reports_BadActError'
+      - $ref: '#/components/schemas/abuse-reports_BadAddressError'
+      - $ref: '#/components/schemas/abuse-reports_BadAgentNameError'
+      - $ref: '#/components/schemas/abuse-reports_BadCityError'
+      - $ref: '#/components/schemas/abuse-reports_BadCountryError'
+      - $ref: '#/components/schemas/abuse-reports_BadPortsProtocolError'
+      - $ref: '#/components/schemas/abuse-reports_BadStateError'
+      - $ref: '#/components/schemas/abuse-reports_MaxIPsError'
+      - $ref: '#/components/schemas/abuse-reports_PortsProtocolError'
+      - $ref: '#/components/schemas/abuse-reports_BadCommentsError'
+      - $ref: '#/components/schemas/abuse-reports_BadEmailError'
+      - $ref: '#/components/schemas/abuse-reports_BadIPError'
+      - $ref: '#/components/schemas/abuse-reports_BadJustError'
+      - $ref: '#/components/schemas/abuse-reports_BadNameError'
+      - $ref: '#/components/schemas/abuse-reports_BadUrlsError'
+      - $ref: '#/components/schemas/abuse-reports_DBError'
+      - $ref: '#/components/schemas/abuse-reports_DedupeError'
+      - $ref: '#/components/schemas/abuse-reports_DiffEmailError'
+      - $ref: '#/components/schemas/abuse-reports_EmailError'
+      - $ref: '#/components/schemas/abuse-reports_InternalError'
+      - $ref: '#/components/schemas/abuse-reports_InvalidNotifyError'
+      - $ref: '#/components/schemas/abuse-reports_MustNotifyError'
+      - $ref: '#/components/schemas/abuse-reports_NoAgreeError'
+      - $ref: '#/components/schemas/abuse-reports_NoOriginalWorkError'
+      - $ref: '#/components/schemas/abuse-reports_NoSigError'
+      - $ref: '#/components/schemas/abuse-reports_UnexpectedActError'
+      - $ref: '#/components/schemas/abuse-reports_UnknownError'
+      - $ref: '#/components/schemas/abuse-reports_UrlNotOrangeError'
+      - $ref: '#/components/schemas/abuse-reports_UrlNotvalidError'
+    abuse-reports_PhishingReport:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/abuse-reports_BaseReportFields'
+      - properties:
+          act:
+            type: string
+            enum:
+            - abuse_phishing
+          host_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+            - send-anon
+          justification:
+            description: 'A detailed description of the infringement, including any necessary access details and the exact steps needed to view the content, not exceeding 5000 characters.
+
+              '
+            type: string
+            maxLength: 5000
+            minLength: 20
+          original_work:
+            description: 'Text not exceeding 255 characters. This field may be released by Cloudflare to third parties such as the Lumen Database (https://lumendatabase.org/).
+
+              '
+            type: string
+            maxLength: 255
+            minLength: 1
+          owner_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+            - send-anon
+        required:
+        - host_notification
+        - justification
+        - owner_notification
+        title: Phishing Report
+        type: object
+    abuse-reports_SubmittedAbuseReportDetail:
+      allOf:
+      - $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportListItem'
+      - properties:
+          agent_name:
+            description: Authorized agent name supplied with the report.
+            type: string
+          comments:
+            description: Additional comments supplied with the report.
+            type: string
+          court:
+            description: The string "on" when a court proceeding applies to the report; otherwise omitted.
+            type: string
+          destination_ips:
+            description: Destination IP addresses supplied with a network abuse report.
+            type: array
+            items:
+              type: string
+          dsa_attestation:
+            description: Whether the submitter provided the Digital Services Act attestation.
+            type: boolean
+          host_notification:
+            description: Submitter preference for notifying the hosting provider.
+            type: string
+          justification:
+            description: Evidence supplied with the report.
+            type: string
+          ncmec_notification:
+            description: Submitter preference for notifying NCMEC.
+            type: string
+          ncsei_subject_representation:
+            description: Representation supplied for an NCSEI report.
+            type: boolean
+          original_work:
+            description: Original work or targeted brand supplied with the report.
+            type: string
+          owner_notification:
+            description: Submitter preference for notifying the content owner.
+            type: string
+          ports_protocols:
+            description: Ports and protocols supplied with a network abuse report.
+            type: array
+            items:
+              type: string
+          reg_who_request:
+            $ref: '#/components/schemas/abuse-reports_RegistrarWhoIsFields'
+          reported_country:
+            description: Country associated with the reported activity.
+            type: string
+          reported_user_agent:
+            description: User agent associated with the reported activity.
+            type: string
+          source_ips:
+            description: Source IP addresses supplied with a network abuse report.
+            type: array
+            items:
+              type: string
+          subtypes:
+            description: Additional abuse classifications supplied with the report.
+            type: array
+            items:
+              type: string
+          title:
+            description: Title supplied with the report.
+            type: string
+          udrp:
+            description: The string "on" when a UDRP proceeding applies to the report; otherwise omitted.
+            type: string
+          urls:
+            description: URLs supplied with the report.
+            type: array
+            items:
+              type: string
+          urs:
+            description: The string "on" when a URS proceeding applies to the report; otherwise omitted.
+            type: string
+        required:
+        - urls
+        - dsa_attestation
+        type: object
+    abuse-reports_BadActError:
+      description: Report has invalid type
+      type: string
+    abuse-reports_BaseReportFields:
+      type: object
+      properties:
+        act:
+          $ref: '#/components/schemas/abuse-reports_SubmissionReportType'
+        comments:
+          description: Any additional comments about the infringement not exceeding 2000 characters
+          type: string
+          maxLength: 2000
+          minLength: 1
+        company:
+          description: Text not exceeding 100 characters. This field may be released by Cloudflare to third parties such as the Lumen Database (https://lumendatabase.org/).
+          type: string
+          maxLength: 100
+          minLength: 1
+        email:
+          description: A valid email of the abuse reporter. This field may be released by Cloudflare to third parties such as the Lumen Database (https://lumendatabase.org/).
+          type: string
+        email2:
+          description: Should match the value provided in `email`
+          type: string
+        name:
+          description: Text not exceeding 255 characters. This field may be released by Cloudflare to third parties such as the Lumen Database (https://lumendatabase.org/).
+          type: string
+          maxLength: 255
+          minLength: 1
+        reported_country:
+          description: Text containing 2 characters
+          type: string
+          maxLength: 2
+          minLength: 2
+        reported_user_agent:
+          description: Text not exceeding 255 characters
+          type: string
+          maxLength: 255
+          minLength: 1
+        tele:
+          description: Text not exceeding 20 characters. This field may be released by Cloudflare to third parties such as the Lumen Database (https://lumendatabase.org/).
+          type: string
+          maxLength: 20
+          minLength: 1
+        title:
+          description: Text not exceeding 255 characters
+          type: string
+          maxLength: 255
+          minLength: 1
+        urls:
+          description: A list of valid URLs separated by ‘\n’ (new line character). The list of the URLs should not exceed 250 URLs. All URLs should have the same hostname. Each URL should be unique. This field may be released by Cloudflare to third parties such as the Lumen Database (https://lumendatabase.org/).
+          type: string
+      required:
+      - act
+      - email
+      - email2
+      - name
+      - urls
+    abuse-reports_Message:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    abuse-reports_MitigationListItem:
+      type: object
+      properties:
+        effective_date:
+          description: Date when the mitigation will become active. Time in RFC 3339 format (https://www.rfc-editor.org/rfc/rfc3339.html)
+          type: string
+          example: '2009-11-10T23:00:00Z'
+        entity_id:
+          type: string
+        entity_type:
+          $ref: '#/components/schemas/abuse-reports_MitigatedEntityType'
+        id:
+          description: ID of remediation.
+          type: string
+        status:
+          $ref: '#/components/schemas/abuse-reports_MitigationStatus'
+        type:
+          $ref: '#/components/schemas/abuse-reports_MitigationType'
+      required:
+      - id
+      - type
+      - effective_date
+      - status
+      - entity_type
+      - entity_id
+    abuse-reports_AppealReason:
+      description: Reason why the customer is appealing.
+      type: string
+      example: misclassified
+      enum:
+      - removed
+      - misclassified
+    abuse-reports_AuthErrorResponse:
+      description: 'The Abuse Reports API returns this HTTP 401 authorization error after credentials pass authentication but fail the required Trust and Safety permission check or, for report submission, the account entitlement check. Submission entitlement failures return "Not entitled to use feature: Abuse Report API". Enterprise accounts have the entitlement by default; other accounts must request access.'
+      type: object
+      properties:
+        err_code:
+          description: Machine-readable error code.
+          type: string
+          example: unknown_err
+        error_code:
+          description: Legacy alias for err_code.
+          type: string
+          example: unknown_err
+        msg:
+          description: 'Human-readable description of the authorization error. Submission entitlement failures return "Not entitled to use feature: Abuse Report API".'
+          type: string
+          example: 'Not entitled to use feature: Abuse Report API'
+        result:
+          description: The result is 'error' for an error response.
+          type: string
+          example: error
+      example:
+        err_code: unknown_err
+        error_code: unknown_err
+        msg: 'Not entitled to use feature: Abuse Report API'
+        result: error
+      required:
+      - result
+      - msg
+      - err_code
+      - error_code
+    abuse-reports_MitigationStatus:
+      description: The status of a mitigation
+      type: string
+      enum:
+      - pending
+      - active
+      - in_review
+      - cancelled
+      - removed
+    abuse-reports_NoOriginalWorkError:
+      description: Original Work section must be between 20 and 2000 characters. Please include a description of the original work and a URL to the original content when possible.
+      type: string
+    abuse-reports_BadCountryError:
+      description: Provided value has invalid size
+      type: string
+    abuse-reports_AppealEligibility:
+      type: object
+      properties:
+        appeal_count:
+          description: Number of appeals submitted against the report so far.
+          type: integer
+        appealable:
+          description: Whether the report can currently be appealed under the policy applied to it.
+          type: boolean
+        has_appealable_mitigations:
+          description: Whether the report has at least one mitigation an appeal could reverse.
+          type: boolean
+        has_open_appeal:
+          description: Whether the report already has an open (undecided) appeal.
+          type: boolean
+        max_appeals:
+          description: Maximum number of appeals allowed per report.
+          type: integer
+      required:
+      - appealable
+      - has_appealable_mitigations
+      - has_open_appeal
+      - appeal_count
+      - max_appeals
+    abuse-reports_ErrorMessage:
+      type: object
+      properties:
+        code:
+          oneOf:
+          - type: string
+          - type: number
+        message:
+          type: string
+      required:
+      - message
+    abuse-reports_ThreatReport:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/abuse-reports_BaseReportFields'
+      - properties:
+          act:
+            type: string
+            enum:
+            - abuse_threat
+          host_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+            - send-anon
+          justification:
+            description: 'A detailed description of the infringement, including any necessary access details and the exact steps needed to view the content, not exceeding 5000 characters.
+
+              '
+            type: string
+            maxLength: 5000
+            minLength: 1
+          owner_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+            - send-anon
+        required:
+        - host_notification
+        - justification
+        - owner_notification
+        title: Threat Report
+        type: object
+    abuse-reports_RegistrarWhoisReport:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/abuse-reports_BaseReportFields'
+      - properties:
+          act:
+            type: string
+            enum:
+            - abuse_registrar_whois
+          owner_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+            - send-anon
+            - none
+          reg_who_request:
+            $ref: '#/components/schemas/abuse-reports_RegistrarWhoIsFields'
+        required:
+        - owner_notification
+        title: Registrar Whois Report
+        type: object
+    abuse-reports_SubmitErrorResponse:
+      type: object
+      properties:
+        err_code:
+          $ref: '#/components/schemas/abuse-reports_ErrorCode'
+        error_code:
+          $ref: '#/components/schemas/abuse-reports_ErrorCode'
+        msg:
+          description: The error message for the error
+          type: string
+        request:
+          type: object
+          properties:
+            act:
+              $ref: '#/components/schemas/abuse-reports_SubmissionReportType'
+          required:
+          - act
+        result:
+          description: The result should be 'error' for successful response
+          type: string
+      required:
+      - request
+      - result
+      - msg
+      - err_code
+      - error_code
+    abuse-reports_CSAMReport:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/abuse-reports_BaseReportFields'
+      - properties:
+          act:
+            type: string
+            enum:
+            - abuse_children
+          country:
+            description: 'Text not exceeding 255 characters. This field may be released by Cloudflare to third parties such as the Lumen Database (https://lumendatabase.org/).
+
+              '
+            type: string
+            maxLength: 255
+            minLength: 1
+          host_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+            - send-anon
+          justification:
+            description: 'A detailed description of the infringement, including any necessary access details and the exact steps needed to view the content, not exceeding 5000 characters.
+
+              '
+            type: string
+            maxLength: 5000
+            minLength: 1
+          ncmec_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+            - send-anon
+          owner_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+            - send-anon
+            - none
+        required:
+        - host_notification
+        - justification
+        - ncmec_notification
+        - owner_notification
+        title: Children Abuse Report
+        type: object
+    abuse-reports_GeneralReport:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/abuse-reports_BaseReportFields'
+      - properties:
+          act:
+            type: string
+            enum:
+            - abuse_general
+          destination_ips:
+            description: A list of IP addresses separated by ‘\n’ (new line character). The list of destination IPs should not exceed 30 IP addresses. Each one of the IP addresses ought to be unique.
+            type: string
+          host_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+            - send-anon
+          justification:
+            description: 'A detailed description of the infringement, including any necessary access details and the exact steps needed to view the content, not exceeding 5000 characters.
+
+              '
+            type: string
+            maxLength: 5000
+            minLength: 1
+          owner_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+            - send-anon
+          ports_protocols:
+            description: A comma separated list of ports and protocols e.g. 80/TCP, 22/UDP. The total size of the field should not exceed 2000 characters. Each individual port/protocol should not exceed 100 characters. The list should not have more than 30 unique ports and protocols.
+            type: string
+          source_ips:
+            description: A list of IP addresses separated by ‘\n’ (new line character). The list of source IPs should not exceed 30 IP addresses. Each one of the IP addresses ought to be unique.
+            type: string
+        required:
+        - host_notification
+        - justification
+        - owner_notification
+        title: General Report
+        type: object
+    abuse-reports_MitigationAppeal:
+      type: object
+      properties:
+        id:
+          description: ID of the mitigation to appeal.
+          type: string
+        reason:
+          $ref: '#/components/schemas/abuse-reports_AppealReason'
+      required:
+      - id
+      - reason
+    abuse-reports_SubmitterDetails:
+      description: Information about the submitter of the report.
+      type: object
+      properties:
+        company:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        telephone:
+          type: string
+    abuse-reports_NoSigError:
+      description: Signature must match your name
+      type: string
+    abuse-reports_BadStateError:
+      description: Provided value has invalid size
+      type: string
+    abuse-reports_EmailError:
+      description: Failed to send confirmation email
+      type: string
+    abuse-reports_BadCommentsError:
+      description: Comment maximum length of 2000 characters exceeded
+      type: string
+    abuse-reports_SubmittedAbuseReportDenialReason:
+      description: Submitter-safe reason that a submitted report was denied.
+      type: string
+      enum:
+      - unable_to_confirm
+      - incomplete_report
+      - not_on_cloudflare
+      - duplicate_report
+      - content_removed
+      - report_details_mismatch
+      - no_abuse_found
+      - missing_original_work
+      - direct_url_required
+      - wrong_report_category
+      - content_unavailable
+      - law_enforcement_referral_required
+      - domain_dispute_process_required
+    abuse-reports_BadPortsProtocolError:
+      description: Invalid Port and Protocol passed to api
+      type: string
+    abuse-reports_TrademarkReport:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/abuse-reports_BaseReportFields'
+      - properties:
+          act:
+            type: string
+            enum:
+            - abuse_trademark
+          host_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+          justification:
+            description: 'A detailed description of the infringement, including any necessary access details and the exact steps needed to view the content, not exceeding 5000 characters.
+
+              '
+            type: string
+            maxLength: 5000
+            minLength: 1
+          owner_notification:
+            description: 'Notification type based on the abuse type. NOTE: Copyright (DMCA) and Trademark reports cannot be anonymous.
+
+              '
+            type: string
+            enum:
+            - send
+          trademark_number:
+            description: Text not exceeding 1000 characters
+            type: string
+            maxLength: 1000
+            minLength: 1
+          trademark_office:
+            description: Text not exceeding 1000 characters
+            type: string
+            maxLength: 1000
+            minLength: 1
+          trademark_symbol:
+            description: Text not exceeding 1000 characters
+            type: string
+            maxLength: 1000
+            minLength: 1
+        required:
+        - host_notification
+        - justification
+        - owner_notification
+        - trademark_number
+        - trademark_office
+        - trademark_symbol
+        title: Trademark Report
+        type: object
+    abuse-reports_SubmittedAbuseReportListResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_ErrorMessage'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_Message'
+        result:
+          type: object
+          properties:
+            reports:
+              type: array
+              items:
+                $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportListItem'
+          required:
+          - reports
+        result_info:
+          $ref: '#/components/schemas/abuse-reports_ResultInfo'
+        success:
+          type: boolean
+      required:
+      - success
+      - result
+    abuse-reports_BadNameError:
+      description: Missing a required field
+      type: string
+    abuse-reports_MitigationAppealRequest:
+      description: Submit an appeal for a report. Provide either a list of mitigations to appeal, or an appeal type with its supporting details, but not both. When type is "counter_notice", the counter-notice details are required.
+      type: object
+      properties:
+        appeals:
+          description: List of mitigations to appeal.
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_MitigationAppeal'
+        data:
+          $ref: '#/components/schemas/abuse-reports_DMCACounterNotice'
+        type:
+          $ref: '#/components/schemas/abuse-reports_AppealType'
+      oneOf:
+      - required:
+        - appeals
+        type: object
+      - required:
+        - type
+        type: object
+    abuse-reports_DiffEmailError:
+      description: Provided emails did not match
+      type: string
+    abuse-reports_MustNotifyError:
+      description: Please pick one party to notify about this report
+      type: string
+    abuse-reports_AbuseReport:
+      type: object
+      properties:
+        cdate:
+          description: Creation date of report. Time in RFC 3339 format (https://www.rfc-editor.org/rfc/rfc3339.html)
+          type: string
+          example: '2009-11-10T23:00:00Z'
+        domain:
+          description: Domain that relates to the report.
+          type: string
+        id:
+          description: Public facing ID of abuse report, aka abuse_rand.
+          type: string
+        justification:
+          description: Justification for the report.
+          type: string
+        mitigation_summary:
+          $ref: '#/components/schemas/abuse-reports_MitigationSummary'
+        original_work:
+          description: Original work / Targeted brand in the alleged abuse.
+          type: string
+        status:
+          $ref: '#/components/schemas/abuse-reports_ReportStatus'
+        submitter:
+          $ref: '#/components/schemas/abuse-reports_SubmitterDetails'
+        type:
+          $ref: '#/components/schemas/abuse-reports_ReportType'
+        urls:
+          type: array
+          items:
+            type: string
+      required:
+      - id
+      - cdate
+      - domain
+      - type
+      - status
+      - mitigation_summary
+    abuse-reports_DMCACounterNotice:
+      description: Counter-notice details supporting an appeal.
+      type: object
+      properties:
+        city:
+          type: string
+        company:
+          type: string
+        counter_notice_response:
+          type: string
+        country:
+          type: string
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+        jurisdiction_consent:
+          type: boolean
+        perjury_attestation:
+          type: boolean
+        phone_number:
+          type: string
+        signature:
+          type: string
+        state:
+          type: string
+        street_address:
+          type: string
+        urls:
+          type: array
+          items:
+            format: uri
+            type: string
+        zip_code:
+          type: string
+      required:
+      - full_name
+      - street_address
+      - city
+      - state
+      - country
+      - zip_code
+      - phone_number
+      - email
+      - urls
+      - perjury_attestation
+      - jurisdiction_consent
+      - signature
+    abuse-reports_SubmittedAbuseReportListItem:
+      type: object
+      properties:
+        cdate:
+          description: Time the report was submitted.
+          type: string
+          format: date-time
+        denial_reason:
+          description: Submitter-safe reason for a denied report. Null when unavailable.
+          type:
+          - string
+          - 'null'
+          allOf:
+          - $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportDenialReason'
+        domain:
+          description: Domain identified in the report.
+          type: string
+        id:
+          description: Public report code.
+          type: string
+        status:
+          $ref: '#/components/schemas/abuse-reports_SubmittedAbuseReportStatus'
+        submitter:
+          $ref: '#/components/schemas/abuse-reports_SubmitterDetails'
+        type:
+          $ref: '#/components/schemas/abuse-reports_ReportType'
+      required:
+      - id
+      - cdate
+      - domain
+      - type
+      - status
+      - denial_reason
+    abuse-reports_CloudflareAPIErrorResponse:
+      description: Cloudflare's API layer uses this standard error envelope for requests that fail authentication or authorization before they reach the Abuse Reports API. The example shows error code `10000`, returned for missing or invalid credentials (HTTP 401) and for a token or OAuth grant that lacks the required Trust and Safety permission (HTTP 403).
+      type: object
+      properties:
+        errors:
+          description: Cloudflare API error details.
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_ErrorMessage'
+          example:
+          - code: 10000
+            message: Authentication error
+        messages:
+          description: Informational messages.
+          type: array
+          items:
+            $ref: '#/components/schemas/abuse-reports_Message'
+          example: []
+        result:
+          description: Always null for this error response.
+          type:
+          - object
+          - 'null'
+        success:
+          description: Whether the request succeeded.
+          type: boolean
+          example: false
+      example:
+        errors:
+        - code: 10000
+          message: Authentication error
+        messages: []
+        result: null
+        success: false
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    abuse-reports_SubmitReportResponse:
+      type: object
+      properties:
+        abuse_rand:
+          description: The identifier for the submitted abuse report.
+          type: string
+        request:
+          type: object
+          properties:
+            act:
+              $ref: '#/components/schemas/abuse-reports_SubmissionReportType'
+          required:
+          - act
+        result:
+          description: The result should be 'success' for successful response
+          type: string
+      required:
+      - request
+      - result
+      - abuse_rand
+    abuse-reports_SubmissionReportType:
+      description: The report type for submitted reports.
+      type: string
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-forge-commands:
+  abuse-reports:
+    description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
+    groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
+      emails:
+        description: Emails sent for abuse reports
+      mitigations:
+        description: Mitigation actions taken in response to abuse reports
+  accounts:
+    description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
+    groups:
+      applications:
+        description: Applications operations
+      categories:
+        description: Categories operations
+      organizations:
+        description: Move accounts between organizations
+      profile:
+        description: View and manage the profile for a Cloudflare account
+      roles:
+        description: View the roles available for assigning to account members, each defining a set of permissions
+      subscriptions:
+        description: View and manage plan subscriptions attached to this account
+      tokens:
+        description: Create and manage scoped API tokens for programmatic access to the Cloudflare API
+  ai-gateway:
+    description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
+    groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
+      datasets:
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
+      dynamic-routing:
+        description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
+      evaluation-types:
+        description: 'Deprecated: list the evaluator types that evaluations can use'
+      evaluations:
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
+      logs:
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
+  ai-search:
+    description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
+    groups:
+      items:
+        description: Content indexed by AI Search instances
+      jobs:
+        description: Indexing job lifecycle for AI Search instances
+      namespace:
+        description: Logical groupings for organizing AI Search instances
+      tokens:
+        description: Credentials used by AI Search instances
+  ai-security:
+    description: Detect prompt injection, PII, and unsafe topics in traffic to your AI applications
+    groups:
+      custom-topics:
+        description: Organization-specific topic categories used by AI Security for Apps content detection
+  analytics:
+    description: Zone-level traffic analytics — dashboard summaries, per-colo breakdowns, and Argo latency metrics
+    groups:
+      colo:
+        description: Per-data-center (colo) traffic analytics breakdown for the zone
+      dashboard:
+        description: Aggregated zone dashboard analytics — requests, bandwidth, threats, and page views
+      latency:
+        description: Argo Smart Routing latency analytics showing time-to-first-byte improvements
+  argo:
+    description: Network optimization features that speed up and improve reliability of traffic to your origins
+    groups:
+      smart-routing:
+        description: Route traffic through the fastest network paths to your origin using real-time latency data
+      tiered-caching:
+        description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  billing:
+    description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
+    groups:
+      profiles:
+        description: Billing profile with payment method, address, and invoice preferences
+      usage:
+        description: Metered usage data for billed services — requests, bandwidth, and feature consumption
+  botnet-feed:
+    description: Botnet threat intelligence feeds — IP and ASN-level data on known command-and-control infrastructure
+    groups:
+      asn:
+        description: ASN-level botnet activity data showing networks with known C2 infrastructure
+      configs:
+        description: Botnet feed subscription configuration and notification preferences
+  builds:
+    description: Build and deploy Workers from connected repositories, then inspect build status and logs.
+    groups:
+      deploy-hooks:
+        description: Manage branch-specific HTTP hooks that start builds.
+      limits:
+        description: View build-minute availability and refresh information.
+      logs:
+        description: Retrieve build logs.
+      repos:
+        description: Manage source repository connections for Workers Builds.
+      tokens:
+        description: Manage credentials used by Workers Builds to deploy Workers.
+      triggers:
+        description: Configure how repository changes build and deploy Workers.
+      versions:
+        description: Find builds associated with Worker versions.
+      workers:
+        description: Manage repository-backed build configuration for Workers.
+  cache:
+    description: Purge cached content and configure Cache Reserve, tiered caching, and variant serving
+    groups:
+      origin-cloud-regions:
+        description: Manage Origin Cloud Regions routing and failover configurations
+      settings:
+        description: Configure Cache Reserve, tiered caching, and variant serving
+      settings.regional-tiered-cache:
+        description: Restrict tiered cache topology to data centers within a specific geographic region
+      settings.reserve:
+        description: Persistent storage tier that keeps cached assets even after eviction from edge caches
+      settings.smart-tiered-cache:
+        description: Automatically determine the best upper-tier data centers for tiered cache topology
+      settings.variants:
+        description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
+  client-side-security:
+    description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
+    groups:
+      connections:
+        description: Third-party connections made by scripts on your pages — track data exfiltration risks
+      cookies:
+        description: Cookies set by your pages with classification and same-site attribute tracking
+      policies:
+        description: Content Security Policies that control which scripts and connections are allowed on your pages
+      scripts:
+        description: JavaScript files detected on your pages with change tracking and malicious code detection
+      settings:
+        description: Fine tune Client-Side Security behaviors
+  cloud-connector:
+    description: Route traffic from Cloudflare directly to cloud provider services (AWS, Azure, GCP) without origin servers
+    groups:
+      rules:
+        description: Routing rules that map request patterns to cloud provider endpoints
+  cloudforce-one:
+    description: Detection rule management APIs
+    groups:
+      binary-storage:
+        description: Upload and retrieve malware samples and suspicious binaries for analysis
+      requests:
+        description: Additional request operations — priority listing and asset creation
+      rules:
+        description: Rule management operations
+        groups:
+          approvals:
+            description: Approval workflow operations
+          email:
+            description: Email rule operations
+          exemptions:
+            description: Exemption rule operations
+          managed:
+            description: Managed rule operations
+          stats:
+            description: Rule statistics operations
+          tree:
+            description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
+  containers:
+    description: Deploy and manage Containers applications on Cloudflare's global network
+    groups:
+      applications:
+        description: Manage Containers applications
+      applications.instances:
+        description: Inspect Containers instances belonging to applications
+      applications.rollouts:
+        description: Manage rollouts for scheduler-backed applications
+      applications.versions:
+        description: Inspect versions of scheduler-backed applications
+      registries:
+        description: Manage Containers image registries
+      registries.credentials:
+        description: Generate image registry credentials
+  content-scan:
+    description: Malicious uploads detection, scan uploaded content in HTTP requests for malware and malicious payloads
+    groups:
+      expressions:
+        description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
+  custom-pages:
+    description: Manage custom error and challenge pages and their assets for accounts and zones
+    groups:
+      account-custom-pages:
+        description: Manage account-level custom pages
+      account-custom-pages.preview-tokens:
+        description: Preview tokens for account-level custom pages
+      assets:
+        description: Manage account- and zone-level custom assets
+      zone-custom-pages:
+        description: Manage zone-level custom pages
+      zone-custom-pages.preview-tokens:
+        description: Preview tokens for zone-level custom pages
+  d1:
+    description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
+    groups:
+      time-travel:
+        description: use specific point-in-time backups of your D1 database
+        x-forge-epilogue: For more information about Time Travel, see https://developers.cloudflare.com/d1/reference/time-travel
+  diagnostics:
+    description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
+    groups:
+      endpoint-healthchecks:
+        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+      traceroutes:
+        description: Run traceroutes from Cloudflare data centers to diagnose network path issues
+  email-routing:
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
+    groups:
+      addresses:
+        description: Verified destination email addresses that can receive forwarded mail
+      dns:
+        description: Inspect or unlock the DNS records required by Email Routing
+      rules:
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
+  email-security:
+    description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
+    groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
+      investigate:
+        description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
+      phishguard:
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
+      settings:
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
+      submissions:
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
+  email-sending:
+    description: Send transactional email and manage sending subdomains and their DNS configuration
+    groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
+      subdomains:
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
+  filters:
+    description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
+  firewall:
+    description: Legacy firewall rules, zone lockdowns, access rules, user-agent blocking, and WAF packages
+    groups:
+      access-rules:
+        description: IP-based access rules that allow, block, challenge, or whitelist traffic globally or per-zone
+      lockdowns:
+        description: Zone lockdown rules that restrict access to URLs by IP address or range
+      rules:
+        description: Legacy firewall rules with filter expressions — prefer Rulesets for new configurations
+      ua-rules:
+        description: Block or challenge requests based on the User-Agent header string
+      waf:
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
+      zone-access-rules:
+        description: Zone-scoped IP access rules for blocking or allowing traffic
+  google-tag-gateway:
+    description: Google Tag Gateway operations
+    groups:
+      config:
+        description: Google Tag Gateway config operations
+  healthchecks:
+    description: Standalone health checks that monitor origin server availability from Cloudflare's edge
+    groups:
+      previews:
+        description: Test a health check configuration before deploying it to production
+  hyperdrive:
+    description: Accelerate access to existing databases by caching queries and pooling connections at the edge
+  iam:
+    description: Identity and access management — permission groups, resource groups, user groups, and SSO connectors
+    groups:
+      permission-groups:
+        description: View the permission groups that can be assigned to API tokens and policies
+      resource-groups:
+        description: Define scopes that limit which account resources a policy or token can access
+      sso:
+        description: Configure single sign-on connectors to authenticate account members through an external identity provider
+      user-groups:
+        description: Organize account members into groups for easier permission assignment
+  images:
+    description: Store, resize, and deliver optimized images globally — variants, signing keys, and direct uploads
+    groups:
+      flows:
+        description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
+      keys:
+        description: Manage signing keys for generating private image URLs
+      variants:
+        description: Manage named resize variants for transforming images on delivery
+  intel:
+    description: Threat intelligence lookups — IP reputation, domain info, ASN details, WHOIS, and indicator feeds
+    groups:
+      asn:
+        description: ASN intelligence — ownership, geolocation, and subnet details for autonomous systems
+      attack-surface-report:
+        description: Attack surface intelligence — exposed assets, vulnerabilities, and infrastructure mapping
+      dns:
+        description: Passive DNS data showing historical DNS resolution records for domains
+      domain-history:
+        description: Historical domain registration and categorization changes over time
+      domains:
+        description: Domain intelligence — risk scores, categories, and associated infrastructure
+      indicator-feeds:
+        description: Threat indicator feeds — subscribe to and manage curated lists of malicious IPs, domains, and URLs
+      ip-lists:
+        description: Curated IP lists used for threat detection and policy enforcement
+      ips:
+        description: IP address intelligence — geolocation, risk assessment, and hosting provider details
+      miscategorizations:
+        description: Report and track domain miscategorization corrections
+      whois:
+        description: WHOIS registration data for domains including registrant, registrar, and nameservers
+  k2:
+    description: Durable, ordered event streams that you produce records to and consume from with subscriptions
+    groups:
+      streams:
+        description: K2 streams, their retention, and the HTTP and Workers binding inputs used to produce records
+      streams.subscriptions:
+        description: Subscriptions that consume a K2 stream, with committed-position lag
+  leaked-credential-checks:
+    description: Detect compromised credentials in login requests by checking against known breach databases
+    groups:
+      detections:
+        description: Custom detection locations that tell the WAF where to find usernames and passwords in requests
+  load-balancers:
+    description: Distribute traffic across origin pools with health monitoring, geo-steering, and failover
+    groups:
+      monitor-groups:
+        description: Group monitors together for shared configuration and bulk management
+      monitor-groups.references:
+        description: List references to monitor groups used by load balancer pools
+      monitors:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.previews:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.references:
+        description: Health check configurations that probe origin servers and determine pool availability
+      pools:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.health:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.references:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      previews:
+        description: Preview the result of a health check monitor configuration before applying it
+      regions:
+        description: Geographic regions used for regional pool steering and traffic policies
+      searches:
+        description: Search across all load balancer resources (pools, monitors, load balancers) by name or reference
+  logs:
+    description: Log control, retention, and raw log access — CMB config, ray ID lookups, and received fields
+    groups:
+      control:
+        description: Log control operations
+      received:
+        description: Received log operations
+  magic-network-monitoring:
+    description: Flow-based network traffic monitoring with configurable alerting rules and VPC flow ingestion
+    groups:
+      configs:
+        description: Account-level monitoring configuration — sampling rates, thresholds, and notification settings
+      rules:
+        description: Monitoring rules that define traffic thresholds and trigger alerts or prefix advertisements
+      vpc-flows:
+        description: Ingest VPC flow logs from cloud providers for network visibility and anomaly detection
+  magic-transit:
+    description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
+    groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
+      apps:
+        description: Application-aware traffic policies for Magic WAN that steer traffic by app type
+      bgp-filter-profiles:
+        description: BGP filter profiles for controlling which routes are allowed or denied on Magic Transit tunnels
+      bgp-settings:
+        description: BGP settings for controlling default ASN and route redistribution on Magic Transit tunnels
+      cf-interconnects:
+        description: Cloudflare Network Interconnect (CNI) links for direct physical or virtual peering
+      gre-tunnels:
+        description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
+      ipsec-tunnels:
+        description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
+      routes:
+        description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
+      sites:
+        description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
+  mcp:
+    description: Manage MCP portals and upstream MCP servers for Cloudflare Access AI controls
+    groups:
+      portals:
+        description: Manage MCP portals, attached servers, and Code Mode settings
+      servers:
+        description: Manage upstream MCP servers, credentials, capabilities, and sync state
+  network-interconnects:
+    description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
+    groups:
+      cnis:
+        description: Cloud Network Interconnect (CNI) connections — private links from cloud providers to Cloudflare
+      interconnects:
+        description: Physical cross-connect and partner interconnect sessions with LOA and status tracking
+      settings:
+        description: Account-level interconnect settings and default configurations
+      slots:
+        description: Available interconnect facility slots showing port capacity at Cloudflare data centers
+  organizations:
+    description: Multi-user organizations that group accounts, members, and shared settings under a single entity
+    groups:
+      account-organizations:
+        description: List organizations associated with a specific account
+      accounts:
+        description: Accounts operations
+      members:
+        description: Members operations
+      members-batch-create:
+        description: Members Batch Create operations
+      organization-profile:
+        description: View and update the public profile information for an organization
+      shares:
+        description: Shares operations
+  origin-post-quantum-encryption:
+    description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
+  pages:
+    description: Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains
+    groups:
+      projects:
+        description: Pages projects, deployments, build logs, and custom domain bindings
+  pipelines:
+    description: Ingest, transform, and route event streams into R2, analytics, or other destinations in real time
+    groups:
+      sinks:
+        description: Destinations where pipeline data is written — R2 buckets, HTTP endpoints, or other storage
+      streams:
+        description: Inbound data streams that feed events into a pipeline for processing
+  precursor:
+    description: Precursor settings for a zone
+  queues:
+    description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
+    groups:
+      consumers:
+        description: Workers that automatically receive and process messages from a queue
+      messages:
+        description: Push messages to a queue and pull or acknowledge them from consumers
+      purge:
+        description: Remove all pending messages from a queue
+      subscriptions:
+        description: Manage queue subscriptions for event-driven message routing
+  r2:
+    description: S3-compatible object storage with zero egress fees — buckets, lifecycle rules, event notifications, and data migration
+    groups:
+      buckets:
+        description: Create and configure R2 buckets including CORS, lifecycle, custom domains, event notifications, and object locks
+      buckets.jobs:
+        description: Create and inspect background jobs for an R2 bucket
+      buckets.local-uploads:
+        description: R2 bucket local upload configuration
+      super-slurper:
+        description: Migrate data from external S3-compatible storage into R2 buckets with resumable transfer jobs
+      temporary-credentials:
+        description: Generate short-lived S3-compatible credentials scoped to specific buckets and operations
+  r2-data-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  radar:
+    description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
+    groups:
+      agent-readiness:
+        description: Agent readiness summary statistics across the Cloudflare network
+      ai:
+        description: AI inference trends and model usage statistics across the Cloudflare network
+      annotations:
+        description: Radar annotations marking significant Internet events (outages, cable cuts, etc.)
+      as112:
+        description: AS112 DNS sinkhole statistics — reverse DNS query volumes for private address space
+      attacks:
+        description: DDoS and application-layer attack trends, vectors, and target analysis
+      bgp:
+        description: BGP routing data — prefix announcements, AS-level stats, route leaks, and hijack events
+      bots:
+        description: Internet-wide bot traffic trends, categories, and distribution statistics
+      ct:
+        description: Certificate Transparency log monitoring and newly-issued certificate discovery
+      datasets:
+        description: Downloadable Radar datasets for offline analysis and research
+      dns:
+        description: Global DNS query trends — top domains, resolver stats, and DNSSEC adoption
+      email:
+        description: Email security trends — DMARC/SPF/DKIM adoption, spam, and phishing statistics
+      entities:
+        description: Look up ASNs, IPs, domains, and locations with metadata and traffic summaries
+      geolocations:
+        description: Geographic location metadata used for regional traffic analysis
+      http:
+        description: HTTP protocol trends — TLS versions, HTTP versions, browser share, and OS distribution
+      leaked-credentials:
+        description: Leaked credential detection trends and exposure statistics
+      netflows:
+        description: Network-layer traffic flow data and volumetric trend analysis
+      origins:
+        description: Cloud and hosting origin providers (e.g. Amazon, by region) and their traffic metrics
+      post-quantum:
+        description: Post-quantum encryption adoption and deployment trends across the Internet
+      quality:
+        description: Internet connection quality metrics — speed, latency, and jitter by geography and ASN
+      ranking:
+        description: Top domain rankings based on DNS query popularity across the Cloudflare network
+      robots-txt:
+        description: Robots.txt adoption and crawler directive trends across the web
+      search:
+        description: Search Radar data across IPs, ASNs, domains, and locations
+      tcp-resets-timeouts:
+        description: TCP connection reset and timeout statistics indicating network health issues
+      tlds:
+        description: Top-level domain (TLD) metadata and performance trends
+      traffic-anomalies:
+        description: Detected traffic anomalies and unusual patterns in Internet traffic flows
+      verified-bots:
+        description: Catalog of known good bots (Googlebot, Bingbot, etc.) and their traffic patterns
+  rate-limits:
+    description: Legacy per-zone rate limiting rules — prefer Advanced Rate Limiting in Rulesets for new configurations
+  realtime:
+    description: Real-time audio, video, and data services on Cloudflare's global network
+    groups:
+      kit:
+        description: SDK-backed meetings, participants, recordings, livestreams, and webhooks
+      kit.analytics:
+        description: Usage and livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams:
+        description: Livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams.daily:
+        description: Daily livestream analytics for RealtimeKit applications
+      kit.analytics.usage:
+        description: Usage analytics for RealtimeKit applications
+      kit.apps:
+        description: RealtimeKit applications that group meetings, sessions, and configuration
+      kit.livestreams:
+        description: Independent and meeting-based livestreams and their sessions
+      kit.livestreams.sessions:
+        description: Sessions for RealtimeKit livestreams
+      kit.meetings:
+        description: Meetings, participants, access tokens, and meeting livestreams
+      kit.meetings.active:
+        description: Live meeting state and participant controls
+      kit.meetings.active.polls:
+        description: Polls for active meeting sessions
+      kit.meetings.livestream:
+        description: Livestream operations associated with RealtimeKit meetings
+      kit.meetings.participants:
+        description: Participants in RealtimeKit meetings
+      kit.meetings.participants.tokens:
+        description: Access tokens for RealtimeKit meeting participants
+      kit.presets:
+        description: Reusable meeting configuration for media, permissions, and interface behavior
+      kit.recordings:
+        description: Meeting and participant-track recordings and recording controls
+      kit.recordings.active:
+        description: Active recordings for RealtimeKit meetings
+      kit.recordings.tracks:
+        description: Participant-track recordings for RealtimeKit meetings
+      kit.sessions:
+        description: Historical session data, participants, chat, transcripts, and summaries
+      kit.sessions.chat:
+        description: Chat messages from historical RealtimeKit sessions
+      kit.sessions.livestreams:
+        description: Livestreams associated with historical RealtimeKit sessions
+      kit.sessions.participants:
+        description: Participants in historical RealtimeKit sessions
+      kit.sessions.peers:
+        description: Peer details from historical RealtimeKit sessions
+      kit.sessions.summaries:
+        description: Summaries of historical RealtimeKit sessions
+      kit.sessions.transcripts:
+        description: Transcripts from historical RealtimeKit sessions
+      kit.webhooks:
+        description: Webhook endpoints and supported events for RealtimeKit notifications
+      kit.webhooks.events:
+        description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
+  request-tracers:
+    description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
+    groups:
+      traces:
+        description: Simulate request processing to debug rule matches, transforms, and routing decisions
+  resource-sharing:
+    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    groups:
+      recipients:
+        description: Update share recipients
+      resources:
+        description: Individual resources (zones, configs) that have been shared with recipients
+  rules:
+    description: Resources used by Cloudflare rules and rulesets
+    groups:
+      lists:
+        description: Custom account-level lists of IPs, hostnames, ASNs, or redirects used in rule expressions
+  rum:
+    description: Real User Measurement (Web Analytics) — track page loads, Core Web Vitals, and visitor metrics
+    groups:
+      rules:
+        description: Rules that control which pages and paths are tracked by Web Analytics
+      site-info:
+        description: Web Analytics sites — register domains and get the JavaScript beacon snippet
+  scim:
+    description: SCIM 2.0 provisioning — manage users, groups, and identity provider sync for your account
+    groups:
+      groups:
+        description: Groups operations
+      resource-types:
+        description: Resource Types operations
+      schemas:
+        description: Schemas operations
+      service-provider-config:
+        description: Service Provider Config operations
+      users:
+        description: Users operations
+  secrets-store:
+    description: Centralized secret management — store API keys, tokens, and credentials for use across Workers and other products
+    groups:
+      quota:
+        description: Account quota limits for secrets stores, secrets count, and storage capacity
+      secrets:
+        description: Encrypted key-value secrets within a store. Pass --store-id to scope.
+      stores:
+        description: Secret stores that hold encrypted key-value secrets accessible by Workers and services
+  security-center:
+    description: Security posture dashboard — view and manage security insights, misconfigurations, and vulnerabilities
+    groups:
+      insights:
+        description: Security findings and recommendations across your account — DNS, SSL, WAF misconfigurations, etc.
+      zone-insights:
+        description: Zone-scoped security insights — counts by class, severity, type, and dismissal
+  security-txt:
+    description: Manage the /.well-known/security.txt file that tells security researchers how to report vulnerabilities
+  smart-shield:
+    description: Smart Shield settings, health checks, and cache reserve management
+    groups:
+      cache-reserve-clear:
+        description: Cache Reserve Clear operations
+      health-checks:
+        description: Health checks operations
+  spectrum:
+    description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
+    groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
+      apps:
+        description: Spectrum application configurations that map protocols and ports to origin servers
+  speed:
+    description: Observatory speed tests — run Lighthouse audits, track performance trends, and schedule recurring tests
+    groups:
+      availabilities:
+        description: Check which speed test regions and configurations are available for your zone
+      pages:
+        description: Tested pages with their performance history, trends, and individual test results
+      schedule:
+        description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
+  stream:
+    description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
+    groups:
+      audio-tracks:
+        description: Add, edit, or remove additional audio tracks on a video
+      captions:
+        description: Upload, generate, or retrieve captions and subtitles for videos in multiple languages
+      clip:
+        description: Create a new video clip from an existing video by specifying start and end times
+      copy:
+        description: Import a video from a URL into Stream for processing and delivery
+      direct-upload:
+        description: Generate a tokenized URL that lets end-users upload video directly to Stream
+      downloads:
+        description: Create downloadable MP4 renditions of a video for offline viewing
+      embed:
+        description: Retrieve the HTML embed code snippet for a video
+      keys:
+        description: Signing keys used to generate short-lived signed URLs for private video playback
+      live-inputs:
+        description: Enable and disable live input streams
+      token:
+        description: Generate short-lived signed URL tokens for secure private video playback
+      typed-downloads:
+        description: Type-specific stream download creation and deletion
+      videos:
+        description: Aggregate video storage usage statistics for the account
+      watermarks:
+        description: Watermark profiles that overlay an image on every video in the account
+      webhooks:
+        description: Webhook notifications for video lifecycle events (ready, error, etc.)
+  tenants:
+    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    groups:
+      account-types:
+        description: Account Types operations
+      accounts:
+        description: Accounts operations
+      entitlements:
+        description: Entitlements operations
+      memberships:
+        description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
+  url-scanner:
+    description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
+    groups:
+      response:
+        description: Response operations
+      responses:
+        description: Raw HTTP response data captured during URL scans
+      scan:
+        description: Scan operations
+      scans:
+        description: URL scan requests and results — submit URLs for analysis and retrieve threat verdicts
+  user:
+    description: Your Cloudflare user profile, invitations, organizations, billing, and personal API tokens
+    groups:
+      billing:
+        description: View billing history and payment profile for your user (deprecated — prefer account-level billing)
+      firewall:
+        description: Firewall operations
+      load-balancers.monitors:
+        description: Load Balancers operations
+      load-balancers.monitors.preview:
+        description: Load Balancers operations
+      load-balancers.monitors.references:
+        description: Load Balancers operations
+      load-balancers.pools:
+        description: Load Balancers operations
+      load-balancers.pools.edit.pools:
+        description: Load Balancers operations
+      load-balancers.pools.health:
+        description: Load Balancers operations
+      load-balancers.pools.preview:
+        description: Load Balancers operations
+      load-balancers.pools.references:
+        description: Load Balancers operations
+      load-balancers.preview:
+        description: Load Balancers operations
+      load-balancing-analytics.events:
+        description: Load Balancing Analytics operations
+      subscriptions:
+        description: View and manage zone-level plan subscriptions owned by your user
+      tenants:
+        description: Tenants operations
+      tokens:
+        description: Create and manage personal API tokens scoped to your user for programmatic API access
+  user.analytics:
+    description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
+  waiting-rooms:
+    description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
+    groups:
+      account-waiting-rooms:
+        description: Account-scoped waiting room listing
+      events:
+        description: Scheduled events that temporarily override waiting room settings for sales, launches, etc.
+      page:
+        description: Custom HTML waiting page templates and preview rendering
+      rules:
+        description: Rules that bypass or modify waiting room behavior for specific request patterns
+      settings:
+        description: Zone-level waiting room defaults and cookie configuration
+      statuses:
+        description: Real-time queue status showing active users, queued users, and estimated wait times
+  workflows:
+    description: Durable, multi-step workflows that run on Workers with automatic retries and state persistence
+    groups:
+      instances:
+        description: Workflow instance operations
+      versions:
+        description: Workflow version operations
+  zaraz:
+    description: Server-side tag manager — load third-party tools (analytics, pixels, etc.) from Cloudflare's edge without client-side JS
+    groups:
+      config:
+        description: Full Zaraz configuration including tools, triggers, and variables for the zone
+      default:
+        description: Default Zaraz configuration template used as a starting point for new zones
+      export:
+        description: Export the current Zaraz configuration as a portable JSON document
+      history:
+        description: Configuration version history — browse and restore previous Zaraz configurations
+      publish:
+        description: Publish pending Zaraz configuration changes to make them live on the zone
+      workflow:
+        description: Workflow state for Zaraz configuration changes (draft vs. published)
+  zero-trust:
+    description: Cloudflare's SASE platform — secure access, device posture, DLP, tunnels, gateway policies, and network segmentation
+    groups:
+      dex:
+        description: Digital Experience Monitoring — synthetic tests, fleet-wide device metrics, and network path diagnostics
+      dlp.custom-prompt-topics:
+        description: Data Loss Prevention - manage custom prompt topics for AI-based content detection
+      dlp.data-classes:
+        description: Data Loss Prevention - manage data classes used to classify sensitive information
+      dlp.data-tag-categories:
+        description: Data Loss Prevention - manage categories that organize data tags
+      dlp.data-tag-category-templates:
+        description: Data Loss Prevention - browse templates for creating data tag categories
+      dlp.data-tags:
+        description: Data Loss Prevention - manage tags used to classify and organize sensitive data
+      dlp.datasets:
+        description: Data Loss Prevention - manage datasets, versions, and uploads
+      dlp.document-fingerprints:
+        description: Data Loss Prevention - manage document fingerprints for detecting matching documents
+      dlp.email.account-mapping:
+        description: Data Loss Prevention - configure account mappings for outbound email scanning
+      dlp.email.rules:
+        description: Data Loss Prevention - manage outbound email scanning rules and their priorities
+      dlp.entries:
+        description: Data Loss Prevention - list and manage detection entries
+      dlp.limits:
+        description: Data Loss Prevention - view account limits and resource quotas
+      dlp.patterns:
+        description: Data Loss Prevention - validate regular expressions used for content detection
+      dlp.profiles:
+        description: Data Loss Prevention - list and retrieve profiles
+      dlp.profiles.custom:
+        description: Data Loss Prevention - manage custom profiles
+      dlp.profiles.predefined:
+        description: Data Loss Prevention - manage predefined profiles
+      dlp.sensitivity-group-templates:
+        description: Data Loss Prevention - browse templates for creating sensitivity groups
+      dlp.sensitivity-groups:
+        description: Data Loss Prevention - manage sensitivity groups and their level ordering
+      dlp.sensitivity-levels:
+        description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
+      dlp.settings:
+        description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.integrations:
+        description: User Risk Scoring - manage integrations that provide risk score signals
+      risk-scoring.integrations.references:
+        description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
+  zones:
+    description: Zones are domains on Cloudflare — list, create, and configure domain settings
+    groups:
+      aegis:
+        description: Aegis operations
+      fonts:
+        description: Fonts operations
+      origin-h2-max-streams:
+        description: Origin H2 Max Streams operations
+      origin-max-http-version:
+        description: Origin Max Http Version operations
+      origin-tls-compliance-modes:
+        description: Manage zone Origin TLS Compliance Modes setting
+      rum:
+        description: Rum operations
+      speed-brain:
+        description: Speed Brain operations

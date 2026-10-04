@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-bill-subs-api-subscription-v2-schema.json",
+  "title": "bill-subs-api_subscription-v2",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-user-api-openapi.yml#/components/schemas/bill-subs-api_subscription-v2",
+  "type": "object",
+  "properties": {
+    "app": {
+      "properties": {
+        "install_id": {
+          "$ref": "#/$defs/bill-subs-api_install_id"
+        }
+      }
+    },
+    "component_values": {
+      "$ref": "#/$defs/bill-subs-api_component_values"
+    },
+    "currency": {
+      "$ref": "#/$defs/bill-subs-api_currency"
+    },
+    "current_period_end": {
+      "$ref": "#/$defs/bill-subs-api_current_period_end"
+    },
+    "current_period_start": {
+      "$ref": "#/$defs/bill-subs-api_current_period_start"
+    },
+    "frequency": {
+      "$ref": "#/$defs/bill-subs-api_frequency"
+    },
+    "id": {
+      "$ref": "#/$defs/bill-subs-api_schemas-identifier"
+    },
+    "price": {
+      "$ref": "#/$defs/bill-subs-api_price"
+    },
+    "rate_plan": {
+      "$ref": "#/$defs/bill-subs-api_rate_plan"
+    },
+    "state": {
+      "$ref": "#/$defs/bill-subs-api_state"
+    },
+    "zone": {
+      "$ref": "#/$defs/bill-subs-api_zone"
+    }
+  },
+  "$defs": {
+    "bill-subs-api_component_value": {
+      "type": "object",
+      "description": "A component value for a subscription.",
+      "properties": {
+        "default": {
+          "type": "number",
+          "description": "The default amount assigned."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the component value."
+        },
+        "price": {
+          "type": "number",
+          "description": "The unit price for the component value."
+        },
+        "value": {
+          "type": "number",
+          "description": "The amount of the component value assigned."
+        }
+      }
+    },
+    "bill-subs-api_component_values": {
+      "type": "array",
+      "description": "The list of add-ons subscribed to.",
+      "items": {
+        "$ref": "#/$defs/bill-subs-api_component_value"
+      }
+    },
+    "bill-subs-api_currency": {
+      "type": "string",
+      "description": "The monetary unit in which pricing information is displayed.",
+      "readOnly": true
+    },
+    "bill-subs-api_current_period_end": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The end of the current period and also when the next billing is due.",
+      "readOnly": true
+    },
+    "bill-subs-api_current_period_start": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the current billing period started. May match initial_period_start if this is the first period.",
+      "readOnly": true
+    },
+    "bill-subs-api_frequency": {
+      "type": "string",
+      "description": "How often the subscription is renewed automatically.",
+      "enum": [
+        "weekly",
+        "monthly",
+        "quarterly",
+        "yearly"
+      ]
+    },
+    "bill-subs-api_identifier": {
+      "type": "string",
+      "description": "Identifier",
+      "readOnly": true,
+      "maxLength": 32
+    },
+    "bill-subs-api_install_id": {
+      "type": "string",
+      "description": "app install id."
+    },
+    "bill-subs-api_name": {
+      "type": "string",
+      "description": "The domain name",
+      "readOnly": true,
+      "maxLength": 253,
+      "pattern": "^([a-zA-Z0-9][\\-a-zA-Z0-9]*\\.)+[\\-a-zA-Z0-9]{2,20}$"
+    },
+    "bill-subs-api_price": {
+      "type": "number",
+      "description": "The price of the subscription that will be billed, in US dollars.",
+      "readOnly": true
+    },
+    "bill-subs-api_rate_plan": {
+      "type": "object",
+      "description": "The rate plan applied to the subscription.",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "description": "The currency applied to the rate plan subscription."
+        },
+        "externally_managed": {
+          "type": "boolean",
+          "description": "Whether this rate plan is managed externally from Cloudflare."
+        },
+        "id": {
+          "description": "The ID of the rate plan."
+        },
+        "is_contract": {
+          "type": "boolean",
+          "description": "Whether a rate plan is enterprise-based (or newly adopted term contract)."
+        },
+        "public_name": {
+          "type": "string",
+          "description": "The full name of the rate plan."
+        },
+        "scope": {
+          "type": "string",
+          "description": "The scope that this rate plan applies to."
+        },
+        "sets": {
+          "type": "array",
+          "description": "The list of sets this rate plan applies to.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "bill-subs-api_schemas-identifier": {
+      "type": "string",
+      "description": "Subscription identifier tag.",
+      "readOnly": true,
+      "maxLength": 32
+    },
+    "bill-subs-api_state": {
+      "type": "string",
+      "description": "The state that the subscription is in.",
+      "enum": [
+        "Trial",
+        "Provisioned",
+        "Paid",
+        "AwaitingPayment",
+        "Cancelled",
+        "Failed",
+        "Expired"
+      ],
+      "readOnly": true
+    },
+    "bill-subs-api_zone": {
+      "type": "object",
+      "description": "A simple zone object. May have null properties if not a zone subscription.",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/bill-subs-api_identifier"
+        },
+        "name": {
+          "$ref": "#/$defs/bill-subs-api_name"
+        }
+      }
+    }
+  }
+}

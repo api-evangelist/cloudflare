@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-dns-record-list-response-schema.json",
+  "title": "DnsRecordListResponse",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-dns-records-api-openapi.yml#/components/schemas/DnsRecordListResponse",
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DnsRecord"
+      }
+    },
+    "success": {
+      "type": "boolean"
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "result_info": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer"
+        },
+        "per_page": {
+          "type": "integer"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "total_count": {
+          "type": "integer"
+        },
+        "total_pages": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "DnsRecord": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier of the DNS record."
+        },
+        "zone_id": {
+          "type": "string",
+          "description": "The zone identifier."
+        },
+        "zone_name": {
+          "type": "string",
+          "description": "The zone name."
+        },
+        "type": {
+          "$ref": "#/$defs/RecordType"
+        },
+        "name": {
+          "type": "string",
+          "description": "The DNS record name."
+        },
+        "content": {
+          "type": "string",
+          "description": "The DNS record content."
+        },
+        "ttl": {
+          "type": "integer",
+          "description": "Time to live in seconds."
+        },
+        "proxied": {
+          "type": "boolean",
+          "description": "Whether the record is proxied through Cloudflare."
+        },
+        "proxiable": {
+          "type": "boolean",
+          "description": "Whether the record can be proxied."
+        },
+        "locked": {
+          "type": "boolean",
+          "description": "Whether the record is locked."
+        },
+        "comment": {
+          "type": "string",
+          "description": "A comment about the DNS record."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Custom tags for the DNS record."
+        },
+        "created_on": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the record was created."
+        },
+        "modified_on": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the record was last modified."
+        }
+      }
+    },
+    "RecordType": {
+      "type": "string",
+      "description": "The type of DNS record.",
+      "enum": [
+        "A",
+        "AAAA",
+        "CAA",
+        "CERT",
+        "CNAME",
+        "DNSKEY",
+        "DS",
+        "HTTPS",
+        "LOC",
+        "MX",
+        "NAPTR",
+        "NS",
+        "PTR",
+        "SMIMEA",
+        "SRV",
+        "SSHFP",
+        "SVCB",
+        "TLSA",
+        "TXT",
+        "URI"
+      ]
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-load-balancing-load-shedding-schema.json",
+  "title": "load-balancing_load_shedding",
+  "description": "Configures load shedding policies and percentages for the pool.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-user-api-openapi.yml#/components/schemas/load-balancing_load_shedding",
+  "type": "object",
+  "properties": {
+    "default_percent": {
+      "type": "number",
+      "description": "The percent of traffic to shed from the pool, according to the default policy. Applies to new sessions and traffic without session affinity.",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 100
+    },
+    "default_policy": {
+      "type": "string",
+      "description": "The default policy to use when load shedding. A random policy randomly sheds a given percent of requests. A hash policy computes a hash over the CF-Connecting-IP address and sheds all requests originating from a percent of IPs.",
+      "enum": [
+        "random",
+        "hash"
+      ],
+      "default": "random"
+    },
+    "session_percent": {
+      "type": "number",
+      "description": "The percent of existing sessions to shed from the pool, according to the session policy.",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 100
+    },
+    "session_policy": {
+      "type": "string",
+      "description": "Only the hash policy is supported for existing sessions (to avoid exponential decay).",
+      "enum": [
+        "hash"
+      ],
+      "default": "hash"
+    }
+  }
+}

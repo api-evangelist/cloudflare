@@ -1,17 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Cloudflare KV Keys API
-  description: Cloudflare Workers KV is a global, low-latency key-value data store. The KV API allows developers to create namespaces, write and read key-value pairs, list keys, perform bulk operations with support for up to 10,000 key-value pairs per request, and manage key metadata.
-  version: '4.0'
-  contact:
-    name: Cloudflare Support
-    url: https://support.cloudflare.com/
-  termsOfService: https://www.cloudflare.com/terms/
+  title: Cloudflare Keys API
+  version: '1.0'
+  description: 'Operations tagged Keys across 2 of this provider''s published API definitions: cloudflare-kv-openapi.yml, cloudflare-openapi.json. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.cloudflare.com/client/v4
   description: Cloudflare API v4 Production Server
-security:
-- bearerAuth: []
 tags:
 - name: Keys
   description: List and manage keys within a namespace.
@@ -70,20 +64,429 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
-components:
-  parameters:
-    AccountId:
-      name: account_id
+      security:
+      - bearerAuth: []
+    servers:
+    - url: https://api.cloudflare.com/client/v4
+      description: Cloudflare API v4 Production Server
+  /accounts/{account_id}/workers/observability/telemetry/keys:
+    parameters:
+    - name: account_id
       in: path
+      description: Your Cloudflare account ID.
       required: true
-      description: The unique identifier of the Cloudflare account.
       schema:
         type: string
+    post:
+      operationId: telemetry.keys.list
+      summary: List keys
+      description: List all the keys in your telemetry events.
+      requestBody:
+        description: Find keys in your telemetry events matching a specific filter or needle.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                datasets:
+                  description: Leave this empty to use the default datasets
+                  type: array
+                  items:
+                    type: string
+                  default: []
+                filters:
+                  description: 'Apply filters to narrow key discovery. Supports nested groups via kind: ''group''. Maximum nesting depth is 4.'
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/workers-observability_filter_node'
+                    - anyOf:
+                      - description: A group node that nests child filters combined with a logical operator.
+                        properties:
+                          filterCombination:
+                            description: 'Logical operator for combining child filters: ''and'' (all must match) or ''or'' (any must match).'
+                            type: string
+                            enum:
+                            - and
+                            - or
+                            - AND
+                            - OR
+                          filters:
+                            description: Child filter nodes. Each can be a leaf filter or another nested group.
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/workers-observability_filter_node'
+                            minItems: 1
+                          kind:
+                            description: Discriminator indicating this is a nested filter group.
+                            type: string
+                            enum:
+                            - group
+                        required:
+                        - kind
+                        - filterCombination
+                        - filters
+                        type: object
+                      - $ref: '#/components/schemas/workers-observability_filter_leaf'
+                      description: 'Supports nested groups via kind: ''group''. Maximum nesting depth is 4.'
+                  default: []
+                from:
+                  type: number
+                keyNeedle:
+                  description: If the user suggests a key, use this to narrow down the list of keys returned. Make sure matchCase is false to avoid case sensitivity issues.
+                  type: object
+                  properties:
+                    isRegex:
+                      description: When true, treats the value as a regular expression (RE2 syntax).
+                      type: boolean
+                    matchCase:
+                      description: When true, performs a case-sensitive search. Defaults to case-insensitive.
+                      type: boolean
+                    value:
+                      description: The text or pattern to search for.
+                      allOf:
+                      - anyOf:
+                        - type: string
+                        - type: number
+                        - type: boolean
+                      - maxLength: 1000
+                        type: string
+                  required:
+                  - value
+                limit:
+                  description: 'Advanced usage: set limit=1000+ to retrieve comprehensive key options without needing additional filtering.'
+                  type: number
+                needle:
+                  description: Search for a specific substring in any of the events
+                  type: object
+                  properties:
+                    isRegex:
+                      description: When true, treats the value as a regular expression (RE2 syntax).
+                      type: boolean
+                    matchCase:
+                      description: When true, performs a case-sensitive search. Defaults to case-insensitive.
+                      type: boolean
+                    value:
+                      description: The text or pattern to search for.
+                      allOf:
+                      - anyOf:
+                        - type: string
+                        - type: number
+                        - type: boolean
+                      - maxLength: 1000
+                        type: string
+                  required:
+                  - value
+                to:
+                  type: number
+      responses:
+        '200':
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                          enum:
+                          - Successful request
+                      required:
+                      - message
+                      type: object
+                  result:
+                    type: array
+                    items:
+                      properties:
+                        key:
+                          type: string
+                        lastSeenAt:
+                          type: number
+                        type:
+                          type: string
+                          enum:
+                          - string
+                          - boolean
+                          - number
+                      required:
+                      - key
+                      - type
+                      - lastSeenAt
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                    - true
+                required:
+                - messages
+                - success
+                - errors
+                - result
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                          - Bad Request
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                    - false
+                required:
+                - errors
+                - success
+                - messages
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                          - Unauthorized
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                    - false
+                required:
+                - errors
+                - success
+                - messages
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                          - Forbidden
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                    - false
+                required:
+                - errors
+                - success
+                - messages
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                          - Too many requests
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                    - false
+                required:
+                - errors
+                - success
+                - messages
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                          - Internal error
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                    - false
+                required:
+                - errors
+                - success
+                - messages
+        '504':
+          description: Gateway timeout
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        detail:
+                          type: string
+                        message:
+                          type: string
+                          enum:
+                          - Gateway timeout
+                      required:
+                      - message
+                      type: object
+                  messages:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                      required:
+                      - message
+                      type: object
+                  success:
+                    type: boolean
+                    enum:
+                    - false
+                required:
+                - errors
+                - success
+                - messages
+      tags:
+      - Keys
+      x-api-token-group:
+      - Workers Observability Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: observability.telemetry
+      x-fern-sdk-method-name: keys
+      security:
+      - api_email: []
+        api_key: []
+      - api_token: []
+      - user_service_key: []
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+components:
+  parameters:
     NamespaceId:
       name: namespace_id
       in: path
       required: true
       description: The unique identifier of the KV namespace.
+      schema:
+        type: string
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
       schema:
         type: string
   schemas:
@@ -117,11 +520,116 @@ components:
             count:
               type: integer
           example: example_value
+    workers-observability_filter_node:
+      description: 'Supports nested groups via kind: ''group''.'
+      type: object
+      anyOf:
+      - properties:
+          filterCombination:
+            type: string
+            enum:
+            - and
+            - or
+            - AND
+            - OR
+          filters:
+            type: array
+            items:
+              $ref: '#/components/schemas/workers-observability_filter_node'
+            minItems: 1
+          kind:
+            type: string
+            enum:
+            - group
+        required:
+        - kind
+        - filterCombination
+        - filters
+        type: object
+      - $ref: '#/components/schemas/workers-observability_filter_leaf'
+    workers-observability_filter_leaf:
+      description: A filter condition applied to query results. Use the keys and values endpoints to discover available fields and their values before constructing filters.
+      type: object
+      properties:
+        key:
+          description: Filter field name. Use verified keys from previous query results or the keys endpoint. Common keys include $metadata.service, $metadata.origin, $metadata.trigger, $metadata.message, and $metadata.error.
+          type: string
+        kind:
+          description: Discriminator for leaf filter nodes. Always 'filter' when present; may be omitted.
+          type: string
+          enum:
+          - filter
+        operation:
+          description: 'Comparison operator. String operators: includes, not_includes, starts_with, ends_with, regex. Existence: exists, is_null. Set membership: in, not_in (comma-separated values). Numeric: eq, neq, gt, gte, lt, lte.'
+          type: string
+          enum:
+          - includes
+          - not_includes
+          - starts_with
+          - ends_with
+          - regex
+          - exists
+          - is_null
+          - in
+          - not_in
+          - eq
+          - neq
+          - gt
+          - gte
+          - lt
+          - lte
+          - '='
+          - '!='
+          - '>'
+          - '>='
+          - <
+          - <=
+          - INCLUDES
+          - DOES_NOT_INCLUDE
+          - MATCH_REGEX
+          - EXISTS
+          - DOES_NOT_EXIST
+          - IN
+          - NOT_IN
+          - STARTS_WITH
+          - ENDS_WITH
+        type:
+          description: Data type of the filter field. Must match the actual type of the key being filtered.
+          type: string
+          enum:
+          - string
+          - number
+          - boolean
+        value:
+          description: Comparison value. Must match actual values in your data — verify with the values endpoint. Ensure the value type (string/number/boolean) matches the field type. String comparisons are case-sensitive. Regex uses RE2 syntax (no lookaheads/lookbehinds).
+          anyOf:
+          - type: string
+          - type: number
+          - type: boolean
+      required:
+      - key
+      - operation
+      - type
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       description: API token with Workers KV Storage permissions.
-externalDocs:
-  description: Cloudflare KV API Documentation
-  url: https://developers.cloudflare.com/api/resources/kv/
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+x-refined-from:
+- cloudflare-kv-openapi.yml
+- cloudflare-openapi.json

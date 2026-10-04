@@ -1,17 +1,11 @@
 openapi: 3.2.0
 info:
   title: Cloudflare Namespaces API
-  version: '4.0'
-  contact:
-    name: Cloudflare Support
-    url: https://support.cloudflare.com/
-  termsOfService: https://www.cloudflare.com/terms/
-  description: 'Operations tagged Namespaces across 2 of this provider''s published API definitions: cloudflare-durable-objects-openapi.yml, cloudflare-kv-openapi.yml. Each path carries the servers of the definition it was published in.'
+  version: '1.0'
+  description: 'Operations tagged Namespaces across 3 of this provider''s published API definitions: cloudflare-durable-objects-openapi.yml, cloudflare-kv-openapi.yml, cloudflare-openapi.json. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.cloudflare.com/client/v4
   description: Cloudflare API v4 Production Server
-security:
-- bearerAuth: []
 tags:
 - name: Namespaces
   description: Manage Durable Object namespaces that group related object instances.
@@ -52,6 +46,8 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
     servers:
     - url: https://api.cloudflare.com/client/v4
       description: Cloudflare API v4 Production Server
@@ -104,6 +100,8 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
     post:
       operationId: createKvNamespace
       summary: Cloudflare Create Kv Namespace
@@ -158,6 +156,8 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
     servers:
     - url: https://api.cloudflare.com/client/v4
       description: Cloudflare API v4 Production Server
@@ -199,6 +199,8 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
     put:
       operationId: renameKvNamespace
       summary: Cloudflare Rename Kv Namespace
@@ -236,6 +238,8 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
     delete:
       operationId: deleteKvNamespace
       summary: Cloudflare Delete Kv Namespace
@@ -255,9 +259,867 @@ paths:
       x-microcks-operation:
         delay: 0
         dispatcher: FALLBACK
+      security:
+      - bearerAuth: []
     servers:
     - url: https://api.cloudflare.com/client/v4
       description: Cloudflare API v4 Production Server
+  /accounts/{account_id}/agent-memory/namespaces:
+    parameters:
+    - name: account_id
+      in: path
+      description: Cloudflare Account ID.
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        pattern: ^\d+$
+    get:
+      operationId: agent-memory-namespace-list
+      summary: List namespaces
+      description: Lists all namespaces for the given account. Results are paginated.
+      parameters:
+      - name: per_page
+        in: query
+        schema:
+          description: Number of results per page.
+          type: integer
+          example: 20
+          maximum: 1000
+          minimum: 1
+      - name: order
+        in: query
+        schema:
+          description: Field to order the results by.
+          type: string
+          example: id
+          enum:
+          - id
+          - name
+      - name: direction
+        in: query
+        schema:
+          description: Direction to sort the results in.
+          type: string
+          example: asc
+          enum:
+          - asc
+          - desc
+      - name: cursor
+        in: query
+        schema:
+          description: Pagination cursor returned by a previous list response.
+          type: string
+      responses:
+        '200':
+          description: A List of namespaces.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    description: Always empty for a successful response.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  messages:
+                    description: Informational, non-error messages, if any.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  result:
+                    type: array
+                    items:
+                      properties:
+                        created_at:
+                          description: Time the namespace was created.
+                          type: string
+                          format: date-time
+                          example: '2025-09-21T14:30:00Z'
+                        id:
+                          description: Unique identifier of the namespace.
+                          type: string
+                          example: 01JSGCEXAMP1E0000000000000
+                        name:
+                          description: Namespace name.
+                          type: string
+                          example: support-agent
+                        updated_at:
+                          description: Time the namespace was last updated.
+                          type: string
+                          format: date-time
+                          example: '2025-09-21T14:30:00Z'
+                      required:
+                      - id
+                      - name
+                      - created_at
+                      - updated_at
+                      type: object
+                  result_info:
+                    type: object
+                    properties:
+                      count:
+                        description: Number of results returned in this page.
+                        type: integer
+                        example: 1
+                      cursor:
+                        description: Opaque cursor for the next page; omitted on the last page.
+                        type: string
+                        example: 01JSGCEXAMP1E0000000000000
+                      per_page:
+                        description: Page size used for this query.
+                        type: integer
+                        example: 20
+                  success:
+                    description: Always true for a successful response.
+                    type: boolean
+                    enum:
+                    - true
+                required:
+                - result
+                - success
+                - errors
+                - messages
+        4XX:
+          description: Error response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    description: One or more errors describing what went wrong.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example:
+                    - code: 1003
+                      message: namespace not found
+                  messages:
+                    description: Informational, non-error messages, if any.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  result:
+                    description: Always null for an error response.
+                    type:
+                    - object
+                    - 'null'
+                  success:
+                    description: Always false for an error response.
+                    type: boolean
+                    enum:
+                    - false
+                required:
+                - result
+                - success
+                - errors
+                - messages
+      security:
+      - api_token: []
+      tags:
+      - Namespaces
+      x-fern-availability: beta
+      x-fern-sdk-group-name: agent-memory
+      x-fern-sdk-method-name: list-namespaces
+    post:
+      operationId: agent-memory-namespace-create
+      summary: Create a namespace
+      description: Creates a new memory namespace owned by the account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Namespace name.
+                  type: string
+                  example: support-agent
+                  maxLength: 32
+                  minLength: 1
+                  pattern: ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$
+              required:
+              - name
+      responses:
+        '201':
+          description: Namespace created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    description: Always empty for a successful response.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  messages:
+                    description: Informational, non-error messages, if any.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      created_at:
+                        description: Time the namespace was created.
+                        type: string
+                        format: date-time
+                        example: '2025-09-21T14:30:00Z'
+                      id:
+                        description: Unique identifier of the namespace.
+                        type: string
+                        example: 01JSGCEXAMP1E0000000000000
+                      name:
+                        description: Namespace name.
+                        type: string
+                        example: support-agent
+                      updated_at:
+                        description: Time the namespace was last updated.
+                        type: string
+                        format: date-time
+                        example: '2025-09-21T14:30:00Z'
+                    required:
+                    - id
+                    - name
+                    - created_at
+                    - updated_at
+                  success:
+                    description: Always true for a successful response.
+                    type: boolean
+                    enum:
+                    - true
+                required:
+                - result
+                - success
+                - errors
+                - messages
+        4XX:
+          description: Error response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    description: One or more errors describing what went wrong.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example:
+                    - code: 1003
+                      message: namespace not found
+                  messages:
+                    description: Informational, non-error messages, if any.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  result:
+                    description: Always null for an error response.
+                    type:
+                    - object
+                    - 'null'
+                  success:
+                    description: Always false for an error response.
+                    type: boolean
+                    enum:
+                    - false
+                required:
+                - result
+                - success
+                - errors
+                - messages
+      security:
+      - api_token: []
+      tags:
+      - Namespaces
+      x-fern-availability: beta
+      x-fern-sdk-group-name: agent-memory
+      x-fern-sdk-method-name: create-namespace
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /accounts/{account_id}/agent-memory/namespaces/{namespace_name}:
+    parameters:
+    - name: account_id
+      in: path
+      description: Cloudflare Account ID.
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        pattern: ^\d+$
+    delete:
+      operationId: agent-memory-namespace-delete
+      summary: Delete a namespace
+      description: Deletes a namespace.
+      parameters:
+      - name: namespace_name
+        in: path
+        required: true
+        schema:
+          description: Namespace name.
+          type: string
+          example: support-agent
+          maxLength: 32
+          minLength: 1
+          pattern: ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$
+      responses:
+        '200':
+          description: Namespace deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    description: Always empty for a successful response.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  messages:
+                    description: Informational, non-error messages, if any.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  result:
+                    type:
+                    - object
+                    - 'null'
+                  success:
+                    description: Always true for a successful response.
+                    type: boolean
+                    enum:
+                    - true
+                required:
+                - result
+                - success
+                - errors
+                - messages
+        4XX:
+          description: Error response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    description: One or more errors describing what went wrong.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example:
+                    - code: 1003
+                      message: namespace not found
+                  messages:
+                    description: Informational, non-error messages, if any.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  result:
+                    description: Always null for an error response.
+                    type:
+                    - object
+                    - 'null'
+                  success:
+                    description: Always false for an error response.
+                    type: boolean
+                    enum:
+                    - false
+                required:
+                - result
+                - success
+                - errors
+                - messages
+      security:
+      - api_token: []
+      tags:
+      - Namespaces
+      x-fern-availability: beta
+      x-fern-sdk-group-name: agent-memory
+      x-fern-sdk-method-name: delete-namespace
+      x-forge-require-confirmation: This operation deletes the namespace along with all memory profiles, memories, and sessions it contains.
+    get:
+      operationId: agent-memory-namespace-get
+      summary: Get a namespace
+      description: Gets a namespace by name.
+      parameters:
+      - name: namespace_name
+        in: path
+        required: true
+        schema:
+          description: Namespace name.
+          type: string
+          example: support-agent
+          maxLength: 32
+          minLength: 1
+          pattern: ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$
+      responses:
+        '200':
+          description: The requested namespace.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    description: Always empty for a successful response.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  messages:
+                    description: Informational, non-error messages, if any.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  result:
+                    type: object
+                    properties:
+                      created_at:
+                        description: Time the namespace was created.
+                        type: string
+                        format: date-time
+                        example: '2025-09-21T14:30:00Z'
+                      id:
+                        description: Unique identifier of the namespace.
+                        type: string
+                        example: 01JSGCEXAMP1E0000000000000
+                      name:
+                        description: Namespace name.
+                        type: string
+                        example: support-agent
+                      updated_at:
+                        description: Time the namespace was last updated.
+                        type: string
+                        format: date-time
+                        example: '2025-09-21T14:30:00Z'
+                    required:
+                    - id
+                    - name
+                    - created_at
+                    - updated_at
+                  success:
+                    description: Always true for a successful response.
+                    type: boolean
+                    enum:
+                    - true
+                required:
+                - result
+                - success
+                - errors
+                - messages
+        4XX:
+          description: Error response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    description: One or more errors describing what went wrong.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example:
+                    - code: 1003
+                      message: namespace not found
+                  messages:
+                    description: Informational, non-error messages, if any.
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          description: Machine-readable status code.
+                          type: number
+                          example: 1003
+                        documentation_url:
+                          description: Link to relevant documentation, when available.
+                          type: string
+                        message:
+                          description: Human-readable message describing the error or status.
+                          type: string
+                          example: namespace not found
+                        source:
+                          type: object
+                          properties:
+                            pointer:
+                              description: JSON pointer to the request field that caused the error.
+                              type: string
+                              example: /name
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  result:
+                    description: Always null for an error response.
+                    type:
+                    - object
+                    - 'null'
+                  success:
+                    description: Always false for an error response.
+                    type: boolean
+                    enum:
+                    - false
+                required:
+                - result
+                - success
+                - errors
+                - messages
+      security:
+      - api_token: []
+      tags:
+      - Namespaces
+      x-fern-availability: beta
+      x-fern-sdk-group-name: agent-memory
+      x-fern-sdk-method-name: get-namespace
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
 components:
   schemas:
     DurableObjectNamespace:
@@ -287,24 +1149,6 @@ components:
           items:
             $ref: '#/components/schemas/DurableObjectNamespace'
           example: []
-        success:
-          type: boolean
-          example: true
-        errors:
-          type: array
-          items:
-            type: object
-          example: []
-        messages:
-          type: array
-          items:
-            type: object
-          example: []
-    NamespaceResponse:
-      type: object
-      properties:
-        result:
-          $ref: '#/components/schemas/Namespace'
         success:
           type: boolean
           example: true
@@ -356,6 +1200,24 @@ components:
             total_count:
               type: integer
           example: example_value
+    NamespaceResponse:
+      type: object
+      properties:
+        result:
+          $ref: '#/components/schemas/Namespace'
+        success:
+          type: boolean
+          example: true
+        errors:
+          type: array
+          items:
+            type: object
+          example: []
+        messages:
+          type: array
+          items:
+            type: object
+          example: []
   parameters:
     AccountId:
       name: account_id
@@ -376,6 +1238,22 @@ components:
       type: http
       scheme: bearer
       description: API token with Workers permissions.
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
 x-refined-from:
 - cloudflare-durable-objects-openapi.yml
 - cloudflare-kv-openapi.yml
+- cloudflare-openapi.json

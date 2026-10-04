@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-addressing-api-response-single-schema.json",
+  "title": "addressing_api-response-single",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-ips-api-openapi.yml#/components/schemas/addressing_api-response-single",
+  "allOf": [
+    {
+      "$ref": "#/$defs/addressing_api-response-common"
+    },
+    {
+      "properties": {
+        "result": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "type": "object",
+  "$defs": {
+    "addressing_api-response-common": {
+      "type": "object",
+      "required": [
+        "success",
+        "errors",
+        "messages",
+        "result"
+      ],
+      "properties": {
+        "errors": {
+          "$ref": "#/$defs/addressing_messages"
+        },
+        "messages": {
+          "$ref": "#/$defs/addressing_messages"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "success": {
+          "type": "boolean",
+          "description": "Whether the API call was successful",
+          "enum": [
+            true
+          ]
+        }
+      }
+    },
+    "addressing_messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "uniqueItems": true,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "minimum": 1000
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

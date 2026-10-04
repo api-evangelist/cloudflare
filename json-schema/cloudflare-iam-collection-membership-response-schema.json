@@ -1,0 +1,313 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-iam-collection-membership-response-schema.json",
+  "title": "iam_collection_membership_response",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-memberships-api-openapi.yml#/components/schemas/iam_collection_membership_response",
+  "allOf": [
+    {
+      "$ref": "#/$defs/iam_api-response-collection"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/iam_membership"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "iam_account": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "created_on": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp for the creation of the account",
+          "readOnly": true
+        },
+        "id": {
+          "$ref": "#/$defs/iam_common_components-schemas-identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Account name",
+          "maxLength": 100
+        },
+        "settings": {
+          "type": "object",
+          "description": "Account settings",
+          "properties": {
+            "default_nameservers": {
+              "type": "string",
+              "description": "Specifies the default nameservers to be used for new zones added to this account.\n\n- `cloudflare.standard` for Cloudflare-branded nameservers\n- `custom.account` for account custom nameservers\n- `custom.tenant` for tenant custom nameservers\n\nSee [Custom Nameservers](https://developers.cloudflare.com/dns/additional-options/custom-nameservers/)\nfor more information.",
+              "enum": [
+                "cloudflare.standard",
+                "custom.account",
+                "custom.tenant"
+              ],
+              "default": "cloudflare.standard"
+            },
+            "enforce_twofactor": {
+              "type": "boolean",
+              "description": "Indicates whether membership in this account requires that\nTwo-Factor Authentication is enabled",
+              "default": false
+            },
+            "use_account_custom_ns_by_default": {
+              "type": "boolean",
+              "description": "Indicates whether new zones should use the account-level custom\nnameservers by default.\n\nDeprecated in favor of `default_nameservers`.",
+              "default": false,
+              "deprecated": true
+            }
+          }
+        }
+      }
+    },
+    "iam_api-response-collection": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/iam_api-response-common"
+        },
+        {
+          "properties": {
+            "result": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {}
+            },
+            "result_info": {
+              "$ref": "#/$defs/iam_result_info"
+            }
+          }
+        }
+      ],
+      "type": "object"
+    },
+    "iam_api-response-common": {
+      "type": "object",
+      "required": [
+        "success",
+        "errors",
+        "messages",
+        "result"
+      ],
+      "properties": {
+        "errors": {
+          "$ref": "#/$defs/iam_messages"
+        },
+        "messages": {
+          "$ref": "#/$defs/iam_messages"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "success": {
+          "type": "boolean",
+          "description": "Whether the API call was successful",
+          "enum": [
+            true
+          ]
+        }
+      }
+    },
+    "iam_api_access_enabled": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "Enterprise only. Indicates whether or not API access is enabled specifically for this user on a given account."
+    },
+    "iam_code": {
+      "type": "string",
+      "description": "The unique activation code for the account membership.",
+      "readOnly": true,
+      "maxLength": 64
+    },
+    "iam_common_components-schemas-identifier": {
+      "type": "string",
+      "description": "Identifier",
+      "readOnly": true,
+      "maxLength": 32
+    },
+    "iam_grants": {
+      "type": "object",
+      "properties": {
+        "read": {
+          "type": "boolean"
+        },
+        "write": {
+          "type": "boolean"
+        }
+      }
+    },
+    "iam_membership": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/$defs/iam_schemas-account"
+        },
+        "api_access_enabled": {
+          "$ref": "#/$defs/iam_api_access_enabled"
+        },
+        "code": {
+          "$ref": "#/$defs/iam_code"
+        },
+        "id": {
+          "$ref": "#/$defs/iam_membership_components-schemas-identifier"
+        },
+        "permissions": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/iam_permissions"
+            }
+          ],
+          "description": "All access permissions for the user at the account.",
+          "readOnly": true
+        },
+        "roles": {
+          "$ref": "#/$defs/iam_roles"
+        },
+        "status": {
+          "$ref": "#/$defs/iam_schemas-status"
+        }
+      }
+    },
+    "iam_membership_components-schemas-identifier": {
+      "type": "string",
+      "description": "Membership identifier tag.",
+      "readOnly": true,
+      "maxLength": 32
+    },
+    "iam_messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "uniqueItems": true,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "minimum": 1000
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "iam_permissions": {
+      "type": "object",
+      "properties": {
+        "analytics": {
+          "$ref": "#/$defs/iam_grants"
+        },
+        "billing": {
+          "$ref": "#/$defs/iam_grants"
+        },
+        "cache_purge": {
+          "$ref": "#/$defs/iam_grants"
+        },
+        "dns": {
+          "$ref": "#/$defs/iam_grants"
+        },
+        "dns_records": {
+          "$ref": "#/$defs/iam_grants"
+        },
+        "lb": {
+          "$ref": "#/$defs/iam_grants"
+        },
+        "logs": {
+          "$ref": "#/$defs/iam_grants"
+        },
+        "organization": {
+          "$ref": "#/$defs/iam_grants"
+        },
+        "ssl": {
+          "$ref": "#/$defs/iam_grants"
+        },
+        "waf": {
+          "$ref": "#/$defs/iam_grants"
+        },
+        "zone_settings": {
+          "$ref": "#/$defs/iam_grants"
+        },
+        "zones": {
+          "$ref": "#/$defs/iam_grants"
+        }
+      }
+    },
+    "iam_result_info": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "number",
+          "description": "Total number of results for the requested service"
+        },
+        "page": {
+          "type": "number",
+          "description": "Current page within paginated list of results"
+        },
+        "per_page": {
+          "type": "number",
+          "description": "Number of results per page of results"
+        },
+        "total_count": {
+          "type": "number",
+          "description": "Total results available without any search parameters"
+        }
+      }
+    },
+    "iam_roles": {
+      "type": "array",
+      "description": "List of role names for the user at the account.",
+      "readOnly": true,
+      "items": {
+        "type": "string",
+        "maxLength": 120
+      }
+    },
+    "iam_schemas-account": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/iam_account"
+        }
+      ],
+      "readOnly": true
+    },
+    "iam_schemas-status": {
+      "type": "string",
+      "description": "Status of this membership.",
+      "enum": [
+        "accepted",
+        "pending",
+        "rejected"
+      ]
+    }
+  }
+}

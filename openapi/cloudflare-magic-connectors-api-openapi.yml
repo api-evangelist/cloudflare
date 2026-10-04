@@ -1,0 +1,3619 @@
+openapi: 3.2.0
+info:
+  description: Welcome to Cloudflare's API documentation site.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  title: Cloudflare Magic Connectors API
+  version: 4.0.0
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Magic Connectors
+paths:
+  /accounts/{account_id}/magic/connectors:
+    get:
+      operationId: mconn-connectors-list
+      summary: List Connectors
+      description: Lists Magic WAN Connectors.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn_account_id'
+      - name: device_type
+        in: query
+        description: Filter connectors by device type.
+        schema:
+          type: string
+          enum:
+          - MANAGED
+          - LICENSED
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_customer_connectors_list_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Magic Connectors
+      x-api-token-group:
+      - Magic WAN Write
+      - Magic WAN Read
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: connectors
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+    post:
+      operationId: mconn-connectors-create
+      summary: Create Connector
+      description: Creates a Magic WAN Connector.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn_account_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mconn_customer_connectors_create_request'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_customer_connectors_create_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Magic Connectors
+      x-api-token-group:
+      - Magic WAN Write
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: connectors
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
+  /accounts/{account_id}/magic/connectors/{connector_id}:
+    delete:
+      operationId: mconn-connectors-delete
+      summary: Delete Connector
+      description: Deletes a Magic WAN Connector.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn_account_id'
+      - name: connector_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn_uuid'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_customer_connectors_delete_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Magic Connectors
+      x-api-token-group:
+      - Magic WAN Write
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: connectors
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
+    get:
+      operationId: mconn-connectors-get
+      summary: Get Connector
+      description: Gets a Magic WAN Connector.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn_account_id'
+      - name: connector_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn_uuid'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_customer_connectors_get_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Magic Connectors
+      x-api-token-group:
+      - Magic WAN Write
+      - Magic WAN Read
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: connectors
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    patch:
+      operationId: mconn-connectors-edit
+      summary: Edit Connector
+      description: Edits properties of a Magic WAN Connector. May be used to re-provision a license key.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn_account_id'
+      - name: connector_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn_uuid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mconn_customer_connectors_edit_request'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_customer_connectors_edit_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Magic Connectors
+      x-api-token-group:
+      - Magic WAN Write
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: connectors
+      x-fern-sdk-method-name: edit
+      x-forge-hidden: true
+    put:
+      operationId: mconn-connectors-update
+      summary: Update Connector
+      description: Updates properties of a Magic WAN Connector. May be used to re-provision a license key.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn_account_id'
+      - name: connector_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn_uuid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mconn_customer_connectors_update_request'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_customer_connectors_update_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Magic Connectors
+      x-api-token-group:
+      - Magic WAN Write
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: connectors
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+  /accounts/{account_id}/magic/connectors/{connector_id}/interrupts:
+    get:
+      operationId: mconn-connector-interrupts-list
+      summary: List Interrupts
+      description: Lists interrupts for a Magic WAN Connector.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn_account_id'
+      - name: connector_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn_uuid'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_connector_interrupts_list_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Magic Connectors
+      x-api-token-group:
+      - Magic WAN Write
+      - Magic WAN Read
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: connector-interrupts
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+    post:
+      operationId: mconn-connector-interrupts-create
+      summary: Create Interrupt
+      description: Creates an interrupt for a Magic WAN Connector.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn_account_id'
+      - name: connector_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn_uuid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mconn_interrupt'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_connector_interrupts_create_response'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn_bad_response'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Magic Connectors
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: connector-interrupts
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
+  /accounts/{account_id}/magic/connectors/{connector_id}/telemetry/events:
+    get:
+      operationId: mconn-connector-telemetry-events-list
+      summary: List Events
+      description: Lists Magic WAN Connector Telemetry Events
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn-telemetry_account_id'
+      - name: connector_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: from
+        in: query
+        required: true
+        schema:
+          type: number
+      - name: to
+        in: query
+        required: true
+        schema:
+          type: number
+      - name: limit
+        in: query
+        schema:
+          type: number
+      - name: cursor
+        in: query
+        schema:
+          type: string
+      - name: k
+        in: query
+        description: Filter by event kind
+        schema:
+          type: string
+        x-fern-parameter-name: kind
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_customer_events_list_success'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Magic Connectors
+      x-api-token-group:
+      - Magic WAN Write
+      - Magic WAN Read
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: connector-telemetry-events
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+  /accounts/{account_id}/magic/connectors/{connector_id}/telemetry/events/latest:
+    get:
+      operationId: mconn-connector-telemetry-events-latest-get
+      summary: Get latest Events
+      description: Gets latest Magic WAN Connector Telemetry Events
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn-telemetry_account_id'
+      - name: connector_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_customer_events_latest_get_success'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Magic Connectors
+      x-api-token-group:
+      - Magic WAN Write
+      - Magic WAN Read
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-ignore: true
+      x-fern-sdk-group-name: connector-telemetry-events-latest
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+  /accounts/{account_id}/magic/connectors/{connector_id}/telemetry/events/{event_t}.{event_n}:
+    get:
+      operationId: mconn-connector-telemetry-events-get
+      summary: Get Event
+      description: Gets Magic WAN Connector Telemetry Event
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn-telemetry_account_id'
+      - name: connector_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: event_t
+        in: path
+        required: true
+        schema:
+          type: number
+      - name: event_n
+        in: path
+        required: true
+        schema:
+          type: number
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_customer_events_get_success'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Magic Connectors
+      x-api-token-group:
+      - Magic WAN Write
+      - Magic WAN Read
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: connector-telemetry-events
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+  /accounts/{account_id}/magic/connectors/{connector_id}/telemetry/snapshots:
+    get:
+      operationId: mconn-connector-telemetry-snapshots-list
+      summary: List Snapshots
+      description: Lists Magic WAN Connector Telemetry Snapshots
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn-telemetry_account_id'
+      - name: connector_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: from
+        in: query
+        required: true
+        schema:
+          type: number
+      - name: to
+        in: query
+        required: true
+        schema:
+          type: number
+      - name: limit
+        in: query
+        schema:
+          type: number
+      - name: cursor
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_customer_snapshots_list_success'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Magic Connectors
+      x-api-token-group:
+      - Magic WAN Write
+      - Magic WAN Read
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: connector-telemetry-snapshots
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+  /accounts/{account_id}/magic/connectors/{connector_id}/telemetry/snapshots/latest:
+    get:
+      operationId: mconn-connector-telemetry-snapshots-latest-get
+      summary: Get latest Snapshots
+      description: Gets latest Magic WAN Connector Telemetry Snapshots
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn-telemetry_account_id'
+      - name: connector_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_customer_snapshots_latest_get_success'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Magic Connectors
+      x-api-token-group:
+      - Magic WAN Write
+      - Magic WAN Read
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-ignore: true
+      x-fern-sdk-group-name: connector-telemetry-snapshots-latest
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+  /accounts/{account_id}/magic/connectors/{connector_id}/telemetry/snapshots/{snapshot_t}:
+    get:
+      operationId: mconn-connector-telemetry-snapshots-get
+      summary: Get Snapshot
+      description: Gets Magic WAN Connector Telemetry Snapshot
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/mconn-telemetry_account_id'
+      - name: connector_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: snapshot_t
+        in: path
+        required: true
+        schema:
+          type: number
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_customer_snapshots_get_success'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mconn-telemetry_envelope'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Magic Connectors
+      x-api-token-group:
+      - Magic WAN Write
+      - Magic WAN Read
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: connector-telemetry-snapshots
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+components:
+  schemas:
+    mconn_customer_connectors_list_response:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn_good_response'
+      - properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/mconn_customer_connector'
+        type: object
+    mconn-telemetry_snapshot_bond:
+      description: Snapshot Bond
+      type: object
+      properties:
+        name:
+          description: Name of the network interface
+          type: string
+        status:
+          description: Current status of the network interface
+          type: string
+      required:
+      - name
+      - status
+    mconn-telemetry_customer_snapshots_list_success:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn-telemetry_envelope'
+      - properties:
+          result:
+            $ref: '#/components/schemas/mconn-telemetry_customer_snapshots_list_result'
+        required:
+        - result
+        type: object
+    mconn_interrupt:
+      description: Interrupt action for a connector.
+      type: object
+      properties:
+        reboot:
+          type: object
+          additionalProperties: false
+          properties:
+            purge:
+              description: Purge connector state.
+              type: boolean
+              default: false
+        restart:
+          type: object
+          additionalProperties: false
+          properties:
+            purge:
+              description: Purge connector state.
+              type: boolean
+              default: false
+        shutdown:
+          type: object
+          additionalProperties: false
+          properties:
+            purge:
+              description: Purge connector state.
+              type: boolean
+              default: false
+      additionalProperties: false
+      maxProperties: 1
+      minProperties: 1
+    mconn_customer_connector_fields:
+      type: object
+      properties:
+        activated:
+          type: boolean
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        interrupt_window_days_of_week:
+          description: Allowed days of the week for upgrades. Default is all days.
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn_day_of_week'
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        interrupt_window_duration_hours:
+          type: number
+          maximum: 24
+          minimum: 1
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        interrupt_window_embargo_dates:
+          description: List of dates (YYYY-MM-DD) when upgrades are blocked.
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn_embargo_date'
+          maxItems: 100
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        interrupt_window_hour_of_day:
+          type: number
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        notes:
+          type: string
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        timezone:
+          type: string
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+    mconn_customer_connectors_edit_request:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn_customer_connector_fields'
+      - properties:
+          provision_license:
+            description: When true, regenerate license key for the connector.
+            type: boolean
+        type: object
+    mconn_good_response:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn_response'
+      - properties:
+          errors:
+            type: array
+            items:
+              $ref: '#/components/schemas/mconn_coded_message'
+            maxLength: 0
+        type: object
+    mconn_none:
+      type:
+      - object
+      - 'null'
+    mconn-telemetry_customer_events_list_success:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn-telemetry_envelope'
+      - properties:
+          result:
+            $ref: '#/components/schemas/mconn-telemetry_customer_events_list_result'
+        required:
+        - result
+        type: object
+    mconn_customer_connectors_edit_response:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn_good_response'
+      - properties:
+          result:
+            $ref: '#/components/schemas/mconn_customer_connector'
+        type: object
+    mconn-telemetry_snapshot_tunnel:
+      description: Snapshot Tunnels
+      type: object
+      properties:
+        health_state:
+          description: Name of tunnel health state (unknown, healthy, degraded, down)
+          type: string
+        health_value:
+          description: Numeric value associated with tunnel state (0 = unknown, 1 = healthy, 2 = degraded, 3 = down)
+          type: number
+        interface_name:
+          description: The tunnel interface name (i.e. xfrm1, xfrm3.99, etc.)
+          type: string
+        jitter_ms:
+          description: Tunnel round-trip latency variation in milliseconds
+          type: number
+        latency_ms:
+          description: 50th percentile tunnel round-trip latency in milliseconds
+          type: number
+        natd_result:
+          description: Public socket address returned by the NAT detector
+          type: string
+        natd_state:
+          description: Numeric NAT detector state (0 = detected, 1 = missing result, 2 = stale result)
+          type: number
+        natd_target:
+          description: Target socket address probed by the NAT detector, using the detector source port
+          type: string
+        probed_mtu:
+          description: MTU as measured between the two ends of the tunnel
+          type: number
+        recent_healthy_pings:
+          description: Number of recent healthy pings for this tunnel
+          type: number
+        recent_unhealthy_pings:
+          description: Number of recent unhealthy pings for this tunnel
+          type: number
+        tunnel_id:
+          description: Tunnel identifier
+          type: string
+      required:
+      - tunnel_id
+      - interface_name
+      - health_state
+      - health_value
+    mconn_day_of_week:
+      type: string
+      enum:
+      - Sunday
+      - Monday
+      - Tuesday
+      - Wednesday
+      - Thursday
+      - Friday
+      - Saturday
+    mconn_customer_connectors_get_response:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn_good_response'
+      - properties:
+          result:
+            $ref: '#/components/schemas/mconn_customer_connector'
+        type: object
+    mconn_response:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn_coded_message'
+        success:
+          type: boolean
+      required:
+      - result
+      - success
+      - errors
+      - messages
+    mconn-telemetry_account_id:
+      description: Account identifier
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      readOnly: true
+    mconn_customer_connectors_create_response:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn_good_response'
+      - properties:
+          result:
+            $ref: '#/components/schemas/mconn_customer_connector'
+        type: object
+    mconn-telemetry_customer_events_latest_get_result:
+      type: object
+      properties:
+        count:
+          type: number
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_recorded_event'
+      required:
+      - items
+      - count
+    mconn-telemetry_customer_events_get_success:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn-telemetry_envelope'
+      - properties:
+          result:
+            $ref: '#/components/schemas/mconn-telemetry_recorded_event'
+        required:
+        - result
+        type: object
+    mconn_account_id:
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      readOnly: true
+    mconn_customer_connectors_create_request:
+      type: object
+      allOf:
+      - properties:
+          device:
+            $ref: '#/components/schemas/mconn_customer_device_options'
+        required:
+        - device
+        type: object
+      - $ref: '#/components/schemas/mconn_customer_connector_fields'
+    mconn-telemetry_event:
+      description: 'Event kind plus event-specific payload fields.
+
+
+        Event kinds:
+
+        - `Init`: Initialized process
+
+        - `Leave`: Stopped process
+
+        - `StartAttestation`: Started attestation
+
+        - `FinishAttestationSuccess`: Finished attestation
+
+        - `FinishAttestationFailure`: Failed attestation
+
+        - `StartRotateCryptKey`: Started crypt key rotation
+
+        - `FinishRotateCryptKeySuccess`: Finished crypt key rotation
+
+        - `FinishRotateCryptKeyFailure`: Failed crypt key rotation
+
+        - `StartRotatePki`: Started PKI rotation
+
+        - `FinishRotatePkiSuccess`: Finished PKI rotation
+
+        - `FinishRotatePkiFailure`: Failed PKI rotation
+
+        - `StartUpgrade`: Started upgrade
+
+        - `FinishUpgradeSuccess`: Finished upgrade
+
+        - `FinishUpgradeFailure`: Failed upgrade
+
+        - `BlessSlotSuccess`: Blessed boot entry slot
+
+        - `BlessSlotPending`: Boot entry slot is not yet blessed
+
+        - `BlessSlotFailure`: Failed to bless boot entry slot
+
+        - `Reconcile`: Reconciled
+
+        - `ConfigureCloudflaredTunnel`: Configured Cloudflared tunnel
+
+        - `RekeyInstallBoth`: Installed initial inbound and outbound keys
+
+        - `RekeyStart`: Installed new inbound key, kept old outbound
+
+        - `RekeyRestart`: Restarted in-progress rekey with newer key material
+
+        - `RekeyAdvance`: Confirmed traffic on new inbound key, swapped outbound to new
+
+        - `RekeyComplete`: Deleted old keys
+
+        - `RekeyReset`: Deleted all keys after receiving an unexpected key
+
+        - `HaTransition`: Completed HA state transition
+
+        - `HaError`: Received unexpected HA error
+
+        - `HaInit`: Initialized HA subsystem
+
+        - `HaLeave`: Stopped HA subsystem'
+      type: object
+      properties:
+        k:
+          description: Event kind
+          type: string
+          enum:
+          - Init
+          - Leave
+          - StartAttestation
+          - FinishAttestationSuccess
+          - FinishAttestationFailure
+          - StartRotateCryptKey
+          - FinishRotateCryptKeySuccess
+          - FinishRotateCryptKeyFailure
+          - StartRotatePki
+          - FinishRotatePkiSuccess
+          - FinishRotatePkiFailure
+          - StartUpgrade
+          - FinishUpgradeSuccess
+          - FinishUpgradeFailure
+          - BlessSlotSuccess
+          - BlessSlotPending
+          - BlessSlotFailure
+          - Reconcile
+          - ConfigureCloudflaredTunnel
+          - RekeyInstallBoth
+          - RekeyStart
+          - RekeyRestart
+          - RekeyAdvance
+          - RekeyComplete
+          - RekeyReset
+          - HaTransition
+          - HaError
+          - HaInit
+          - HaLeave
+      additionalProperties: true
+      required:
+      - k
+    mconn-telemetry_snapshot:
+      description: Snapshot
+      type: object
+      properties:
+        bonds:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_snapshot_bond'
+        count_reclaim_failures:
+          description: Count of failures to reclaim space
+          type: number
+        count_reclaimed_paths:
+          description: Count of reclaimed paths
+          type: number
+        count_record_failed:
+          description: Count of failed snapshot recordings
+          type: number
+        count_transmit_failures:
+          description: Count of failed snapshot transmissions
+          type: number
+        cpu_count:
+          description: Count of processors/cores
+          type: number
+        cpu_pressure_10s:
+          description: Percentage of time over a 10 second window that tasks were stalled
+          type: number
+        cpu_pressure_300s:
+          description: Percentage of time over a 5 minute window that tasks were stalled
+          type: number
+        cpu_pressure_60s:
+          description: Percentage of time over a 1 minute window that tasks were stalled
+          type: number
+        cpu_pressure_total_us:
+          description: Total stall time (microseconds)
+          type: number
+        cpu_time_guest_ms:
+          description: Time spent running a virtual CPU or guest OS (milliseconds)
+          type: number
+        cpu_time_guest_nice_ms:
+          description: Time spent running a niced guest (milliseconds)
+          type: number
+        cpu_time_idle_ms:
+          description: Time spent in idle state (milliseconds)
+          type: number
+        cpu_time_iowait_ms:
+          description: Time spent wait for I/O to complete (milliseconds)
+          type: number
+        cpu_time_irq_ms:
+          description: Time spent servicing interrupts (milliseconds)
+          type: number
+        cpu_time_nice_ms:
+          description: Time spent in low-priority user mode (milliseconds)
+          type: number
+        cpu_time_softirq_ms:
+          description: Time spent servicing softirqs (milliseconds)
+          type: number
+        cpu_time_steal_ms:
+          description: Time stolen (milliseconds)
+          type: number
+        cpu_time_system_ms:
+          description: Time spent in system mode (milliseconds)
+          type: number
+        cpu_time_user_ms:
+          description: Time spent in user mode (milliseconds)
+          type: number
+        delta:
+          description: Number of network operations applied during state transition
+          type: number
+        dhcp_leases:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_snapshot_dhcp_lease'
+        disks:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_snapshot_disk'
+        epsilon:
+          description: Simulated number of network operations applied during state transition
+          type: number
+        ha_state:
+          description: Name of high availability state
+          type: string
+        ha_value:
+          description: Numeric value associated with high availability state (0 = disabled, 1 = active, 2 = standby, 3 = stopped, 4 = fault)
+          type: number
+        interfaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_snapshot_interface'
+        io_pressure_full_10s:
+          description: Percentage of time over a 10 second window that all tasks were stalled
+          type: number
+        io_pressure_full_300s:
+          description: Percentage of time over a 5 minute window that all tasks were stalled
+          type: number
+        io_pressure_full_60s:
+          description: Percentage of time over a 1 minute window that all tasks were stalled
+          type: number
+        io_pressure_full_total_us:
+          description: Total stall time (microseconds)
+          type: number
+        io_pressure_some_10s:
+          description: Percentage of time over a 10 second window that some tasks were stalled
+          type: number
+        io_pressure_some_300s:
+          description: Percentage of time over a 3 minute window that some tasks were stalled
+          type: number
+        io_pressure_some_60s:
+          description: Percentage of time over a 1 minute window that some tasks were stalled
+          type: number
+        io_pressure_some_total_us:
+          description: Total stall time (microseconds)
+          type: number
+        kernel_btime:
+          description: Boot time (seconds since Unix epoch)
+          type: number
+        kernel_ctxt:
+          description: Number of context switches that the system underwent
+          type: number
+        kernel_processes:
+          description: Number of forks since boot
+          type: number
+        kernel_processes_blocked:
+          description: Number of processes blocked waiting for I/O
+          type: number
+        kernel_processes_running:
+          description: Number of processes in runnable state
+          type: number
+        load_average_15m:
+          description: The fifteen-minute load average
+          type: number
+        load_average_1m:
+          description: The one-minute load average
+          type: number
+        load_average_5m:
+          description: The five-minute load average
+          type: number
+        load_average_cur:
+          description: Number of currently runnable kernel scheduling entities
+          type: number
+        load_average_max:
+          description: Number of kernel scheduling entities that currently exist on the system
+          type: number
+        memory_active_bytes:
+          description: Memory that has been used more recently
+          type: number
+        memory_anon_hugepages_bytes:
+          description: Non-file backed huge pages mapped into user-space page tables
+          type: number
+        memory_anon_pages_bytes:
+          description: Non-file backed pages mapped into user-space page tables
+          type: number
+        memory_available_bytes:
+          description: Estimate of how much memory is available for starting new applications
+          type: number
+        memory_bounce_bytes:
+          description: Memory used for block device bounce buffers
+          type: number
+        memory_buffers_bytes:
+          description: Relatively temporary storage for raw disk blocks
+          type: number
+        memory_cached_bytes:
+          description: In-memory cache for files read from the disk
+          type: number
+        memory_cma_free_bytes:
+          description: Free CMA (Contiguous Memory Allocator) pages
+          type: number
+        memory_cma_total_bytes:
+          description: Total CMA (Contiguous Memory Allocator) pages
+          type: number
+        memory_commit_limit_bytes:
+          description: Total amount of memory currently available to be allocated on the system
+          type: number
+        memory_committed_as_bytes:
+          description: Amount of memory presently allocated on the system
+          type: number
+        memory_dirty_bytes:
+          description: Memory which is waiting to get written back to the disk
+          type: number
+        memory_free_bytes:
+          description: The sum of LowFree and HighFree
+          type: number
+        memory_high_free_bytes:
+          description: Amount of free highmem
+          type: number
+        memory_high_total_bytes:
+          description: Total amount of highmem
+          type: number
+        memory_hugepages_free:
+          description: The number of huge pages in the pool that are not yet allocated
+          type: number
+        memory_hugepages_rsvd:
+          description: Number of huge pages for which a commitment has been made, but no allocation has yet been made
+          type: number
+        memory_hugepages_surp:
+          description: Number of huge pages in the pool above the threshold
+          type: number
+        memory_hugepages_total:
+          description: The size of the pool of huge pages
+          type: number
+        memory_hugepagesize_bytes:
+          description: The size of huge pages
+          type: number
+        memory_inactive_bytes:
+          description: Memory which has been less recently used
+          type: number
+        memory_k_reclaimable_bytes:
+          description: Kernel allocations that the kernel will attempt to reclaim under memory pressure
+          type: number
+        memory_kernel_stack_bytes:
+          description: Amount of memory allocated to kernel stacks
+          type: number
+        memory_low_free_bytes:
+          description: Amount of free lowmem
+          type: number
+        memory_low_total_bytes:
+          description: Total amount of lowmem
+          type: number
+        memory_mapped_bytes:
+          description: Files which have been mapped into memory
+          type: number
+        memory_page_tables_bytes:
+          description: Amount of memory dedicated to the lowest level of page tables
+          type: number
+        memory_per_cpu_bytes:
+          description: Memory allocated to the per-cpu alloctor used to back per-cpu allocations
+          type: number
+        memory_pressure_full_10s:
+          description: Percentage of time over a 10 second window that all tasks were stalled
+          type: number
+        memory_pressure_full_300s:
+          description: Percentage of time over a 5 minute window that all tasks were stalled
+          type: number
+        memory_pressure_full_60s:
+          description: Percentage of time over a 1 minute window that all tasks were stalled
+          type: number
+        memory_pressure_full_total_us:
+          description: Total stall time (microseconds)
+          type: number
+        memory_pressure_some_10s:
+          description: Percentage of time over a 10 second window that some tasks were stalled
+          type: number
+        memory_pressure_some_300s:
+          description: Percentage of time over a 5 minute window that some tasks were stalled
+          type: number
+        memory_pressure_some_60s:
+          description: Percentage of time over a 1 minute window that some tasks were stalled
+          type: number
+        memory_pressure_some_total_us:
+          description: Total stall time (microseconds)
+          type: number
+        memory_s_reclaimable_bytes:
+          description: Part of slab that can be reclaimed on memory pressure
+          type: number
+        memory_s_unreclaim_bytes:
+          description: Part of slab that cannot be reclaimed on memory pressure
+          type: number
+        memory_secondary_page_tables_bytes:
+          description: Amount of memory dedicated to the lowest level of page tables
+          type: number
+        memory_shmem_bytes:
+          description: Amount of memory consumed by tmpfs
+          type: number
+        memory_shmem_hugepages_bytes:
+          description: Memory used by shmem and tmpfs, allocated with huge pages
+          type: number
+        memory_shmem_pmd_mapped_bytes:
+          description: Shared memory mapped into user space with huge pages
+          type: number
+        memory_slab_bytes:
+          description: In-kernel data structures cache
+          type: number
+        memory_swap_cached_bytes:
+          description: Memory swapped out and back in while still in swap file
+          type: number
+        memory_swap_free_bytes:
+          description: Amount of swap space that is currently unused
+          type: number
+        memory_swap_total_bytes:
+          description: Total amount of swap space available
+          type: number
+        memory_total_bytes:
+          description: Total usable RAM
+          type: number
+        memory_vmalloc_chunk_bytes:
+          description: Largest contiguous block of vmalloc area which is free
+          type: number
+        memory_vmalloc_total_bytes:
+          description: Total size of vmalloc memory area
+          type: number
+        memory_vmalloc_used_bytes:
+          description: Amount of vmalloc area which is used
+          type: number
+        memory_writeback_bytes:
+          description: Memory which is actively being written back to the disk
+          type: number
+        memory_writeback_tmp_bytes:
+          description: Memory used by FUSE for temporary writeback buffers
+          type: number
+        memory_z_swap_bytes:
+          description: Memory consumed by the zswap backend, compressed
+          type: number
+        memory_z_swapped_bytes:
+          description: Amount of anonymous memory stored in zswap, uncompressed
+          type: number
+        mounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_snapshot_mount'
+        netdevs:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_snapshot_netdev'
+        platform:
+          description: Platform identifier
+          type: string
+        routes:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_snapshot_route'
+        site_id:
+          description: Site identifier
+          type: string
+        snmp_icmp_in_addr_mask_reps:
+          description: Number of ICMP Address Mask Reply messages received
+          type: number
+        snmp_icmp_in_addr_masks:
+          description: Number of ICMP Address Mask Request messages received
+          type: number
+        snmp_icmp_in_csum_errors:
+          description: Number of ICMP messages received with bad checksums
+          type: number
+        snmp_icmp_in_dest_unreachs:
+          description: Number of ICMP Destination Unreachable messages received
+          type: number
+        snmp_icmp_in_echo_reps:
+          description: Number of ICMP Echo Reply messages received
+          type: number
+        snmp_icmp_in_echos:
+          description: Number of ICMP Echo (request) messages received
+          type: number
+        snmp_icmp_in_errors:
+          description: Number of ICMP messages received with ICMP-specific errors
+          type: number
+        snmp_icmp_in_msgs:
+          description: Number of ICMP messages received
+          type: number
+        snmp_icmp_in_parm_probs:
+          description: Number of ICMP Parameter Problem messages received
+          type: number
+        snmp_icmp_in_redirects:
+          description: Number of ICMP Redirect messages received
+          type: number
+        snmp_icmp_in_src_quenchs:
+          description: Number of ICMP Source Quench messages received
+          type: number
+        snmp_icmp_in_time_excds:
+          description: Number of ICMP Time Exceeded messages received
+          type: number
+        snmp_icmp_in_timestamp_reps:
+          description: Number of ICMP Address Mask Request messages received
+          type: number
+        snmp_icmp_in_timestamps:
+          description: Number of ICMP Timestamp (request) messages received
+          type: number
+        snmp_icmp_out_addr_mask_reps:
+          description: Number of ICMP Address Mask Reply messages sent
+          type: number
+        snmp_icmp_out_addr_masks:
+          description: Number of ICMP Address Mask Request messages sent
+          type: number
+        snmp_icmp_out_dest_unreachs:
+          description: Number of ICMP Destination Unreachable messages sent
+          type: number
+        snmp_icmp_out_echo_reps:
+          description: Number of ICMP Echo Reply messages sent
+          type: number
+        snmp_icmp_out_echos:
+          description: Number of ICMP Echo (request) messages sent
+          type: number
+        snmp_icmp_out_errors:
+          description: Number of ICMP messages which this entity did not send due to ICMP-specific errors
+          type: number
+        snmp_icmp_out_msgs:
+          description: Number of ICMP messages attempted to send
+          type: number
+        snmp_icmp_out_parm_probs:
+          description: Number of ICMP Parameter Problem messages sent
+          type: number
+        snmp_icmp_out_redirects:
+          description: Number of ICMP Redirect messages sent
+          type: number
+        snmp_icmp_out_src_quenchs:
+          description: Number of ICMP Source Quench messages sent
+          type: number
+        snmp_icmp_out_time_excds:
+          description: Number of ICMP Time Exceeded messages sent
+          type: number
+        snmp_icmp_out_timestamp_reps:
+          description: Number of ICMP Timestamp Reply messages sent
+          type: number
+        snmp_icmp_out_timestamps:
+          description: Number of ICMP Timestamp (request) messages sent
+          type: number
+        snmp_ip_default_ttl:
+          description: Default value of the Time-To-Live field of the IP header
+          type: number
+        snmp_ip_forw_datagrams:
+          description: Number of datagrams forwarded to their final destination
+          type: number
+        snmp_ip_forwarding_enabled:
+          description: Set when acting as an IP gateway
+          type: boolean
+        snmp_ip_frag_creates:
+          description: Number of datagrams generated by fragmentation
+          type: number
+        snmp_ip_frag_fails:
+          description: Number of datagrams discarded because fragmentation failed
+          type: number
+        snmp_ip_frag_oks:
+          description: Number of datagrams successfully fragmented
+          type: number
+        snmp_ip_in_addr_errors:
+          description: Number of input datagrams discarded due to errors in the IP address
+          type: number
+        snmp_ip_in_delivers:
+          description: Number of input datagrams successfully delivered to IP user-protocols
+          type: number
+        snmp_ip_in_discards:
+          description: Number of input datagrams otherwise discarded
+          type: number
+        snmp_ip_in_hdr_errors:
+          description: Number of input datagrams discarded due to errors in the IP header
+          type: number
+        snmp_ip_in_receives:
+          description: Number of input datagrams received from interfaces
+          type: number
+        snmp_ip_in_unknown_protos:
+          description: Number of input datagrams discarded due unknown or unsupported protocol
+          type: number
+        snmp_ip_out_discards:
+          description: Number of output datagrams otherwise discarded
+          type: number
+        snmp_ip_out_no_routes:
+          description: Number of output datagrams discarded because no route matched
+          type: number
+        snmp_ip_out_requests:
+          description: Number of datagrams supplied for transmission
+          type: number
+        snmp_ip_reasm_fails:
+          description: Number of failures detected by the reassembly algorithm
+          type: number
+        snmp_ip_reasm_oks:
+          description: Number of datagrams successfully reassembled
+          type: number
+        snmp_ip_reasm_reqds:
+          description: Number of fragments received which needed to be reassembled
+          type: number
+        snmp_ip_reasm_timeout:
+          description: Number of seconds fragments are held while awaiting reassembly
+          type: number
+        snmp_tcp_active_opens:
+          description: Number of times TCP transitions to SYN-SENT from CLOSED
+          type: number
+        snmp_tcp_attempt_fails:
+          description: Number of times TCP transitions to CLOSED from SYN-SENT or SYN-RCVD, plus transitions to LISTEN from SYN-RCVD
+          type: number
+        snmp_tcp_curr_estab:
+          description: Number of TCP connections in ESTABLISHED or CLOSE-WAIT
+          type: number
+        snmp_tcp_estab_resets:
+          description: Number of times TCP transitions to CLOSED from ESTABLISHED or CLOSE-WAIT
+          type: number
+        snmp_tcp_in_csum_errors:
+          description: Number of TCP segments received with checksum errors
+          type: number
+        snmp_tcp_in_errs:
+          description: Number of TCP segments received in error
+          type: number
+        snmp_tcp_in_segs:
+          description: Number of TCP segments received
+          type: number
+        snmp_tcp_max_conn:
+          description: Limit on the total number of TCP connections
+          type: number
+        snmp_tcp_out_rsts:
+          description: Number of TCP segments sent with RST flag
+          type: number
+        snmp_tcp_out_segs:
+          description: Number of TCP segments sent
+          type: number
+        snmp_tcp_passive_opens:
+          description: Number of times TCP transitions to SYN-RCVD from LISTEN
+          type: number
+        snmp_tcp_retrans_segs:
+          description: Number of TCP segments retransmitted
+          type: number
+        snmp_tcp_rto_max:
+          description: Maximum value permitted by a TCP implementation for the retransmission timeout (milliseconds)
+          type: number
+        snmp_tcp_rto_min:
+          description: Minimum value permitted by a TCP implementation for the retransmission timeout (milliseconds)
+          type: number
+        snmp_udp_in_datagrams:
+          description: Number of UDP datagrams delivered to UDP applications
+          type: number
+        snmp_udp_in_errors:
+          description: Number of UDP datagrams failed to be delivered for reasons other than lack of application at the destination port
+          type: number
+        snmp_udp_no_ports:
+          description: Number of UDP datagrams received for which there was not application at the destination port
+          type: number
+        snmp_udp_out_datagrams:
+          description: Number of UDP datagrams sent
+          type: number
+        system_boot_time_s:
+          description: Boottime of the system (seconds since the Unix epoch)
+          type: number
+        t:
+          description: Time the Snapshot was recorded (seconds since the Unix epoch)
+          type: number
+        thermals:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_snapshot_thermal'
+        tunnels:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_snapshot_tunnel'
+        uptime_idle_ms:
+          description: Sum of how much time each core has spent idle
+          type: number
+        uptime_total_ms:
+          description: Uptime of the system, including time spent in suspend
+          type: number
+        v:
+          description: Version
+          type: string
+      required:
+      - t
+      - v
+      - count_reclaim_failures
+      - count_reclaimed_paths
+      - count_record_failed
+      - count_transmit_failures
+    mconn_bad_response:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn_response'
+      - properties:
+          errors:
+            type: array
+            items:
+              $ref: '#/components/schemas/mconn_coded_message'
+            minLength: 1
+          result:
+            $ref: '#/components/schemas/mconn_none'
+        type: object
+    mconn_connector_interrupts_list_response:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn_good_response'
+      - properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/mconn_connector_interrupts_result'
+        type: object
+    mconn-telemetry_snapshot_metadata:
+      type: object
+      properties:
+        a:
+          description: Time the Snapshot was collected (seconds since the Unix epoch)
+          type: number
+        t:
+          description: Time the Snapshot was recorded (seconds since the Unix epoch)
+          type: number
+      required:
+      - a
+      - t
+    mconn_customer_connectors_update_request:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn_customer_connector_fields'
+      - properties:
+          provision_license:
+            description: When true, regenerate license key for the connector.
+            type: boolean
+        type: object
+    mconn-telemetry_customer_events_list_result:
+      type: object
+      properties:
+        count:
+          type: number
+        cursor:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_event_metadata'
+      required:
+      - items
+      - count
+    mconn-telemetry_coded_message:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+      required:
+      - code
+      - message
+    mconn-telemetry_recorded_event:
+      description: Recorded Event
+      type: object
+      properties:
+        e:
+          $ref: '#/components/schemas/mconn-telemetry_event'
+        n:
+          description: Sequence number, used to order events with the same timestamp
+          type: number
+        t:
+          description: Time the Event was recorded (seconds since the Unix epoch)
+          type: number
+        v:
+          description: Version
+          type: string
+      required:
+      - t
+      - n
+      - e
+    mconn_customer_connectors_update_response:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn_good_response'
+      - properties:
+          result:
+            $ref: '#/components/schemas/mconn_customer_connector'
+        type: object
+    mconn_connector_interrupts_result:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn_interrupt'
+      - properties:
+          submitted_at:
+            type: string
+          triggered_at:
+            type: string
+        required:
+        - submitted_at
+        type: object
+    mconn-telemetry_customer_events_latest_get_success:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn-telemetry_envelope'
+      - properties:
+          result:
+            $ref: '#/components/schemas/mconn-telemetry_customer_events_latest_get_result'
+        required:
+        - result
+        type: object
+    mconn_customer_device:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/mconn_uuid'
+        serial_number:
+          type: string
+          x-auditable: true
+        type:
+          type: string
+          enum:
+          - MANAGED
+          - LICENSED
+          x-auditable: true
+      required:
+      - id
+    mconn-telemetry_customer_snapshots_get_success:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn-telemetry_envelope'
+      - properties:
+          result:
+            $ref: '#/components/schemas/mconn-telemetry_snapshot'
+        required:
+        - result
+        type: object
+    mconn-telemetry_snapshot_thermal:
+      description: Snapshot Thermal
+      type: object
+      properties:
+        critical_celcius:
+          description: Critical failure temperature of the component (degrees Celsius)
+          type: number
+        current_celcius:
+          description: Current temperature of the component (degrees Celsius)
+          type: number
+        label:
+          description: Sensor identifier for the component
+          type: string
+        max_celcius:
+          description: Maximum temperature of the component (degrees Celsius)
+          type: number
+      required:
+      - label
+    mconn_customer_device_options:
+      description: Exactly one of id, serial_number, or provision_license must be provided.
+      type: object
+      properties:
+        id:
+          type: string
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        provision_license:
+          description: When true, create and provision a new licence key for the connector.
+          type: boolean
+        serial_number:
+          type: string
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+      maxProperties: 1
+      minProperties: 1
+    mconn_customer_connectors_delete_response:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn_good_response'
+      - properties:
+          result:
+            $ref: '#/components/schemas/mconn_customer_connector'
+        type: object
+    mconn-telemetry_event_metadata:
+      type: object
+      properties:
+        a:
+          description: Time the Event was collected (seconds since the Unix epoch)
+          type: number
+        k:
+          description: Kind
+          type: string
+        n:
+          description: Sequence number, used to order events with the same timestamp
+          type: number
+        t:
+          description: Time the Event was recorded (seconds since the Unix epoch)
+          type: number
+      required:
+      - a
+      - t
+      - n
+      - k
+    mconn-telemetry_customer_snapshots_latest_get_result:
+      type: object
+      properties:
+        count:
+          type: number
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_snapshot'
+      required:
+      - items
+      - count
+    mconn-telemetry_customer_snapshots_latest_get_success:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn-telemetry_envelope'
+      - properties:
+          result:
+            $ref: '#/components/schemas/mconn-telemetry_customer_snapshots_latest_get_result'
+        required:
+        - result
+        type: object
+    mconn-telemetry_snapshot_dhcp_lease:
+      description: Snapshot DHCP lease
+      type: object
+      properties:
+        client_id:
+          description: Client ID of the device the IP Address was leased to
+          type: string
+        expiry_time:
+          description: Expiry time of the DHCP lease (seconds since the Unix epoch)
+          type: number
+        hostname:
+          description: Hostname of the device the IP Address was leased to
+          type: string
+        interface_name:
+          description: Name of the network interface
+          type: string
+        ip_address:
+          description: IP Address that was leased
+          type: string
+        mac_address:
+          description: MAC Address of the device the IP Address was leased to
+          type: string
+      required:
+      - interface_name
+      - expiry_time
+      - mac_address
+      - ip_address
+      - hostname
+      - client_id
+    mconn_customer_connector:
+      type: object
+      properties:
+        activated:
+          type: boolean
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        device:
+          $ref: '#/components/schemas/mconn_customer_device'
+        id:
+          $ref: '#/components/schemas/mconn_uuid'
+        interrupt_window_days_of_week:
+          description: Allowed days of the week for upgrades. Default is all days.
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn_day_of_week'
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        interrupt_window_duration_hours:
+          type: number
+          maximum: 24
+          minimum: 1
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        interrupt_window_embargo_dates:
+          description: List of dates (YYYY-MM-DD) when upgrades are blocked.
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn_embargo_date'
+          maxItems: 100
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        interrupt_window_hour_of_day:
+          type: number
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        last_heartbeat:
+          type: string
+          x-auditable: true
+        last_seen_version:
+          type: string
+          x-auditable: true
+        last_updated:
+          type: string
+          x-auditable: true
+        license_key:
+          type: string
+          x-stainless-terraform-configurability: computed_optional
+        notes:
+          type: string
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+        timezone:
+          type: string
+          x-auditable: true
+          x-stainless-terraform-configurability: computed_optional
+      required:
+      - id
+      - notes
+      - activated
+      - last_updated
+      - timezone
+      - interrupt_window_hour_of_day
+      - interrupt_window_duration_hours
+      - interrupt_window_days_of_week
+      - interrupt_window_embargo_dates
+    mconn_coded_message:
+      type: object
+      properties:
+        code:
+          type: integer
+          minimum: 1000
+        message:
+          type: string
+      required:
+      - code
+      - message
+    mconn-telemetry_snapshot_disk:
+      description: Snapshot Disk
+      type: object
+      properties:
+        discards:
+          description: Discards completed successfully
+          type: number
+        discards_merged:
+          description: Discards merged
+          type: number
+        flushes:
+          description: Flushes completed successfully
+          type: number
+        in_progress:
+          description: I/Os currently in progress
+          type: number
+        major:
+          description: Device major number
+          type: number
+        merged:
+          description: Reads merged
+          type: number
+        minor:
+          description: Device minor number
+          type: number
+        name:
+          description: Device name
+          type: string
+        reads:
+          description: Reads completed successfully
+          type: number
+        sectors_discarded:
+          description: Sectors discarded
+          type: number
+        sectors_read:
+          description: Sectors read successfully
+          type: number
+        sectors_written:
+          description: Sectors written successfully
+          type: number
+        time_discarding_ms:
+          description: Time spent discarding (milliseconds)
+          type: number
+        time_flushing_ms:
+          description: Time spent flushing (milliseconds)
+          type: number
+        time_in_progress_ms:
+          description: Time spent doing I/Os (milliseconds)
+          type: number
+        time_reading_ms:
+          description: Time spent reading (milliseconds)
+          type: number
+        time_writing_ms:
+          description: Time spent writing (milliseconds)
+          type: number
+        weighted_time_in_progress_ms:
+          description: Weighted time spent doing I/Os (milliseconds)
+          type: number
+        writes:
+          description: Writes completed
+          type: number
+        writes_merged:
+          description: Writes merged
+          type: number
+      required:
+      - in_progress
+      - major
+      - merged
+      - minor
+      - name
+      - reads
+      - sectors_read
+      - sectors_written
+      - time_in_progress_ms
+      - time_reading_ms
+      - time_writing_ms
+      - weighted_time_in_progress_ms
+      - writes
+      - writes_merged
+    mconn_connector_interrupts_create_response:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/mconn_good_response'
+      - properties:
+          result:
+            $ref: '#/components/schemas/mconn_connector_interrupts_result'
+        type: object
+    mconn_embargo_date:
+      type: string
+      pattern: ^\d{4}-\d{2}-\d{2}$
+    mconn-telemetry_snapshot_interface:
+      description: Snapshot Interface
+      type: object
+      properties:
+        health_reason:
+          description: Comma-separated list of reasons for health score
+          type: string
+        health_score:
+          description: Aggregate health score (0-100)
+          type: number
+        ip_addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_snapshot_interface_address'
+        name:
+          description: Name of the network interface
+          type: string
+        operstate:
+          description: UP/DOWN state of the network interface
+          type: string
+        speed:
+          description: Speed of the network interface (bits per second)
+          type: number
+      required:
+      - name
+      - operstate
+    mconn-telemetry_snapshot_netdev:
+      description: Snapshot Netdev
+      type: object
+      properties:
+        name:
+          description: Name of the network device
+          type: string
+        recv_bytes:
+          description: Total bytes received
+          type: number
+        recv_compressed:
+          description: Compressed packets received
+          type: number
+        recv_drop:
+          description: Packets dropped
+          type: number
+        recv_errs:
+          description: Bad packets received
+          type: number
+        recv_fifo:
+          description: FIFO overruns
+          type: number
+        recv_frame:
+          description: Frame alignment errors
+          type: number
+        recv_multicast:
+          description: Multicast packets received
+          type: number
+        recv_packets:
+          description: Total packets received
+          type: number
+        sent_bytes:
+          description: Total bytes transmitted
+          type: number
+        sent_carrier:
+          description: Number of packets not sent due to carrier errors
+          type: number
+        sent_colls:
+          description: Number of collisions
+          type: number
+        sent_compressed:
+          description: Number of compressed packets transmitted
+          type: number
+        sent_drop:
+          description: Number of packets dropped during transmission
+          type: number
+        sent_errs:
+          description: Number of transmission errors
+          type: number
+        sent_fifo:
+          description: FIFO overruns
+          type: number
+        sent_packets:
+          description: Total packets transmitted
+          type: number
+      required:
+      - name
+      - recv_bytes
+      - recv_packets
+      - recv_errs
+      - recv_drop
+      - recv_fifo
+      - recv_frame
+      - recv_compressed
+      - recv_multicast
+      - sent_bytes
+      - sent_packets
+      - sent_errs
+      - sent_drop
+      - sent_fifo
+      - sent_colls
+      - sent_carrier
+      - sent_compressed
+    mconn-telemetry_snapshot_interface_address:
+      description: Snapshot Interface Address
+      type: object
+      properties:
+        interface_name:
+          description: Name of the network interface
+          type: string
+        ip_address:
+          description: IP address of the network interface
+          type: string
+      required:
+      - interface_name
+      - ip_address
+    mconn-telemetry_snapshot_mount:
+      description: Snapshot Mount
+      type: object
+      properties:
+        available_bytes:
+          description: Available disk size (bytes)
+          type: number
+        available_inodes:
+          description: Available inodes on filesystem
+          type: number
+        file_system:
+          description: File system on disk (EXT4, NTFS, etc.)
+          type: string
+        is_read_only:
+          description: Determines whether the disk is read-only
+          type: boolean
+        is_removable:
+          description: Determines whether the disk is removable
+          type: boolean
+        kind:
+          description: Kind of disk (HDD, SSD, etc.)
+          type: string
+        mount_point:
+          description: Path where disk is mounted
+          type: string
+        name:
+          description: Name of the disk mount
+          type: string
+        total_bytes:
+          description: Total disk size (bytes)
+          type: number
+        total_inodes:
+          description: Total inodes on filesystem
+          type: number
+      required:
+      - name
+      - kind
+      - file_system
+      - mount_point
+    mconn_uuid:
+      type: string
+      x-auditable: true
+    mconn-telemetry_snapshot_route:
+      description: Snapshot Route
+      type: object
+      properties:
+        destination:
+          description: Route destination as default or an IPv4 CIDR
+          type: string
+        gateway:
+          description: Gateway address for the next hop
+          type: string
+        interface_name:
+          description: Interface used by the next hop
+          type: string
+        kind:
+          description: 'Routing decision type: tunnel, breakout, or lan'
+          type: string
+        metric:
+          description: Route metric; lower metrics are preferred
+          type: number
+        weight:
+          description: Relative weight within an equal-cost route
+          type: number
+      required:
+      - kind
+      - destination
+      - metric
+      - interface_name
+    mconn-telemetry_envelope:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_coded_message'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_coded_message'
+        success:
+          type: boolean
+      required:
+      - success
+    mconn-telemetry_customer_snapshots_list_result:
+      type: object
+      properties:
+        count:
+          type: number
+        cursor:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/mconn-telemetry_snapshot_metadata'
+      required:
+      - items
+      - count
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-forge-commands:
+  abuse-reports:
+    description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
+    groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
+      emails:
+        description: Emails sent for abuse reports
+      mitigations:
+        description: Mitigation actions taken in response to abuse reports
+  accounts:
+    description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
+    groups:
+      applications:
+        description: Applications operations
+      categories:
+        description: Categories operations
+      organizations:
+        description: Move accounts between organizations
+      profile:
+        description: View and manage the profile for a Cloudflare account
+      roles:
+        description: View the roles available for assigning to account members, each defining a set of permissions
+      subscriptions:
+        description: View and manage plan subscriptions attached to this account
+      tokens:
+        description: Create and manage scoped API tokens for programmatic access to the Cloudflare API
+  ai-gateway:
+    description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
+    groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
+      datasets:
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
+      dynamic-routing:
+        description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
+      evaluation-types:
+        description: 'Deprecated: list the evaluator types that evaluations can use'
+      evaluations:
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
+      logs:
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
+  ai-search:
+    description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
+    groups:
+      items:
+        description: Content indexed by AI Search instances
+      jobs:
+        description: Indexing job lifecycle for AI Search instances
+      namespace:
+        description: Logical groupings for organizing AI Search instances
+      tokens:
+        description: Credentials used by AI Search instances
+  ai-security:
+    description: Detect prompt injection, PII, and unsafe topics in traffic to your AI applications
+    groups:
+      custom-topics:
+        description: Organization-specific topic categories used by AI Security for Apps content detection
+  analytics:
+    description: Zone-level traffic analytics — dashboard summaries, per-colo breakdowns, and Argo latency metrics
+    groups:
+      colo:
+        description: Per-data-center (colo) traffic analytics breakdown for the zone
+      dashboard:
+        description: Aggregated zone dashboard analytics — requests, bandwidth, threats, and page views
+      latency:
+        description: Argo Smart Routing latency analytics showing time-to-first-byte improvements
+  argo:
+    description: Network optimization features that speed up and improve reliability of traffic to your origins
+    groups:
+      smart-routing:
+        description: Route traffic through the fastest network paths to your origin using real-time latency data
+      tiered-caching:
+        description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  billing:
+    description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
+    groups:
+      profiles:
+        description: Billing profile with payment method, address, and invoice preferences
+      usage:
+        description: Metered usage data for billed services — requests, bandwidth, and feature consumption
+  botnet-feed:
+    description: Botnet threat intelligence feeds — IP and ASN-level data on known command-and-control infrastructure
+    groups:
+      asn:
+        description: ASN-level botnet activity data showing networks with known C2 infrastructure
+      configs:
+        description: Botnet feed subscription configuration and notification preferences
+  builds:
+    description: Build and deploy Workers from connected repositories, then inspect build status and logs.
+    groups:
+      deploy-hooks:
+        description: Manage branch-specific HTTP hooks that start builds.
+      limits:
+        description: View build-minute availability and refresh information.
+      logs:
+        description: Retrieve build logs.
+      repos:
+        description: Manage source repository connections for Workers Builds.
+      tokens:
+        description: Manage credentials used by Workers Builds to deploy Workers.
+      triggers:
+        description: Configure how repository changes build and deploy Workers.
+      versions:
+        description: Find builds associated with Worker versions.
+      workers:
+        description: Manage repository-backed build configuration for Workers.
+  cache:
+    description: Purge cached content and configure Cache Reserve, tiered caching, and variant serving
+    groups:
+      origin-cloud-regions:
+        description: Manage Origin Cloud Regions routing and failover configurations
+      settings:
+        description: Configure Cache Reserve, tiered caching, and variant serving
+      settings.regional-tiered-cache:
+        description: Restrict tiered cache topology to data centers within a specific geographic region
+      settings.reserve:
+        description: Persistent storage tier that keeps cached assets even after eviction from edge caches
+      settings.smart-tiered-cache:
+        description: Automatically determine the best upper-tier data centers for tiered cache topology
+      settings.variants:
+        description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
+  client-side-security:
+    description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
+    groups:
+      connections:
+        description: Third-party connections made by scripts on your pages — track data exfiltration risks
+      cookies:
+        description: Cookies set by your pages with classification and same-site attribute tracking
+      policies:
+        description: Content Security Policies that control which scripts and connections are allowed on your pages
+      scripts:
+        description: JavaScript files detected on your pages with change tracking and malicious code detection
+      settings:
+        description: Fine tune Client-Side Security behaviors
+  cloud-connector:
+    description: Route traffic from Cloudflare directly to cloud provider services (AWS, Azure, GCP) without origin servers
+    groups:
+      rules:
+        description: Routing rules that map request patterns to cloud provider endpoints
+  cloudforce-one:
+    description: Detection rule management APIs
+    groups:
+      binary-storage:
+        description: Upload and retrieve malware samples and suspicious binaries for analysis
+      requests:
+        description: Additional request operations — priority listing and asset creation
+      rules:
+        description: Rule management operations
+        groups:
+          approvals:
+            description: Approval workflow operations
+          email:
+            description: Email rule operations
+          exemptions:
+            description: Exemption rule operations
+          managed:
+            description: Managed rule operations
+          stats:
+            description: Rule statistics operations
+          tree:
+            description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
+  containers:
+    description: Deploy and manage Containers applications on Cloudflare's global network
+    groups:
+      applications:
+        description: Manage Containers applications
+      applications.instances:
+        description: Inspect Containers instances belonging to applications
+      applications.rollouts:
+        description: Manage rollouts for scheduler-backed applications
+      applications.versions:
+        description: Inspect versions of scheduler-backed applications
+      registries:
+        description: Manage Containers image registries
+      registries.credentials:
+        description: Generate image registry credentials
+  content-scan:
+    description: Malicious uploads detection, scan uploaded content in HTTP requests for malware and malicious payloads
+    groups:
+      expressions:
+        description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
+  custom-pages:
+    description: Manage custom error and challenge pages and their assets for accounts and zones
+    groups:
+      account-custom-pages:
+        description: Manage account-level custom pages
+      account-custom-pages.preview-tokens:
+        description: Preview tokens for account-level custom pages
+      assets:
+        description: Manage account- and zone-level custom assets
+      zone-custom-pages:
+        description: Manage zone-level custom pages
+      zone-custom-pages.preview-tokens:
+        description: Preview tokens for zone-level custom pages
+  d1:
+    description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
+    groups:
+      time-travel:
+        description: use specific point-in-time backups of your D1 database
+        x-forge-epilogue: For more information about Time Travel, see https://developers.cloudflare.com/d1/reference/time-travel
+  diagnostics:
+    description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
+    groups:
+      endpoint-healthchecks:
+        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+      traceroutes:
+        description: Run traceroutes from Cloudflare data centers to diagnose network path issues
+  email-routing:
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
+    groups:
+      addresses:
+        description: Verified destination email addresses that can receive forwarded mail
+      dns:
+        description: Inspect or unlock the DNS records required by Email Routing
+      rules:
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
+  email-security:
+    description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
+    groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
+      investigate:
+        description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
+      phishguard:
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
+      settings:
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
+      submissions:
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
+  email-sending:
+    description: Send transactional email and manage sending subdomains and their DNS configuration
+    groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
+      subdomains:
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
+  filters:
+    description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
+  firewall:
+    description: Legacy firewall rules, zone lockdowns, access rules, user-agent blocking, and WAF packages
+    groups:
+      access-rules:
+        description: IP-based access rules that allow, block, challenge, or whitelist traffic globally or per-zone
+      lockdowns:
+        description: Zone lockdown rules that restrict access to URLs by IP address or range
+      rules:
+        description: Legacy firewall rules with filter expressions — prefer Rulesets for new configurations
+      ua-rules:
+        description: Block or challenge requests based on the User-Agent header string
+      waf:
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
+      zone-access-rules:
+        description: Zone-scoped IP access rules for blocking or allowing traffic
+  google-tag-gateway:
+    description: Google Tag Gateway operations
+    groups:
+      config:
+        description: Google Tag Gateway config operations
+  healthchecks:
+    description: Standalone health checks that monitor origin server availability from Cloudflare's edge
+    groups:
+      previews:
+        description: Test a health check configuration before deploying it to production
+  hyperdrive:
+    description: Accelerate access to existing databases by caching queries and pooling connections at the edge
+  iam:
+    description: Identity and access management — permission groups, resource groups, user groups, and SSO connectors
+    groups:
+      permission-groups:
+        description: View the permission groups that can be assigned to API tokens and policies
+      resource-groups:
+        description: Define scopes that limit which account resources a policy or token can access
+      sso:
+        description: Configure single sign-on connectors to authenticate account members through an external identity provider
+      user-groups:
+        description: Organize account members into groups for easier permission assignment
+  images:
+    description: Store, resize, and deliver optimized images globally — variants, signing keys, and direct uploads
+    groups:
+      flows:
+        description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
+      keys:
+        description: Manage signing keys for generating private image URLs
+      variants:
+        description: Manage named resize variants for transforming images on delivery
+  intel:
+    description: Threat intelligence lookups — IP reputation, domain info, ASN details, WHOIS, and indicator feeds
+    groups:
+      asn:
+        description: ASN intelligence — ownership, geolocation, and subnet details for autonomous systems
+      attack-surface-report:
+        description: Attack surface intelligence — exposed assets, vulnerabilities, and infrastructure mapping
+      dns:
+        description: Passive DNS data showing historical DNS resolution records for domains
+      domain-history:
+        description: Historical domain registration and categorization changes over time
+      domains:
+        description: Domain intelligence — risk scores, categories, and associated infrastructure
+      indicator-feeds:
+        description: Threat indicator feeds — subscribe to and manage curated lists of malicious IPs, domains, and URLs
+      ip-lists:
+        description: Curated IP lists used for threat detection and policy enforcement
+      ips:
+        description: IP address intelligence — geolocation, risk assessment, and hosting provider details
+      miscategorizations:
+        description: Report and track domain miscategorization corrections
+      whois:
+        description: WHOIS registration data for domains including registrant, registrar, and nameservers
+  k2:
+    description: Durable, ordered event streams that you produce records to and consume from with subscriptions
+    groups:
+      streams:
+        description: K2 streams, their retention, and the HTTP and Workers binding inputs used to produce records
+      streams.subscriptions:
+        description: Subscriptions that consume a K2 stream, with committed-position lag
+  leaked-credential-checks:
+    description: Detect compromised credentials in login requests by checking against known breach databases
+    groups:
+      detections:
+        description: Custom detection locations that tell the WAF where to find usernames and passwords in requests
+  load-balancers:
+    description: Distribute traffic across origin pools with health monitoring, geo-steering, and failover
+    groups:
+      monitor-groups:
+        description: Group monitors together for shared configuration and bulk management
+      monitor-groups.references:
+        description: List references to monitor groups used by load balancer pools
+      monitors:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.previews:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.references:
+        description: Health check configurations that probe origin servers and determine pool availability
+      pools:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.health:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.references:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      previews:
+        description: Preview the result of a health check monitor configuration before applying it
+      regions:
+        description: Geographic regions used for regional pool steering and traffic policies
+      searches:
+        description: Search across all load balancer resources (pools, monitors, load balancers) by name or reference
+  logs:
+    description: Log control, retention, and raw log access — CMB config, ray ID lookups, and received fields
+    groups:
+      control:
+        description: Log control operations
+      received:
+        description: Received log operations
+  magic-network-monitoring:
+    description: Flow-based network traffic monitoring with configurable alerting rules and VPC flow ingestion
+    groups:
+      configs:
+        description: Account-level monitoring configuration — sampling rates, thresholds, and notification settings
+      rules:
+        description: Monitoring rules that define traffic thresholds and trigger alerts or prefix advertisements
+      vpc-flows:
+        description: Ingest VPC flow logs from cloud providers for network visibility and anomaly detection
+  magic-transit:
+    description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
+    groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
+      apps:
+        description: Application-aware traffic policies for Magic WAN that steer traffic by app type
+      bgp-filter-profiles:
+        description: BGP filter profiles for controlling which routes are allowed or denied on Magic Transit tunnels
+      bgp-settings:
+        description: BGP settings for controlling default ASN and route redistribution on Magic Transit tunnels
+      cf-interconnects:
+        description: Cloudflare Network Interconnect (CNI) links for direct physical or virtual peering
+      gre-tunnels:
+        description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
+      ipsec-tunnels:
+        description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
+      routes:
+        description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
+      sites:
+        description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
+  mcp:
+    description: Manage MCP portals and upstream MCP servers for Cloudflare Access AI controls
+    groups:
+      portals:
+        description: Manage MCP portals, attached servers, and Code Mode settings
+      servers:
+        description: Manage upstream MCP servers, credentials, capabilities, and sync state
+  network-interconnects:
+    description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
+    groups:
+      cnis:
+        description: Cloud Network Interconnect (CNI) connections — private links from cloud providers to Cloudflare
+      interconnects:
+        description: Physical cross-connect and partner interconnect sessions with LOA and status tracking
+      settings:
+        description: Account-level interconnect settings and default configurations
+      slots:
+        description: Available interconnect facility slots showing port capacity at Cloudflare data centers
+  organizations:
+    description: Multi-user organizations that group accounts, members, and shared settings under a single entity
+    groups:
+      account-organizations:
+        description: List organizations associated with a specific account
+      accounts:
+        description: Accounts operations
+      members:
+        description: Members operations
+      members-batch-create:
+        description: Members Batch Create operations
+      organization-profile:
+        description: View and update the public profile information for an organization
+      shares:
+        description: Shares operations
+  origin-post-quantum-encryption:
+    description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
+  pages:
+    description: Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains
+    groups:
+      projects:
+        description: Pages projects, deployments, build logs, and custom domain bindings
+  pipelines:
+    description: Ingest, transform, and route event streams into R2, analytics, or other destinations in real time
+    groups:
+      sinks:
+        description: Destinations where pipeline data is written — R2 buckets, HTTP endpoints, or other storage
+      streams:
+        description: Inbound data streams that feed events into a pipeline for processing
+  precursor:
+    description: Precursor settings for a zone
+  queues:
+    description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
+    groups:
+      consumers:
+        description: Workers that automatically receive and process messages from a queue
+      messages:
+        description: Push messages to a queue and pull or acknowledge them from consumers
+      purge:
+        description: Remove all pending messages from a queue
+      subscriptions:
+        description: Manage queue subscriptions for event-driven message routing
+  r2:
+    description: S3-compatible object storage with zero egress fees — buckets, lifecycle rules, event notifications, and data migration
+    groups:
+      buckets:
+        description: Create and configure R2 buckets including CORS, lifecycle, custom domains, event notifications, and object locks
+      buckets.jobs:
+        description: Create and inspect background jobs for an R2 bucket
+      buckets.local-uploads:
+        description: R2 bucket local upload configuration
+      super-slurper:
+        description: Migrate data from external S3-compatible storage into R2 buckets with resumable transfer jobs
+      temporary-credentials:
+        description: Generate short-lived S3-compatible credentials scoped to specific buckets and operations
+  r2-data-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  radar:
+    description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
+    groups:
+      agent-readiness:
+        description: Agent readiness summary statistics across the Cloudflare network
+      ai:
+        description: AI inference trends and model usage statistics across the Cloudflare network
+      annotations:
+        description: Radar annotations marking significant Internet events (outages, cable cuts, etc.)
+      as112:
+        description: AS112 DNS sinkhole statistics — reverse DNS query volumes for private address space
+      attacks:
+        description: DDoS and application-layer attack trends, vectors, and target analysis
+      bgp:
+        description: BGP routing data — prefix announcements, AS-level stats, route leaks, and hijack events
+      bots:
+        description: Internet-wide bot traffic trends, categories, and distribution statistics
+      ct:
+        description: Certificate Transparency log monitoring and newly-issued certificate discovery
+      datasets:
+        description: Downloadable Radar datasets for offline analysis and research
+      dns:
+        description: Global DNS query trends — top domains, resolver stats, and DNSSEC adoption
+      email:
+        description: Email security trends — DMARC/SPF/DKIM adoption, spam, and phishing statistics
+      entities:
+        description: Look up ASNs, IPs, domains, and locations with metadata and traffic summaries
+      geolocations:
+        description: Geographic location metadata used for regional traffic analysis
+      http:
+        description: HTTP protocol trends — TLS versions, HTTP versions, browser share, and OS distribution
+      leaked-credentials:
+        description: Leaked credential detection trends and exposure statistics
+      netflows:
+        description: Network-layer traffic flow data and volumetric trend analysis
+      origins:
+        description: Cloud and hosting origin providers (e.g. Amazon, by region) and their traffic metrics
+      post-quantum:
+        description: Post-quantum encryption adoption and deployment trends across the Internet
+      quality:
+        description: Internet connection quality metrics — speed, latency, and jitter by geography and ASN
+      ranking:
+        description: Top domain rankings based on DNS query popularity across the Cloudflare network
+      robots-txt:
+        description: Robots.txt adoption and crawler directive trends across the web
+      search:
+        description: Search Radar data across IPs, ASNs, domains, and locations
+      tcp-resets-timeouts:
+        description: TCP connection reset and timeout statistics indicating network health issues
+      tlds:
+        description: Top-level domain (TLD) metadata and performance trends
+      traffic-anomalies:
+        description: Detected traffic anomalies and unusual patterns in Internet traffic flows
+      verified-bots:
+        description: Catalog of known good bots (Googlebot, Bingbot, etc.) and their traffic patterns
+  rate-limits:
+    description: Legacy per-zone rate limiting rules — prefer Advanced Rate Limiting in Rulesets for new configurations
+  realtime:
+    description: Real-time audio, video, and data services on Cloudflare's global network
+    groups:
+      kit:
+        description: SDK-backed meetings, participants, recordings, livestreams, and webhooks
+      kit.analytics:
+        description: Usage and livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams:
+        description: Livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams.daily:
+        description: Daily livestream analytics for RealtimeKit applications
+      kit.analytics.usage:
+        description: Usage analytics for RealtimeKit applications
+      kit.apps:
+        description: RealtimeKit applications that group meetings, sessions, and configuration
+      kit.livestreams:
+        description: Independent and meeting-based livestreams and their sessions
+      kit.livestreams.sessions:
+        description: Sessions for RealtimeKit livestreams
+      kit.meetings:
+        description: Meetings, participants, access tokens, and meeting livestreams
+      kit.meetings.active:
+        description: Live meeting state and participant controls
+      kit.meetings.active.polls:
+        description: Polls for active meeting sessions
+      kit.meetings.livestream:
+        description: Livestream operations associated with RealtimeKit meetings
+      kit.meetings.participants:
+        description: Participants in RealtimeKit meetings
+      kit.meetings.participants.tokens:
+        description: Access tokens for RealtimeKit meeting participants
+      kit.presets:
+        description: Reusable meeting configuration for media, permissions, and interface behavior
+      kit.recordings:
+        description: Meeting and participant-track recordings and recording controls
+      kit.recordings.active:
+        description: Active recordings for RealtimeKit meetings
+      kit.recordings.tracks:
+        description: Participant-track recordings for RealtimeKit meetings
+      kit.sessions:
+        description: Historical session data, participants, chat, transcripts, and summaries
+      kit.sessions.chat:
+        description: Chat messages from historical RealtimeKit sessions
+      kit.sessions.livestreams:
+        description: Livestreams associated with historical RealtimeKit sessions
+      kit.sessions.participants:
+        description: Participants in historical RealtimeKit sessions
+      kit.sessions.peers:
+        description: Peer details from historical RealtimeKit sessions
+      kit.sessions.summaries:
+        description: Summaries of historical RealtimeKit sessions
+      kit.sessions.transcripts:
+        description: Transcripts from historical RealtimeKit sessions
+      kit.webhooks:
+        description: Webhook endpoints and supported events for RealtimeKit notifications
+      kit.webhooks.events:
+        description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
+  request-tracers:
+    description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
+    groups:
+      traces:
+        description: Simulate request processing to debug rule matches, transforms, and routing decisions
+  resource-sharing:
+    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    groups:
+      recipients:
+        description: Update share recipients
+      resources:
+        description: Individual resources (zones, configs) that have been shared with recipients
+  rules:
+    description: Resources used by Cloudflare rules and rulesets
+    groups:
+      lists:
+        description: Custom account-level lists of IPs, hostnames, ASNs, or redirects used in rule expressions
+  rum:
+    description: Real User Measurement (Web Analytics) — track page loads, Core Web Vitals, and visitor metrics
+    groups:
+      rules:
+        description: Rules that control which pages and paths are tracked by Web Analytics
+      site-info:
+        description: Web Analytics sites — register domains and get the JavaScript beacon snippet
+  scim:
+    description: SCIM 2.0 provisioning — manage users, groups, and identity provider sync for your account
+    groups:
+      groups:
+        description: Groups operations
+      resource-types:
+        description: Resource Types operations
+      schemas:
+        description: Schemas operations
+      service-provider-config:
+        description: Service Provider Config operations
+      users:
+        description: Users operations
+  secrets-store:
+    description: Centralized secret management — store API keys, tokens, and credentials for use across Workers and other products
+    groups:
+      quota:
+        description: Account quota limits for secrets stores, secrets count, and storage capacity
+      secrets:
+        description: Encrypted key-value secrets within a store. Pass --store-id to scope.
+      stores:
+        description: Secret stores that hold encrypted key-value secrets accessible by Workers and services
+  security-center:
+    description: Security posture dashboard — view and manage security insights, misconfigurations, and vulnerabilities
+    groups:
+      insights:
+        description: Security findings and recommendations across your account — DNS, SSL, WAF misconfigurations, etc.
+      zone-insights:
+        description: Zone-scoped security insights — counts by class, severity, type, and dismissal
+  security-txt:
+    description: Manage the /.well-known/security.txt file that tells security researchers how to report vulnerabilities
+  smart-shield:
+    description: Smart Shield settings, health checks, and cache reserve management
+    groups:
+      cache-reserve-clear:
+        description: Cache Reserve Clear operations
+      health-checks:
+        description: Health checks operations
+  spectrum:
+    description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
+    groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
+      apps:
+        description: Spectrum application configurations that map protocols and ports to origin servers
+  speed:
+    description: Observatory speed tests — run Lighthouse audits, track performance trends, and schedule recurring tests
+    groups:
+      availabilities:
+        description: Check which speed test regions and configurations are available for your zone
+      pages:
+        description: Tested pages with their performance history, trends, and individual test results
+      schedule:
+        description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
+  stream:
+    description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
+    groups:
+      audio-tracks:
+        description: Add, edit, or remove additional audio tracks on a video
+      captions:
+        description: Upload, generate, or retrieve captions and subtitles for videos in multiple languages
+      clip:
+        description: Create a new video clip from an existing video by specifying start and end times
+      copy:
+        description: Import a video from a URL into Stream for processing and delivery
+      direct-upload:
+        description: Generate a tokenized URL that lets end-users upload video directly to Stream
+      downloads:
+        description: Create downloadable MP4 renditions of a video for offline viewing
+      embed:
+        description: Retrieve the HTML embed code snippet for a video
+      keys:
+        description: Signing keys used to generate short-lived signed URLs for private video playback
+      live-inputs:
+        description: Enable and disable live input streams
+      token:
+        description: Generate short-lived signed URL tokens for secure private video playback
+      typed-downloads:
+        description: Type-specific stream download creation and deletion
+      videos:
+        description: Aggregate video storage usage statistics for the account
+      watermarks:
+        description: Watermark profiles that overlay an image on every video in the account
+      webhooks:
+        description: Webhook notifications for video lifecycle events (ready, error, etc.)
+  tenants:
+    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    groups:
+      account-types:
+        description: Account Types operations
+      accounts:
+        description: Accounts operations
+      entitlements:
+        description: Entitlements operations
+      memberships:
+        description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
+  url-scanner:
+    description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
+    groups:
+      response:
+        description: Response operations
+      responses:
+        description: Raw HTTP response data captured during URL scans
+      scan:
+        description: Scan operations
+      scans:
+        description: URL scan requests and results — submit URLs for analysis and retrieve threat verdicts
+  user:
+    description: Your Cloudflare user profile, invitations, organizations, billing, and personal API tokens
+    groups:
+      billing:
+        description: View billing history and payment profile for your user (deprecated — prefer account-level billing)
+      firewall:
+        description: Firewall operations
+      load-balancers.monitors:
+        description: Load Balancers operations
+      load-balancers.monitors.preview:
+        description: Load Balancers operations
+      load-balancers.monitors.references:
+        description: Load Balancers operations
+      load-balancers.pools:
+        description: Load Balancers operations
+      load-balancers.pools.edit.pools:
+        description: Load Balancers operations
+      load-balancers.pools.health:
+        description: Load Balancers operations
+      load-balancers.pools.preview:
+        description: Load Balancers operations
+      load-balancers.pools.references:
+        description: Load Balancers operations
+      load-balancers.preview:
+        description: Load Balancers operations
+      load-balancing-analytics.events:
+        description: Load Balancing Analytics operations
+      subscriptions:
+        description: View and manage zone-level plan subscriptions owned by your user
+      tenants:
+        description: Tenants operations
+      tokens:
+        description: Create and manage personal API tokens scoped to your user for programmatic API access
+  user.analytics:
+    description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
+  waiting-rooms:
+    description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
+    groups:
+      account-waiting-rooms:
+        description: Account-scoped waiting room listing
+      events:
+        description: Scheduled events that temporarily override waiting room settings for sales, launches, etc.
+      page:
+        description: Custom HTML waiting page templates and preview rendering
+      rules:
+        description: Rules that bypass or modify waiting room behavior for specific request patterns
+      settings:
+        description: Zone-level waiting room defaults and cookie configuration
+      statuses:
+        description: Real-time queue status showing active users, queued users, and estimated wait times
+  workflows:
+    description: Durable, multi-step workflows that run on Workers with automatic retries and state persistence
+    groups:
+      instances:
+        description: Workflow instance operations
+      versions:
+        description: Workflow version operations
+  zaraz:
+    description: Server-side tag manager — load third-party tools (analytics, pixels, etc.) from Cloudflare's edge without client-side JS
+    groups:
+      config:
+        description: Full Zaraz configuration including tools, triggers, and variables for the zone
+      default:
+        description: Default Zaraz configuration template used as a starting point for new zones
+      export:
+        description: Export the current Zaraz configuration as a portable JSON document
+      history:
+        description: Configuration version history — browse and restore previous Zaraz configurations
+      publish:
+        description: Publish pending Zaraz configuration changes to make them live on the zone
+      workflow:
+        description: Workflow state for Zaraz configuration changes (draft vs. published)
+  zero-trust:
+    description: Cloudflare's SASE platform — secure access, device posture, DLP, tunnels, gateway policies, and network segmentation
+    groups:
+      dex:
+        description: Digital Experience Monitoring — synthetic tests, fleet-wide device metrics, and network path diagnostics
+      dlp.custom-prompt-topics:
+        description: Data Loss Prevention - manage custom prompt topics for AI-based content detection
+      dlp.data-classes:
+        description: Data Loss Prevention - manage data classes used to classify sensitive information
+      dlp.data-tag-categories:
+        description: Data Loss Prevention - manage categories that organize data tags
+      dlp.data-tag-category-templates:
+        description: Data Loss Prevention - browse templates for creating data tag categories
+      dlp.data-tags:
+        description: Data Loss Prevention - manage tags used to classify and organize sensitive data
+      dlp.datasets:
+        description: Data Loss Prevention - manage datasets, versions, and uploads
+      dlp.document-fingerprints:
+        description: Data Loss Prevention - manage document fingerprints for detecting matching documents
+      dlp.email.account-mapping:
+        description: Data Loss Prevention - configure account mappings for outbound email scanning
+      dlp.email.rules:
+        description: Data Loss Prevention - manage outbound email scanning rules and their priorities
+      dlp.entries:
+        description: Data Loss Prevention - list and manage detection entries
+      dlp.limits:
+        description: Data Loss Prevention - view account limits and resource quotas
+      dlp.patterns:
+        description: Data Loss Prevention - validate regular expressions used for content detection
+      dlp.profiles:
+        description: Data Loss Prevention - list and retrieve profiles
+      dlp.profiles.custom:
+        description: Data Loss Prevention - manage custom profiles
+      dlp.profiles.predefined:
+        description: Data Loss Prevention - manage predefined profiles
+      dlp.sensitivity-group-templates:
+        description: Data Loss Prevention - browse templates for creating sensitivity groups
+      dlp.sensitivity-groups:
+        description: Data Loss Prevention - manage sensitivity groups and their level ordering
+      dlp.sensitivity-levels:
+        description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
+      dlp.settings:
+        description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.integrations:
+        description: User Risk Scoring - manage integrations that provide risk score signals
+      risk-scoring.integrations.references:
+        description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
+  zones:
+    description: Zones are domains on Cloudflare — list, create, and configure domain settings
+    groups:
+      aegis:
+        description: Aegis operations
+      fonts:
+        description: Fonts operations
+      origin-h2-max-streams:
+        description: Origin H2 Max Streams operations
+      origin-max-http-version:
+        description: Origin Max Http Version operations
+      origin-tls-compliance-modes:
+        description: Manage zone Origin TLS Compliance Modes setting
+      rum:
+        description: Rum operations
+      speed-brain:
+        description: Speed Brain operations

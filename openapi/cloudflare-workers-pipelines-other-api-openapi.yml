@@ -1,0 +1,4052 @@
+openapi: 3.2.0
+info:
+  description: Welcome to Cloudflare's API documentation site.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  title: Cloudflare Workers Pipelines Other API
+  version: 4.0.0
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: workers_pipelines_other
+paths:
+  /accounts/{account_id}/pipelines:
+    get:
+      operationId: getV4AccountsByAccount_idPipelines_deprecated
+      summary: '[DEPRECATED] List Pipelines'
+      description: '[DEPRECATED] List, filter, and paginate pipelines in an account. Use the new /pipelines/v1/pipelines endpoint instead.'
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      - name: search
+        in: query
+        schema:
+          description: Specifies the prefix of pipeline name to search.
+          type: string
+      - name: page
+        in: query
+        schema:
+          description: Specifies which page to retrieve.
+          type: string
+          default: '1'
+      - name: per_page
+        in: query
+        schema:
+          description: Specifies the number of pipelines per page.
+          type: string
+          default: '25'
+      responses:
+        '200':
+          description: '[DEPRECATED] Lists the pipelines. Use /pipelines/v1/pipelines instead.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result_info:
+                    type: object
+                    properties:
+                      count:
+                        description: Indicates the number of items on current page.
+                        type: number
+                        example: 1
+                      page:
+                        description: Indicates the current page number.
+                        type: number
+                        example: 0
+                      per_page:
+                        description: Indicates the number of items per page.
+                        type: number
+                        example: 10
+                      total_count:
+                        description: Indicates the total number of items.
+                        type: number
+                        example: 1
+                    required:
+                    - count
+                    - page
+                    - per_page
+                    - total_count
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-pipeline'
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - results
+                - result_info
+        4XX:
+          description: Indicates the error trying to list pipelines.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  results:
+                    type:
+                    - object
+                    - 'null'
+                    x-stainless-empty-object: true
+                  success:
+                    example: false
+                    allOf:
+                    - $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - results
+                - errors
+      deprecated: true
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      - Pipelines Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines
+      x-fern-sdk-method-name: legacy-list
+      x-forge-hidden: true
+    post:
+      operationId: postV4AccountsByAccount_idPipelines_deprecated
+      summary: '[DEPRECATED] Create Pipeline'
+      description: '[DEPRECATED] Create a new pipeline. Use the new /pipelines/v1/pipelines endpoint instead.'
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                destination:
+                  type: object
+                  properties:
+                    batch:
+                      type: object
+                      properties:
+                        max_bytes:
+                          description: Specifies rough maximum size of files.
+                          type: integer
+                          default: 100000000
+                          maximum: 100000000
+                          minimum: 1000
+                        max_duration_s:
+                          description: Specifies duration to wait to aggregate batches files.
+                          type: number
+                          default: 300
+                          maximum: 300
+                          minimum: 0.25
+                        max_rows:
+                          description: Specifies rough maximum number of rows per file.
+                          type: integer
+                          default: 10000000
+                          maximum: 10000000
+                          minimum: 100
+                    compression:
+                      type: object
+                      properties:
+                        type:
+                          description: Specifies the desired compression algorithm and format.
+                          type: string
+                          example: gzip
+                          default: gzip
+                          enum:
+                          - none
+                          - gzip
+                          - deflate
+                    credentials:
+                      type: object
+                      properties:
+                        access_key_id:
+                          description: Specifies the R2 Bucket Access Key Id.
+                          type: string
+                          example: <access key id>
+                        endpoint:
+                          description: Specifies the R2 Endpoint.
+                          type: string
+                          example: https://123f8a8258064ed892a347f173372359.r2.cloudflarestorage.com
+                        secret_access_key:
+                          description: Specifies the R2 Bucket Secret Access Key.
+                          type: string
+                          example: <secret key>
+                      required:
+                      - endpoint
+                      - access_key_id
+                      - secret_access_key
+                    format:
+                      description: Specifies the format of data to deliver.
+                      type: string
+                      enum:
+                      - json
+                    path:
+                      type: object
+                      example:
+                        bucket: bucket
+                        prefix: base
+                      properties:
+                        bucket:
+                          description: Specifies the R2 Bucket to store files.
+                          type: string
+                          example: bucket
+                        filename:
+                          description: Specifies the name pattern to for individual data files.
+                          example: ${slug}${extension}
+                          allOf:
+                          - type: string
+                          - type: string
+                        filepath:
+                          description: Specifies the name pattern for directory.
+                          type: string
+                          example: ${date}/${hour}
+                        prefix:
+                          description: Specifies the base directory within the bucket.
+                          type: string
+                          example: base
+                      required:
+                      - bucket
+                    type:
+                      description: Specifies the type of destination.
+                      type: string
+                      enum:
+                      - r2
+                  required:
+                  - type
+                  - format
+                  - batch
+                  - compression
+                  - path
+                  - credentials
+                name:
+                  description: Defines the name of the pipeline.
+                  type: string
+                  example: sample_pipeline
+                  maxLength: 128
+                  minLength: 1
+                source:
+                  type: array
+                  items:
+                    discriminator:
+                      mapping:
+                        binding: '#/components/schemas/cloudflare-pipelines_workers_pipelines_binding_source'
+                        http: '#/components/schemas/cloudflare-pipelines_workers_pipelines_http_source'
+                      propertyName: type
+                    oneOf:
+                    - $ref: '#/components/schemas/cloudflare-pipelines_workers_pipelines_http_source'
+                    - $ref: '#/components/schemas/cloudflare-pipelines_workers_pipelines_binding_source'
+                  minItems: 1
+              required:
+              - name
+              - source
+              - destination
+      responses:
+        '200':
+          description: '[DEPRECATED] Indicates a successfully created pipeline. Use /pipelines/v1/pipelines instead.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-pipeline'
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+        4XX:
+          description: Indicates an error in creating a pipeline.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  results:
+                    type:
+                    - object
+                    - 'null'
+                    x-stainless-empty-object: true
+                  success:
+                    example: false
+                    allOf:
+                    - $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - results
+                - errors
+      deprecated: true
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines
+      x-fern-sdk-method-name: legacy-create
+      x-forge-hidden: true
+  /accounts/{account_id}/pipelines/v1/pipelines:
+    get:
+      operationId: getV4AccountsByAccount_idPipelinesV1Pipelines
+      summary: List Pipelines
+      description: List/Filter Pipelines in Account.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      - name: page
+        in: query
+        schema:
+          type: number
+          default: 1
+      - name: per_page
+        in: query
+        schema:
+          type: number
+      - name: name
+        in: query
+        description: Filters pipelines by name (case-insensitive substring).
+        schema:
+          type: string
+          maxLength: 128
+          minLength: 1
+      responses:
+        '200':
+          description: Indicates a successfully listed Pipelines.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      properties:
+                        created_at:
+                          type: string
+                        id:
+                          description: Indicates a unique identifier for this pipeline.
+                          type: string
+                          example: 01234567890123457689012345678901
+                        modified_at:
+                          type: string
+                        name:
+                          description: Indicates the name of the Pipeline.
+                          type: string
+                          example: my_pipeline
+                          maxLength: 128
+                          minLength: 1
+                        sql:
+                          description: Specifies SQL for the Pipeline processing flow.
+                          type: string
+                          example: insert into sink select * from source;
+                        status:
+                          description: Indicates the current status of the Pipeline.
+                          type: string
+                      required:
+                      - id
+                      - name
+                      - created_at
+                      - modified_at
+                      - sql
+                      - status
+                      type: object
+                  result_info:
+                    type: object
+                    properties:
+                      count:
+                        description: Indicates the number of items on current page.
+                        type: number
+                        example: 1
+                      page:
+                        description: Indicates the current page number.
+                        type: number
+                        example: 0
+                      per_page:
+                        description: Indicates the number of items per page.
+                        type: number
+                        example: 10
+                      total_count:
+                        description: Indicates the total number of items.
+                        type: number
+                        example: 1
+                    required:
+                    - count
+                    - page
+                    - per_page
+                    - total_count
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+                - result_info
+        4XX:
+          description: Indicates an error in listing Pipelines.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      - Pipelines Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines
+      x-fern-sdk-method-name: list
+      x-forge-hidden: false
+    post:
+      operationId: postV4AccountsByAccount_idPipelinesV1Pipelines
+      summary: Create Pipeline
+      description: Create a new Pipeline.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Specifies the name of the Pipeline.
+                  type: string
+                  example: my_pipeline
+                  maxLength: 128
+                  minLength: 1
+                sql:
+                  description: Specifies SQL for the Pipeline processing flow.
+                  type: string
+                  example: insert into sink select * from source;
+              required:
+              - name
+              - sql
+      responses:
+        '200':
+          description: Indicates a successfully created Pipeline.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      created_at:
+                        type: string
+                      id:
+                        description: Indicates a unique identifier for this pipeline.
+                        type: string
+                        example: 01234567890123457689012345678901
+                      modified_at:
+                        type: string
+                      name:
+                        description: Indicates the name of the Pipeline.
+                        type: string
+                        example: my_pipeline
+                        maxLength: 128
+                        minLength: 1
+                      sql:
+                        description: Specifies SQL for the Pipeline processing flow.
+                        type: string
+                        example: insert into sink select * from source;
+                      status:
+                        description: Indicates the current status of the Pipeline.
+                        type: string
+                    required:
+                    - id
+                    - name
+                    - created_at
+                    - modified_at
+                    - sql
+                    - status
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+        4XX:
+          description: Indicates an error in creating a Pipeline.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines
+      x-fern-sdk-method-name: create
+      x-forge-hidden: false
+  /accounts/{account_id}/pipelines/v1/pipelines/{pipeline_id}:
+    delete:
+      operationId: deleteV4AccountsByAccount_idPipelinesV1PipelinesByPipeline_id
+      summary: Delete Pipeline
+      description: Delete Pipeline in Account.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      - name: pipeline_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-pipeline-id'
+      responses:
+        '200':
+          description: Indicates a successfully deleted Pipeline.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+        4XX:
+          description: Indicates an error in listing Pipelines.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: false
+    get:
+      operationId: getV4AccountsByAccount_idPipelinesV1PipelinesByPipeline_id
+      summary: Get Pipeline Details
+      description: Get Pipeline details.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      - name: pipeline_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-pipeline-id'
+      responses:
+        '200':
+          description: Indicates a successfully retrieved Pipeline.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      created_at:
+                        type: string
+                      failure_reason:
+                        description: Indicates the reason for the failure of the Pipeline.
+                        type: string
+                      id:
+                        description: Indicates a unique identifier for this pipeline.
+                        type: string
+                        example: 01234567890123457689012345678901
+                      modified_at:
+                        type: string
+                      name:
+                        description: Indicates the name of the Pipeline.
+                        type: string
+                        example: my_pipeline
+                        maxLength: 128
+                        minLength: 1
+                      sql:
+                        description: Specifies SQL for the Pipeline processing flow.
+                        type: string
+                        example: insert into sink select * from source;
+                      status:
+                        description: Indicates the current status of the Pipeline.
+                        type: string
+                      tables:
+                        description: List of streams and sinks used by this pipeline.
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              description: Unique identifier for the connection (stream or sink).
+                              type: string
+                              example: 1c9200d5872c018bb34e93e2cd8a438e
+                            latest:
+                              description: Latest available version of the connection.
+                              type: integer
+                              example: 5
+                            name:
+                              description: Name of the connection.
+                              type: string
+                              example: my_table
+                              maxLength: 128
+                              minLength: 1
+                            type:
+                              description: Type of the connection.
+                              type: string
+                              example: stream
+                              enum:
+                              - stream
+                              - sink
+                            version:
+                              description: Current version of the connection used by this pipeline.
+                              type: integer
+                              example: 4
+                          required:
+                          - id
+                          - version
+                          - latest
+                          - type
+                          - name
+                          type: object
+                    required:
+                    - id
+                    - name
+                    - created_at
+                    - modified_at
+                    - sql
+                    - status
+                    - tables
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+        4XX:
+          description: Indicates an error in retrieving Pipelines.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      - Pipelines Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines
+      x-fern-sdk-method-name: get
+      x-forge-hidden: false
+  /accounts/{account_id}/pipelines/v1/sinks:
+    get:
+      operationId: getV4AccountsByAccount_idPipelinesV1Sinks
+      summary: List Sinks
+      description: List/Filter Sinks in Account.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      - name: pipeline_id
+        in: query
+        schema:
+          type: string
+      - name: name
+        in: query
+        description: Filters sinks by name (case-insensitive substring).
+        schema:
+          type: string
+          maxLength: 128
+          minLength: 1
+      - name: page
+        in: query
+        schema:
+          type: number
+          default: 1
+      - name: per_page
+        in: query
+        schema:
+          type: number
+      responses:
+        '200':
+          description: Indicates successfully listed Sinks.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      properties:
+                        config:
+                          description: Defines the configuration of the R2 Sink.
+                          oneOf:
+                          - $ref: '#/components/schemas/cloudflare-pipelines_r2TablePublic'
+                          - $ref: '#/components/schemas/cloudflare-pipelines_r2_data_catalogTablePublic'
+                        created_at:
+                          type: string
+                          format: date-time
+                        format:
+                          $ref: '#/components/schemas/cloudflare-pipelines_SinkFormat'
+                        id:
+                          description: Indicates a unique identifier for this sink.
+                          type: string
+                          example: 01234567890123457689012345678901
+                        modified_at:
+                          type: string
+                          format: date-time
+                        name:
+                          description: Defines the name of the Sink.
+                          type: string
+                          example: my_sink
+                          maxLength: 128
+                          minLength: 1
+                        schema:
+                          $ref: '#/components/schemas/cloudflare-pipelines_ConnectionSchema'
+                        type:
+                          description: Specifies the type of sink.
+                          type: string
+                          example: r2
+                          enum:
+                          - r2
+                          - r2_data_catalog
+                          - basin_catalog
+                      required:
+                      - id
+                      - name
+                      - created_at
+                      - modified_at
+                      - type
+                      type: object
+                  result_info:
+                    type: object
+                    properties:
+                      count:
+                        description: Indicates the number of items on current page.
+                        type: number
+                        example: 1
+                      page:
+                        description: Indicates the current page number.
+                        type: number
+                        example: 0
+                      per_page:
+                        description: Indicates the number of items per page.
+                        type: number
+                        example: 10
+                      total_count:
+                        description: Indicates the total number of items.
+                        type: number
+                        example: 1
+                    required:
+                    - count
+                    - page
+                    - per_page
+                    - total_count
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+                - result_info
+        4XX:
+          description: Indicates an error in listing Sinks.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      - Pipelines Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines.sinks
+      x-fern-sdk-method-name: list
+      x-forge-hidden: false
+    post:
+      operationId: postV4AccountsByAccount_idPipelinesV1Sinks
+      summary: Create Sink
+      description: Create a new Sink.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                config:
+                  description: Defines the configuration of the R2 Sink.
+                  oneOf:
+                  - $ref: '#/components/schemas/cloudflare-pipelines_r2Table'
+                  - $ref: '#/components/schemas/cloudflare-pipelines_r2_data_catalogTable'
+                format:
+                  $ref: '#/components/schemas/cloudflare-pipelines_SinkFormat'
+                name:
+                  description: Defines the name of the Sink.
+                  type: string
+                  example: my_sink
+                  maxLength: 128
+                  minLength: 1
+                schema:
+                  $ref: '#/components/schemas/cloudflare-pipelines_ConnectionSchema'
+                type:
+                  description: Specifies the type of sink.
+                  type: string
+                  example: r2
+                  enum:
+                  - r2
+                  - r2_data_catalog
+                  - basin_catalog
+              required:
+              - name
+              - type
+      responses:
+        '200':
+          description: Indicates a successfully created Sink.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      config:
+                        oneOf:
+                        - $ref: '#/components/schemas/cloudflare-pipelines_r2Table'
+                        - $ref: '#/components/schemas/cloudflare-pipelines_r2_data_catalogTable'
+                      created_at:
+                        type: string
+                        format: date-time
+                      format:
+                        $ref: '#/components/schemas/cloudflare-pipelines_SinkFormat'
+                      id:
+                        description: Indicates a unique identifier for this sink.
+                        type: string
+                        example: 01234567890123457689012345678901
+                      modified_at:
+                        type: string
+                        format: date-time
+                      name:
+                        description: Defines the name of the Sink.
+                        type: string
+                        example: my_sink
+                        maxLength: 128
+                        minLength: 1
+                      schema:
+                        $ref: '#/components/schemas/cloudflare-pipelines_ConnectionSchema'
+                      type:
+                        description: Specifies the type of sink.
+                        type: string
+                        example: r2
+                        enum:
+                        - r2
+                        - r2_data_catalog
+                        - basin_catalog
+                    required:
+                    - id
+                    - name
+                    - created_at
+                    - modified_at
+                    - type
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+        4XX:
+          description: Indicates an error in creating a Sink.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines.sinks
+      x-fern-sdk-method-name: create
+      x-forge-hidden: false
+  /accounts/{account_id}/pipelines/v1/sinks/{sink_id}:
+    delete:
+      operationId: deleteV4AccountsByAccount_idPipelinesV1SinksBySink_id
+      summary: Delete Sink
+      description: Delete Sink in Account.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      - name: sink_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-sink-id'
+      responses:
+        '200':
+          description: Indicates a successfully deleted Sink.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+        4XX:
+          description: Indicates an error in listing Sinks.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines.sinks
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: false
+    get:
+      operationId: getV4AccountsByAccount_idPipelinesV1SinksBySink_id
+      summary: Get Sink Details
+      description: Get Sink Details.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      - name: sink_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-sink-id'
+      responses:
+        '200':
+          description: Indicates that Sink was retrieved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      config:
+                        description: Defines the configuration of the R2 Sink.
+                        oneOf:
+                        - $ref: '#/components/schemas/cloudflare-pipelines_r2TablePublic'
+                        - $ref: '#/components/schemas/cloudflare-pipelines_r2_data_catalogTablePublic'
+                      created_at:
+                        type: string
+                        format: date-time
+                      format:
+                        $ref: '#/components/schemas/cloudflare-pipelines_SinkFormat'
+                      id:
+                        description: Indicates a unique identifier for this sink.
+                        type: string
+                        example: 01234567890123457689012345678901
+                      modified_at:
+                        type: string
+                        format: date-time
+                      name:
+                        description: Defines the name of the Sink.
+                        type: string
+                        example: my_sink
+                        maxLength: 128
+                        minLength: 1
+                      schema:
+                        $ref: '#/components/schemas/cloudflare-pipelines_ConnectionSchema'
+                      type:
+                        description: Specifies the type of sink.
+                        type: string
+                        example: r2
+                        enum:
+                        - r2
+                        - r2_data_catalog
+                        - basin_catalog
+                    required:
+                    - id
+                    - name
+                    - created_at
+                    - modified_at
+                    - type
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+        4XX:
+          description: Indicates an error in listing Sinks.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      - Pipelines Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines.sinks
+      x-fern-sdk-method-name: get
+      x-forge-hidden: false
+  /accounts/{account_id}/pipelines/v1/streams:
+    get:
+      operationId: getV4AccountsByAccount_idPipelinesV1Streams
+      summary: List Streams
+      description: List/Filter Streams in Account.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      - name: pipeline_id
+        in: query
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-pipeline-id'
+      - name: name
+        in: query
+        description: Filters streams by name (case-insensitive substring).
+        schema:
+          type: string
+          maxLength: 128
+          minLength: 1
+      - name: page
+        in: query
+        schema:
+          type: number
+          default: 1
+      - name: per_page
+        in: query
+        schema:
+          type: number
+      responses:
+        '200':
+          description: Indicates a successfully created Stream.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      properties:
+                        created_at:
+                          type: string
+                          format: date-time
+                        endpoint:
+                          description: Indicates the endpoint URL of this stream.
+                          type: string
+                          format: uri
+                          example: https://01234567890123457689012345678901.ingest.cloudflare.com/v1
+                        format:
+                          $ref: '#/components/schemas/cloudflare-pipelines_Format'
+                        http:
+                          type: object
+                          properties:
+                            authentication:
+                              description: Indicates that authentication is required for the HTTP endpoint.
+                              type: boolean
+                              example: false
+                            cors:
+                              description: Specifies the CORS options for the HTTP endpoint.
+                              type: object
+                              example: {}
+                              properties:
+                                origins:
+                                  type: array
+                                  items:
+                                    type: string
+                                  maxItems: 5
+                            enabled:
+                              description: Indicates that the HTTP endpoint is enabled.
+                              type: boolean
+                              example: true
+                          required:
+                          - enabled
+                          - authentication
+                        id:
+                          description: Indicates a unique identifier for this stream.
+                          type: string
+                          example: 01234567890123457689012345678901
+                        modified_at:
+                          type: string
+                          format: date-time
+                        name:
+                          description: Indicates the name of the Stream.
+                          type: string
+                          example: my_stream
+                          maxLength: 128
+                          minLength: 1
+                        schema:
+                          $ref: '#/components/schemas/cloudflare-pipelines_ConnectionSchema'
+                        version:
+                          description: Indicates the current version of this stream.
+                          type: integer
+                          example: 3
+                        worker_binding:
+                          type: object
+                          properties:
+                            enabled:
+                              description: Indicates that the worker binding is enabled.
+                              type: boolean
+                              example: true
+                          required:
+                          - enabled
+                      required:
+                      - id
+                      - name
+                      - version
+                      - created_at
+                      - modified_at
+                      - http
+                      - worker_binding
+                      type: object
+                  result_info:
+                    type: object
+                    properties:
+                      count:
+                        description: Indicates the number of items on current page.
+                        type: number
+                        example: 1
+                      page:
+                        description: Indicates the current page number.
+                        type: number
+                        example: 0
+                      per_page:
+                        description: Indicates the number of items per page.
+                        type: number
+                        example: 10
+                      total_count:
+                        description: Indicates the total number of items.
+                        type: number
+                        example: 1
+                    required:
+                    - count
+                    - page
+                    - per_page
+                    - total_count
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+                - result_info
+        4XX:
+          description: Indicates an error in listing Streams.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      - Pipelines Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines.streams
+      x-fern-sdk-method-name: list
+      x-forge-hidden: false
+    post:
+      operationId: postV4AccountsByAccount_idPipelinesV1Streams
+      summary: Create Stream
+      description: Create a new Stream.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                format:
+                  $ref: '#/components/schemas/cloudflare-pipelines_Format'
+                http:
+                  type: object
+                  default:
+                    authentication: false
+                    enabled: true
+                  properties:
+                    authentication:
+                      description: Indicates that authentication is required for the HTTP endpoint.
+                      type: boolean
+                      example: false
+                    cors:
+                      description: Specifies the CORS options for the HTTP endpoint.
+                      type: object
+                      example: {}
+                      properties:
+                        origins:
+                          type: array
+                          items:
+                            type: string
+                          maxItems: 5
+                    enabled:
+                      description: Indicates that the HTTP endpoint is enabled.
+                      type: boolean
+                      example: true
+                  required:
+                  - enabled
+                  - authentication
+                name:
+                  description: Specifies the name of the Stream.
+                  type: string
+                  example: my_stream
+                  maxLength: 128
+                  minLength: 1
+                schema:
+                  $ref: '#/components/schemas/cloudflare-pipelines_ConnectionSchema'
+                worker_binding:
+                  type: object
+                  default:
+                    enabled: true
+                  properties:
+                    enabled:
+                      description: Indicates that the worker binding is enabled.
+                      type: boolean
+                      example: true
+                  required:
+                  - enabled
+              required:
+              - name
+      responses:
+        '200':
+          description: Indicates a successfully created Stream.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      created_at:
+                        type: string
+                        format: date-time
+                      endpoint:
+                        description: Indicates the endpoint URL of this stream.
+                        type: string
+                        format: uri
+                        example: https://01234567890123457689012345678901.ingest.cloudflare.com/v1
+                      format:
+                        $ref: '#/components/schemas/cloudflare-pipelines_Format'
+                      http:
+                        type: object
+                        properties:
+                          authentication:
+                            description: Indicates that authentication is required for the HTTP endpoint.
+                            type: boolean
+                            example: false
+                          cors:
+                            description: Specifies the CORS options for the HTTP endpoint.
+                            type: object
+                            example: {}
+                            properties:
+                              origins:
+                                type: array
+                                items:
+                                  type: string
+                                maxItems: 5
+                          enabled:
+                            description: Indicates that the HTTP endpoint is enabled.
+                            type: boolean
+                            example: true
+                        required:
+                        - enabled
+                        - authentication
+                      id:
+                        description: Indicates a unique identifier for this stream.
+                        type: string
+                        example: 01234567890123457689012345678901
+                      modified_at:
+                        type: string
+                        format: date-time
+                      name:
+                        description: Indicates the name of the Stream.
+                        type: string
+                        example: my_stream
+                        maxLength: 128
+                        minLength: 1
+                      schema:
+                        $ref: '#/components/schemas/cloudflare-pipelines_ConnectionSchema'
+                      version:
+                        description: Indicates the current version of this stream.
+                        type: integer
+                        example: 3
+                      worker_binding:
+                        type: object
+                        properties:
+                          enabled:
+                            description: Indicates that the worker binding is enabled.
+                            type: boolean
+                            example: true
+                        required:
+                        - enabled
+                    required:
+                    - id
+                    - name
+                    - version
+                    - created_at
+                    - modified_at
+                    - http
+                    - worker_binding
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+        4XX:
+          description: Indicates an error in creating a Stream.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines.streams
+      x-fern-sdk-method-name: create
+      x-forge-hidden: false
+  /accounts/{account_id}/pipelines/v1/streams/{stream_id}:
+    delete:
+      operationId: deleteV4AccountsByAccount_idPipelinesV1StreamsByStream_id
+      summary: Delete Stream
+      description: Delete Stream in Account.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      - name: stream_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-stream-id'
+      responses:
+        '200':
+          description: Indicates a successfully deleted Stream.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+        4XX:
+          description: Indicates an error in listing Streams.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines.streams
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: false
+    get:
+      operationId: getV4AccountsByAccount_idPipelinesV1StreamsByStream_id
+      summary: Get Stream Details
+      description: Get Stream Details.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      - name: stream_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-stream-id'
+      responses:
+        '200':
+          description: Indicates a successfully retrieved Stream.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      created_at:
+                        type: string
+                        format: date-time
+                      endpoint:
+                        description: Indicates the endpoint URL of this stream.
+                        type: string
+                        format: uri
+                        example: https://01234567890123457689012345678901.ingest.cloudflare.com/v1
+                      format:
+                        $ref: '#/components/schemas/cloudflare-pipelines_Format'
+                      http:
+                        type: object
+                        properties:
+                          authentication:
+                            description: Indicates that authentication is required for the HTTP endpoint.
+                            type: boolean
+                            example: false
+                          cors:
+                            description: Specifies the CORS options for the HTTP endpoint.
+                            type: object
+                            example: {}
+                            properties:
+                              origins:
+                                type: array
+                                items:
+                                  type: string
+                                maxItems: 5
+                          enabled:
+                            description: Indicates that the HTTP endpoint is enabled.
+                            type: boolean
+                            example: true
+                        required:
+                        - enabled
+                        - authentication
+                      id:
+                        description: Indicates a unique identifier for this stream.
+                        type: string
+                        example: 01234567890123457689012345678901
+                      modified_at:
+                        type: string
+                        format: date-time
+                      name:
+                        description: Indicates the name of the Stream.
+                        type: string
+                        example: my_stream
+                        maxLength: 128
+                        minLength: 1
+                      schema:
+                        $ref: '#/components/schemas/cloudflare-pipelines_ConnectionSchema'
+                      version:
+                        description: Indicates the current version of this stream.
+                        type: integer
+                        example: 3
+                      worker_binding:
+                        type: object
+                        properties:
+                          enabled:
+                            description: Indicates that the worker binding is enabled.
+                            type: boolean
+                            example: true
+                        required:
+                        - enabled
+                    required:
+                    - id
+                    - name
+                    - version
+                    - created_at
+                    - modified_at
+                    - http
+                    - worker_binding
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+        4XX:
+          description: Indicates an error in retrieving Stream.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      - Pipelines Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines.streams
+      x-fern-sdk-method-name: get
+      x-forge-hidden: false
+    patch:
+      operationId: patchV4AccountsByAccount_idPipelinesV1StreamsByStream_id
+      summary: Update Stream
+      description: Update a Stream.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      - name: stream_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-stream-id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                http:
+                  type: object
+                  properties:
+                    authentication:
+                      description: Indicates that authentication is required for the HTTP endpoint.
+                      type: boolean
+                      example: false
+                    cors:
+                      description: Specifies the CORS options for the HTTP endpoint.
+                      type: object
+                      example: {}
+                      properties:
+                        origins:
+                          type: array
+                          items:
+                            type: string
+                          maxItems: 5
+                    enabled:
+                      description: Indicates that the HTTP endpoint is enabled.
+                      type: boolean
+                      example: true
+                  required:
+                  - enabled
+                  - authentication
+                worker_binding:
+                  type: object
+                  properties:
+                    enabled:
+                      description: Indicates that the worker binding is enabled.
+                      type: boolean
+                      example: true
+                  required:
+                  - enabled
+      responses:
+        '200':
+          description: Indicates a successfully updated Stream.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      created_at:
+                        type: string
+                        format: date-time
+                      endpoint:
+                        description: Indicates the endpoint URL of this stream.
+                        type: string
+                        format: uri
+                        example: https://01234567890123457689012345678901.ingest.cloudflare.com/v1
+                      format:
+                        $ref: '#/components/schemas/cloudflare-pipelines_Format'
+                      http:
+                        type: object
+                        properties:
+                          authentication:
+                            description: Indicates that authentication is required for the HTTP endpoint.
+                            type: boolean
+                            example: false
+                          cors:
+                            description: Specifies the CORS options for the HTTP endpoint.
+                            type: object
+                            example: {}
+                            properties:
+                              origins:
+                                type: array
+                                items:
+                                  type: string
+                                maxItems: 5
+                          enabled:
+                            description: Indicates that the HTTP endpoint is enabled.
+                            type: boolean
+                            example: true
+                        required:
+                        - enabled
+                        - authentication
+                      id:
+                        description: Indicates a unique identifier for this stream.
+                        type: string
+                        example: 01234567890123457689012345678901
+                      modified_at:
+                        type: string
+                        format: date-time
+                      name:
+                        description: Indicates the name of the Stream.
+                        type: string
+                        example: my_stream
+                        maxLength: 128
+                        minLength: 1
+                      schema:
+                        $ref: '#/components/schemas/cloudflare-pipelines_ConnectionSchema'
+                      version:
+                        description: Indicates the current version of this stream.
+                        type: integer
+                        example: 3
+                      worker_binding:
+                        type: object
+                        properties:
+                          enabled:
+                            description: Indicates that the worker binding is enabled.
+                            type: boolean
+                            example: true
+                        required:
+                        - enabled
+                    required:
+                    - id
+                    - name
+                    - version
+                    - created_at
+                    - modified_at
+                    - http
+                    - worker_binding
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+        4XX:
+          description: Indicates an error in creating a Stream.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines.streams
+      x-fern-sdk-method-name: update
+      x-forge-hidden: false
+  /accounts/{account_id}/pipelines/v1/validate_sql:
+    post:
+      operationId: postV4AccountsByAccount_idPipelinesV1Validate_sql
+      summary: Validate SQL
+      description: Validates that the Pipelines SQL is correct.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sql:
+                  description: Specifies SQL to validate.
+                  type: string
+                  example: insert into sink select * from source;
+              required:
+              - sql
+      responses:
+        '200':
+          description: Indicates SQL validation success.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      graph:
+                        $ref: '#/components/schemas/cloudflare-pipelines_PipelineGraph'
+                      tables:
+                        description: Indicates tables involved in the processing.
+                        type: object
+                        additionalProperties:
+                          properties:
+                            id:
+                              type: string
+                            name:
+                              type: string
+                            type:
+                              type: string
+                            version:
+                              type: number
+                          required:
+                          - id
+                          - version
+                          - type
+                          - name
+                          type: object
+                    required:
+                    - tables
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+        '422':
+          description: Indicates SQL validation failed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  diagnostics:
+                    type: array
+                    items:
+                      properties:
+                        message:
+                          type: string
+                        span:
+                          type:
+                          - object
+                          - 'null'
+                          properties:
+                            end:
+                              type: object
+                              properties:
+                                column:
+                                  type: integer
+                                  minimum: 0
+                                line:
+                                  type: integer
+                                  minimum: 0
+                              required:
+                              - line
+                              - column
+                            start:
+                              type: object
+                              properties:
+                                column:
+                                  type: integer
+                                  minimum: 0
+                                line:
+                                  type: integer
+                                  minimum: 0
+                              required:
+                              - line
+                              - column
+                          required:
+                          - start
+                          - end
+                      required:
+                      - message
+                      type: object
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                      - code
+                      - message
+                      type: object
+                  result:
+                    type:
+                    - object
+                    - 'null'
+                  success:
+                    type: boolean
+                    enum:
+                    - false
+                required:
+                - success
+                - errors
+                - diagnostics
+                - result
+        4XX:
+          description: Indicates SQL validation failed.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines
+      x-fern-sdk-method-name: validate-sql
+      x-forge-hidden: false
+  /accounts/{account_id}/pipelines/{pipeline_name}:
+    delete:
+      operationId: deleteV4AccountsByAccount_idPipelinesByPipeline_name_deprecated
+      summary: '[DEPRECATED] Delete Pipeline'
+      description: '[DEPRECATED] Delete a pipeline. Use the new /pipelines/v1/pipelines endpoint instead.'
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      - name: pipeline_name
+        in: path
+        required: true
+        schema:
+          description: Defines the name of the pipeline.
+          type: string
+          example: sample_pipeline
+          maxLength: 128
+          minLength: 1
+      responses:
+        '200':
+          description: '[DEPRECATED] Indicates a successfully deleted pipeline.'
+        4XX:
+          description: Indicates an error in deleting a pipeline.
+      deprecated: true
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines
+      x-fern-sdk-method-name: legacy-delete
+      x-forge-hidden: true
+    get:
+      operationId: getV4AccountsByAccount_idPipelinesByPipeline_name_deprecated
+      summary: '[DEPRECATED] Get Pipeline'
+      description: '[DEPRECATED] Get configuration of a pipeline. Use the new /pipelines/v1/pipelines endpoint instead.'
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      - name: pipeline_name
+        in: path
+        required: true
+        schema:
+          description: Defines the name of the pipeline.
+          type: string
+          example: sample_pipeline
+          maxLength: 128
+          minLength: 1
+      responses:
+        '200':
+          description: '[DEPRECATED] Describes the configuration of a pipeline.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-pipeline'
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+        '404':
+          description: Indicates that the pipeline was not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  results:
+                    type:
+                    - object
+                    - 'null'
+                    x-stainless-empty-object: true
+                  success:
+                    example: false
+                    allOf:
+                    - $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - results
+                - errors
+      deprecated: true
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      - Pipelines Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines
+      x-fern-sdk-method-name: legacy-get
+      x-forge-hidden: true
+    put:
+      operationId: putV4AccountsByAccount_idPipelinesByPipeline_name_deprecated
+      summary: '[DEPRECATED] Update Pipeline'
+      description: '[DEPRECATED] Update an existing pipeline. Use the new /pipelines/v1/pipelines endpoint instead.'
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-account-id'
+      - name: pipeline_name
+        in: path
+        required: true
+        schema:
+          description: Defines the name of the pipeline.
+          type: string
+          example: sample_pipeline
+          maxLength: 128
+          minLength: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                destination:
+                  type: object
+                  properties:
+                    batch:
+                      type: object
+                      properties:
+                        max_bytes:
+                          description: Specifies rough maximum size of files.
+                          type: integer
+                          default: 100000000
+                          maximum: 100000000
+                          minimum: 1000
+                        max_duration_s:
+                          description: Specifies duration to wait to aggregate batches files.
+                          type: number
+                          default: 300
+                          maximum: 300
+                          minimum: 0.25
+                        max_rows:
+                          description: Specifies rough maximum number of rows per file.
+                          type: integer
+                          default: 10000000
+                          maximum: 10000000
+                          minimum: 100
+                    compression:
+                      type: object
+                      properties:
+                        type:
+                          description: Specifies the desired compression algorithm and format.
+                          type: string
+                          example: gzip
+                          default: gzip
+                          enum:
+                          - none
+                          - gzip
+                          - deflate
+                    credentials:
+                      type: object
+                      properties:
+                        access_key_id:
+                          description: Specifies the R2 Bucket Access Key Id.
+                          type: string
+                          example: <access key id>
+                        endpoint:
+                          description: Specifies the R2 Endpoint.
+                          type: string
+                          example: https://123f8a8258064ed892a347f173372359.r2.cloudflarestorage.com
+                        secret_access_key:
+                          description: Specifies the R2 Bucket Secret Access Key.
+                          type: string
+                          example: <secret key>
+                      required:
+                      - endpoint
+                      - access_key_id
+                      - secret_access_key
+                    format:
+                      description: Specifies the format of data to deliver.
+                      type: string
+                      enum:
+                      - json
+                    path:
+                      type: object
+                      example:
+                        bucket: bucket
+                        prefix: base
+                      properties:
+                        bucket:
+                          description: Specifies the R2 Bucket to store files.
+                          type: string
+                          example: bucket
+                        filename:
+                          description: Specifies the name pattern to for individual data files.
+                          example: ${slug}${extension}
+                          allOf:
+                          - type: string
+                          - type: string
+                        filepath:
+                          description: Specifies the name pattern for directory.
+                          type: string
+                          example: ${date}/${hour}
+                        prefix:
+                          description: Specifies the base directory within the bucket.
+                          type: string
+                          example: base
+                      required:
+                      - bucket
+                    type:
+                      description: Specifies the type of destination.
+                      type: string
+                      enum:
+                      - r2
+                  required:
+                  - type
+                  - format
+                  - batch
+                  - compression
+                  - path
+                name:
+                  description: Defines the name of the pipeline.
+                  type: string
+                  example: sample_pipeline
+                  maxLength: 128
+                  minLength: 1
+                source:
+                  type: array
+                  items:
+                    discriminator:
+                      mapping:
+                        binding: '#/components/schemas/cloudflare-pipelines_workers_pipelines_binding_source'
+                        http: '#/components/schemas/cloudflare-pipelines_workers_pipelines_http_source'
+                      propertyName: type
+                    oneOf:
+                    - $ref: '#/components/schemas/cloudflare-pipelines_workers_pipelines_http_source'
+                    - $ref: '#/components/schemas/cloudflare-pipelines_workers_pipelines_binding_source'
+                  minItems: 1
+              required:
+              - name
+              - source
+              - destination
+      responses:
+        '200':
+          description: '[DEPRECATED] Indicates a successfully updated pipeline.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/cloudflare-pipelines_workers-pipelines-pipeline'
+                  success:
+                    $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - result
+        4XX:
+          description: Indicates an error updating pipeline.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      properties:
+                        code:
+                          type: number
+                        message:
+                          type: string
+                      required:
+                      - code
+                      - message
+                      type: object
+                    example: []
+                  results:
+                    type:
+                    - object
+                    - 'null'
+                    x-stainless-empty-object: true
+                  success:
+                    example: false
+                    allOf:
+                    - $ref: '#/components/schemas/cloudflare-pipelines_worker-pipelines-common-success'
+                required:
+                - success
+                - results
+                - errors
+      deprecated: true
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - workers_pipelines_other
+      x-api-token-group:
+      - Pipelines Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: false
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: pipelines
+      x-fern-sdk-method-name: legacy-update
+      x-forge-hidden: true
+      x-forge-params:
+        destination.batch.max_bytes:
+          default: null
+        destination.batch.max_duration_s:
+          default: null
+        destination.batch.max_rows:
+          default: null
+        destination.compression.type:
+          default: null
+components:
+  schemas:
+    cloudflare-pipelines_SinkJsonFormat:
+      allOf:
+      - $ref: '#/components/schemas/cloudflare-pipelines_JsonFormat'
+      - properties:
+          compression:
+            $ref: '#/components/schemas/cloudflare-pipelines_JsonCompression'
+          type:
+            type: string
+            enum:
+            - json
+        required:
+        - type
+        type: object
+      title: Json
+    cloudflare-pipelines_r2_data_catalogTablePublic:
+      description: R2 Data Catalog Sink public configuration.
+      type: object
+      properties:
+        account_id:
+          description: Cloudflare Account ID
+          type: string
+          format: uri
+          example: 6791973bbe876d621f9e557f891e90b3
+        bucket:
+          description: The R2 Bucket that hosts this catalog
+          type: string
+          example: my-bucket
+        namespace:
+          description: Table namespace
+          type: string
+          title: Namespace
+        rolling_policy:
+          description: Rolling policy for file sinks (when & why to close a file and open a new one).
+          type: object
+          additionalProperties: false
+          properties:
+            file_size_bytes:
+              description: Files will be rolled after reaching this number of bytes
+              type: integer
+              format: uint64
+              minimum: 0
+              title: File Size
+            inactivity_seconds:
+              description: Number of seconds of inactivity to wait before rolling over to a new file
+              type: integer
+              format: uint64
+              minimum: 1
+              title: Inactivity Seconds
+            interval_seconds:
+              description: Number of seconds to wait before rolling over to a new file
+              type: integer
+              format: uint64
+              minimum: 1
+              title: Interval Seconds
+          title: File Rolling Policy
+        table_name:
+          description: Table name
+          type: string
+          title: Table Name
+      additionalProperties: false
+      required:
+      - account_id
+      - bucket
+      - table_name
+      title: R2DataCatalogSinkTablePublic
+    cloudflare-pipelines_TimestampFormat:
+      type: string
+      enum:
+      - rfc3339
+      - unix_millis
+    cloudflare-pipelines_workers-pipelines-account-id:
+      description: Specifies the public ID of the account.
+      type: string
+      example: 0123105f4ecef8ad9ca31a8372d0c353
+    cloudflare-pipelines_workers-pipelines-sink-id:
+      description: Specifies the publid ID of the sink.
+      type: string
+      example: 0223105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      minLength: 32
+    cloudflare-pipelines_ConnectionSchema:
+      description: Defines the schema of the events in the data stream.
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/cloudflare-pipelines_SourceField'
+        inferred:
+          type:
+          - boolean
+          - 'null'
+    cloudflare-pipelines_workers-pipelines-stream-id:
+      description: Specifies the public ID of the stream.
+      type: string
+      example: 033e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      minLength: 32
+    cloudflare-pipelines_PipelineGraph:
+      description: Indicates the processing flow to implement the SQL.
+      type: object
+      properties:
+        edges:
+          type: array
+          items:
+            $ref: '#/components/schemas/cloudflare-pipelines_PipelineEdge'
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/cloudflare-pipelines_PipelineNode'
+      required:
+      - nodes
+      - edges
+    cloudflare-pipelines_r2TablePublic:
+      description: R2 Sink public configuration.
+      type: object
+      properties:
+        account_id:
+          description: Cloudflare Account ID for the bucket
+          type: string
+          title: Account ID
+        bucket:
+          description: R2 Bucket to write to
+          type: string
+          title: Bucket
+        file_naming:
+          description: Controls filename prefix/suffix and strategy.
+          type: object
+          additionalProperties: false
+          properties:
+            prefix:
+              description: The prefix to use in file name. i.e prefix-<uuid>.parquet
+              type: string
+              title: Filename Prefix
+            strategy:
+              description: Filename generation strategy.
+              type: string
+              enum:
+              - serial
+              - uuid
+              - uuid_v7
+              - ulid
+              title: Filename Strategy
+            suffix:
+              description: This will overwrite the default file suffix. i.e .parquet, use with caution
+              type: string
+              title: Filename Suffix
+          title: File Naming
+        jurisdiction:
+          description: Jurisdiction this bucket is hosted in
+          type: string
+          title: Jurisdiction
+        partitioning:
+          description: Data-layout partitioning for sinks.
+          type: object
+          additionalProperties: false
+          properties:
+            time_pattern:
+              description: The pattern of the date string
+              type: string
+              example: year=%Y/month=%m/day=%d/hour=%H
+              title: Time Partition Pattern
+          title: Partitioning Configuration
+        path:
+          description: Subpath within the bucket to write to
+          type: string
+          title: Path
+        rolling_policy:
+          description: Rolling policy for file sinks (when & why to close a file and open a new one).
+          type: object
+          additionalProperties: false
+          properties:
+            file_size_bytes:
+              description: Files will be rolled after reaching this number of bytes
+              type: integer
+              format: uint64
+              minimum: 0
+              title: File Size
+            inactivity_seconds:
+              description: Number of seconds of inactivity to wait before rolling over to a new file
+              type: integer
+              format: uint64
+              minimum: 1
+              title: Inactivity Seconds
+            interval_seconds:
+              description: Number of seconds to wait before rolling over to a new file
+              type: integer
+              format: uint64
+              minimum: 1
+              title: Interval Seconds
+          title: File Rolling Policy
+      additionalProperties: false
+      required:
+      - account_id
+      - bucket
+      title: R2 Sink Public
+    cloudflare-pipelines_PipelineEdge:
+      type: object
+      properties:
+        dest_id:
+          type: integer
+          format: int32
+          minimum: 0
+        edge_type:
+          type: string
+        key_type:
+          type: string
+        src_id:
+          type: integer
+          format: int32
+          minimum: 0
+        value_type:
+          type: string
+      required:
+      - src_id
+      - dest_id
+      - key_type
+      - value_type
+      - edge_type
+    cloudflare-pipelines_ListField:
+      type: object
+      properties:
+        items:
+          $ref: '#/components/schemas/cloudflare-pipelines_SourceField'
+      required:
+      - items
+    cloudflare-pipelines_ParquetFormat:
+      type: object
+      properties:
+        compression:
+          $ref: '#/components/schemas/cloudflare-pipelines_ParquetCompression'
+        row_group_bytes:
+          type:
+          - integer
+          - 'null'
+          format: int64
+          minimum: 0
+    cloudflare-pipelines_FieldType:
+      discriminator:
+        propertyName: type
+      oneOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - int32
+        required:
+        - type
+        title: Int32
+        type: object
+      - properties:
+          type:
+            type: string
+            enum:
+            - int64
+        required:
+        - type
+        title: Int64
+        type: object
+      - properties:
+          type:
+            type: string
+            enum:
+            - float32
+        required:
+        - type
+        title: Float32
+        type: object
+      - properties:
+          type:
+            type: string
+            enum:
+            - float64
+        required:
+        - type
+        title: Float64
+        type: object
+      - properties:
+          type:
+            type: string
+            enum:
+            - bool
+        required:
+        - type
+        title: Bool
+        type: object
+      - properties:
+          type:
+            type: string
+            enum:
+            - string
+        required:
+        - type
+        title: String
+        type: object
+      - properties:
+          type:
+            type: string
+            enum:
+            - binary
+        required:
+        - type
+        title: Binary
+        type: object
+      - allOf:
+        - $ref: '#/components/schemas/cloudflare-pipelines_TimestampField'
+        - properties:
+            type:
+              type: string
+              enum:
+              - timestamp
+          required:
+          - type
+          type: object
+        title: Timestamp
+      - properties:
+          type:
+            type: string
+            enum:
+            - json
+        required:
+        - type
+        title: Json
+        type: object
+      - allOf:
+        - $ref: '#/components/schemas/cloudflare-pipelines_StructField'
+        - properties:
+            type:
+              type: string
+              enum:
+              - struct
+          required:
+          - type
+          type: object
+        title: Struct
+      - allOf:
+        - $ref: '#/components/schemas/cloudflare-pipelines_ListField'
+        - properties:
+            type:
+              type: string
+              enum:
+              - list
+          required:
+          - type
+          type: object
+        title: List
+    cloudflare-pipelines_JsonCompression:
+      description: Specifies the compression applied to JSON sink output.
+      type: string
+      default: uncompressed
+      enum:
+      - uncompressed
+      - gzip
+    cloudflare-pipelines_PipelineNode:
+      type: object
+      properties:
+        description:
+          type: string
+        node_id:
+          type: integer
+          format: int32
+          minimum: 0
+        operator:
+          type: string
+        parallelism:
+          type: integer
+          format: int32
+          minimum: 0
+      required:
+      - node_id
+      - operator
+      - description
+      - parallelism
+    cloudflare-pipelines_SinkFormat:
+      description: Defines the output data format of a sink.
+      discriminator:
+        mapping:
+          json: '#/components/schemas/cloudflare-pipelines_SinkJsonFormat'
+          parquet: '#/components/schemas/cloudflare-pipelines_SinkParquetFormat'
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/cloudflare-pipelines_SinkJsonFormat'
+      - $ref: '#/components/schemas/cloudflare-pipelines_SinkParquetFormat'
+    cloudflare-pipelines_r2Table:
+      type: object
+      properties:
+        account_id:
+          description: Cloudflare Account ID for the bucket
+          type: string
+          title: Account ID
+        bucket:
+          description: R2 Bucket to write to
+          type: string
+          title: Bucket
+        credentials:
+          type: object
+          additionalProperties: false
+          properties:
+            access_key_id:
+              description: Cloudflare Account ID for the bucket
+              type: string
+              format: var-str
+              title: Access Key ID
+            secret_access_key:
+              description: Cloudflare Account ID for the bucket
+              type: string
+              format: var-str
+              title: Access Key ID
+              x-sensitive: true
+          required:
+          - access_key_id
+          - secret_access_key
+          title: R2 Credentials
+        file_naming:
+          description: Controls filename prefix/suffix and strategy.
+          type: object
+          additionalProperties: false
+          properties:
+            prefix:
+              description: The prefix to use in file name. i.e prefix-<uuid>.parquet
+              type: string
+              title: Filename Prefix
+            strategy:
+              description: Filename generation strategy.
+              type: string
+              enum:
+              - serial
+              - uuid
+              - uuid_v7
+              - ulid
+              title: Filename Strategy
+            suffix:
+              description: This will overwrite the default file suffix. i.e .parquet, use with caution
+              type: string
+              title: Filename Suffix
+          title: File Naming
+        jurisdiction:
+          description: Jurisdiction this bucket is hosted in
+          type: string
+          title: Jurisdiction
+        partitioning:
+          description: Data-layout partitioning for sinks.
+          type: object
+          additionalProperties: false
+          properties:
+            time_pattern:
+              description: The pattern of the date string
+              type: string
+              example: year=%Y/month=%m/day=%d/hour=%H
+              title: Time Partition Pattern
+          title: Partitioning Configuration
+        path:
+          description: Subpath within the bucket to write to
+          type: string
+          title: Path
+        rolling_policy:
+          description: Rolling policy for file sinks (when & why to close a file and open a new one).
+          type: object
+          additionalProperties: false
+          properties:
+            file_size_bytes:
+              description: Files will be rolled after reaching this number of bytes
+              type: integer
+              format: uint64
+              minimum: 0
+              title: File Size
+            inactivity_seconds:
+              description: Number of seconds of inactivity to wait before rolling over to a new file
+              type: integer
+              format: uint64
+              minimum: 1
+              title: Inactivity Seconds
+            interval_seconds:
+              description: Number of seconds to wait before rolling over to a new file
+              type: integer
+              format: uint64
+              minimum: 1
+              title: Interval Seconds
+          title: File Rolling Policy
+      additionalProperties: false
+      required:
+      - account_id
+      - bucket
+      - credentials
+      title: R2 Sink
+    cloudflare-pipelines_workers-pipelines-pipeline:
+      description: '[DEPRECATED] Describes the configuration of a pipeline. Use the new streams/sinks/pipelines API instead.'
+      type: object
+      properties:
+        destination:
+          type: object
+          properties:
+            batch:
+              type: object
+              properties:
+                max_bytes:
+                  description: Specifies rough maximum size of files.
+                  type: integer
+                  default: 100000000
+                  maximum: 100000000
+                  minimum: 1000
+                max_duration_s:
+                  description: Specifies duration to wait to aggregate batches files.
+                  type: number
+                  default: 300
+                  maximum: 300
+                  minimum: 0.25
+                max_rows:
+                  description: Specifies rough maximum number of rows per file.
+                  type: integer
+                  default: 10000000
+                  maximum: 10000000
+                  minimum: 100
+              required:
+              - max_rows
+              - max_bytes
+              - max_duration_s
+            compression:
+              type: object
+              properties:
+                type:
+                  description: Specifies the desired compression algorithm and format.
+                  type: string
+                  example: gzip
+                  default: gzip
+                  enum:
+                  - none
+                  - gzip
+                  - deflate
+              required:
+              - type
+            format:
+              description: Specifies the format of data to deliver.
+              type: string
+              enum:
+              - json
+            path:
+              type: object
+              example:
+                bucket: bucket
+                prefix: base
+              properties:
+                bucket:
+                  description: Specifies the R2 Bucket to store files.
+                  type: string
+                  example: bucket
+                filename:
+                  description: Specifies the name pattern to for individual data files.
+                  example: ${slug}${extension}
+                  allOf:
+                  - type: string
+                  - type: string
+                filepath:
+                  description: Specifies the name pattern for directory.
+                  type: string
+                  example: ${date}/${hour}
+                prefix:
+                  description: Specifies the base directory within the bucket.
+                  type: string
+                  example: base
+              required:
+              - bucket
+            type:
+              description: Specifies the type of destination.
+              type: string
+              enum:
+              - r2
+          required:
+          - type
+          - format
+          - batch
+          - compression
+          - path
+        endpoint:
+          description: Indicates the endpoint URL to send traffic.
+          type: string
+          example: https://123f8a8258064ed892a347f173372359.pipelines.cloudflare.com
+        id:
+          description: Specifies the pipeline identifier.
+          type: string
+          example: 123f8a8258064ed892a347f173372359
+        name:
+          description: Defines the name of the pipeline.
+          type: string
+          example: sample_pipeline
+          maxLength: 128
+          minLength: 1
+        source:
+          type: array
+          items:
+            discriminator:
+              mapping:
+                binding: '#/components/schemas/cloudflare-pipelines_workers_pipelines_binding_source'
+                http: '#/components/schemas/cloudflare-pipelines_workers_pipelines_http_source'
+              propertyName: type
+            oneOf:
+            - $ref: '#/components/schemas/cloudflare-pipelines_workers_pipelines_http_source'
+            - $ref: '#/components/schemas/cloudflare-pipelines_workers_pipelines_binding_source'
+          minItems: 1
+        version:
+          description: Indicates the version number of last saved configuration.
+          type: number
+          example: 2
+      deprecated: true
+      required:
+      - name
+      - source
+      - destination
+      - id
+      - version
+      - endpoint
+    cloudflare-pipelines_Format:
+      description: Defines the data format of the events.
+      discriminator:
+        propertyName: type
+      oneOf:
+      - allOf:
+        - $ref: '#/components/schemas/cloudflare-pipelines_JsonFormat'
+        - properties:
+            type:
+              type: string
+              enum:
+              - json
+          required:
+          - type
+          type: object
+        title: Json
+      - allOf:
+        - $ref: '#/components/schemas/cloudflare-pipelines_ParquetFormat'
+        - properties:
+            type:
+              type: string
+              enum:
+              - parquet
+          required:
+          - type
+          type: object
+        title: Parquet
+    cloudflare-pipelines_DecimalEncoding:
+      type: string
+      enum:
+      - number
+      - string
+      - bytes
+    cloudflare-pipelines_workers_pipelines_http_source:
+      description: '[DEPRECATED] HTTP source configuration. Use the new streams API instead.'
+      type: object
+      properties:
+        authentication:
+          description: Specifies whether authentication is required to send to this pipeline via HTTP.
+          type: boolean
+        cors:
+          type: object
+          properties:
+            origins:
+              description: Specifies allowed origins to allow Cross Origin HTTP Requests.
+              type: array
+              items:
+                type: string
+              example:
+              - '*'
+              maxItems: 5
+        format:
+          description: Specifies the format of source data.
+          type: string
+          enum:
+          - json
+        type:
+          type: string
+      deprecated: true
+      required:
+      - type
+      - format
+    cloudflare-pipelines_workers_pipelines_binding_source:
+      description: '[DEPRECATED] Worker binding source configuration. Use the new streams API instead.'
+      type: object
+      properties:
+        format:
+          description: Specifies the format of source data.
+          type: string
+          enum:
+          - json
+        type:
+          type: string
+      deprecated: true
+      required:
+      - type
+      - format
+    cloudflare-pipelines_TimestampField:
+      type: object
+      properties:
+        unit:
+          $ref: '#/components/schemas/cloudflare-pipelines_TimestampUnit'
+    cloudflare-pipelines_worker-pipelines-common-success:
+      description: Indicates whether the API call was successful.
+      type: boolean
+      example: true
+    cloudflare-pipelines_StructField:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/cloudflare-pipelines_SourceField'
+        name:
+          type:
+          - string
+          - 'null'
+      required:
+      - fields
+    cloudflare-pipelines_workers-pipelines-pipeline-id:
+      description: Specifies the public ID of the pipeline.
+      type: string
+      example: 043e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      minLength: 32
+    cloudflare-pipelines_SourceField:
+      allOf:
+      - $ref: '#/components/schemas/cloudflare-pipelines_FieldType'
+      - properties:
+          metadata_key:
+            type:
+            - string
+            - 'null'
+          name:
+            type: string
+          required:
+            type: boolean
+          sql_name:
+            type: string
+        required:
+        - name
+        type: object
+    cloudflare-pipelines_TimestampUnit:
+      type: string
+      enum:
+      - second
+      - millisecond
+      - microsecond
+      - nanosecond
+    cloudflare-pipelines_r2_data_catalogTable:
+      description: R2 Data Catalog Sink
+      type: object
+      properties:
+        account_id:
+          description: Cloudflare Account ID
+          type: string
+          format: uri
+          example: 6791973bbe876d621f9e557f891e90b3
+        bucket:
+          description: The R2 Bucket that hosts this catalog
+          type: string
+          example: my-bucket
+        namespace:
+          description: Table namespace
+          type: string
+          title: Namespace
+        rolling_policy:
+          description: Rolling policy for file sinks (when & why to close a file and open a new one).
+          type: object
+          additionalProperties: false
+          properties:
+            file_size_bytes:
+              description: Files will be rolled after reaching this number of bytes
+              type: integer
+              format: uint64
+              minimum: 0
+              title: File Size
+            inactivity_seconds:
+              description: Number of seconds of inactivity to wait before rolling over to a new file
+              type: integer
+              format: uint64
+              minimum: 1
+              title: Inactivity Seconds
+            interval_seconds:
+              description: Number of seconds to wait before rolling over to a new file
+              type: integer
+              format: uint64
+              minimum: 1
+              title: Interval Seconds
+          title: File Rolling Policy
+        table_name:
+          description: Table name
+          type: string
+          title: Table Name
+        token:
+          description: Authentication token
+          type: string
+          format: var-str
+          example: '"asdfkj2h34kjhkj"'
+          x-sensitive: true
+      additionalProperties: false
+      required:
+      - account_id
+      - bucket
+      - token
+      - table_name
+      title: R2DataCatalogSinkTable
+    cloudflare-pipelines_ParquetCompression:
+      type: string
+      enum:
+      - uncompressed
+      - snappy
+      - gzip
+      - zstd
+      - lz4
+    cloudflare-pipelines_JsonFormat:
+      type: object
+      properties:
+        decimal_encoding:
+          $ref: '#/components/schemas/cloudflare-pipelines_DecimalEncoding'
+        timestamp_format:
+          $ref: '#/components/schemas/cloudflare-pipelines_TimestampFormat'
+        unstructured:
+          type: boolean
+    cloudflare-pipelines_SinkParquetFormat:
+      allOf:
+      - $ref: '#/components/schemas/cloudflare-pipelines_ParquetFormat'
+      - properties:
+          type:
+            type: string
+            enum:
+            - parquet
+        required:
+        - type
+        type: object
+      title: Parquet
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-forge-commands:
+  abuse-reports:
+    description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
+    groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
+      emails:
+        description: Emails sent for abuse reports
+      mitigations:
+        description: Mitigation actions taken in response to abuse reports
+  accounts:
+    description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
+    groups:
+      applications:
+        description: Applications operations
+      categories:
+        description: Categories operations
+      organizations:
+        description: Move accounts between organizations
+      profile:
+        description: View and manage the profile for a Cloudflare account
+      roles:
+        description: View the roles available for assigning to account members, each defining a set of permissions
+      subscriptions:
+        description: View and manage plan subscriptions attached to this account
+      tokens:
+        description: Create and manage scoped API tokens for programmatic access to the Cloudflare API
+  ai-gateway:
+    description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
+    groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
+      datasets:
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
+      dynamic-routing:
+        description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
+      evaluation-types:
+        description: 'Deprecated: list the evaluator types that evaluations can use'
+      evaluations:
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
+      logs:
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
+  ai-search:
+    description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
+    groups:
+      items:
+        description: Content indexed by AI Search instances
+      jobs:
+        description: Indexing job lifecycle for AI Search instances
+      namespace:
+        description: Logical groupings for organizing AI Search instances
+      tokens:
+        description: Credentials used by AI Search instances
+  ai-security:
+    description: Detect prompt injection, PII, and unsafe topics in traffic to your AI applications
+    groups:
+      custom-topics:
+        description: Organization-specific topic categories used by AI Security for Apps content detection
+  analytics:
+    description: Zone-level traffic analytics — dashboard summaries, per-colo breakdowns, and Argo latency metrics
+    groups:
+      colo:
+        description: Per-data-center (colo) traffic analytics breakdown for the zone
+      dashboard:
+        description: Aggregated zone dashboard analytics — requests, bandwidth, threats, and page views
+      latency:
+        description: Argo Smart Routing latency analytics showing time-to-first-byte improvements
+  argo:
+    description: Network optimization features that speed up and improve reliability of traffic to your origins
+    groups:
+      smart-routing:
+        description: Route traffic through the fastest network paths to your origin using real-time latency data
+      tiered-caching:
+        description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  billing:
+    description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
+    groups:
+      profiles:
+        description: Billing profile with payment method, address, and invoice preferences
+      usage:
+        description: Metered usage data for billed services — requests, bandwidth, and feature consumption
+  botnet-feed:
+    description: Botnet threat intelligence feeds — IP and ASN-level data on known command-and-control infrastructure
+    groups:
+      asn:
+        description: ASN-level botnet activity data showing networks with known C2 infrastructure
+      configs:
+        description: Botnet feed subscription configuration and notification preferences
+  builds:
+    description: Build and deploy Workers from connected repositories, then inspect build status and logs.
+    groups:
+      deploy-hooks:
+        description: Manage branch-specific HTTP hooks that start builds.
+      limits:
+        description: View build-minute availability and refresh information.
+      logs:
+        description: Retrieve build logs.
+      repos:
+        description: Manage source repository connections for Workers Builds.
+      tokens:
+        description: Manage credentials used by Workers Builds to deploy Workers.
+      triggers:
+        description: Configure how repository changes build and deploy Workers.
+      versions:
+        description: Find builds associated with Worker versions.
+      workers:
+        description: Manage repository-backed build configuration for Workers.
+  cache:
+    description: Purge cached content and configure Cache Reserve, tiered caching, and variant serving
+    groups:
+      origin-cloud-regions:
+        description: Manage Origin Cloud Regions routing and failover configurations
+      settings:
+        description: Configure Cache Reserve, tiered caching, and variant serving
+      settings.regional-tiered-cache:
+        description: Restrict tiered cache topology to data centers within a specific geographic region
+      settings.reserve:
+        description: Persistent storage tier that keeps cached assets even after eviction from edge caches
+      settings.smart-tiered-cache:
+        description: Automatically determine the best upper-tier data centers for tiered cache topology
+      settings.variants:
+        description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
+  client-side-security:
+    description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
+    groups:
+      connections:
+        description: Third-party connections made by scripts on your pages — track data exfiltration risks
+      cookies:
+        description: Cookies set by your pages with classification and same-site attribute tracking
+      policies:
+        description: Content Security Policies that control which scripts and connections are allowed on your pages
+      scripts:
+        description: JavaScript files detected on your pages with change tracking and malicious code detection
+      settings:
+        description: Fine tune Client-Side Security behaviors
+  cloud-connector:
+    description: Route traffic from Cloudflare directly to cloud provider services (AWS, Azure, GCP) without origin servers
+    groups:
+      rules:
+        description: Routing rules that map request patterns to cloud provider endpoints
+  cloudforce-one:
+    description: Detection rule management APIs
+    groups:
+      binary-storage:
+        description: Upload and retrieve malware samples and suspicious binaries for analysis
+      requests:
+        description: Additional request operations — priority listing and asset creation
+      rules:
+        description: Rule management operations
+        groups:
+          approvals:
+            description: Approval workflow operations
+          email:
+            description: Email rule operations
+          exemptions:
+            description: Exemption rule operations
+          managed:
+            description: Managed rule operations
+          stats:
+            description: Rule statistics operations
+          tree:
+            description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
+  containers:
+    description: Deploy and manage Containers applications on Cloudflare's global network
+    groups:
+      applications:
+        description: Manage Containers applications
+      applications.instances:
+        description: Inspect Containers instances belonging to applications
+      applications.rollouts:
+        description: Manage rollouts for scheduler-backed applications
+      applications.versions:
+        description: Inspect versions of scheduler-backed applications
+      registries:
+        description: Manage Containers image registries
+      registries.credentials:
+        description: Generate image registry credentials
+  content-scan:
+    description: Malicious uploads detection, scan uploaded content in HTTP requests for malware and malicious payloads
+    groups:
+      expressions:
+        description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
+  custom-pages:
+    description: Manage custom error and challenge pages and their assets for accounts and zones
+    groups:
+      account-custom-pages:
+        description: Manage account-level custom pages
+      account-custom-pages.preview-tokens:
+        description: Preview tokens for account-level custom pages
+      assets:
+        description: Manage account- and zone-level custom assets
+      zone-custom-pages:
+        description: Manage zone-level custom pages
+      zone-custom-pages.preview-tokens:
+        description: Preview tokens for zone-level custom pages
+  d1:
+    description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
+    groups:
+      time-travel:
+        description: use specific point-in-time backups of your D1 database
+        x-forge-epilogue: For more information about Time Travel, see https://developers.cloudflare.com/d1/reference/time-travel
+  diagnostics:
+    description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
+    groups:
+      endpoint-healthchecks:
+        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+      traceroutes:
+        description: Run traceroutes from Cloudflare data centers to diagnose network path issues
+  email-routing:
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
+    groups:
+      addresses:
+        description: Verified destination email addresses that can receive forwarded mail
+      dns:
+        description: Inspect or unlock the DNS records required by Email Routing
+      rules:
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
+  email-security:
+    description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
+    groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
+      investigate:
+        description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
+      phishguard:
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
+      settings:
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
+      submissions:
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
+  email-sending:
+    description: Send transactional email and manage sending subdomains and their DNS configuration
+    groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
+      subdomains:
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
+  filters:
+    description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
+  firewall:
+    description: Legacy firewall rules, zone lockdowns, access rules, user-agent blocking, and WAF packages
+    groups:
+      access-rules:
+        description: IP-based access rules that allow, block, challenge, or whitelist traffic globally or per-zone
+      lockdowns:
+        description: Zone lockdown rules that restrict access to URLs by IP address or range
+      rules:
+        description: Legacy firewall rules with filter expressions — prefer Rulesets for new configurations
+      ua-rules:
+        description: Block or challenge requests based on the User-Agent header string
+      waf:
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
+      zone-access-rules:
+        description: Zone-scoped IP access rules for blocking or allowing traffic
+  google-tag-gateway:
+    description: Google Tag Gateway operations
+    groups:
+      config:
+        description: Google Tag Gateway config operations
+  healthchecks:
+    description: Standalone health checks that monitor origin server availability from Cloudflare's edge
+    groups:
+      previews:
+        description: Test a health check configuration before deploying it to production
+  hyperdrive:
+    description: Accelerate access to existing databases by caching queries and pooling connections at the edge
+  iam:
+    description: Identity and access management — permission groups, resource groups, user groups, and SSO connectors
+    groups:
+      permission-groups:
+        description: View the permission groups that can be assigned to API tokens and policies
+      resource-groups:
+        description: Define scopes that limit which account resources a policy or token can access
+      sso:
+        description: Configure single sign-on connectors to authenticate account members through an external identity provider
+      user-groups:
+        description: Organize account members into groups for easier permission assignment
+  images:
+    description: Store, resize, and deliver optimized images globally — variants, signing keys, and direct uploads
+    groups:
+      flows:
+        description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
+      keys:
+        description: Manage signing keys for generating private image URLs
+      variants:
+        description: Manage named resize variants for transforming images on delivery
+  intel:
+    description: Threat intelligence lookups — IP reputation, domain info, ASN details, WHOIS, and indicator feeds
+    groups:
+      asn:
+        description: ASN intelligence — ownership, geolocation, and subnet details for autonomous systems
+      attack-surface-report:
+        description: Attack surface intelligence — exposed assets, vulnerabilities, and infrastructure mapping
+      dns:
+        description: Passive DNS data showing historical DNS resolution records for domains
+      domain-history:
+        description: Historical domain registration and categorization changes over time
+      domains:
+        description: Domain intelligence — risk scores, categories, and associated infrastructure
+      indicator-feeds:
+        description: Threat indicator feeds — subscribe to and manage curated lists of malicious IPs, domains, and URLs
+      ip-lists:
+        description: Curated IP lists used for threat detection and policy enforcement
+      ips:
+        description: IP address intelligence — geolocation, risk assessment, and hosting provider details
+      miscategorizations:
+        description: Report and track domain miscategorization corrections
+      whois:
+        description: WHOIS registration data for domains including registrant, registrar, and nameservers
+  k2:
+    description: Durable, ordered event streams that you produce records to and consume from with subscriptions
+    groups:
+      streams:
+        description: K2 streams, their retention, and the HTTP and Workers binding inputs used to produce records
+      streams.subscriptions:
+        description: Subscriptions that consume a K2 stream, with committed-position lag
+  leaked-credential-checks:
+    description: Detect compromised credentials in login requests by checking against known breach databases
+    groups:
+      detections:
+        description: Custom detection locations that tell the WAF where to find usernames and passwords in requests
+  load-balancers:
+    description: Distribute traffic across origin pools with health monitoring, geo-steering, and failover
+    groups:
+      monitor-groups:
+        description: Group monitors together for shared configuration and bulk management
+      monitor-groups.references:
+        description: List references to monitor groups used by load balancer pools
+      monitors:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.previews:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.references:
+        description: Health check configurations that probe origin servers and determine pool availability
+      pools:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.health:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.references:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      previews:
+        description: Preview the result of a health check monitor configuration before applying it
+      regions:
+        description: Geographic regions used for regional pool steering and traffic policies
+      searches:
+        description: Search across all load balancer resources (pools, monitors, load balancers) by name or reference
+  logs:
+    description: Log control, retention, and raw log access — CMB config, ray ID lookups, and received fields
+    groups:
+      control:
+        description: Log control operations
+      received:
+        description: Received log operations
+  magic-network-monitoring:
+    description: Flow-based network traffic monitoring with configurable alerting rules and VPC flow ingestion
+    groups:
+      configs:
+        description: Account-level monitoring configuration — sampling rates, thresholds, and notification settings
+      rules:
+        description: Monitoring rules that define traffic thresholds and trigger alerts or prefix advertisements
+      vpc-flows:
+        description: Ingest VPC flow logs from cloud providers for network visibility and anomaly detection
+  magic-transit:
+    description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
+    groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
+      apps:
+        description: Application-aware traffic policies for Magic WAN that steer traffic by app type
+      bgp-filter-profiles:
+        description: BGP filter profiles for controlling which routes are allowed or denied on Magic Transit tunnels
+      bgp-settings:
+        description: BGP settings for controlling default ASN and route redistribution on Magic Transit tunnels
+      cf-interconnects:
+        description: Cloudflare Network Interconnect (CNI) links for direct physical or virtual peering
+      gre-tunnels:
+        description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
+      ipsec-tunnels:
+        description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
+      routes:
+        description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
+      sites:
+        description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
+  mcp:
+    description: Manage MCP portals and upstream MCP servers for Cloudflare Access AI controls
+    groups:
+      portals:
+        description: Manage MCP portals, attached servers, and Code Mode settings
+      servers:
+        description: Manage upstream MCP servers, credentials, capabilities, and sync state
+  network-interconnects:
+    description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
+    groups:
+      cnis:
+        description: Cloud Network Interconnect (CNI) connections — private links from cloud providers to Cloudflare
+      interconnects:
+        description: Physical cross-connect and partner interconnect sessions with LOA and status tracking
+      settings:
+        description: Account-level interconnect settings and default configurations
+      slots:
+        description: Available interconnect facility slots showing port capacity at Cloudflare data centers
+  organizations:
+    description: Multi-user organizations that group accounts, members, and shared settings under a single entity
+    groups:
+      account-organizations:
+        description: List organizations associated with a specific account
+      accounts:
+        description: Accounts operations
+      members:
+        description: Members operations
+      members-batch-create:
+        description: Members Batch Create operations
+      organization-profile:
+        description: View and update the public profile information for an organization
+      shares:
+        description: Shares operations
+  origin-post-quantum-encryption:
+    description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
+  pages:
+    description: Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains
+    groups:
+      projects:
+        description: Pages projects, deployments, build logs, and custom domain bindings
+  pipelines:
+    description: Ingest, transform, and route event streams into R2, analytics, or other destinations in real time
+    groups:
+      sinks:
+        description: Destinations where pipeline data is written — R2 buckets, HTTP endpoints, or other storage
+      streams:
+        description: Inbound data streams that feed events into a pipeline for processing
+  precursor:
+    description: Precursor settings for a zone
+  queues:
+    description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
+    groups:
+      consumers:
+        description: Workers that automatically receive and process messages from a queue
+      messages:
+        description: Push messages to a queue and pull or acknowledge them from consumers
+      purge:
+        description: Remove all pending messages from a queue
+      subscriptions:
+        description: Manage queue subscriptions for event-driven message routing
+  r2:
+    description: S3-compatible object storage with zero egress fees — buckets, lifecycle rules, event notifications, and data migration
+    groups:
+      buckets:
+        description: Create and configure R2 buckets including CORS, lifecycle, custom domains, event notifications, and object locks
+      buckets.jobs:
+        description: Create and inspect background jobs for an R2 bucket
+      buckets.local-uploads:
+        description: R2 bucket local upload configuration
+      super-slurper:
+        description: Migrate data from external S3-compatible storage into R2 buckets with resumable transfer jobs
+      temporary-credentials:
+        description: Generate short-lived S3-compatible credentials scoped to specific buckets and operations
+  r2-data-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  radar:
+    description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
+    groups:
+      agent-readiness:
+        description: Agent readiness summary statistics across the Cloudflare network
+      ai:
+        description: AI inference trends and model usage statistics across the Cloudflare network
+      annotations:
+        description: Radar annotations marking significant Internet events (outages, cable cuts, etc.)
+      as112:
+        description: AS112 DNS sinkhole statistics — reverse DNS query volumes for private address space
+      attacks:
+        description: DDoS and application-layer attack trends, vectors, and target analysis
+      bgp:
+        description: BGP routing data — prefix announcements, AS-level stats, route leaks, and hijack events
+      bots:
+        description: Internet-wide bot traffic trends, categories, and distribution statistics
+      ct:
+        description: Certificate Transparency log monitoring and newly-issued certificate discovery
+      datasets:
+        description: Downloadable Radar datasets for offline analysis and research
+      dns:
+        description: Global DNS query trends — top domains, resolver stats, and DNSSEC adoption
+      email:
+        description: Email security trends — DMARC/SPF/DKIM adoption, spam, and phishing statistics
+      entities:
+        description: Look up ASNs, IPs, domains, and locations with metadata and traffic summaries
+      geolocations:
+        description: Geographic location metadata used for regional traffic analysis
+      http:
+        description: HTTP protocol trends — TLS versions, HTTP versions, browser share, and OS distribution
+      leaked-credentials:
+        description: Leaked credential detection trends and exposure statistics
+      netflows:
+        description: Network-layer traffic flow data and volumetric trend analysis
+      origins:
+        description: Cloud and hosting origin providers (e.g. Amazon, by region) and their traffic metrics
+      post-quantum:
+        description: Post-quantum encryption adoption and deployment trends across the Internet
+      quality:
+        description: Internet connection quality metrics — speed, latency, and jitter by geography and ASN
+      ranking:
+        description: Top domain rankings based on DNS query popularity across the Cloudflare network
+      robots-txt:
+        description: Robots.txt adoption and crawler directive trends across the web
+      search:
+        description: Search Radar data across IPs, ASNs, domains, and locations
+      tcp-resets-timeouts:
+        description: TCP connection reset and timeout statistics indicating network health issues
+      tlds:
+        description: Top-level domain (TLD) metadata and performance trends
+      traffic-anomalies:
+        description: Detected traffic anomalies and unusual patterns in Internet traffic flows
+      verified-bots:
+        description: Catalog of known good bots (Googlebot, Bingbot, etc.) and their traffic patterns
+  rate-limits:
+    description: Legacy per-zone rate limiting rules — prefer Advanced Rate Limiting in Rulesets for new configurations
+  realtime:
+    description: Real-time audio, video, and data services on Cloudflare's global network
+    groups:
+      kit:
+        description: SDK-backed meetings, participants, recordings, livestreams, and webhooks
+      kit.analytics:
+        description: Usage and livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams:
+        description: Livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams.daily:
+        description: Daily livestream analytics for RealtimeKit applications
+      kit.analytics.usage:
+        description: Usage analytics for RealtimeKit applications
+      kit.apps:
+        description: RealtimeKit applications that group meetings, sessions, and configuration
+      kit.livestreams:
+        description: Independent and meeting-based livestreams and their sessions
+      kit.livestreams.sessions:
+        description: Sessions for RealtimeKit livestreams
+      kit.meetings:
+        description: Meetings, participants, access tokens, and meeting livestreams
+      kit.meetings.active:
+        description: Live meeting state and participant controls
+      kit.meetings.active.polls:
+        description: Polls for active meeting sessions
+      kit.meetings.livestream:
+        description: Livestream operations associated with RealtimeKit meetings
+      kit.meetings.participants:
+        description: Participants in RealtimeKit meetings
+      kit.meetings.participants.tokens:
+        description: Access tokens for RealtimeKit meeting participants
+      kit.presets:
+        description: Reusable meeting configuration for media, permissions, and interface behavior
+      kit.recordings:
+        description: Meeting and participant-track recordings and recording controls
+      kit.recordings.active:
+        description: Active recordings for RealtimeKit meetings
+      kit.recordings.tracks:
+        description: Participant-track recordings for RealtimeKit meetings
+      kit.sessions:
+        description: Historical session data, participants, chat, transcripts, and summaries
+      kit.sessions.chat:
+        description: Chat messages from historical RealtimeKit sessions
+      kit.sessions.livestreams:
+        description: Livestreams associated with historical RealtimeKit sessions
+      kit.sessions.participants:
+        description: Participants in historical RealtimeKit sessions
+      kit.sessions.peers:
+        description: Peer details from historical RealtimeKit sessions
+      kit.sessions.summaries:
+        description: Summaries of historical RealtimeKit sessions
+      kit.sessions.transcripts:
+        description: Transcripts from historical RealtimeKit sessions
+      kit.webhooks:
+        description: Webhook endpoints and supported events for RealtimeKit notifications
+      kit.webhooks.events:
+        description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
+  request-tracers:
+    description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
+    groups:
+      traces:
+        description: Simulate request processing to debug rule matches, transforms, and routing decisions
+  resource-sharing:
+    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    groups:
+      recipients:
+        description: Update share recipients
+      resources:
+        description: Individual resources (zones, configs) that have been shared with recipients
+  rules:
+    description: Resources used by Cloudflare rules and rulesets
+    groups:
+      lists:
+        description: Custom account-level lists of IPs, hostnames, ASNs, or redirects used in rule expressions
+  rum:
+    description: Real User Measurement (Web Analytics) — track page loads, Core Web Vitals, and visitor metrics
+    groups:
+      rules:
+        description: Rules that control which pages and paths are tracked by Web Analytics
+      site-info:
+        description: Web Analytics sites — register domains and get the JavaScript beacon snippet
+  scim:
+    description: SCIM 2.0 provisioning — manage users, groups, and identity provider sync for your account
+    groups:
+      groups:
+        description: Groups operations
+      resource-types:
+        description: Resource Types operations
+      schemas:
+        description: Schemas operations
+      service-provider-config:
+        description: Service Provider Config operations
+      users:
+        description: Users operations
+  secrets-store:
+    description: Centralized secret management — store API keys, tokens, and credentials for use across Workers and other products
+    groups:
+      quota:
+        description: Account quota limits for secrets stores, secrets count, and storage capacity
+      secrets:
+        description: Encrypted key-value secrets within a store. Pass --store-id to scope.
+      stores:
+        description: Secret stores that hold encrypted key-value secrets accessible by Workers and services
+  security-center:
+    description: Security posture dashboard — view and manage security insights, misconfigurations, and vulnerabilities
+    groups:
+      insights:
+        description: Security findings and recommendations across your account — DNS, SSL, WAF misconfigurations, etc.
+      zone-insights:
+        description: Zone-scoped security insights — counts by class, severity, type, and dismissal
+  security-txt:
+    description: Manage the /.well-known/security.txt file that tells security researchers how to report vulnerabilities
+  smart-shield:
+    description: Smart Shield settings, health checks, and cache reserve management
+    groups:
+      cache-reserve-clear:
+        description: Cache Reserve Clear operations
+      health-checks:
+        description: Health checks operations
+  spectrum:
+    description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
+    groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
+      apps:
+        description: Spectrum application configurations that map protocols and ports to origin servers
+  speed:
+    description: Observatory speed tests — run Lighthouse audits, track performance trends, and schedule recurring tests
+    groups:
+      availabilities:
+        description: Check which speed test regions and configurations are available for your zone
+      pages:
+        description: Tested pages with their performance history, trends, and individual test results
+      schedule:
+        description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
+  stream:
+    description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
+    groups:
+      audio-tracks:
+        description: Add, edit, or remove additional audio tracks on a video
+      captions:
+        description: Upload, generate, or retrieve captions and subtitles for videos in multiple languages
+      clip:
+        description: Create a new video clip from an existing video by specifying start and end times
+      copy:
+        description: Import a video from a URL into Stream for processing and delivery
+      direct-upload:
+        description: Generate a tokenized URL that lets end-users upload video directly to Stream
+      downloads:
+        description: Create downloadable MP4 renditions of a video for offline viewing
+      embed:
+        description: Retrieve the HTML embed code snippet for a video
+      keys:
+        description: Signing keys used to generate short-lived signed URLs for private video playback
+      live-inputs:
+        description: Enable and disable live input streams
+      token:
+        description: Generate short-lived signed URL tokens for secure private video playback
+      typed-downloads:
+        description: Type-specific stream download creation and deletion
+      videos:
+        description: Aggregate video storage usage statistics for the account
+      watermarks:
+        description: Watermark profiles that overlay an image on every video in the account
+      webhooks:
+        description: Webhook notifications for video lifecycle events (ready, error, etc.)
+  tenants:
+    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    groups:
+      account-types:
+        description: Account Types operations
+      accounts:
+        description: Accounts operations
+      entitlements:
+        description: Entitlements operations
+      memberships:
+        description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
+  url-scanner:
+    description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
+    groups:
+      response:
+        description: Response operations
+      responses:
+        description: Raw HTTP response data captured during URL scans
+      scan:
+        description: Scan operations
+      scans:
+        description: URL scan requests and results — submit URLs for analysis and retrieve threat verdicts
+  user:
+    description: Your Cloudflare user profile, invitations, organizations, billing, and personal API tokens
+    groups:
+      billing:
+        description: View billing history and payment profile for your user (deprecated — prefer account-level billing)
+      firewall:
+        description: Firewall operations
+      load-balancers.monitors:
+        description: Load Balancers operations
+      load-balancers.monitors.preview:
+        description: Load Balancers operations
+      load-balancers.monitors.references:
+        description: Load Balancers operations
+      load-balancers.pools:
+        description: Load Balancers operations
+      load-balancers.pools.edit.pools:
+        description: Load Balancers operations
+      load-balancers.pools.health:
+        description: Load Balancers operations
+      load-balancers.pools.preview:
+        description: Load Balancers operations
+      load-balancers.pools.references:
+        description: Load Balancers operations
+      load-balancers.preview:
+        description: Load Balancers operations
+      load-balancing-analytics.events:
+        description: Load Balancing Analytics operations
+      subscriptions:
+        description: View and manage zone-level plan subscriptions owned by your user
+      tenants:
+        description: Tenants operations
+      tokens:
+        description: Create and manage personal API tokens scoped to your user for programmatic API access
+  user.analytics:
+    description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
+  waiting-rooms:
+    description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
+    groups:
+      account-waiting-rooms:
+        description: Account-scoped waiting room listing
+      events:
+        description: Scheduled events that temporarily override waiting room settings for sales, launches, etc.
+      page:
+        description: Custom HTML waiting page templates and preview rendering
+      rules:
+        description: Rules that bypass or modify waiting room behavior for specific request patterns
+      settings:
+        description: Zone-level waiting room defaults and cookie configuration
+      statuses:
+        description: Real-time queue status showing active users, queued users, and estimated wait times
+  workflows:
+    description: Durable, multi-step workflows that run on Workers with automatic retries and state persistence
+    groups:
+      instances:
+        description: Workflow instance operations
+      versions:
+        description: Workflow version operations
+  zaraz:
+    description: Server-side tag manager — load third-party tools (analytics, pixels, etc.) from Cloudflare's edge without client-side JS
+    groups:
+      config:
+        description: Full Zaraz configuration including tools, triggers, and variables for the zone
+      default:
+        description: Default Zaraz configuration template used as a starting point for new zones
+      export:
+        description: Export the current Zaraz configuration as a portable JSON document
+      history:
+        description: Configuration version history — browse and restore previous Zaraz configurations
+      publish:
+        description: Publish pending Zaraz configuration changes to make them live on the zone
+      workflow:
+        description: Workflow state for Zaraz configuration changes (draft vs. published)
+  zero-trust:
+    description: Cloudflare's SASE platform — secure access, device posture, DLP, tunnels, gateway policies, and network segmentation
+    groups:
+      dex:
+        description: Digital Experience Monitoring — synthetic tests, fleet-wide device metrics, and network path diagnostics
+      dlp.custom-prompt-topics:
+        description: Data Loss Prevention - manage custom prompt topics for AI-based content detection
+      dlp.data-classes:
+        description: Data Loss Prevention - manage data classes used to classify sensitive information
+      dlp.data-tag-categories:
+        description: Data Loss Prevention - manage categories that organize data tags
+      dlp.data-tag-category-templates:
+        description: Data Loss Prevention - browse templates for creating data tag categories
+      dlp.data-tags:
+        description: Data Loss Prevention - manage tags used to classify and organize sensitive data
+      dlp.datasets:
+        description: Data Loss Prevention - manage datasets, versions, and uploads
+      dlp.document-fingerprints:
+        description: Data Loss Prevention - manage document fingerprints for detecting matching documents
+      dlp.email.account-mapping:
+        description: Data Loss Prevention - configure account mappings for outbound email scanning
+      dlp.email.rules:
+        description: Data Loss Prevention - manage outbound email scanning rules and their priorities
+      dlp.entries:
+        description: Data Loss Prevention - list and manage detection entries
+      dlp.limits:
+        description: Data Loss Prevention - view account limits and resource quotas
+      dlp.patterns:
+        description: Data Loss Prevention - validate regular expressions used for content detection
+      dlp.profiles:
+        description: Data Loss Prevention - list and retrieve profiles
+      dlp.profiles.custom:
+        description: Data Loss Prevention - manage custom profiles
+      dlp.profiles.predefined:
+        description: Data Loss Prevention - manage predefined profiles
+      dlp.sensitivity-group-templates:
+        description: Data Loss Prevention - browse templates for creating sensitivity groups
+      dlp.sensitivity-groups:
+        description: Data Loss Prevention - manage sensitivity groups and their level ordering
+      dlp.sensitivity-levels:
+        description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
+      dlp.settings:
+        description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.integrations:
+        description: User Risk Scoring - manage integrations that provide risk score signals
+      risk-scoring.integrations.references:
+        description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
+  zones:
+    description: Zones are domains on Cloudflare — list, create, and configure domain settings
+    groups:
+      aegis:
+        description: Aegis operations
+      fonts:
+        description: Fonts operations
+      origin-h2-max-streams:
+        description: Origin H2 Max Streams operations
+      origin-max-http-version:
+        description: Origin Max Http Version operations
+      origin-tls-compliance-modes:
+        description: Manage zone Origin TLS Compliance Modes setting
+      rum:
+        description: Rum operations
+      speed-brain:
+        description: Speed Brain operations

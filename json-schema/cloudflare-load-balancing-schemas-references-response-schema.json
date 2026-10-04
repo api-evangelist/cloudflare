@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-load-balancing-schemas-references-response-schema.json",
+  "title": "load-balancing_schemas-references_response",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-user-api-openapi.yml#/components/schemas/load-balancing_schemas-references_response",
+  "allOf": [
+    {
+      "$ref": "#/$defs/load-balancing_api-response-collection"
+    },
+    {
+      "properties": {
+        "result": {
+          "type": "array",
+          "description": "List of resources that reference a given pool.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "reference_type": {
+                "type": "string",
+                "enum": [
+                  "*",
+                  "referral",
+                  "referrer"
+                ]
+              },
+              "resource_id": {
+                "type": "string"
+              },
+              "resource_name": {
+                "type": "string"
+              },
+              "resource_type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "load-balancing_api-response-collection": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/load-balancing_api-response-common"
+        },
+        {
+          "properties": {
+            "result": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {}
+            },
+            "result_info": {
+              "$ref": "#/$defs/load-balancing_result_info"
+            }
+          }
+        }
+      ],
+      "type": "object"
+    },
+    "load-balancing_api-response-common": {
+      "type": "object",
+      "required": [
+        "success",
+        "errors",
+        "messages",
+        "result"
+      ],
+      "properties": {
+        "errors": {
+          "$ref": "#/$defs/load-balancing_messages"
+        },
+        "messages": {
+          "$ref": "#/$defs/load-balancing_messages"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "success": {
+          "type": "boolean",
+          "description": "Whether the API call was successful",
+          "enum": [
+            true
+          ]
+        }
+      }
+    },
+    "load-balancing_messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "uniqueItems": true,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "minimum": 1000
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "load-balancing_result_info": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "number",
+          "description": "Total number of results for the requested service"
+        },
+        "page": {
+          "type": "number",
+          "description": "Current page within paginated list of results"
+        },
+        "per_page": {
+          "type": "number",
+          "description": "Number of results per page of results"
+        },
+        "total_count": {
+          "type": "number",
+          "description": "Total results available without any search parameters"
+        }
+      }
+    }
+  }
+}

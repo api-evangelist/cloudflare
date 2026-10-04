@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-image-response-schema.json",
+  "title": "ImageResponse",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-images-api-openapi.yml#/components/schemas/ImageResponse",
+  "type": "object",
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/Image"
+    },
+    "success": {
+      "type": "boolean"
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "$defs": {
+    "Image": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier of the image."
+        },
+        "filename": {
+          "type": "string",
+          "description": "Original filename."
+        },
+        "metadata": {
+          "type": "object",
+          "description": "User-defined metadata."
+        },
+        "uploaded": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Upload timestamp."
+        },
+        "requireSignedURLs": {
+          "type": "boolean"
+        },
+        "variants": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": "URLs for each variant of the image."
+        }
+      }
+    }
+  }
+}

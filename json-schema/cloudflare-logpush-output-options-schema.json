@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-logpush-output-options-schema.json",
+  "title": "logpush_output_options",
+  "description": "The structured replacement for `logpull_options`. When including this field, the `logpull_option` field will be ignored.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-accounts-api-openapi.yml#/components/schemas/logpush_output_options",
+  "type": [
+    "object",
+    "null"
+  ],
+  "properties": {
+    "CVE-2021-4428": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "If set to true, will cause all occurrences of `${` in the generated files to be replaced with `x{`.",
+      "default": false
+    },
+    "batch_prefix": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "String to be prepended before each batch.",
+      "default": ""
+    },
+    "batch_suffix": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "String to be appended after each batch.",
+      "default": ""
+    },
+    "field_delimiter": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "String to join fields. This field be ignored when `record_template` is set.",
+      "default": ","
+    },
+    "field_names": {
+      "type": "array",
+      "description": "List of field names to be included in the Logpush output. For the moment, there is no option to add all fields at once, so you must specify all the fields names you are interested in.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "output_type": {
+      "type": "string",
+      "description": "Specifies the output type, such as `ndjson` or `csv`. This sets default values for the rest of the settings, depending on the chosen output type. Some formatting rules, like string quoting, are different between output types.",
+      "enum": [
+        "ndjson",
+        "csv"
+      ],
+      "default": "ndjson"
+    },
+    "record_delimiter": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "String to be inserted in-between the records as separator.",
+      "default": ""
+    },
+    "record_prefix": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "String to be prepended before each record.",
+      "default": "{"
+    },
+    "record_suffix": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "String to be appended after each record.",
+      "default": "}\n"
+    },
+    "record_template": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "String to use as template for each record instead of the default comma-separated list. All fields used in the template must be present in `field_names` as well, otherwise they will end up as null. Format as a Go `text/template` without any standard functions, like conditionals, loops, sub-templates, etc.",
+      "default": ""
+    },
+    "sample_rate": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "format": "float",
+      "description": "Floating number to specify sampling rate. Sampling is applied on top of filtering, and regardless of the current `sample_interval` of the data.",
+      "default": 1,
+      "minimum": 0,
+      "maximum": 1
+    },
+    "timestamp_format": {
+      "type": "string",
+      "description": "String to specify the format for timestamps, such as `unixnano`, `unix`, or `rfc3339`.",
+      "enum": [
+        "unixnano",
+        "unix",
+        "rfc3339"
+      ],
+      "default": "unixnano"
+    }
+  }
+}

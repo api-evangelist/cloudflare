@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-config-list-response-schema.json",
+  "title": "ConfigListResponse",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-configurations-api-openapi.yml#/components/schemas/ConfigListResponse",
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/HyperdriveConfig"
+      }
+    },
+    "success": {
+      "type": "boolean"
+    }
+  },
+  "$defs": {
+    "HyperdriveConfig": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the configuration."
+        },
+        "origin": {
+          "type": "object",
+          "properties": {
+            "scheme": {
+              "type": "string",
+              "description": "The database protocol."
+            },
+            "host": {
+              "type": "string",
+              "description": "The database host."
+            },
+            "port": {
+              "type": "integer",
+              "description": "The database port."
+            },
+            "database": {
+              "type": "string",
+              "description": "The database name."
+            },
+            "user": {
+              "type": "string",
+              "description": "The database user."
+            }
+          }
+        },
+        "caching": {
+          "type": "object",
+          "properties": {
+            "disabled": {
+              "type": "boolean",
+              "description": "Whether caching is disabled."
+            },
+            "max_age": {
+              "type": "integer",
+              "description": "Maximum cache age in seconds."
+            },
+            "stale_while_revalidate": {
+              "type": "integer",
+              "description": "Stale-while-revalidate window in seconds."
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,4897 @@
+openapi: 3.2.0
+info:
+  description: Welcome to Cloudflare's API documentation site.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  title: Cloudflare Zone Rulesets API
+  version: 4.0.0
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Zone Rulesets
+paths:
+  /zones/{zone_id}/rulesets:
+    get:
+      operationId: listZoneRulesets
+      summary: List zone rulesets
+      description: Fetches all rulesets at the zone level.
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      - name: cursor
+        in: query
+        schema:
+          $ref: '#/components/schemas/rulesets_Cursor'
+      - name: per_page
+        in: query
+        schema:
+          $ref: '#/components/schemas/rulesets_PerPage'
+      responses:
+        '200':
+          $ref: '#/components/responses/rulesets_Rulesets'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Response Compression Read
+      - Config Settings Write
+      - Config Settings Read
+      - Dynamic URL Redirects Write
+      - Dynamic URL Redirects Read
+      - Cache Settings Write
+      - Cache Settings Read
+      - Custom Errors Write
+      - Custom Errors Read
+      - Origin Write
+      - Origin Read
+      - Managed headers Write
+      - Managed headers Read
+      - Zone Transform Rules Write
+      - Zone Transform Rules Read
+      - Mass URL Redirects Write
+      - Mass URL Redirects Read
+      - Magic Firewall Write
+      - Magic Firewall Read
+      - L4 DDoS Managed Ruleset Write
+      - L4 DDoS Managed Ruleset Read
+      - HTTP DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Read
+      - Sanitize Write
+      - Sanitize Read
+      - Transform Rules Write
+      - Transform Rules Read
+      - Select Configuration Write
+      - Select Configuration Read
+      - Bot Management Write
+      - Bot Management Read
+      - Zone WAF Write
+      - Zone WAF Read
+      - Account WAF Write
+      - Account WAF Read
+      - Account Rulesets Read
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Read
+      - Logs Write
+      - Logs Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+    post:
+      operationId: createZoneRuleset
+      summary: Create a zone ruleset
+      description: Creates a ruleset at the zone level.
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      - $ref: '#/components/parameters/rulesets_DryRun'
+      requestBody:
+        $ref: '#/components/requestBodies/rulesets_CreateRuleset'
+      responses:
+        '200':
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Config Settings Write
+      - Dynamic URL Redirects Write
+      - Cache Settings Write
+      - Custom Errors Write
+      - Origin Write
+      - Managed headers Write
+      - Zone Transform Rules Write
+      - Mass URL Redirects Write
+      - Magic Firewall Write
+      - L4 DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Write
+      - Sanitize Write
+      - Transform Rules Write
+      - Select Configuration Write
+      - Bot Management Write
+      - Zone WAF Write
+      - Account WAF Write
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
+  /zones/{zone_id}/rulesets/phases/{ruleset_phase}/entrypoint:
+    get:
+      operationId: getZoneEntrypointRuleset
+      summary: Get a zone entry point ruleset
+      description: Fetches the latest version of the zone entry point ruleset for a given phase.
+      parameters:
+      - name: ruleset_phase
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetPhase'
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      responses:
+        '200':
+          $ref: '#/components/responses/rulesets_Ruleset'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Response Compression Read
+      - Config Settings Write
+      - Config Settings Read
+      - Dynamic URL Redirects Write
+      - Dynamic URL Redirects Read
+      - Cache Settings Write
+      - Cache Settings Read
+      - Custom Errors Write
+      - Custom Errors Read
+      - Origin Write
+      - Origin Read
+      - Managed headers Write
+      - Managed headers Read
+      - Zone Transform Rules Write
+      - Zone Transform Rules Read
+      - Mass URL Redirects Write
+      - Mass URL Redirects Read
+      - Magic Firewall Write
+      - Magic Firewall Read
+      - L4 DDoS Managed Ruleset Write
+      - L4 DDoS Managed Ruleset Read
+      - HTTP DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Read
+      - Sanitize Write
+      - Sanitize Read
+      - Transform Rules Write
+      - Transform Rules Read
+      - Select Configuration Write
+      - Select Configuration Read
+      - Bot Management Write
+      - Bot Management Read
+      - Zone WAF Write
+      - Zone WAF Read
+      - Account WAF Write
+      - Account WAF Read
+      - Account Rulesets Read
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Read
+      - Logs Write
+      - Logs Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets.phases
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    put:
+      operationId: updateZoneEntrypointRuleset
+      summary: Update a zone entry point ruleset
+      description: Updates a zone entry point ruleset, creating a new version.
+      parameters:
+      - name: ruleset_phase
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetPhase'
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      - $ref: '#/components/parameters/rulesets_DryRun'
+      requestBody:
+        $ref: '#/components/requestBodies/rulesets_UpdateEntrypointRuleset'
+      responses:
+        '200':
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Config Settings Write
+      - Dynamic URL Redirects Write
+      - Cache Settings Write
+      - Custom Errors Write
+      - Origin Write
+      - Managed headers Write
+      - Zone Transform Rules Write
+      - Mass URL Redirects Write
+      - Magic Firewall Write
+      - L4 DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Write
+      - Sanitize Write
+      - Transform Rules Write
+      - Select Configuration Write
+      - Bot Management Write
+      - Zone WAF Write
+      - Account WAF Write
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets.phases
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+  /zones/{zone_id}/rulesets/phases/{ruleset_phase}/entrypoint/versions:
+    get:
+      operationId: listZoneEntrypointRulesetVersions
+      summary: List a zone entry point ruleset's versions
+      description: Fetches the versions of a zone entry point ruleset.
+      parameters:
+      - name: ruleset_phase
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetPhase'
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      responses:
+        '200':
+          $ref: '#/components/responses/rulesets_Rulesets'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Response Compression Read
+      - Config Settings Write
+      - Config Settings Read
+      - Dynamic URL Redirects Write
+      - Dynamic URL Redirects Read
+      - Cache Settings Write
+      - Cache Settings Read
+      - Custom Errors Write
+      - Custom Errors Read
+      - Origin Write
+      - Origin Read
+      - Managed headers Write
+      - Managed headers Read
+      - Zone Transform Rules Write
+      - Zone Transform Rules Read
+      - Mass URL Redirects Write
+      - Mass URL Redirects Read
+      - Magic Firewall Write
+      - Magic Firewall Read
+      - L4 DDoS Managed Ruleset Write
+      - L4 DDoS Managed Ruleset Read
+      - HTTP DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Read
+      - Sanitize Write
+      - Sanitize Read
+      - Transform Rules Write
+      - Transform Rules Read
+      - Select Configuration Write
+      - Select Configuration Read
+      - Bot Management Write
+      - Bot Management Read
+      - Zone WAF Write
+      - Zone WAF Read
+      - Account WAF Write
+      - Account WAF Read
+      - Account Rulesets Read
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Read
+      - Logs Write
+      - Logs Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets.phases.versions
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+  /zones/{zone_id}/rulesets/phases/{ruleset_phase}/entrypoint/versions/{ruleset_version}:
+    get:
+      operationId: getZoneEntrypointRulesetVersion
+      summary: Get a zone entry point ruleset version
+      description: Fetches a specific version of a zone entry point ruleset.
+      parameters:
+      - name: ruleset_version
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetVersion'
+      - name: ruleset_phase
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetPhase'
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      responses:
+        '200':
+          $ref: '#/components/responses/rulesets_Ruleset'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Response Compression Read
+      - Config Settings Write
+      - Config Settings Read
+      - Dynamic URL Redirects Write
+      - Dynamic URL Redirects Read
+      - Cache Settings Write
+      - Cache Settings Read
+      - Custom Errors Write
+      - Custom Errors Read
+      - Origin Write
+      - Origin Read
+      - Managed headers Write
+      - Managed headers Read
+      - Zone Transform Rules Write
+      - Zone Transform Rules Read
+      - Mass URL Redirects Write
+      - Mass URL Redirects Read
+      - Magic Firewall Write
+      - Magic Firewall Read
+      - L4 DDoS Managed Ruleset Write
+      - L4 DDoS Managed Ruleset Read
+      - HTTP DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Read
+      - Sanitize Write
+      - Sanitize Read
+      - Transform Rules Write
+      - Transform Rules Read
+      - Select Configuration Write
+      - Select Configuration Read
+      - Bot Management Write
+      - Bot Management Read
+      - Zone WAF Write
+      - Zone WAF Read
+      - Account WAF Write
+      - Account WAF Read
+      - Account Rulesets Read
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Read
+      - Logs Write
+      - Logs Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets.phases.versions
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+  /zones/{zone_id}/rulesets/{ruleset_id}:
+    delete:
+      operationId: deleteZoneRuleset
+      summary: Delete a zone ruleset
+      description: Deletes all versions of an existing zone ruleset.
+      parameters:
+      - name: ruleset_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetId'
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      - $ref: '#/components/parameters/rulesets_DryRun'
+      responses:
+        '204':
+          $ref: '#/components/responses/rulesets_Empty'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Config Settings Write
+      - Dynamic URL Redirects Write
+      - Cache Settings Write
+      - Custom Errors Write
+      - Origin Write
+      - Managed headers Write
+      - Zone Transform Rules Write
+      - Mass URL Redirects Write
+      - Magic Firewall Write
+      - L4 DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Write
+      - Sanitize Write
+      - Transform Rules Write
+      - Select Configuration Write
+      - Bot Management Write
+      - Zone WAF Write
+      - Account WAF Write
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
+    get:
+      operationId: getZoneRuleset
+      summary: Get a zone ruleset
+      description: Fetches the latest version of a zone ruleset.
+      parameters:
+      - name: ruleset_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetId'
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      responses:
+        '200':
+          $ref: '#/components/responses/rulesets_Ruleset'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Response Compression Read
+      - Config Settings Write
+      - Config Settings Read
+      - Dynamic URL Redirects Write
+      - Dynamic URL Redirects Read
+      - Cache Settings Write
+      - Cache Settings Read
+      - Custom Errors Write
+      - Custom Errors Read
+      - Origin Write
+      - Origin Read
+      - Managed headers Write
+      - Managed headers Read
+      - Zone Transform Rules Write
+      - Zone Transform Rules Read
+      - Mass URL Redirects Write
+      - Mass URL Redirects Read
+      - Magic Firewall Write
+      - Magic Firewall Read
+      - L4 DDoS Managed Ruleset Write
+      - L4 DDoS Managed Ruleset Read
+      - HTTP DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Read
+      - Sanitize Write
+      - Sanitize Read
+      - Transform Rules Write
+      - Transform Rules Read
+      - Select Configuration Write
+      - Select Configuration Read
+      - Bot Management Write
+      - Bot Management Read
+      - Zone WAF Write
+      - Zone WAF Read
+      - Account WAF Write
+      - Account WAF Read
+      - Account Rulesets Read
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Read
+      - Logs Write
+      - Logs Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    put:
+      operationId: updateZoneRuleset
+      summary: Update a zone ruleset
+      description: Updates a zone ruleset, creating a new version.
+      parameters:
+      - name: ruleset_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetId'
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      - $ref: '#/components/parameters/rulesets_DryRun'
+      requestBody:
+        $ref: '#/components/requestBodies/rulesets_UpdateRuleset'
+      responses:
+        '200':
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Config Settings Write
+      - Dynamic URL Redirects Write
+      - Cache Settings Write
+      - Custom Errors Write
+      - Origin Write
+      - Managed headers Write
+      - Zone Transform Rules Write
+      - Mass URL Redirects Write
+      - Magic Firewall Write
+      - L4 DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Write
+      - Sanitize Write
+      - Transform Rules Write
+      - Select Configuration Write
+      - Bot Management Write
+      - Zone WAF Write
+      - Account WAF Write
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+  /zones/{zone_id}/rulesets/{ruleset_id}/rules:
+    post:
+      operationId: createZoneRulesetRule
+      summary: Create a zone ruleset rule
+      description: Adds a new rule to a zone ruleset. The rule will be added to the end of the existing list of rules in the ruleset by default.
+      parameters:
+      - name: ruleset_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetId'
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      - $ref: '#/components/parameters/rulesets_DryRun'
+      requestBody:
+        $ref: '#/components/requestBodies/rulesets_Rule'
+      responses:
+        '200':
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Config Settings Write
+      - Dynamic URL Redirects Write
+      - Cache Settings Write
+      - Custom Errors Write
+      - Origin Write
+      - Managed headers Write
+      - Zone Transform Rules Write
+      - Mass URL Redirects Write
+      - Magic Firewall Write
+      - L4 DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Write
+      - Sanitize Write
+      - Transform Rules Write
+      - Select Configuration Write
+      - Bot Management Write
+      - Zone WAF Write
+      - Account WAF Write
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets.rules
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
+  /zones/{zone_id}/rulesets/{ruleset_id}/rules/{rule_id}:
+    delete:
+      operationId: deleteZoneRulesetRule
+      summary: Delete a zone ruleset rule
+      description: Deletes an existing rule from a zone ruleset.
+      parameters:
+      - name: rule_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RuleId'
+      - name: ruleset_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetId'
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      - $ref: '#/components/parameters/rulesets_DryRun'
+      responses:
+        '200':
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Config Settings Write
+      - Dynamic URL Redirects Write
+      - Cache Settings Write
+      - Custom Errors Write
+      - Origin Write
+      - Managed headers Write
+      - Zone Transform Rules Write
+      - Mass URL Redirects Write
+      - Magic Firewall Write
+      - L4 DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Write
+      - Sanitize Write
+      - Transform Rules Write
+      - Select Configuration Write
+      - Bot Management Write
+      - Zone WAF Write
+      - Account WAF Write
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets.rules
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
+    patch:
+      operationId: updateZoneRulesetRule
+      summary: Update a zone ruleset rule
+      description: Updates an existing rule in a zone ruleset.
+      parameters:
+      - name: rule_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RuleId'
+      - name: ruleset_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetId'
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      - $ref: '#/components/parameters/rulesets_DryRun'
+      requestBody:
+        $ref: '#/components/requestBodies/rulesets_Rule'
+      responses:
+        '200':
+          $ref: '#/components/responses/rulesets_RulesetOrDryRun'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Config Settings Write
+      - Dynamic URL Redirects Write
+      - Cache Settings Write
+      - Custom Errors Write
+      - Origin Write
+      - Managed headers Write
+      - Zone Transform Rules Write
+      - Mass URL Redirects Write
+      - Magic Firewall Write
+      - L4 DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Write
+      - Sanitize Write
+      - Transform Rules Write
+      - Select Configuration Write
+      - Bot Management Write
+      - Zone WAF Write
+      - Account WAF Write
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets.rules
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+  /zones/{zone_id}/rulesets/{ruleset_id}/versions:
+    get:
+      operationId: listZoneRulesetVersions
+      summary: List a zone ruleset's versions
+      description: Fetches the versions of a zone ruleset.
+      parameters:
+      - name: ruleset_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetId'
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      responses:
+        '200':
+          $ref: '#/components/responses/rulesets_Rulesets'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Response Compression Read
+      - Config Settings Write
+      - Config Settings Read
+      - Dynamic URL Redirects Write
+      - Dynamic URL Redirects Read
+      - Cache Settings Write
+      - Cache Settings Read
+      - Custom Errors Write
+      - Custom Errors Read
+      - Origin Write
+      - Origin Read
+      - Managed headers Write
+      - Managed headers Read
+      - Zone Transform Rules Write
+      - Zone Transform Rules Read
+      - Mass URL Redirects Write
+      - Mass URL Redirects Read
+      - Magic Firewall Write
+      - Magic Firewall Read
+      - L4 DDoS Managed Ruleset Write
+      - L4 DDoS Managed Ruleset Read
+      - HTTP DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Read
+      - Sanitize Write
+      - Sanitize Read
+      - Transform Rules Write
+      - Transform Rules Read
+      - Select Configuration Write
+      - Select Configuration Read
+      - Bot Management Write
+      - Bot Management Read
+      - Zone WAF Write
+      - Zone WAF Read
+      - Account WAF Write
+      - Account WAF Read
+      - Account Rulesets Read
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Read
+      - Logs Write
+      - Logs Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets.versions
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+  /zones/{zone_id}/rulesets/{ruleset_id}/versions/{ruleset_version}:
+    delete:
+      operationId: deleteZoneRulesetVersion
+      summary: Delete a zone ruleset version
+      description: Deletes an existing version of a zone ruleset.
+      parameters:
+      - name: ruleset_version
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetVersion'
+      - name: ruleset_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetId'
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      - $ref: '#/components/parameters/rulesets_DryRun'
+      responses:
+        '204':
+          $ref: '#/components/responses/rulesets_Empty'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Config Settings Write
+      - Dynamic URL Redirects Write
+      - Cache Settings Write
+      - Custom Errors Write
+      - Origin Write
+      - Managed headers Write
+      - Zone Transform Rules Write
+      - Mass URL Redirects Write
+      - Magic Firewall Write
+      - L4 DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Write
+      - Sanitize Write
+      - Transform Rules Write
+      - Select Configuration Write
+      - Bot Management Write
+      - Zone WAF Write
+      - Account WAF Write
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Write
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets.versions
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
+    get:
+      operationId: getZoneRulesetVersion
+      summary: Get a zone ruleset version
+      description: Fetches a specific version of a zone ruleset.
+      parameters:
+      - name: ruleset_version
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetVersion'
+      - name: ruleset_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetId'
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      responses:
+        '200':
+          $ref: '#/components/responses/rulesets_Ruleset'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Response Compression Read
+      - Config Settings Write
+      - Config Settings Read
+      - Dynamic URL Redirects Write
+      - Dynamic URL Redirects Read
+      - Cache Settings Write
+      - Cache Settings Read
+      - Custom Errors Write
+      - Custom Errors Read
+      - Origin Write
+      - Origin Read
+      - Managed headers Write
+      - Managed headers Read
+      - Zone Transform Rules Write
+      - Zone Transform Rules Read
+      - Mass URL Redirects Write
+      - Mass URL Redirects Read
+      - Magic Firewall Write
+      - Magic Firewall Read
+      - L4 DDoS Managed Ruleset Write
+      - L4 DDoS Managed Ruleset Read
+      - HTTP DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Read
+      - Sanitize Write
+      - Sanitize Read
+      - Transform Rules Write
+      - Transform Rules Read
+      - Select Configuration Write
+      - Select Configuration Read
+      - Bot Management Write
+      - Bot Management Read
+      - Zone WAF Write
+      - Zone WAF Read
+      - Account WAF Write
+      - Account WAF Read
+      - Account Rulesets Read
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Read
+      - Logs Write
+      - Logs Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets.versions
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+  /zones/{zone_id}/rulesets/{ruleset_id}/versions/{ruleset_version}/by_tag/{rule_tag}:
+    get:
+      operationId: listZoneRulesetVersionRulesByTag
+      summary: List a zone ruleset version's rules by tag
+      description: Fetches the rules of a managed zone ruleset version for a given tag.
+      parameters:
+      - name: rule_tag
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RuleCategory'
+      - name: ruleset_version
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetVersion'
+      - name: ruleset_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_RulesetId'
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/rulesets_ZoneId'
+      responses:
+        '200':
+          $ref: '#/components/responses/rulesets_Ruleset'
+        4XX:
+          $ref: '#/components/responses/rulesets_Failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Zone Rulesets
+      x-api-token-group:
+      - Response Compression Write
+      - Response Compression Read
+      - Config Settings Write
+      - Config Settings Read
+      - Dynamic URL Redirects Write
+      - Dynamic URL Redirects Read
+      - Cache Settings Write
+      - Cache Settings Read
+      - Custom Errors Write
+      - Custom Errors Read
+      - Origin Write
+      - Origin Read
+      - Managed headers Write
+      - Managed headers Read
+      - Zone Transform Rules Write
+      - Zone Transform Rules Read
+      - Mass URL Redirects Write
+      - Mass URL Redirects Read
+      - Magic Firewall Write
+      - Magic Firewall Read
+      - L4 DDoS Managed Ruleset Write
+      - L4 DDoS Managed Ruleset Read
+      - HTTP DDoS Managed Ruleset Write
+      - HTTP DDoS Managed Ruleset Read
+      - Sanitize Write
+      - Sanitize Read
+      - Transform Rules Write
+      - Transform Rules Read
+      - Select Configuration Write
+      - Select Configuration Read
+      - Bot Management Write
+      - Bot Management Read
+      - Zone WAF Write
+      - Zone WAF Read
+      - Account WAF Write
+      - Account WAF Read
+      - Account Rulesets Read
+      - Account Rulesets Write
+      - Logs Write
+      - Logs Read
+      - Logs Write
+      - Logs Read
+      x-cfPlanAvailability:
+        business: true
+        enterprise: true
+        free: true
+        pro: true
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: rulesets.account-rulesets.versions.zone-by-tag
+      x-fern-sdk-method-name: tag
+      x-forge-hidden: true
+components:
+  schemas:
+    rulesets_SetCacheSettingsAdditionalCacheablePorts:
+      description: A list of additional ports that caching should be enabled on.
+      type: array
+      items:
+        description: A port to enable caching on.
+        example: 8080
+        maximum: 65535
+        minimum: 1
+        title: Additional Cacheable Port
+        type: integer
+      minItems: 1
+      title: Additional Cacheable Ports (Enterprise-Only)
+      uniqueItems: true
+    rulesets_LogCustomFieldResponseFields:
+      description: The transformed response fields to log.
+      type: array
+      items:
+        description: The transformed response field to log.
+        properties:
+          name:
+            description: The name of the response header.
+            type: string
+            example: my-response-header
+            minLength: 1
+            title: Header Name
+          preserve_duplicates:
+            description: Whether to log duplicate values of the same header.
+            type: boolean
+            example: true
+            default: false
+            title: Preserve Duplicates
+        required:
+        - name
+        title: Transformed Response Field
+        type: object
+      minItems: 1
+      title: Transformed Response Fields
+    rulesets_SkipRules:
+      description: A mapping of ruleset IDs to a list of rule IDs in that ruleset to skip the execution of. This option is incompatible with the ruleset option.
+      type: object
+      example:
+        4814384a9e5d4991b9815dcfc25d2f1f:
+        - 8ac8bc2a661e475d940980f9317f28e1
+      additionalProperties:
+        description: A list of rule IDs in the ruleset to skip the execution of.
+        items:
+          allOf:
+          - $ref: '#/components/schemas/rulesets_RuleId'
+          - description: The ID of a rule in the ruleset to skip the execution of.
+            example: 8ac8bc2a661e475d940980f9317f28e1
+            title: Rule
+            type: string
+        minItems: 1
+        title: Rules
+        type: array
+        uniqueItems: true
+      minProperties: 1
+      title: Rules
+    rulesets_RewriteHeaders:
+      description: A map of headers to rewrite.
+      type: object
+      example:
+        client-http-version:
+          expression: http.request.version
+          operation: set
+      additionalProperties:
+        oneOf:
+        - description: A header with a static value to add.
+          properties:
+            operation:
+              allOf:
+              - $ref: '#/components/schemas/rulesets_RewriteHeaderOperation'
+              - enum:
+                - add
+                type: string
+            value:
+              $ref: '#/components/schemas/rulesets_RewriteHeaderValue'
+          required:
+          - operation
+          - value
+          title: Add Static Header
+          type: object
+        - description: A header with a dynamic value to add.
+          properties:
+            expression:
+              $ref: '#/components/schemas/rulesets_RewriteHeaderExpression'
+            operation:
+              allOf:
+              - $ref: '#/components/schemas/rulesets_RewriteHeaderOperation'
+              - enum:
+                - add
+                type: string
+          required:
+          - operation
+          - expression
+          title: Add Dynamic Header
+          type: object
+        - description: A header with a static value to set.
+          properties:
+            operation:
+              allOf:
+              - $ref: '#/components/schemas/rulesets_RewriteHeaderOperation'
+              - enum:
+                - set
+                type: string
+            value:
+              $ref: '#/components/schemas/rulesets_RewriteHeaderValue'
+          required:
+          - operation
+          - value
+          title: Set Static Header
+          type: object
+        - description: A header with a dynamic value to set.
+          properties:
+            expression:
+              $ref: '#/components/schemas/rulesets_RewriteHeaderExpression'
+            operation:
+              allOf:
+              - $ref: '#/components/schemas/rulesets_RewriteHeaderOperation'
+              - enum:
+                - set
+                type: string
+          required:
+          - operation
+          - expression
+          title: Set Dynamic Header
+          type: object
+        - description: A header to remove.
+          properties:
+            operation:
+              allOf:
+              - $ref: '#/components/schemas/rulesets_RewriteHeaderOperation'
+              - enum:
+                - remove
+                type: string
+          required:
+          - operation
+          title: Remove Header
+          type: object
+      minProperties: 1
+      title: Headers
+    rulesets_Rule:
+      type: object
+      properties:
+        action:
+          $ref: '#/components/schemas/rulesets_RuleAction'
+        action_parameters:
+          description: The parameters configuring the rule's action.
+          type: object
+          default: {}
+          title: Action Parameters
+        categories:
+          $ref: '#/components/schemas/rulesets_RuleCategories'
+        description:
+          description: An informative description of the rule.
+          type: string
+          default: ''
+          title: Description
+        enabled:
+          allOf:
+          - $ref: '#/components/schemas/rulesets_RuleEnabled'
+          - default: true
+            type: boolean
+        exposed_credential_check:
+          $ref: '#/components/schemas/rulesets_RuleExposedCredentialCheck'
+        expression:
+          description: The expression defining which traffic will match the rule.
+          type: string
+          example: ip.src eq 1.1.1.1
+          minLength: 1
+          title: Expression
+        id:
+          $ref: '#/components/schemas/rulesets_RuleId'
+        last_updated:
+          description: The timestamp of when the rule was last modified.
+          type: string
+          format: date-time
+          example: '2000-01-01T00:00:00Z'
+          readOnly: true
+          title: Last Updated
+          x-stainless-skip:
+          - terraform
+        logging:
+          $ref: '#/components/schemas/rulesets_RuleLogging'
+        ratelimit:
+          $ref: '#/components/schemas/rulesets_RuleRatelimit'
+        ref:
+          description: The reference of the rule (the rule's ID by default).
+          type: string
+          example: my_ref
+          minLength: 1
+          title: Ref
+        version:
+          description: The version of the rule.
+          type: string
+          example: '1'
+          pattern: ^[0-9]+$
+          readOnly: true
+          title: Version
+          x-stainless-skip:
+          - terraform
+      required:
+      - version
+      - last_updated
+      title: Rule
+    rulesets_SetCacheControlDirective:
+      description: A cache-control directive configuration.
+      oneOf:
+      - description: Set the directive.
+        properties:
+          cloudflare_only:
+            $ref: '#/components/schemas/rulesets_SetCacheControlCloudflareOnly'
+          operation:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_SetCacheControlOperation'
+            - enum:
+              - set
+              type: string
+        required:
+        - operation
+        title: Set Directive
+        type: object
+      - description: Remove the directive.
+        properties:
+          cloudflare_only:
+            $ref: '#/components/schemas/rulesets_SetCacheControlCloudflareOnly'
+          operation:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_SetCacheControlOperation'
+            - enum:
+              - remove
+              type: string
+        required:
+        - operation
+        title: Remove Directive
+        type: object
+      title: Cache Control Directive
+    rulesets_RuleRatelimit:
+      description: An object configuring the rule's rate limit behavior.
+      type: object
+      properties:
+        characteristics:
+          description: Characteristics of the request on which the rate limit counter will be incremented.
+          type: array
+          items:
+            description: The characteristic of the request.
+            example: cf.colo.id
+            minLength: 1
+            title: Characteristic
+            type: string
+          minItems: 1
+          title: Characteristics
+          uniqueItems: true
+        counting_expression:
+          description: An expression that defines when the rate limit counter should be incremented. It defaults to the same as the rule's expression.
+          type: string
+          example: http.request.body.raw eq "abcd"
+          minLength: 1
+          title: Counting Expression
+        mitigation_timeout:
+          description: Period of time in seconds after which the action will be disabled following its first execution.
+          type: integer
+          example: 600
+          title: Mitigation Timeout
+        period:
+          description: Period in seconds over which the counter is being incremented.
+          type: integer
+          example: 60
+          minimum: 0
+          title: Period
+        requests_per_period:
+          description: The threshold of requests per period after which the action will be executed for the first time.
+          type: integer
+          example: 1000
+          minimum: 1
+          title: Requests per Period
+        requests_to_origin:
+          description: Whether counting is only performed when an origin is reached.
+          type: boolean
+          example: true
+          default: false
+          title: Requests to Origin
+        score_per_period:
+          description: The score threshold per period for which the action will be executed the first time.
+          type: integer
+          example: 400
+          title: Score per Period
+        score_response_header_name:
+          description: A response header name provided by the origin, which contains the score to increment rate limit counter with.
+          type: string
+          example: my-score
+          minLength: 1
+          title: Score Response Header Name
+      required:
+      - characteristics
+      - period
+      title: Rate Limit
+    rulesets_RewriteHeaderValue:
+      description: A static value for the header.
+      type: string
+      example: my-header-value
+      minLength: 1
+      title: Header Value
+    rulesets_SetCacheSettingsReadTimeout:
+      description: A timeout value between two successive read operations to use for your origin server. Historically, the timeout value between two read options from Cloudflare to an origin server is 100 seconds. If you are attempting to reduce HTTP 524 errors because of timeouts from an origin server, try increasing this timeout value.
+      type: integer
+      example: 900
+      maximum: 6000
+      minimum: 100
+      title: Read Timeout (Enterprise-Only)
+    rulesets_SkipRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - skip
+          action_parameters:
+            type: object
+            minProperties: 1
+            properties:
+              phase:
+                $ref: '#/components/schemas/rulesets_SkipPhase'
+              phases:
+                $ref: '#/components/schemas/rulesets_SkipPhases'
+              products:
+                $ref: '#/components/schemas/rulesets_SkipProducts'
+              rules:
+                $ref: '#/components/schemas/rulesets_SkipRules'
+              ruleset:
+                $ref: '#/components/schemas/rulesets_SkipRuleset'
+              rulesets:
+                $ref: '#/components/schemas/rulesets_SkipRulesets'
+          description:
+            type: string
+            example: Skip executing rulesets, rules, phases, and other products.
+        title: Skip Rule
+        type: object
+    rulesets_SkipPhase:
+      description: A phase to skip the execution of. This option is only compatible with the products option.
+      type: string
+      enum:
+      - current
+      title: Phase
+    rulesets_RulesetId:
+      description: The unique ID of the ruleset.
+      type: string
+      example: 2f2feab2026849078ba485f918791bdc
+      pattern: ^[0-9a-f]{32}$
+      title: Ruleset ID
+    rulesets_LogCustomFieldRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - log_custom_field
+          action_parameters:
+            type: object
+            minProperties: 1
+            properties:
+              cookie_fields:
+                $ref: '#/components/schemas/rulesets_LogCustomFieldCookieFields'
+              raw_response_fields:
+                $ref: '#/components/schemas/rulesets_LogCustomFieldRawResponseFields'
+              request_fields:
+                $ref: '#/components/schemas/rulesets_LogCustomFieldRequestFields'
+              response_fields:
+                $ref: '#/components/schemas/rulesets_LogCustomFieldResponseFields'
+              transformed_request_fields:
+                $ref: '#/components/schemas/rulesets_LogCustomFieldTransformedRequestFields'
+          description:
+            type: string
+            example: Log additional custom fields.
+        title: Log Custom Field Rule
+        type: object
+    rulesets_RequestRule:
+      discriminator:
+        mapping:
+          block: '#/components/schemas/rulesets_BlockRule'
+          challenge: '#/components/schemas/rulesets_ChallengeRule'
+          compress_response: '#/components/schemas/rulesets_CompressResponseRule'
+          ddos_dynamic: '#/components/schemas/rulesets_DDoSDynamicRule'
+          execute: '#/components/schemas/rulesets_ExecuteRule'
+          force_connection_close: '#/components/schemas/rulesets_ForceConnectionCloseRule'
+          js_challenge: '#/components/schemas/rulesets_JsChallengeRule'
+          log: '#/components/schemas/rulesets_LogRule'
+          log_custom_field: '#/components/schemas/rulesets_LogCustomFieldRule'
+          managed_challenge: '#/components/schemas/rulesets_ManagedChallengeRule'
+          redirect: '#/components/schemas/rulesets_RedirectRule'
+          rewrite: '#/components/schemas/rulesets_RewriteRule'
+          route: '#/components/schemas/rulesets_RouteRule'
+          score: '#/components/schemas/rulesets_ScoreRule'
+          serve_error: '#/components/schemas/rulesets_ServeErrorRule'
+          set_cache_control: '#/components/schemas/rulesets_SetCacheControlRule'
+          set_cache_settings: '#/components/schemas/rulesets_SetCacheSettingsRule'
+          set_cache_tags: '#/components/schemas/rulesets_SetCacheTagsRule'
+          set_config: '#/components/schemas/rulesets_SetConfigRule'
+          skip: '#/components/schemas/rulesets_SkipRule'
+          transform_response_html: '#/components/schemas/rulesets_TransformResponseHTMLRule'
+        propertyName: action
+      oneOf:
+      - $ref: '#/components/schemas/rulesets_BlockRule'
+      - $ref: '#/components/schemas/rulesets_ChallengeRule'
+      - $ref: '#/components/schemas/rulesets_CompressResponseRule'
+      - $ref: '#/components/schemas/rulesets_DDoSDynamicRule'
+      - $ref: '#/components/schemas/rulesets_ExecuteRule'
+      - $ref: '#/components/schemas/rulesets_ForceConnectionCloseRule'
+      - $ref: '#/components/schemas/rulesets_JsChallengeRule'
+      - $ref: '#/components/schemas/rulesets_LogRule'
+      - $ref: '#/components/schemas/rulesets_LogCustomFieldRule'
+      - $ref: '#/components/schemas/rulesets_ManagedChallengeRule'
+      - $ref: '#/components/schemas/rulesets_RedirectRule'
+      - $ref: '#/components/schemas/rulesets_RewriteRule'
+      - $ref: '#/components/schemas/rulesets_RouteRule'
+      - $ref: '#/components/schemas/rulesets_ScoreRule'
+      - $ref: '#/components/schemas/rulesets_ServeErrorRule'
+      - $ref: '#/components/schemas/rulesets_SetCacheControlRule'
+      - $ref: '#/components/schemas/rulesets_SetCacheSettingsRule'
+      - $ref: '#/components/schemas/rulesets_SetCacheTagsRule'
+      - $ref: '#/components/schemas/rulesets_SetConfigRule'
+      - $ref: '#/components/schemas/rulesets_SkipRule'
+      - $ref: '#/components/schemas/rulesets_TransformResponseHTMLRule'
+    rulesets_RewriteUriPath:
+      description: A URI path rewrite.
+      type: object
+      properties:
+        expression:
+          description: An expression that evaluates to a value to rewrite the URI path to.
+          type: string
+          example: regex_replace(http.request.uri.path, "/foo$", "/bar")
+          minLength: 1
+          title: Path Expression
+        value:
+          description: A value to rewrite the URI path to.
+          type: string
+          example: /foo
+          minLength: 1
+          title: Path Value
+      maxProperties: 1
+      minProperties: 1
+      title: URI Path
+    rulesets_ServeErrorStatusCode:
+      description: The status code to use for the error.
+      type: integer
+      example: 500
+      maximum: 999
+      minimum: 400
+      title: Status Code
+    rulesets_ResponseRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_RequestRule'
+      - properties:
+          action:
+            type: string
+          enabled:
+            type: boolean
+          expression:
+            type: string
+          id:
+            type: string
+          ref:
+            type: string
+        required:
+        - id
+        - expression
+        - action
+        - ref
+        - enabled
+        type: object
+    rulesets_RuleLogging:
+      description: An object configuring the rule's logging behavior.
+      type: object
+      properties:
+        enabled:
+          description: Whether to generate a log when the rule matches.
+          type: boolean
+          example: true
+          title: Enabled
+      required:
+      - enabled
+      title: Logging
+    rulesets_SetCacheSettingsOriginRangeRequests:
+      description: Controls whether Cloudflare fetches a large asset from the origin as a series of range requests instead of one whole-body request.
+      type: object
+      properties:
+        mode:
+          description: Whether to use range requests. `default` is the behaviour the zone gets without this rule.
+          type: string
+          example: 'on'
+          enum:
+          - 'on'
+          - 'off'
+          - default
+          title: Mode
+      required:
+      - mode
+      title: Origin Range Requests
+    rulesets_SetCacheTagsRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - set_cache_tags
+          action_parameters:
+            oneOf:
+            - description: Add cache tags using a list of values.
+              properties:
+                operation:
+                  allOf:
+                  - $ref: '#/components/schemas/rulesets_SetCacheTagsOperation'
+                  - enum:
+                    - add
+                    type: string
+                values:
+                  $ref: '#/components/schemas/rulesets_SetCacheTagsValues'
+              required:
+              - operation
+              - values
+              title: Add Cache Tags (Values)
+              type: object
+            - description: Add cache tags using an expression.
+              properties:
+                expression:
+                  $ref: '#/components/schemas/rulesets_SetCacheTagsExpression'
+                operation:
+                  allOf:
+                  - $ref: '#/components/schemas/rulesets_SetCacheTagsOperation'
+                  - enum:
+                    - add
+                    type: string
+              required:
+              - operation
+              - expression
+              title: Add Cache Tags (Expression)
+              type: object
+            - description: Remove cache tags using a list of values.
+              properties:
+                operation:
+                  allOf:
+                  - $ref: '#/components/schemas/rulesets_SetCacheTagsOperation'
+                  - enum:
+                    - remove
+                    type: string
+                values:
+                  $ref: '#/components/schemas/rulesets_SetCacheTagsValues'
+              required:
+              - operation
+              - values
+              title: Remove Cache Tags (Values)
+              type: object
+            - description: Remove cache tags using an expression.
+              properties:
+                expression:
+                  $ref: '#/components/schemas/rulesets_SetCacheTagsExpression'
+                operation:
+                  allOf:
+                  - $ref: '#/components/schemas/rulesets_SetCacheTagsOperation'
+                  - enum:
+                    - remove
+                    type: string
+              required:
+              - operation
+              - expression
+              title: Remove Cache Tags (Expression)
+              type: object
+            - description: Set cache tags using a list of values.
+              properties:
+                operation:
+                  allOf:
+                  - $ref: '#/components/schemas/rulesets_SetCacheTagsOperation'
+                  - enum:
+                    - set
+                    type: string
+                values:
+                  $ref: '#/components/schemas/rulesets_SetCacheTagsValues'
+              required:
+              - operation
+              - values
+              title: Set Cache Tags (Values)
+              type: object
+            - description: Set cache tags using an expression.
+              properties:
+                expression:
+                  $ref: '#/components/schemas/rulesets_SetCacheTagsExpression'
+                operation:
+                  allOf:
+                  - $ref: '#/components/schemas/rulesets_SetCacheTagsOperation'
+                  - enum:
+                    - set
+                    type: string
+              required:
+              - operation
+              - expression
+              title: Set Cache Tags (Expression)
+              type: object
+          description:
+            type: string
+            example: Modify the cache tags associated with the response.
+        title: Set Cache Tags Rule
+        type: object
+    rulesets_SetCacheSettingsSharedDictionary:
+      description: Configuration for shared dictionary compression. When set, Cloudflare injects Use-As-Dictionary headers on matching cacheable responses.
+      type: object
+      properties:
+        match_pattern:
+          description: URL pattern for the Use-As-Dictionary match field. This pattern specifies which URLs can use this response as a dictionary.
+          type: string
+          example: /static/js/*.js
+          maxLength: 1024
+          minLength: 1
+          title: Match Pattern
+      required:
+      - match_pattern
+      title: Shared Dictionary
+    rulesets_SetCacheSettingsCustomCacheKey:
+      description: Which components of the request are included or excluded from the cache key.
+      type: object
+      properties:
+        cookie:
+          $ref: '#/components/schemas/rulesets_SetCacheSettingsCustomCacheKeyCookie'
+        header:
+          $ref: '#/components/schemas/rulesets_SetCacheSettingsCustomCacheKeyHeader'
+        host:
+          $ref: '#/components/schemas/rulesets_SetCacheSettingsCustomCacheKeyHost'
+        query_string:
+          $ref: '#/components/schemas/rulesets_SetCacheSettingsCustomCacheKeyQueryString'
+        user:
+          $ref: '#/components/schemas/rulesets_SetCacheSettingsCustomCacheKeyUser'
+      title: Custom Cache Key
+    rulesets_LogRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - log
+          description:
+            type: string
+            example: Log the request.
+        title: Log Rule
+        type: object
+    rulesets_RuleId:
+      description: The unique ID of the rule.
+      type: string
+      example: 3a03d665bac047339bb530ecb439a90d
+      pattern: ^[0-9a-f]{32}$
+      title: Rule ID
+    rulesets_ResponseRules:
+      description: The list of rules in the ruleset.
+      type: array
+      items:
+        $ref: '#/components/schemas/rulesets_ResponseRule'
+      title: Rules
+    rulesets_SetCacheSettingsStripLastModified:
+      description: Whether to strip Last-Modified headers from the origin response before caching.
+      type: boolean
+      example: true
+      title: Strip Last-Modified
+    rulesets_ServeErrorContentType:
+      description: The content type header to set with the error response.
+      type: string
+      example: application/json
+      enum:
+      - application/json
+      - text/html
+      - text/plain
+      - text/xml
+      title: Content Type
+    rulesets_SkipPhases:
+      description: A list of phases to skip the execution of. This option is incompatible with the rulesets option.
+      type: array
+      items:
+        allOf:
+        - $ref: '#/components/schemas/rulesets_RulesetPhase'
+        - description: The phase to skip the execution of.
+          type: string
+      minItems: 1
+      title: Phases
+      uniqueItems: true
+    rulesets_SetCacheTagsExpression:
+      description: An expression that evaluates to an array of cache tag values.
+      type: string
+      example: http.request.uri.path.extension
+      minLength: 1
+      title: Expression
+    rulesets_SkipProducts:
+      description: A list of legacy security products to skip the execution of.
+      type: array
+      items:
+        description: The name of a legacy security product to skip the execution of.
+        enum:
+        - bic
+        - hot
+        - rateLimit
+        - securityLevel
+        - uaBlock
+        - waf
+        - zoneLockdown
+        example: bic
+        title: Product
+        type: string
+      minItems: 1
+      title: Products
+      uniqueItems: true
+    rulesets_RulesetVersion:
+      description: The version of the ruleset.
+      type: string
+      example: '1'
+      pattern: ^[0-9]+$
+      title: Version
+    rulesets_SetCacheTagsValues:
+      description: A list of cache tag values.
+      type: array
+      items:
+        description: A cache tag value.
+        example: my-cache-tag
+        minLength: 1
+        title: Cache Tag
+        type: string
+      maxItems: 100
+      minItems: 1
+      title: Values
+    rulesets_SetCacheSettingsCustomCacheKeyUser:
+      description: How to use characteristics of the request user agent in the cache key.
+      type: object
+      properties:
+        device_type:
+          description: Whether to use the user agent's device type in the cache key.
+          type: boolean
+          example: true
+          title: Device Type
+        geo:
+          description: Whether to use the user agents's country in the cache key.
+          type: boolean
+          example: true
+          title: Country
+        lang:
+          description: Whether to use the user agent's language in the cache key.
+          type: boolean
+          example: true
+          title: Language
+      title: User
+    rulesets_RewriteHeaderExpression:
+      description: An expression that evaluates to a value for the header.
+      type: string
+      example: ip.src
+      minLength: 1
+      title: Header Expression
+    rulesets_LogCustomFieldRequestFields:
+      description: The raw request fields to log.
+      type: array
+      items:
+        description: The raw request field to log.
+        properties:
+          name:
+            description: The name of the header.
+            type: string
+            example: my-request-header
+            minLength: 1
+            title: Header Name
+        required:
+        - name
+        title: Raw Request Field
+        type: object
+      minItems: 1
+      title: Raw Request Fields
+    rulesets_SetCacheControlOperation:
+      description: The operation to perform on the cache-control directive.
+      type: string
+      example: set
+      enum:
+      - set
+      - remove
+      title: Operation
+    rulesets_ForceConnectionCloseRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - force_connection_close
+          description:
+            type: string
+            example: Close ongoing HTTP connections. This action does not block a request, but it forces the client to reconnect. For HTTP/2 and HTTP/3 connections, the connection will be closed even if it breaks other requests running on the same connection.
+        title: Force Connection Close Rule
+        type: object
+    rulesets_RedirectFromList:
+      description: A redirect based on a bulk list lookup.
+      type: object
+      properties:
+        key:
+          description: An expression that evaluates to the list lookup key.
+          type: string
+          example: http.request.full_uri
+          minLength: 1
+          title: Lookup Key
+        name:
+          description: The name of the list to match against.
+          type: string
+          example: my_list
+          pattern: ^[a-zA-Z0-9_]+$
+          title: List Name
+      required:
+      - name
+      - key
+      title: Bulk Redirect
+    rulesets_SetCacheSettingsOriginCacheControl:
+      description: Whether Cloudflare will aim to strictly adhere to RFC 7234.
+      type: boolean
+      example: true
+      title: Origin Cache Control (Enterprise-Only)
+    rulesets_SetCacheSettingsCache:
+      description: Whether the request's response from the origin is eligible for caching. Caching itself will still depend on the cache control header and your other caching configurations.
+      type: boolean
+      example: true
+      title: Cache
+    rulesets_DDoSDynamicRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - ddos_dynamic
+          description:
+            type: string
+            example: Perform a specific action according to a set of internal guidelines defined by Cloudflare.
+        title: DDoS Dynamic Rule
+        type: object
+    rulesets_TransformResponseHTMLRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - transform_response_html
+          action_parameters:
+            type: object
+            properties:
+              link_maze:
+                description: Enables the link maze transformation on the response.
+                type: object
+                title: Link Maze
+            required:
+            - link_maze
+          description:
+            type: string
+            example: Apply a HTML transformation to the response.
+        title: Transform Response HTML Rule
+        type: object
+    rulesets_LogCustomFieldTransformedRequestFields:
+      description: The transformed request fields to log.
+      type: array
+      items:
+        description: The transformed request field to log.
+        properties:
+          name:
+            description: The name of the header.
+            type: string
+            example: my-request-header
+            minLength: 1
+            title: Header Name
+        required:
+        - name
+        title: Transformed Request Field
+        type: object
+      minItems: 1
+      title: Transformed Request Fields
+    rulesets_RuleCategories:
+      description: The categories of the rule.
+      type: array
+      items:
+        $ref: '#/components/schemas/rulesets_RuleCategory'
+      minItems: 1
+      readOnly: true
+      title: Categories
+      uniqueItems: true
+    rulesets_SetCacheSettingsStripSetCookie:
+      description: Whether to strip Set-Cookie headers from the origin response before caching.
+      type: boolean
+      example: true
+      title: Strip Set-Cookie
+    rulesets_SetCacheSettingsStatusCodeTTL:
+      description: A list of TTLs to apply to specific status codes or status code ranges.
+      type: array
+      items:
+        maxProperties: 2
+        minProperties: 2
+        properties:
+          status_code:
+            description: A single status code to apply the TTL to.
+            type: integer
+            example: 200
+            maximum: 999
+            minimum: 100
+            title: Status Code
+          status_code_range:
+            description: A range of status codes to apply the TTL to.
+            type: object
+            minProperties: 1
+            properties:
+              from:
+                description: The lower bound of the range.
+                type: integer
+                example: 200
+                maximum: 999
+                minimum: 100
+                title: From
+              to:
+                description: The upper bound of the range.
+                type: integer
+                example: 299
+                maximum: 999
+                minimum: 100
+                title: To
+            title: Status Code Range
+          value:
+            description: The time to cache the response for (in seconds). A value of 0 is equivalent to setting the cache control header with the value "no-cache". A value of -1 is equivalent to setting the cache control header with the value of "no-store".
+            type: integer
+            example: 0
+            title: TTL Value
+        required:
+        - value
+        type: object
+      minItems: 1
+      title: Status Code TTLs
+      uniqueItems: true
+    rulesets_RuleEnabled:
+      description: Whether the rule should be executed.
+      type: boolean
+      example: true
+      title: Enabled
+    rulesets_RedirectFromValue:
+      description: A redirect based on the request properties.
+      type: object
+      properties:
+        preserve_query_string:
+          description: Whether to keep the query string of the original request.
+          type: boolean
+          example: true
+          default: false
+          title: Preserve Query String
+        status_code:
+          description: The status code to use for the redirect.
+          type: integer
+          example: 302
+          enum:
+          - 301
+          - 302
+          - 303
+          - 307
+          - 308
+          title: Status Code
+        target_url:
+          description: A URL to redirect the request to.
+          type: object
+          maxProperties: 1
+          minProperties: 1
+          properties:
+            expression:
+              description: An expression that evaluates to a URL to redirect the request to.
+              type: string
+              example: concat("https://example.com", http.request.uri.path)
+              minLength: 1
+              title: Redirect Expression
+            value:
+              description: A URL to redirect the request to.
+              type: string
+              example: https://example.com
+              minLength: 1
+              title: Redirect Value
+          title: Target URL
+      required:
+      - target_url
+      title: Single Redirect
+    rulesets_ResultInfo:
+      description: Information to navigate the results.
+      type: object
+      properties:
+        cursors:
+          description: The set of cursors.
+          type: object
+          properties:
+            after:
+              allOf:
+              - $ref: '#/components/schemas/rulesets_Cursor'
+              - title: After Cursor
+                type: string
+          required:
+          - after
+          title: Cursors
+      title: Result Info
+    rulesets_ServeErrorRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - serve_error
+          action_parameters:
+            allOf:
+            - properties:
+                content_type:
+                  $ref: '#/components/schemas/rulesets_ServeErrorContentType'
+                status_code:
+                  $ref: '#/components/schemas/rulesets_ServeErrorStatusCode'
+              required:
+              - content_type
+              type: object
+            - oneOf:
+              - properties:
+                  content:
+                    $ref: '#/components/schemas/rulesets_ServeErrorContent'
+                required:
+                - content
+                title: Action Parameters (Content)
+                type: object
+              - properties:
+                  asset_name:
+                    $ref: '#/components/schemas/rulesets_ServeErrorAssetName'
+                required:
+                - asset_name
+                title: Action Parameters (Asset)
+                type: object
+          description:
+            type: string
+            example: Customize the serving of errors.
+        title: Serve Error Rule
+        type: object
+    rulesets_RouteSNI:
+      description: A Server Name Indication (SNI) override.
+      type: object
+      properties:
+        value:
+          description: A value to override the SNI to.
+          type: string
+          example: static.example.com
+          minLength: 1
+          title: Value
+      required:
+      - value
+      title: Server Name Indication
+    rulesets_ManagedChallengeRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - managed_challenge
+          description:
+            type: string
+            example: Issue a Managed Challenge if the visitor has not solved a Managed Challenge or Interactive Challenge prior to the request.
+        title: Managed Challenge Rule
+        type: object
+    rulesets_SetCacheSettingsCustomCacheKeyQueryString:
+      description: Which query string parameters to include in or exclude from the cache key.
+      type: object
+      properties:
+        exclude:
+          description: Which query string parameters to exclude from the cache key.
+          type: object
+          maxProperties: 1
+          minProperties: 1
+          properties:
+            all:
+              description: Whether to exclude all query string parameters from the cache key.
+              type: boolean
+              enum:
+              - true
+              title: Exclude All
+            list:
+              description: A list of query string parameters to exclude from the cache key.
+              type: array
+              items:
+                description: The name of the query string parameter to exclude.
+                example: foo
+                minLength: 1
+                title: Parameter Name
+                type: string
+              minItems: 1
+              title: Exclude List
+              uniqueItems: true
+          title: Exclude
+        include:
+          description: Which query string parameters to include in the cache key.
+          type: object
+          maxProperties: 1
+          minProperties: 1
+          properties:
+            all:
+              description: Whether to include all query string parameters in the cache key.
+              type: boolean
+              enum:
+              - true
+              title: Include All
+            list:
+              description: A list of query string parameters to include in the cache key.
+              type: array
+              items:
+                description: The name of the query string parameter to include.
+                example: foo
+                minLength: 1
+                title: Parameter Name
+                type: string
+              minItems: 1
+              title: Include List
+              uniqueItems: true
+          title: Include
+      maxProperties: 1
+      title: Query String Parameters
+    rulesets_ScoreRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - score
+          action_parameters:
+            type: object
+            properties:
+              increment:
+                $ref: '#/components/schemas/rulesets_ScoreIncrement'
+            required:
+            - increment
+          description:
+            type: string
+            example: Increment the cumulative score.
+        title: Score Rule
+        type: object
+    rulesets_RuleCategory:
+      description: The category of a rule.
+      type: string
+      example: directory-traversal
+      minLength: 1
+      title: Category
+    rulesets_RequestRules:
+      description: The list of rules in the ruleset.
+      type: array
+      items:
+        $ref: '#/components/schemas/rulesets_RequestRule'
+      default: []
+      title: Rules
+    rulesets_SetCacheSettingsVaryDefault:
+      description: Controls how response Vary headers without a per-header override contribute to the cache key.
+      type: object
+      properties:
+        action:
+          description: How the header value is treated when building the cache key.
+          type: string
+          example: normalize
+          enum:
+          - bypass
+          - passthrough
+          - normalize
+          title: Action
+      required:
+      - action
+      title: Vary Default
+    rulesets_JsChallengeRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - js_challenge
+          description:
+            type: string
+            example: Issue a non-interactive JavaScript Challenge if the visitor has not solved an Interactive Challenge, Managed Challenge, or JavaScript Challenge prior to the request.
+        title: JavaScript Challenge Rule
+        type: object
+    rulesets_ChallengeRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - challenge
+          description:
+            type: string
+            example: Issue an Interactive Challenge if the visitor has not solved an Interactive Challenge prior to the request.
+        title: Challenge Rule
+        type: object
+    rulesets_SkipRulesets:
+      description: A list of ruleset IDs to skip the execution of. This option is incompatible with the ruleset and phases options.
+      type: array
+      items:
+        allOf:
+        - $ref: '#/components/schemas/rulesets_RulesetId'
+        - description: The ID of a ruleset to skip the execution of.
+          example: 4814384a9e5d4991b9815dcfc25d2f1f
+          title: Ruleset
+          type: string
+      minItems: 1
+      title: Rulesets
+      uniqueItems: true
+    rulesets_RulesetPhase:
+      description: The phase of the ruleset.
+      type: string
+      example: http_request_firewall_custom
+      enum:
+      - ddos_l4
+      - ddos_l7
+      - http_config_settings
+      - http_custom_errors
+      - http_log_custom_fields
+      - http_ratelimit
+      - http_request_cache_settings
+      - http_request_dynamic_redirect
+      - http_request_firewall_custom
+      - http_request_firewall_managed
+      - http_request_late_transform
+      - http_request_origin
+      - http_request_redirect
+      - http_request_sanitize
+      - http_request_sbfm
+      - http_request_transform
+      - http_response_cache_settings
+      - http_response_compression
+      - http_response_firewall_managed
+      - http_response_headers_transform
+      - magic_transit
+      - magic_transit_ids_managed
+      - magic_transit_managed
+      - magic_transit_ratelimit
+      title: Phase
+    rulesets_SetCacheSettingsRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - set_cache_settings
+          action_parameters:
+            type: object
+            minProperties: 1
+            properties:
+              additional_cacheable_ports:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsAdditionalCacheablePorts'
+              browser_ttl:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsBrowserTTL'
+              cache:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsCache'
+              cache_key:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsCacheKey'
+              cache_reserve:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsCacheReserve'
+              edge_ttl:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsEdgeTTL'
+              origin_cache_control:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsOriginCacheControl'
+              origin_error_page_passthru:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsOriginErrorPagePassthru'
+              origin_range_requests:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsOriginRangeRequests'
+              read_timeout:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsReadTimeout'
+              respect_strong_etags:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsRespectStrongEtags'
+              serve_stale:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsServeStale'
+              shared_dictionary:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsSharedDictionary'
+              strip_etags:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsStripETags'
+              strip_last_modified:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsStripLastModified'
+              strip_set_cookie:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsStripSetCookie'
+              vary:
+                $ref: '#/components/schemas/rulesets_SetCacheSettingsVary'
+          description:
+            type: string
+            example: Configure settings for how the response is cached.
+        title: Set Cache Settings Rule
+        type: object
+    rulesets_ServeErrorAssetName:
+      description: The name of a custom asset to serve as the error response.
+      type: string
+      example: 500_errors
+      minLength: 1
+      title: Asset Name
+    rulesets_Message:
+      description: A message.
+      type: object
+      properties:
+        code:
+          description: A unique code for this message.
+          type: integer
+          example: 10000
+          title: Code
+        message:
+          description: A text description of this message.
+          type: string
+          example: something bad happened
+          minLength: 1
+          title: Description
+        source:
+          description: The source of this message.
+          type: object
+          properties:
+            pointer:
+              description: A JSON pointer to the field that is the source of the message.
+              type: string
+              example: /rules/0/action
+              minLength: 1
+              title: Pointer
+          required:
+          - pointer
+          title: Source
+      required:
+      - message
+      title: Message
+    rulesets_SetCacheSettingsOriginErrorPagePassthru:
+      description: Whether to generate Cloudflare error pages for issues from the origin server.
+      type: boolean
+      example: true
+      title: Origin Error Page Passthrough
+    rulesets_SetCacheSettingsStripETags:
+      description: Whether to strip ETag headers from the origin response before caching.
+      type: boolean
+      example: true
+      title: Strip ETags
+    rulesets_SetCacheSettingsVary:
+      description: Controls how cached responses vary based on request headers. `default` is required by the API and applies to any Vary response header that does not have a per-header override.
+      type: object
+      properties:
+        default:
+          $ref: '#/components/schemas/rulesets_SetCacheSettingsVaryDefault'
+        headers:
+          description: A mapping of lowercase request header names to their vary configuration.
+          type: object
+          example:
+            accept:
+              action: normalize
+              media_types:
+              - image/webp
+              - image/png
+          additionalProperties:
+            $ref: '#/components/schemas/rulesets_SetCacheSettingsVaryHeader'
+          maxProperties: 50
+          title: Headers
+      minProperties: 1
+      title: Vary
+    rulesets_SetCacheSettingsVaryHeader:
+      description: Controls how a single request header contributes to the cache key.
+      type: object
+      properties:
+        action:
+          description: How the header value is treated when building the cache key.
+          type: string
+          example: normalize
+          enum:
+          - bypass
+          - passthrough
+          - normalize
+          title: Action
+        languages:
+          description: The set of languages to normalize against. Only valid for the `accept-language` header.
+          type: array
+          items:
+            description: A language tag to normalize against. Must be printable ASCII.
+            example: en
+            maxLength: 64
+            minLength: 1
+            pattern: ^[ -~]+$
+            title: Language
+            type: string
+          maxItems: 20
+          title: Languages
+        media_types:
+          description: The set of media types to normalize against. Only valid for the `accept` header.
+          type: array
+          items:
+            description: A media type to normalize against. Must be printable ASCII.
+            example: image/webp
+            maxLength: 255
+            minLength: 1
+            pattern: ^[ -~]+$
+            title: Media Type
+            type: string
+          maxItems: 10
+          title: Media Types
+      required:
+      - action
+      title: Vary Header
+    rulesets_RedirectRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - redirect
+          action_parameters:
+            type: object
+            maxProperties: 1
+            minProperties: 1
+            properties:
+              from_list:
+                $ref: '#/components/schemas/rulesets_RedirectFromList'
+              from_value:
+                $ref: '#/components/schemas/rulesets_RedirectFromValue'
+          description:
+            type: string
+            example: Redirect the request.
+        title: Redirect Rule
+        type: object
+    rulesets_RouteOrigin:
+      description: An origin to route to.
+      type: object
+      properties:
+        host:
+          description: A resolved host to route to.
+          type: string
+          example: static.example.com
+          minLength: 1
+          title: Host
+        port:
+          description: A destination port to route to.
+          type: integer
+          example: 80
+          maximum: 65535
+          minimum: 1
+          title: Port
+      minProperties: 1
+      title: Origin
+    rulesets_ZoneId:
+      description: The unique ID of the zone.
+      type: string
+      example: 9f1839b6152d298aca64c4e906b6d074
+      pattern: ^[0-9a-f]{32}$
+      title: Zone ID
+    rulesets_ScoreIncrement:
+      description: A delta to change the score by, which can be either positive or negative.
+      type: integer
+      example: 3
+      title: Increment
+    rulesets_RouteRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - route
+          action_parameters:
+            type: object
+            minProperties: 1
+            properties:
+              host_header:
+                $ref: '#/components/schemas/rulesets_RouteHostHeader'
+              origin:
+                $ref: '#/components/schemas/rulesets_RouteOrigin'
+              sni:
+                $ref: '#/components/schemas/rulesets_RouteSNI'
+          description:
+            type: string
+            example: Select an origin server to route the request to.
+        title: Route Rule
+        type: object
+    rulesets_SkipRuleset:
+      description: A ruleset to skip the execution of. This option is incompatible with the rulesets option.
+      type: string
+      enum:
+      - current
+      title: Ruleset
+    rulesets_LogCustomFieldRawResponseFields:
+      description: The raw response fields to log.
+      type: array
+      items:
+        description: The raw response field to log.
+        properties:
+          name:
+            description: The name of the response header.
+            type: string
+            example: my-response-header
+            minLength: 1
+            title: Header Name
+          preserve_duplicates:
+            description: Whether to log duplicate values of the same header.
+            type: boolean
+            example: true
+            default: false
+            title: Preserve Duplicates
+        required:
+        - name
+        title: Raw Response Field
+        type: object
+      minItems: 1
+      title: Raw Response Fields
+    rulesets_ServeErrorContent:
+      description: The response content.
+      type: string
+      example: "{\n  \"error\": \"1xxx error occurred\"\n}"
+      minLength: 1
+      title: Content
+    rulesets_SetCacheSettingsCacheKey:
+      description: Which components of the request are included in or excluded from the cache key Cloudflare uses to store the response in cache.
+      type: object
+      properties:
+        cache_by_device_type:
+          description: Whether to separate cached content based on the visitor's device type.
+          type: boolean
+          example: true
+          title: Cache by Device Type
+        cache_deception_armor:
+          description: Whether to protect from web cache deception attacks, while allowing static assets to be cached.
+          type: boolean
+          example: true
+          title: Cache Deception Armor
+        custom_key:
+          $ref: '#/components/schemas/rulesets_SetCacheSettingsCustomCacheKey'
+        ignore_query_strings_order:
+          description: Whether to treat requests with the same query parameters the same, regardless of the order those query parameters are in.
+          type: boolean
+          example: true
+          title: Ignore Query Strings Order
+      title: Cache Key
+    rulesets_Ruleset:
+      description: A ruleset object.
+      type: object
+      properties:
+        description:
+          description: An informative description of the ruleset.
+          type: string
+          example: A description for my ruleset.
+          default: ''
+          title: Description
+        id:
+          allOf:
+          - $ref: '#/components/schemas/rulesets_RulesetId'
+          - readOnly: true
+            type: string
+        last_updated:
+          description: The timestamp of when the ruleset was last modified.
+          type: string
+          format: date-time
+          example: '2000-01-01T00:00:00Z'
+          readOnly: true
+          title: Last Updated
+        name:
+          description: The human-readable name of the ruleset.
+          type: string
+          example: My ruleset
+          minLength: 1
+          title: Name
+        version:
+          allOf:
+          - $ref: '#/components/schemas/rulesets_RulesetVersion'
+          - readOnly: true
+            type: string
+      required:
+      - id
+      - version
+      - last_updated
+      title: Ruleset
+    rulesets_ExecuteMatchedData:
+      description: The configuration to use for matched data logging.
+      type: object
+      properties:
+        public_key:
+          description: The public key to encrypt matched data logs with.
+          type: string
+          example: iGqBmyIUxuWt1rvxoAharN9FUXneUBxA/Y19PyyrEG0=
+          minLength: 1
+          title: Public Key
+      required:
+      - public_key
+      title: Matched Data
+    rulesets_SetCacheControlCloudflareOnly:
+      description: Whether the directive should only be applied to the Cloudflare CDN cache.
+      type: boolean
+      example: false
+      default: false
+      title: Cloudflare Only
+    rulesets_Response:
+      description: A response object.
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/rulesets_Errors'
+        messages:
+          $ref: '#/components/schemas/rulesets_Messages'
+        result:
+          description: A result.
+          oneOf:
+          - type:
+            - object
+            - 'null'
+          - items: {}
+            type: array
+          - type: string
+          - type: number
+          - type: boolean
+          title: Result
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          title: Success
+      required:
+      - result
+      - success
+      - errors
+      - messages
+      title: Response
+    rulesets_SetConfigAutominify:
+      description: Which file extensions to minify automatically.
+      type: object
+      properties:
+        css:
+          description: Whether to minify CSS files.
+          type: boolean
+          example: true
+          default: false
+          title: CSS
+        html:
+          description: Whether to minify HTML files.
+          type: boolean
+          example: true
+          default: false
+          title: HTML
+        js:
+          description: Whether to minify JavaScript files.
+          type: boolean
+          example: true
+          default: false
+          title: JavaScript
+      title: Auto-Minify
+    rulesets_SetCacheControlRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - set_cache_control
+          action_parameters:
+            type: object
+            minProperties: 1
+            properties:
+              immutable:
+                $ref: '#/components/schemas/rulesets_SetCacheControlDirective'
+              max-age:
+                $ref: '#/components/schemas/rulesets_SetCacheControlDirectiveWithValue'
+              must-revalidate:
+                $ref: '#/components/schemas/rulesets_SetCacheControlDirective'
+              must-understand:
+                $ref: '#/components/schemas/rulesets_SetCacheControlDirective'
+              no-cache:
+                $ref: '#/components/schemas/rulesets_SetCacheControlDirectiveWithQualifiers'
+              no-store:
+                $ref: '#/components/schemas/rulesets_SetCacheControlDirective'
+              no-transform:
+                $ref: '#/components/schemas/rulesets_SetCacheControlDirective'
+              private:
+                $ref: '#/components/schemas/rulesets_SetCacheControlDirectiveWithQualifiers'
+              proxy-revalidate:
+                $ref: '#/components/schemas/rulesets_SetCacheControlDirective'
+              public:
+                $ref: '#/components/schemas/rulesets_SetCacheControlDirective'
+              s-maxage:
+                $ref: '#/components/schemas/rulesets_SetCacheControlDirectiveWithValue'
+              stale-if-error:
+                $ref: '#/components/schemas/rulesets_SetCacheControlDirectiveWithValue'
+              stale-while-revalidate:
+                $ref: '#/components/schemas/rulesets_SetCacheControlDirectiveWithValue'
+          description:
+            type: string
+            example: Modify the cache-control header directives in an Origin response.
+        title: Set Cache Control Rule
+        type: object
+    rulesets_SetCacheSettingsBrowserTTL:
+      description: How long client browsers should cache the response. Cloudflare cache purge will not purge content cached on client browsers, so high browser TTLs may lead to stale content.
+      type: object
+      properties:
+        default:
+          description: The browser TTL (in seconds) if you choose the "override_origin" mode.
+          type: integer
+          example: 60
+          minimum: 0
+          title: Default TTL
+        mode:
+          description: The browser TTL mode.
+          type: string
+          example: override_origin
+          enum:
+          - respect_origin
+          - bypass_by_default
+          - override_origin
+          - bypass
+          title: TTL Mode
+      required:
+      - mode
+      title: Browser TTL
+    rulesets_Cursor:
+      description: The cursor to use for the next page.
+      type: string
+      example: dGhpc2lzYW5leGFtcGxlCg
+      minLength: 1
+      title: Cursor
+    rulesets_RulesetKind:
+      description: The kind of the ruleset.
+      type: string
+      example: root
+      enum:
+      - managed
+      - custom
+      - root
+      - zone
+      title: Kind
+    rulesets_RewriteUriQuery:
+      description: A URI query rewrite.
+      type: object
+      properties:
+        expression:
+          description: An expression that evaluates to a value to rewrite the URI query to.
+          type: string
+          example: regex_replace(http.request.uri.query, "foo=bar", "")
+          minLength: 1
+          title: Query Expression
+        value:
+          description: A value to rewrite the URI query to.
+          type: string
+          example: foo=bar
+          title: Query Value
+      maxProperties: 1
+      minProperties: 1
+      title: URI Query
+    rulesets_RewriteRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - rewrite
+          action_parameters:
+            type: object
+            minProperties: 1
+            properties:
+              headers:
+                $ref: '#/components/schemas/rulesets_RewriteHeaders'
+              uri:
+                $ref: '#/components/schemas/rulesets_RewriteUri'
+          description:
+            type: string
+            example: Rewrite properties of the request or response.
+        title: Rewrite Rule
+        type: object
+    rulesets_Messages:
+      description: A list of warning messages.
+      type: array
+      items:
+        $ref: '#/components/schemas/rulesets_Message'
+      title: Messages
+      uniqueItems: true
+    rulesets_SetCacheSettingsCustomCacheKeyHeader:
+      description: Which headers to include in the cache key.
+      type: object
+      properties:
+        check_presence:
+          description: A list of headers to check for the presence of. The presence of these headers is included in the cache key.
+          type: array
+          items:
+            description: The name of the header to check for the presence of.
+            example: my-header
+            minLength: 1
+            title: Header
+            type: string
+          minItems: 1
+          title: Check Presence
+          uniqueItems: true
+        contains:
+          description: A mapping of header names to a list of values. If a header is present in the request and contains any of the values provided, its value is included in the cache key.
+          type: object
+          example:
+            my-header:
+            - my-header-value-1
+            - my-header-value-2
+          additionalProperties:
+            description: A list of values to match the header against.
+            items:
+              description: The header value to match against.
+              example: my-header-value
+              minLength: 1
+              title: Header Value
+              type: string
+            minItems: 1
+            title: Header Values
+            type: array
+            uniqueItems: true
+          minProperties: 1
+          title: Contains
+        exclude_origin:
+          description: Whether to exclude the origin header in the cache key.
+          type: boolean
+          example: true
+          title: Exclude Origin
+        include:
+          description: A list of headers to include in the cache key.
+          type: array
+          items:
+            description: The name of the header to include.
+            example: my-header
+            minLength: 1
+            title: Header
+            type: string
+          minItems: 1
+          title: Include
+          uniqueItems: true
+      title: Headers
+    rulesets_PerPage:
+      description: The number of rulesets to return per page.
+      type: integer
+      example: 3
+      maximum: 50
+      minimum: 1
+      title: Per Page
+    rulesets_ExecuteSensitivityLevel:
+      type: string
+      example: default
+      enum:
+      - default
+      - medium
+      - low
+      - eoff
+      title: Sensitivity Level
+    rulesets_SetCacheSettingsServeStale:
+      description: When to serve stale content from cache.
+      type: object
+      properties:
+        disable_stale_while_updating:
+          description: Whether Cloudflare should disable serving stale content while getting the latest content from the origin.
+          type: boolean
+          example: true
+          title: Disable Stale While Updating
+      title: Serve Stale
+    rulesets_SetCacheControlDirectiveWithValue:
+      description: A cache-control directive configuration that accepts a duration value in seconds.
+      oneOf:
+      - description: Set the directive with a duration value in seconds.
+        properties:
+          cloudflare_only:
+            $ref: '#/components/schemas/rulesets_SetCacheControlCloudflareOnly'
+          operation:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_SetCacheControlOperation'
+            - enum:
+              - set
+              type: string
+          value:
+            description: The duration value in seconds for the directive.
+            type: integer
+            example: 3600
+            minimum: 0
+            title: Value
+        required:
+        - operation
+        - value
+        title: Set Directive
+        type: object
+      - description: Remove the directive.
+        properties:
+          cloudflare_only:
+            $ref: '#/components/schemas/rulesets_SetCacheControlCloudflareOnly'
+          operation:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_SetCacheControlOperation'
+            - enum:
+              - remove
+              type: string
+        required:
+        - operation
+        title: Remove Directive
+        type: object
+      title: Cache Control Directive With Duration Seconds Value
+    rulesets_RouteHostHeader:
+      description: A value to rewrite the HTTP host header to.
+      type: string
+      example: static.example.com
+      minLength: 1
+      title: Host Header
+    rulesets_SetCacheTagsOperation:
+      description: The operation to perform on the cache tags.
+      type: string
+      example: add
+      enum:
+      - add
+      - remove
+      - set
+      title: Operation
+    rulesets_SetCacheSettingsCacheReserve:
+      description: Settings to determine whether the request's response from origin is eligible for Cache Reserve (requires a Cache Reserve add-on plan).
+      type: object
+      properties:
+        eligible:
+          description: Whether Cache Reserve is enabled. If this is true and a request meets eligibility criteria, Cloudflare will write the resource to Cache Reserve.
+          type: boolean
+          example: true
+          title: Eligible
+        minimum_file_size:
+          description: The minimum file size eligible for storage in Cache Reserve.
+          type: integer
+          example: 1024
+          minimum: 0
+          title: Minimum File Size
+      required:
+      - eligible
+      title: Cache Reserve
+    rulesets_RewriteHeaderOperation:
+      description: The operation to perform on the header.
+      type: string
+      title: Operation
+    rulesets_SetCacheControlDirectiveWithQualifiers:
+      description: A cache-control directive configuration that accepts optional qualifiers (header names).
+      oneOf:
+      - description: Set the directive with optional qualifiers.
+        properties:
+          cloudflare_only:
+            $ref: '#/components/schemas/rulesets_SetCacheControlCloudflareOnly'
+          operation:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_SetCacheControlOperation'
+            - enum:
+              - set
+              type: string
+          qualifiers:
+            description: Optional list of header names to qualify the directive (e.g., for "private" or "no-cache" directives).
+            type: array
+            items:
+              description: A header name to qualify the directive.
+              example: X-Custom-Header
+              minLength: 1
+              title: Qualifier
+              type: string
+            title: Qualifiers
+            uniqueItems: true
+        required:
+        - operation
+        title: Set Directive
+        type: object
+      - description: Remove the directive.
+        properties:
+          cloudflare_only:
+            $ref: '#/components/schemas/rulesets_SetCacheControlCloudflareOnly'
+          operation:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_SetCacheControlOperation'
+            - enum:
+              - remove
+              type: string
+        required:
+        - operation
+        title: Remove Directive
+        type: object
+      title: Cache Control Directive With Optional Qualifiers
+    rulesets_ExecuteOverrides:
+      description: A set of overrides to apply to the target ruleset.
+      type: object
+      properties:
+        action:
+          allOf:
+          - $ref: '#/components/schemas/rulesets_RuleAction'
+          - description: An action to override all rules with. This option has lower precedence than rule and category overrides.
+            example: log
+            type: string
+        categories:
+          $ref: '#/components/schemas/rulesets_ExecuteCategoryOverrides'
+        enabled:
+          allOf:
+          - $ref: '#/components/schemas/rulesets_RuleEnabled'
+          - description: Whether to enable execution of all rules. This option has lower precedence than rule and category overrides.
+            type: boolean
+        rules:
+          $ref: '#/components/schemas/rulesets_ExecuteRuleOverrides'
+        sensitivity_level:
+          allOf:
+          - $ref: '#/components/schemas/rulesets_ExecuteSensitivityLevel'
+          - description: A sensitivity level to set for all rules. This option has lower precedence than rule and category overrides and is only applicable for DDoS phases.
+            type: string
+      minProperties: 1
+      title: Overrides
+    rulesets_SetCacheSettingsEdgeTTL:
+      description: How long the Cloudflare edge network should cache the response.
+      type: object
+      properties:
+        default:
+          description: The edge TTL (in seconds) if you choose the "override_origin" mode.
+          type: integer
+          example: 60
+          minimum: 0
+          title: Default TTL
+        mode:
+          description: The edge TTL mode.
+          type: string
+          example: override_origin
+          enum:
+          - respect_origin
+          - bypass_by_default
+          - override_origin
+          title: TTL Mode
+        status_code_ttl:
+          $ref: '#/components/schemas/rulesets_SetCacheSettingsStatusCodeTTL'
+      required:
+      - mode
+      title: Edge TTL
+    rulesets_BlockRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - block
+          action_parameters:
+            type: object
+            properties:
+              response:
+                description: The response to show when the block is applied.
+                type: object
+                properties:
+                  content:
+                    description: The content to return.
+                    example: "{\n  \"success\": false,\n  \"error\": \"you have been blocked\"\n}"
+                    minLength: 1
+                    title: Content
+                    type: string
+                  content_type:
+                    description: The type of the content to return.
+                    type: string
+                    example: application/json
+                    minLength: 1
+                    title: Content Type
+                  status_code:
+                    description: The status code to return.
+                    type: integer
+                    maximum: 499
+                    minimum: 400
+                    title: Status Code
+                required:
+                - status_code
+                - content
+                - content_type
+                title: Response
+          description:
+            type: string
+            example: Block the request.
+        title: Block Rule
+        type: object
+    rulesets_CompressResponseRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - compress_response
+          action_parameters:
+            type: object
+            properties:
+              algorithms:
+                description: Custom order for compression algorithms.
+                type: array
+                items:
+                  description: Compression algorithm to enable.
+                  properties:
+                    name:
+                      description: Name of the compression algorithm to enable.
+                      type: string
+                      example: none
+                      enum:
+                      - none
+                      - auto
+                      - default
+                      - gzip
+                      - brotli
+                      - zstd
+                      title: Algorithm Name
+                  title: Algorithm
+                  type: object
+                minItems: 1
+                title: Algorithms
+                uniqueItems: true
+            required:
+            - algorithms
+          description:
+            type: string
+            example: Modify the compression algorithm used in the response.
+        title: Response Compression Rule
+        type: object
+    rulesets_ExecuteRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - execute
+          action_parameters:
+            type: object
+            properties:
+              id:
+                allOf:
+                - $ref: '#/components/schemas/rulesets_RulesetId'
+                - description: The ID of the ruleset to execute.
+                  example: 4814384a9e5d4991b9815dcfc25d2f1f
+                  type: string
+              matched_data:
+                $ref: '#/components/schemas/rulesets_ExecuteMatchedData'
+              overrides:
+                $ref: '#/components/schemas/rulesets_ExecuteOverrides'
+            required:
+            - id
+          description:
+            type: string
+            example: Execute another ruleset.
+        title: Execute Rule
+        type: object
+    rulesets_ExecuteRuleOverrides:
+      description: A list of rule-level overrides. This option has the highest precedence.
+      type: array
+      items:
+        description: A rule-level override.
+        minProperties: 2
+        properties:
+          action:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_RuleAction'
+            - description: The action to override the rule with.
+              example: log
+              type: string
+          enabled:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_RuleEnabled'
+            - description: Whether to enable execution of the rule.
+              type: boolean
+          id:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_RuleId'
+            - description: The ID of the rule to override.
+              example: 8ac8bc2a661e475d940980f9317f28e1
+              type: string
+          score_threshold:
+            description: The score threshold to use for the rule.
+            type: integer
+            title: Score Threshold
+          sensitivity_level:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_ExecuteSensitivityLevel'
+            - description: The sensitivity level to use for the rule. This option is only applicable for DDoS phases.
+              type: string
+        required:
+        - id
+        title: Rule Override
+        type: object
+      minItems: 1
+      title: Rule Overrides
+      uniqueItems: true
+    rulesets_RuleAction:
+      description: The action to perform when the rule matches.
+      type: string
+      pattern: ^[a-z_]+$
+      title: Action
+    rulesets_SetCacheSettingsCustomCacheKeyHost:
+      description: How to use the host in the cache key.
+      type: object
+      properties:
+        resolved:
+          description: Whether to use the resolved host in the cache key.
+          type: boolean
+          example: true
+          title: Use Resolved Host
+      title: Host
+    rulesets_SetConfigRule:
+      allOf:
+      - $ref: '#/components/schemas/rulesets_Rule'
+      - properties:
+          action:
+            type: string
+            enum:
+            - set_config
+          action_parameters:
+            type: object
+            minProperties: 1
+            properties:
+              automatic_https_rewrites:
+                description: Whether to enable Automatic HTTPS Rewrites.
+                type: boolean
+                example: true
+                title: Automatic HTTPS Rewrites
+              autominify:
+                $ref: '#/components/schemas/rulesets_SetConfigAutominify'
+              bic:
+                description: Whether to enable Browser Integrity Check (BIC).
+                type: boolean
+                example: true
+                title: Browser Integrity Check
+              content_converter:
+                description: Whether to enable content conversion (e.g., HTML to Markdown).
+                type: boolean
+                example: true
+                title: Content Converter
+              disable_apps:
+                description: Whether to disable Cloudflare Apps.
+                type: boolean
+                enum:
+                - true
+                deprecated: true
+                title: Disable Apps
+                x-stainless-deprecation-message: Cloudflare Apps are deprected.
+              disable_pay_per_crawl:
+                description: Whether to disable Pay Per Crawl.
+                type: boolean
+                enum:
+                - true
+                title: Disable Pay Per Crawl
+              disable_rum:
+                description: Whether to disable Real User Monitoring (RUM).
+                type: boolean
+                enum:
+                - true
+                title: Disable RUM
+              disable_zaraz:
+                description: Whether to disable Zaraz.
+                type: boolean
+                enum:
+                - true
+                title: Disable Zaraz
+              email_obfuscation:
+                description: Whether to enable Email Obfuscation.
+                type: boolean
+                example: true
+                title: Email Obfuscation
+              fonts:
+                description: Whether to enable Cloudflare Fonts.
+                type: boolean
+                example: true
+                title: Cloudflare Fonts
+              hotlink_protection:
+                description: Whether to enable Hotlink Protection.
+                type: boolean
+                example: true
+                title: Hotlink Protection
+              mirage:
+                description: Whether to enable Mirage.
+                type: boolean
+                example: true
+                deprecated: true
+                title: Mirage
+                x-stainless-deprecation-message: Mirage is deprecated. More information at https://developers.cloudflare.com/speed/optimization/images/mirage/.
+              opportunistic_encryption:
+                description: Whether to enable Opportunistic Encryption.
+                type: boolean
+                example: true
+                title: Opportunistic Encryption
+              polish:
+                description: The Polish level to configure.
+                type: string
+                example: 'off'
+                enum:
+                - 'off'
+                - lossless
+                - lossy
+                - webp
+                title: Polish
+              redirects_for_ai_training:
+                description: Whether to redirect verified AI training crawlers to canonical URLs found in the HTML response.
+                type: boolean
+                example: true
+                title: Redirects for AI Training
+              request_body_buffering:
+                description: The request body buffering mode.
+                type: string
+                example: standard
+                enum:
+                - none
+                - standard
+                - full
+                title: Request body buffering
+              response_body_buffering:
+                description: The response body buffering mode.
+                type: string
+                example: standard
+                enum:
+                - none
+                - standard
+                title: Response body buffering
+              rocket_loader:
+                description: Whether to enable Rocket Loader.
+                type: boolean
+                example: true
+                title: Rocket Loader
+              security_level:
+                description: The Security Level to configure.
+                type: string
+                example: 'off'
+                enum:
+                - 'off'
+                - essentially_off
+                - low
+                - medium
+                - high
+                - under_attack
+                title: Security Level
+              server_side_excludes:
+                description: Whether to enable Server-Side Excludes.
+                type: boolean
+                example: true
+                title: Server-Side Excludes
+              ssl:
+                description: The SSL level to configure.
+                type: string
+                example: 'off'
+                enum:
+                - 'off'
+                - flexible
+                - full
+                - strict
+                - origin_pull
+                title: SSL
+              sxg:
+                description: Whether to enable Signed Exchanges (SXG).
+                type: boolean
+                example: true
+                deprecated: true
+                title: Signed Exchanges
+                x-stainless-deprecation-message: Signed Exchanges (SXG) is deprecated.
+              webmcp_enabled:
+                description: Whether to serve the WebMCP bridge script, which exposes the page's tools to browser AI agents.
+                type: boolean
+                example: true
+                title: WebMCP
+              webmcp_packs:
+                description: Bundled WebMCP tool packs to activate for matching requests. An empty array disables all packs. Omitting this parameter leaves the pack selection unchanged. Does not enable the WebMCP bridge itself. Non-empty selections require the WebMCP Configuration Rules entitlement.
+                type: array
+                items:
+                  description: A tool-pack identifier understood by the WebMCP interceptor.
+                  maxLength: 128
+                  minLength: 1
+                  pattern: ^[A-Za-z0-9._:/@-]+$
+                  type: string
+                example:
+                - c2pa
+                - mcp-server-client
+                maxItems: 100
+                title: WebMCP Tool Packs
+                uniqueItems: true
+          description:
+            type: string
+            example: Configure settings for the request and response.
+        title: Set Configuration Rule
+        type: object
+    rulesets_SetCacheSettingsCustomCacheKeyCookie:
+      description: Which cookies to include in the cache key.
+      type: object
+      properties:
+        check_presence:
+          description: A list of cookies to check for the presence of. The presence of these cookies is included in the cache key.
+          type: array
+          items:
+            description: The name of the cookie to check for the presence of.
+            example: myCookie
+            minLength: 1
+            title: Cookie Name
+            type: string
+          minItems: 1
+          title: Check Presence
+          uniqueItems: true
+        include:
+          description: A list of cookies to include in the cache key.
+          type: array
+          items:
+            description: The name of the cookie to include.
+            example: myCookie
+            minLength: 1
+            title: Cookie Name
+            type: string
+          minItems: 1
+          title: Include
+          uniqueItems: true
+      title: Cookies
+    rulesets_RulePosition:
+      description: An object configuring where the rule will be placed.
+      type: object
+      title: Position
+    rulesets_SetCacheSettingsRespectStrongEtags:
+      description: Whether Cloudflare should respect strong ETag (entity tag) headers. If false, Cloudflare converts strong ETag headers to weak ETag headers.
+      type: boolean
+      example: true
+      title: Respect Strong ETags
+    rulesets_LogCustomFieldCookieFields:
+      description: The cookie fields to log.
+      type: array
+      items:
+        description: The cookie field to log.
+        properties:
+          name:
+            description: The name of the cookie.
+            type: string
+            example: myCookie
+            minLength: 1
+            title: Cookie Name
+        required:
+        - name
+        title: Cookie Field
+        type: object
+      minItems: 1
+      title: Cookie Fields
+    rulesets_ExecuteCategoryOverrides:
+      description: A list of category-level overrides. This option has the second-highest precedence after rule-level overrides.
+      type: array
+      items:
+        description: A category-level override.
+        minProperties: 2
+        properties:
+          action:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_RuleAction'
+            - description: The action to override rules in the category with.
+              example: log
+              type: string
+          category:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_RuleCategory'
+            - description: The name of the category to override.
+              type: string
+          enabled:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_RuleEnabled'
+            - description: Whether to enable execution of rules in the category.
+              type: boolean
+          sensitivity_level:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_ExecuteSensitivityLevel'
+            - description: The sensitivity level to use for rules in the category. This option is only applicable for DDoS phases.
+              type: string
+        required:
+        - category
+        title: Category Override
+        type: object
+      minItems: 1
+      title: Category Overrides
+      uniqueItems: true
+    rulesets_Errors:
+      description: A list of error messages.
+      type: array
+      items:
+        $ref: '#/components/schemas/rulesets_Message'
+      title: Errors
+      uniqueItems: true
+    rulesets_RewriteUri:
+      allOf:
+      - anyOf:
+        - description: A URI path rewrite.
+          properties:
+            path:
+              $ref: '#/components/schemas/rulesets_RewriteUriPath'
+          required:
+          - path
+          title: URI Path
+          type: object
+        - description: A URI query rewrite.
+          properties:
+            query:
+              $ref: '#/components/schemas/rulesets_RewriteUriQuery'
+          required:
+          - query
+          title: URI Query
+          type: object
+      - properties:
+          origin:
+            description: Whether to propagate the rewritten URI to origin.
+            type: boolean
+            example: false
+            readOnly: true
+            title: Origin
+        type: object
+    rulesets_RuleExposedCredentialCheck:
+      description: Configuration for exposed credential checking.
+      type: object
+      properties:
+        password_expression:
+          description: An expression that selects the password used in the credentials check.
+          type: string
+          example: url_decode(http.request.body.form[\"password\"][0])
+          minLength: 1
+          title: Password Expression
+        username_expression:
+          description: An expression that selects the user ID used in the credentials check.
+          type: string
+          example: url_decode(http.request.body.form[\"username\"][0])
+          minLength: 1
+          title: Username Expression
+      required:
+      - username_expression
+      - password_expression
+      title: Exposed Credential Check
+  requestBodies:
+    rulesets_UpdateEntrypointRuleset:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_Ruleset'
+            - properties:
+                rules:
+                  $ref: '#/components/schemas/rulesets_RequestRules'
+              type: object
+      required: true
+    rulesets_CreateRuleset:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_Ruleset'
+            - properties:
+                kind:
+                  $ref: '#/components/schemas/rulesets_RulesetKind'
+                phase:
+                  $ref: '#/components/schemas/rulesets_RulesetPhase'
+                rules:
+                  $ref: '#/components/schemas/rulesets_RequestRules'
+              type: object
+            required:
+            - name
+            - kind
+            - phase
+      required: true
+    rulesets_UpdateRuleset:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_Ruleset'
+            - properties:
+                kind:
+                  $ref: '#/components/schemas/rulesets_RulesetKind'
+                phase:
+                  $ref: '#/components/schemas/rulesets_RulesetPhase'
+                rules:
+                  $ref: '#/components/schemas/rulesets_RequestRules'
+              type: object
+      required: true
+    rulesets_Rule:
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_RequestRule'
+            - properties:
+                position:
+                  oneOf:
+                  - allOf:
+                    - $ref: '#/components/schemas/rulesets_RulePosition'
+                    - properties:
+                        before:
+                          description: The ID of another rule to place the rule before. An empty value causes the rule to be placed at the top.
+                          type: string
+                          example: da5e8e506c8e7877fe06cdf4c41add54
+                          pattern: ^[0-9a-f]{32}$
+                          title: Before
+                      title: Before Position
+                      type: object
+                  - allOf:
+                    - $ref: '#/components/schemas/rulesets_RulePosition'
+                    - properties:
+                        after:
+                          description: The ID of another rule to place the rule after. An empty value causes the rule to be placed at the bottom.
+                          type: string
+                          example: 5bccdbb2a5142cd25cad8591255bd209
+                          pattern: ^[0-9a-f]{32}$
+                          title: After
+                      title: After Position
+                      type: object
+                  - allOf:
+                    - $ref: '#/components/schemas/rulesets_RulePosition'
+                    - properties:
+                        index:
+                          description: An index at which to place the rule, where index 1 is the first rule.
+                          type: integer
+                          example: 1
+                          minimum: 1
+                          title: Index
+                      title: Index Position
+                      type: object
+              type: object
+      required: true
+  responses:
+    rulesets_Ruleset:
+      description: A ruleset response.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_Response'
+            - properties:
+                errors:
+                  type: array
+                  items: {}
+                  enum:
+                  - []
+                result:
+                  allOf:
+                  - $ref: '#/components/schemas/rulesets_Ruleset'
+                  - properties:
+                      kind:
+                        $ref: '#/components/schemas/rulesets_RulesetKind'
+                      name:
+                        type: string
+                      phase:
+                        $ref: '#/components/schemas/rulesets_RulesetPhase'
+                      rules:
+                        $ref: '#/components/schemas/rulesets_ResponseRules'
+                    required:
+                    - name
+                    - kind
+                    - phase
+                    - rules
+                    type: object
+                success:
+                  type: boolean
+                  enum:
+                  - true
+              type: object
+    rulesets_Rulesets:
+      description: A rulesets response.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_Response'
+            - properties:
+                errors:
+                  type: array
+                  items: {}
+                  enum:
+                  - []
+                result:
+                  description: A list of rulesets. The returned information will not include the rules in each ruleset.
+                  type: array
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/rulesets_Ruleset'
+                    - properties:
+                        kind:
+                          $ref: '#/components/schemas/rulesets_RulesetKind'
+                        name:
+                          type: string
+                        phase:
+                          $ref: '#/components/schemas/rulesets_RulesetPhase'
+                      required:
+                      - name
+                      - kind
+                      - phase
+                      type: object
+                  title: Rulesets
+                result_info:
+                  $ref: '#/components/schemas/rulesets_ResultInfo'
+                success:
+                  type: boolean
+                  enum:
+                  - true
+              type: object
+    rulesets_RulesetOrDryRun:
+      description: A ruleset response, or a successful dry-run validation response.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_Response'
+            - properties:
+                errors:
+                  type: array
+                  items: {}
+                  enum:
+                  - []
+                result:
+                  oneOf:
+                  - allOf:
+                    - $ref: '#/components/schemas/rulesets_Ruleset'
+                    - properties:
+                        kind:
+                          $ref: '#/components/schemas/rulesets_RulesetKind'
+                        name:
+                          type: string
+                        phase:
+                          $ref: '#/components/schemas/rulesets_RulesetPhase'
+                        rules:
+                          $ref: '#/components/schemas/rulesets_ResponseRules'
+                      required:
+                      - name
+                      - kind
+                      - phase
+                      - rules
+                      type: object
+                  - description: Returned when dry_run is true.
+                    enum:
+                    - null
+                    type:
+                    - object
+                    - 'null'
+                success:
+                  type: boolean
+                  enum:
+                  - true
+              type: object
+    rulesets_Failure:
+      description: A failure response.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/rulesets_Response'
+            - properties:
+                result:
+                  type:
+                  - object
+                  - 'null'
+                  enum:
+                  - null
+                success:
+                  type: boolean
+                  enum:
+                  - false
+              type: object
+    rulesets_Empty:
+      description: An empty response.
+  parameters:
+    rulesets_DryRun:
+      description: 'Validates the request without persisting changes when set to `true`. Responses that normally return 200 return `result: null`; endpoints that normally return 204 continue to return 204.'
+      in: query
+      name: dry_run
+      schema:
+        type: boolean
+        default: false
+      x-fern-parameter-name: validate-only
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-forge-commands:
+  abuse-reports:
+    description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
+    groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
+      emails:
+        description: Emails sent for abuse reports
+      mitigations:
+        description: Mitigation actions taken in response to abuse reports
+  accounts:
+    description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
+    groups:
+      applications:
+        description: Applications operations
+      categories:
+        description: Categories operations
+      organizations:
+        description: Move accounts between organizations
+      profile:
+        description: View and manage the profile for a Cloudflare account
+      roles:
+        description: View the roles available for assigning to account members, each defining a set of permissions
+      subscriptions:
+        description: View and manage plan subscriptions attached to this account
+      tokens:
+        description: Create and manage scoped API tokens for programmatic access to the Cloudflare API
+  ai-gateway:
+    description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
+    groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
+      datasets:
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
+      dynamic-routing:
+        description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
+      evaluation-types:
+        description: 'Deprecated: list the evaluator types that evaluations can use'
+      evaluations:
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
+      logs:
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
+  ai-search:
+    description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
+    groups:
+      items:
+        description: Content indexed by AI Search instances
+      jobs:
+        description: Indexing job lifecycle for AI Search instances
+      namespace:
+        description: Logical groupings for organizing AI Search instances
+      tokens:
+        description: Credentials used by AI Search instances
+  ai-security:
+    description: Detect prompt injection, PII, and unsafe topics in traffic to your AI applications
+    groups:
+      custom-topics:
+        description: Organization-specific topic categories used by AI Security for Apps content detection
+  analytics:
+    description: Zone-level traffic analytics — dashboard summaries, per-colo breakdowns, and Argo latency metrics
+    groups:
+      colo:
+        description: Per-data-center (colo) traffic analytics breakdown for the zone
+      dashboard:
+        description: Aggregated zone dashboard analytics — requests, bandwidth, threats, and page views
+      latency:
+        description: Argo Smart Routing latency analytics showing time-to-first-byte improvements
+  argo:
+    description: Network optimization features that speed up and improve reliability of traffic to your origins
+    groups:
+      smart-routing:
+        description: Route traffic through the fastest network paths to your origin using real-time latency data
+      tiered-caching:
+        description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  billing:
+    description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
+    groups:
+      profiles:
+        description: Billing profile with payment method, address, and invoice preferences
+      usage:
+        description: Metered usage data for billed services — requests, bandwidth, and feature consumption
+  botnet-feed:
+    description: Botnet threat intelligence feeds — IP and ASN-level data on known command-and-control infrastructure
+    groups:
+      asn:
+        description: ASN-level botnet activity data showing networks with known C2 infrastructure
+      configs:
+        description: Botnet feed subscription configuration and notification preferences
+  builds:
+    description: Build and deploy Workers from connected repositories, then inspect build status and logs.
+    groups:
+      deploy-hooks:
+        description: Manage branch-specific HTTP hooks that start builds.
+      limits:
+        description: View build-minute availability and refresh information.
+      logs:
+        description: Retrieve build logs.
+      repos:
+        description: Manage source repository connections for Workers Builds.
+      tokens:
+        description: Manage credentials used by Workers Builds to deploy Workers.
+      triggers:
+        description: Configure how repository changes build and deploy Workers.
+      versions:
+        description: Find builds associated with Worker versions.
+      workers:
+        description: Manage repository-backed build configuration for Workers.
+  cache:
+    description: Purge cached content and configure Cache Reserve, tiered caching, and variant serving
+    groups:
+      origin-cloud-regions:
+        description: Manage Origin Cloud Regions routing and failover configurations
+      settings:
+        description: Configure Cache Reserve, tiered caching, and variant serving
+      settings.regional-tiered-cache:
+        description: Restrict tiered cache topology to data centers within a specific geographic region
+      settings.reserve:
+        description: Persistent storage tier that keeps cached assets even after eviction from edge caches
+      settings.smart-tiered-cache:
+        description: Automatically determine the best upper-tier data centers for tiered cache topology
+      settings.variants:
+        description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
+  client-side-security:
+    description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
+    groups:
+      connections:
+        description: Third-party connections made by scripts on your pages — track data exfiltration risks
+      cookies:
+        description: Cookies set by your pages with classification and same-site attribute tracking
+      policies:
+        description: Content Security Policies that control which scripts and connections are allowed on your pages
+      scripts:
+        description: JavaScript files detected on your pages with change tracking and malicious code detection
+      settings:
+        description: Fine tune Client-Side Security behaviors
+  cloud-connector:
+    description: Route traffic from Cloudflare directly to cloud provider services (AWS, Azure, GCP) without origin servers
+    groups:
+      rules:
+        description: Routing rules that map request patterns to cloud provider endpoints
+  cloudforce-one:
+    description: Detection rule management APIs
+    groups:
+      binary-storage:
+        description: Upload and retrieve malware samples and suspicious binaries for analysis
+      requests:
+        description: Additional request operations — priority listing and asset creation
+      rules:
+        description: Rule management operations
+        groups:
+          approvals:
+            description: Approval workflow operations
+          email:
+            description: Email rule operations
+          exemptions:
+            description: Exemption rule operations
+          managed:
+            description: Managed rule operations
+          stats:
+            description: Rule statistics operations
+          tree:
+            description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
+  containers:
+    description: Deploy and manage Containers applications on Cloudflare's global network
+    groups:
+      applications:
+        description: Manage Containers applications
+      applications.instances:
+        description: Inspect Containers instances belonging to applications
+      applications.rollouts:
+        description: Manage rollouts for scheduler-backed applications
+      applications.versions:
+        description: Inspect versions of scheduler-backed applications
+      registries:
+        description: Manage Containers image registries
+      registries.credentials:
+        description: Generate image registry credentials
+  content-scan:
+    description: Malicious uploads detection, scan uploaded content in HTTP requests for malware and malicious payloads
+    groups:
+      expressions:
+        description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
+  custom-pages:
+    description: Manage custom error and challenge pages and their assets for accounts and zones
+    groups:
+      account-custom-pages:
+        description: Manage account-level custom pages
+      account-custom-pages.preview-tokens:
+        description: Preview tokens for account-level custom pages
+      assets:
+        description: Manage account- and zone-level custom assets
+      zone-custom-pages:
+        description: Manage zone-level custom pages
+      zone-custom-pages.preview-tokens:
+        description: Preview tokens for zone-level custom pages
+  d1:
+    description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
+    groups:
+      time-travel:
+        description: use specific point-in-time backups of your D1 database
+        x-forge-epilogue: For more information about Time Travel, see https://developers.cloudflare.com/d1/reference/time-travel
+  diagnostics:
+    description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
+    groups:
+      endpoint-healthchecks:
+        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+      traceroutes:
+        description: Run traceroutes from Cloudflare data centers to diagnose network path issues
+  email-routing:
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
+    groups:
+      addresses:
+        description: Verified destination email addresses that can receive forwarded mail
+      dns:
+        description: Inspect or unlock the DNS records required by Email Routing
+      rules:
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
+  email-security:
+    description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
+    groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
+      investigate:
+        description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
+      phishguard:
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
+      settings:
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
+      submissions:
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
+  email-sending:
+    description: Send transactional email and manage sending subdomains and their DNS configuration
+    groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
+      subdomains:
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
+  filters:
+    description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
+  firewall:
+    description: Legacy firewall rules, zone lockdowns, access rules, user-agent blocking, and WAF packages
+    groups:
+      access-rules:
+        description: IP-based access rules that allow, block, challenge, or whitelist traffic globally or per-zone
+      lockdowns:
+        description: Zone lockdown rules that restrict access to URLs by IP address or range
+      rules:
+        description: Legacy firewall rules with filter expressions — prefer Rulesets for new configurations
+      ua-rules:
+        description: Block or challenge requests based on the User-Agent header string
+      waf:
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
+      zone-access-rules:
+        description: Zone-scoped IP access rules for blocking or allowing traffic
+  google-tag-gateway:
+    description: Google Tag Gateway operations
+    groups:
+      config:
+        description: Google Tag Gateway config operations
+  healthchecks:
+    description: Standalone health checks that monitor origin server availability from Cloudflare's edge
+    groups:
+      previews:
+        description: Test a health check configuration before deploying it to production
+  hyperdrive:
+    description: Accelerate access to existing databases by caching queries and pooling connections at the edge
+  iam:
+    description: Identity and access management — permission groups, resource groups, user groups, and SSO connectors
+    groups:
+      permission-groups:
+        description: View the permission groups that can be assigned to API tokens and policies
+      resource-groups:
+        description: Define scopes that limit which account resources a policy or token can access
+      sso:
+        description: Configure single sign-on connectors to authenticate account members through an external identity provider
+      user-groups:
+        description: Organize account members into groups for easier permission assignment
+  images:
+    description: Store, resize, and deliver optimized images globally — variants, signing keys, and direct uploads
+    groups:
+      flows:
+        description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
+      keys:
+        description: Manage signing keys for generating private image URLs
+      variants:
+        description: Manage named resize variants for transforming images on delivery
+  intel:
+    description: Threat intelligence lookups — IP reputation, domain info, ASN details, WHOIS, and indicator feeds
+    groups:
+      asn:
+        description: ASN intelligence — ownership, geolocation, and subnet details for autonomous systems
+      attack-surface-report:
+        description: Attack surface intelligence — exposed assets, vulnerabilities, and infrastructure mapping
+      dns:
+        description: Passive DNS data showing historical DNS resolution records for domains
+      domain-history:
+        description: Historical domain registration and categorization changes over time
+      domains:
+        description: Domain intelligence — risk scores, categories, and associated infrastructure
+      indicator-feeds:
+        description: Threat indicator feeds — subscribe to and manage curated lists of malicious IPs, domains, and URLs
+      ip-lists:
+        description: Curated IP lists used for threat detection and policy enforcement
+      ips:
+        description: IP address intelligence — geolocation, risk assessment, and hosting provider details
+      miscategorizations:
+        description: Report and track domain miscategorization corrections
+      whois:
+        description: WHOIS registration data for domains including registrant, registrar, and nameservers
+  k2:
+    description: Durable, ordered event streams that you produce records to and consume from with subscriptions
+    groups:
+      streams:
+        description: K2 streams, their retention, and the HTTP and Workers binding inputs used to produce records
+      streams.subscriptions:
+        description: Subscriptions that consume a K2 stream, with committed-position lag
+  leaked-credential-checks:
+    description: Detect compromised credentials in login requests by checking against known breach databases
+    groups:
+      detections:
+        description: Custom detection locations that tell the WAF where to find usernames and passwords in requests
+  load-balancers:
+    description: Distribute traffic across origin pools with health monitoring, geo-steering, and failover
+    groups:
+      monitor-groups:
+        description: Group monitors together for shared configuration and bulk management
+      monitor-groups.references:
+        description: List references to monitor groups used by load balancer pools
+      monitors:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.previews:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.references:
+        description: Health check configurations that probe origin servers and determine pool availability
+      pools:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.health:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.references:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      previews:
+        description: Preview the result of a health check monitor configuration before applying it
+      regions:
+        description: Geographic regions used for regional pool steering and traffic policies
+      searches:
+        description: Search across all load balancer resources (pools, monitors, load balancers) by name or reference
+  logs:
+    description: Log control, retention, and raw log access — CMB config, ray ID lookups, and received fields
+    groups:
+      control:
+        description: Log control operations
+      received:
+        description: Received log operations
+  magic-network-monitoring:
+    description: Flow-based network traffic monitoring with configurable alerting rules and VPC flow ingestion
+    groups:
+      configs:
+        description: Account-level monitoring configuration — sampling rates, thresholds, and notification settings
+      rules:
+        description: Monitoring rules that define traffic thresholds and trigger alerts or prefix advertisements
+      vpc-flows:
+        description: Ingest VPC flow logs from cloud providers for network visibility and anomaly detection
+  magic-transit:
+    description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
+    groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
+      apps:
+        description: Application-aware traffic policies for Magic WAN that steer traffic by app type
+      bgp-filter-profiles:
+        description: BGP filter profiles for controlling which routes are allowed or denied on Magic Transit tunnels
+      bgp-settings:
+        description: BGP settings for controlling default ASN and route redistribution on Magic Transit tunnels
+      cf-interconnects:
+        description: Cloudflare Network Interconnect (CNI) links for direct physical or virtual peering
+      gre-tunnels:
+        description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
+      ipsec-tunnels:
+        description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
+      routes:
+        description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
+      sites:
+        description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
+  mcp:
+    description: Manage MCP portals and upstream MCP servers for Cloudflare Access AI controls
+    groups:
+      portals:
+        description: Manage MCP portals, attached servers, and Code Mode settings
+      servers:
+        description: Manage upstream MCP servers, credentials, capabilities, and sync state
+  network-interconnects:
+    description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
+    groups:
+      cnis:
+        description: Cloud Network Interconnect (CNI) connections — private links from cloud providers to Cloudflare
+      interconnects:
+        description: Physical cross-connect and partner interconnect sessions with LOA and status tracking
+      settings:
+        description: Account-level interconnect settings and default configurations
+      slots:
+        description: Available interconnect facility slots showing port capacity at Cloudflare data centers
+  organizations:
+    description: Multi-user organizations that group accounts, members, and shared settings under a single entity
+    groups:
+      account-organizations:
+        description: List organizations associated with a specific account
+      accounts:
+        description: Accounts operations
+      members:
+        description: Members operations
+      members-batch-create:
+        description: Members Batch Create operations
+      organization-profile:
+        description: View and update the public profile information for an organization
+      shares:
+        description: Shares operations
+  origin-post-quantum-encryption:
+    description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
+  pages:
+    description: Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains
+    groups:
+      projects:
+        description: Pages projects, deployments, build logs, and custom domain bindings
+  pipelines:
+    description: Ingest, transform, and route event streams into R2, analytics, or other destinations in real time
+    groups:
+      sinks:
+        description: Destinations where pipeline data is written — R2 buckets, HTTP endpoints, or other storage
+      streams:
+        description: Inbound data streams that feed events into a pipeline for processing
+  precursor:
+    description: Precursor settings for a zone
+  queues:
+    description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
+    groups:
+      consumers:
+        description: Workers that automatically receive and process messages from a queue
+      messages:
+        description: Push messages to a queue and pull or acknowledge them from consumers
+      purge:
+        description: Remove all pending messages from a queue
+      subscriptions:
+        description: Manage queue subscriptions for event-driven message routing
+  r2:
+    description: S3-compatible object storage with zero egress fees — buckets, lifecycle rules, event notifications, and data migration
+    groups:
+      buckets:
+        description: Create and configure R2 buckets including CORS, lifecycle, custom domains, event notifications, and object locks
+      buckets.jobs:
+        description: Create and inspect background jobs for an R2 bucket
+      buckets.local-uploads:
+        description: R2 bucket local upload configuration
+      super-slurper:
+        description: Migrate data from external S3-compatible storage into R2 buckets with resumable transfer jobs
+      temporary-credentials:
+        description: Generate short-lived S3-compatible credentials scoped to specific buckets and operations
+  r2-data-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  radar:
+    description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
+    groups:
+      agent-readiness:
+        description: Agent readiness summary statistics across the Cloudflare network
+      ai:
+        description: AI inference trends and model usage statistics across the Cloudflare network
+      annotations:
+        description: Radar annotations marking significant Internet events (outages, cable cuts, etc.)
+      as112:
+        description: AS112 DNS sinkhole statistics — reverse DNS query volumes for private address space
+      attacks:
+        description: DDoS and application-layer attack trends, vectors, and target analysis
+      bgp:
+        description: BGP routing data — prefix announcements, AS-level stats, route leaks, and hijack events
+      bots:
+        description: Internet-wide bot traffic trends, categories, and distribution statistics
+      ct:
+        description: Certificate Transparency log monitoring and newly-issued certificate discovery
+      datasets:
+        description: Downloadable Radar datasets for offline analysis and research
+      dns:
+        description: Global DNS query trends — top domains, resolver stats, and DNSSEC adoption
+      email:
+        description: Email security trends — DMARC/SPF/DKIM adoption, spam, and phishing statistics
+      entities:
+        description: Look up ASNs, IPs, domains, and locations with metadata and traffic summaries
+      geolocations:
+        description: Geographic location metadata used for regional traffic analysis
+      http:
+        description: HTTP protocol trends — TLS versions, HTTP versions, browser share, and OS distribution
+      leaked-credentials:
+        description: Leaked credential detection trends and exposure statistics
+      netflows:
+        description: Network-layer traffic flow data and volumetric trend analysis
+      origins:
+        description: Cloud and hosting origin providers (e.g. Amazon, by region) and their traffic metrics
+      post-quantum:
+        description: Post-quantum encryption adoption and deployment trends across the Internet
+      quality:
+        description: Internet connection quality metrics — speed, latency, and jitter by geography and ASN
+      ranking:
+        description: Top domain rankings based on DNS query popularity across the Cloudflare network
+      robots-txt:
+        description: Robots.txt adoption and crawler directive trends across the web
+      search:
+        description: Search Radar data across IPs, ASNs, domains, and locations
+      tcp-resets-timeouts:
+        description: TCP connection reset and timeout statistics indicating network health issues
+      tlds:
+        description: Top-level domain (TLD) metadata and performance trends
+      traffic-anomalies:
+        description: Detected traffic anomalies and unusual patterns in Internet traffic flows
+      verified-bots:
+        description: Catalog of known good bots (Googlebot, Bingbot, etc.) and their traffic patterns
+  rate-limits:
+    description: Legacy per-zone rate limiting rules — prefer Advanced Rate Limiting in Rulesets for new configurations
+  realtime:
+    description: Real-time audio, video, and data services on Cloudflare's global network
+    groups:
+      kit:
+        description: SDK-backed meetings, participants, recordings, livestreams, and webhooks
+      kit.analytics:
+        description: Usage and livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams:
+        description: Livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams.daily:
+        description: Daily livestream analytics for RealtimeKit applications
+      kit.analytics.usage:
+        description: Usage analytics for RealtimeKit applications
+      kit.apps:
+        description: RealtimeKit applications that group meetings, sessions, and configuration
+      kit.livestreams:
+        description: Independent and meeting-based livestreams and their sessions
+      kit.livestreams.sessions:
+        description: Sessions for RealtimeKit livestreams
+      kit.meetings:
+        description: Meetings, participants, access tokens, and meeting livestreams
+      kit.meetings.active:
+        description: Live meeting state and participant controls
+      kit.meetings.active.polls:
+        description: Polls for active meeting sessions
+      kit.meetings.livestream:
+        description: Livestream operations associated with RealtimeKit meetings
+      kit.meetings.participants:
+        description: Participants in RealtimeKit meetings
+      kit.meetings.participants.tokens:
+        description: Access tokens for RealtimeKit meeting participants
+      kit.presets:
+        description: Reusable meeting configuration for media, permissions, and interface behavior
+      kit.recordings:
+        description: Meeting and participant-track recordings and recording controls
+      kit.recordings.active:
+        description: Active recordings for RealtimeKit meetings
+      kit.recordings.tracks:
+        description: Participant-track recordings for RealtimeKit meetings
+      kit.sessions:
+        description: Historical session data, participants, chat, transcripts, and summaries
+      kit.sessions.chat:
+        description: Chat messages from historical RealtimeKit sessions
+      kit.sessions.livestreams:
+        description: Livestreams associated with historical RealtimeKit sessions
+      kit.sessions.participants:
+        description: Participants in historical RealtimeKit sessions
+      kit.sessions.peers:
+        description: Peer details from historical RealtimeKit sessions
+      kit.sessions.summaries:
+        description: Summaries of historical RealtimeKit sessions
+      kit.sessions.transcripts:
+        description: Transcripts from historical RealtimeKit sessions
+      kit.webhooks:
+        description: Webhook endpoints and supported events for RealtimeKit notifications
+      kit.webhooks.events:
+        description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
+  request-tracers:
+    description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
+    groups:
+      traces:
+        description: Simulate request processing to debug rule matches, transforms, and routing decisions
+  resource-sharing:
+    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    groups:
+      recipients:
+        description: Update share recipients
+      resources:
+        description: Individual resources (zones, configs) that have been shared with recipients
+  rules:
+    description: Resources used by Cloudflare rules and rulesets
+    groups:
+      lists:
+        description: Custom account-level lists of IPs, hostnames, ASNs, or redirects used in rule expressions
+  rum:
+    description: Real User Measurement (Web Analytics) — track page loads, Core Web Vitals, and visitor metrics
+    groups:
+      rules:
+        description: Rules that control which pages and paths are tracked by Web Analytics
+      site-info:
+        description: Web Analytics sites — register domains and get the JavaScript beacon snippet
+  scim:
+    description: SCIM 2.0 provisioning — manage users, groups, and identity provider sync for your account
+    groups:
+      groups:
+        description: Groups operations
+      resource-types:
+        description: Resource Types operations
+      schemas:
+        description: Schemas operations
+      service-provider-config:
+        description: Service Provider Config operations
+      users:
+        description: Users operations
+  secrets-store:
+    description: Centralized secret management — store API keys, tokens, and credentials for use across Workers and other products
+    groups:
+      quota:
+        description: Account quota limits for secrets stores, secrets count, and storage capacity
+      secrets:
+        description: Encrypted key-value secrets within a store. Pass --store-id to scope.
+      stores:
+        description: Secret stores that hold encrypted key-value secrets accessible by Workers and services
+  security-center:
+    description: Security posture dashboard — view and manage security insights, misconfigurations, and vulnerabilities
+    groups:
+      insights:
+        description: Security findings and recommendations across your account — DNS, SSL, WAF misconfigurations, etc.
+      zone-insights:
+        description: Zone-scoped security insights — counts by class, severity, type, and dismissal
+  security-txt:
+    description: Manage the /.well-known/security.txt file that tells security researchers how to report vulnerabilities
+  smart-shield:
+    description: Smart Shield settings, health checks, and cache reserve management
+    groups:
+      cache-reserve-clear:
+        description: Cache Reserve Clear operations
+      health-checks:
+        description: Health checks operations
+  spectrum:
+    description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
+    groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
+      apps:
+        description: Spectrum application configurations that map protocols and ports to origin servers
+  speed:
+    description: Observatory speed tests — run Lighthouse audits, track performance trends, and schedule recurring tests
+    groups:
+      availabilities:
+        description: Check which speed test regions and configurations are available for your zone
+      pages:
+        description: Tested pages with their performance history, trends, and individual test results
+      schedule:
+        description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
+  stream:
+    description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
+    groups:
+      audio-tracks:
+        description: Add, edit, or remove additional audio tracks on a video
+      captions:
+        description: Upload, generate, or retrieve captions and subtitles for videos in multiple languages
+      clip:
+        description: Create a new video clip from an existing video by specifying start and end times
+      copy:
+        description: Import a video from a URL into Stream for processing and delivery
+      direct-upload:
+        description: Generate a tokenized URL that lets end-users upload video directly to Stream
+      downloads:
+        description: Create downloadable MP4 renditions of a video for offline viewing
+      embed:
+        description: Retrieve the HTML embed code snippet for a video
+      keys:
+        description: Signing keys used to generate short-lived signed URLs for private video playback
+      live-inputs:
+        description: Enable and disable live input streams
+      token:
+        description: Generate short-lived signed URL tokens for secure private video playback
+      typed-downloads:
+        description: Type-specific stream download creation and deletion
+      videos:
+        description: Aggregate video storage usage statistics for the account
+      watermarks:
+        description: Watermark profiles that overlay an image on every video in the account
+      webhooks:
+        description: Webhook notifications for video lifecycle events (ready, error, etc.)
+  tenants:
+    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    groups:
+      account-types:
+        description: Account Types operations
+      accounts:
+        description: Accounts operations
+      entitlements:
+        description: Entitlements operations
+      memberships:
+        description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
+  url-scanner:
+    description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
+    groups:
+      response:
+        description: Response operations
+      responses:
+        description: Raw HTTP response data captured during URL scans
+      scan:
+        description: Scan operations
+      scans:
+        description: URL scan requests and results — submit URLs for analysis and retrieve threat verdicts
+  user:
+    description: Your Cloudflare user profile, invitations, organizations, billing, and personal API tokens
+    groups:
+      billing:
+        description: View billing history and payment profile for your user (deprecated — prefer account-level billing)
+      firewall:
+        description: Firewall operations
+      load-balancers.monitors:
+        description: Load Balancers operations
+      load-balancers.monitors.preview:
+        description: Load Balancers operations
+      load-balancers.monitors.references:
+        description: Load Balancers operations
+      load-balancers.pools:
+        description: Load Balancers operations
+      load-balancers.pools.edit.pools:
+        description: Load Balancers operations
+      load-balancers.pools.health:
+        description: Load Balancers operations
+      load-balancers.pools.preview:
+        description: Load Balancers operations
+      load-balancers.pools.references:
+        description: Load Balancers operations
+      load-balancers.preview:
+        description: Load Balancers operations
+      load-balancing-analytics.events:
+        description: Load Balancing Analytics operations
+      subscriptions:
+        description: View and manage zone-level plan subscriptions owned by your user
+      tenants:
+        description: Tenants operations
+      tokens:
+        description: Create and manage personal API tokens scoped to your user for programmatic API access
+  user.analytics:
+    description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
+  waiting-rooms:
+    description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
+    groups:
+      account-waiting-rooms:
+        description: Account-scoped waiting room listing
+      events:
+        description: Scheduled events that temporarily override waiting room settings for sales, launches, etc.
+      page:
+        description: Custom HTML waiting page templates and preview rendering
+      rules:
+        description: Rules that bypass or modify waiting room behavior for specific request patterns
+      settings:
+        description: Zone-level waiting room defaults and cookie configuration
+      statuses:
+        description: Real-time queue status showing active users, queued users, and estimated wait times
+  workflows:
+    description: Durable, multi-step workflows that run on Workers with automatic retries and state persistence
+    groups:
+      instances:
+        description: Workflow instance operations
+      versions:
+        description: Workflow version operations
+  zaraz:
+    description: Server-side tag manager — load third-party tools (analytics, pixels, etc.) from Cloudflare's edge without client-side JS
+    groups:
+      config:
+        description: Full Zaraz configuration including tools, triggers, and variables for the zone
+      default:
+        description: Default Zaraz configuration template used as a starting point for new zones
+      export:
+        description: Export the current Zaraz configuration as a portable JSON document
+      history:
+        description: Configuration version history — browse and restore previous Zaraz configurations
+      publish:
+        description: Publish pending Zaraz configuration changes to make them live on the zone
+      workflow:
+        description: Workflow state for Zaraz configuration changes (draft vs. published)
+  zero-trust:
+    description: Cloudflare's SASE platform — secure access, device posture, DLP, tunnels, gateway policies, and network segmentation
+    groups:
+      dex:
+        description: Digital Experience Monitoring — synthetic tests, fleet-wide device metrics, and network path diagnostics
+      dlp.custom-prompt-topics:
+        description: Data Loss Prevention - manage custom prompt topics for AI-based content detection
+      dlp.data-classes:
+        description: Data Loss Prevention - manage data classes used to classify sensitive information
+      dlp.data-tag-categories:
+        description: Data Loss Prevention - manage categories that organize data tags
+      dlp.data-tag-category-templates:
+        description: Data Loss Prevention - browse templates for creating data tag categories
+      dlp.data-tags:
+        description: Data Loss Prevention - manage tags used to classify and organize sensitive data
+      dlp.datasets:
+        description: Data Loss Prevention - manage datasets, versions, and uploads
+      dlp.document-fingerprints:
+        description: Data Loss Prevention - manage document fingerprints for detecting matching documents
+      dlp.email.account-mapping:
+        description: Data Loss Prevention - configure account mappings for outbound email scanning
+      dlp.email.rules:
+        description: Data Loss Prevention - manage outbound email scanning rules and their priorities
+      dlp.entries:
+        description: Data Loss Prevention - list and manage detection entries
+      dlp.limits:
+        description: Data Loss Prevention - view account limits and resource quotas
+      dlp.patterns:
+        description: Data Loss Prevention - validate regular expressions used for content detection
+      dlp.profiles:
+        description: Data Loss Prevention - list and retrieve profiles
+      dlp.profiles.custom:
+        description: Data Loss Prevention - manage custom profiles
+      dlp.profiles.predefined:
+        description: Data Loss Prevention - manage predefined profiles
+      dlp.sensitivity-group-templates:
+        description: Data Loss Prevention - browse templates for creating sensitivity groups
+      dlp.sensitivity-groups:
+        description: Data Loss Prevention - manage sensitivity groups and their level ordering
+      dlp.sensitivity-levels:
+        description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
+      dlp.settings:
+        description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.integrations:
+        description: User Risk Scoring - manage integrations that provide risk score signals
+      risk-scoring.integrations.references:
+        description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
+  zones:
+    description: Zones are domains on Cloudflare — list, create, and configure domain settings
+    groups:
+      aegis:
+        description: Aegis operations
+      fonts:
+        description: Fonts operations
+      origin-h2-max-streams:
+        description: Origin H2 Max Streams operations
+      origin-max-http-version:
+        description: Origin Max Http Version operations
+      origin-tls-compliance-modes:
+        description: Manage zone Origin TLS Compliance Modes setting
+      rum:
+        description: Rum operations
+      speed-brain:
+        description: Speed Brain operations

@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-iam-api-response-single-schema.json",
+  "title": "iam_api-response-single",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-memberships-api-openapi.yml#/components/schemas/iam_api-response-single",
+  "allOf": [
+    {
+      "$ref": "#/$defs/iam_api-response-common"
+    },
+    {
+      "properties": {
+        "result": {
+          "anyOf": [
+            {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "type": "object",
+  "$defs": {
+    "iam_api-response-common": {
+      "type": "object",
+      "required": [
+        "success",
+        "errors",
+        "messages",
+        "result"
+      ],
+      "properties": {
+        "errors": {
+          "$ref": "#/$defs/iam_messages"
+        },
+        "messages": {
+          "$ref": "#/$defs/iam_messages"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "success": {
+          "type": "boolean",
+          "description": "Whether the API call was successful",
+          "enum": [
+            true
+          ]
+        }
+      }
+    },
+    "iam_messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "uniqueItems": true,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "minimum": 1000
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

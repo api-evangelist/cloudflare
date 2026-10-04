@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-iam-schemas-response-collection-schema.json",
+  "title": "iam_schemas-response_collection",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-user-api-openapi.yml#/components/schemas/iam_schemas-response_collection",
+  "allOf": [
+    {
+      "$ref": "#/$defs/iam_api-response-collection"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "iam_api-response-collection": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/iam_api-response-common"
+        },
+        {
+          "properties": {
+            "result": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {}
+            },
+            "result_info": {
+              "$ref": "#/$defs/iam_result_info"
+            }
+          }
+        }
+      ],
+      "type": "object"
+    },
+    "iam_api-response-common": {
+      "type": "object",
+      "required": [
+        "success",
+        "errors",
+        "messages",
+        "result"
+      ],
+      "properties": {
+        "errors": {
+          "$ref": "#/$defs/iam_messages"
+        },
+        "messages": {
+          "$ref": "#/$defs/iam_messages"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "success": {
+          "type": "boolean",
+          "description": "Whether the API call was successful",
+          "enum": [
+            true
+          ]
+        }
+      }
+    },
+    "iam_messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "uniqueItems": true,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "minimum": 1000
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "iam_result_info": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "number",
+          "description": "Total number of results for the requested service"
+        },
+        "page": {
+          "type": "number",
+          "description": "Current page within paginated list of results"
+        },
+        "per_page": {
+          "type": "number",
+          "description": "Number of results per page of results"
+        },
+        "total_count": {
+          "type": "number",
+          "description": "Total results available without any search parameters"
+        }
+      }
+    }
+  }
+}

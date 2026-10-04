@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-load-balancing-origin-steering-schema.json",
+  "title": "load-balancing_origin_steering",
+  "description": "Configures origin steering for the pool. Controls how origins are selected for new sessions and traffic without session affinity.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-user-api-openapi.yml#/components/schemas/load-balancing_origin_steering",
+  "type": "object",
+  "properties": {
+    "policy": {
+      "type": "string",
+      "description": "The type of origin steering policy to use.\n- `\"random\"`: Select an origin randomly.\n- `\"hash\"`: Select an origin by computing a hash over the CF-Connecting-IP address.\n- `\"least_outstanding_requests\"`: Select an origin by taking into consideration origin weights, as well as each origin's number of outstanding requests. Origins with more pending requests are weighted proportionately less relative to others.\n- `\"least_connections\"`: Select an origin by taking into consideration origin weights, as well as each origin's number of open connections. Origins with more open connections are weighted proportionately less relative to others. Supported for HTTP/1 and HTTP/2 connections.",
+      "enum": [
+        "random",
+        "hash",
+        "least_outstanding_requests",
+        "least_connections"
+      ],
+      "default": "random"
+    }
+  }
+}

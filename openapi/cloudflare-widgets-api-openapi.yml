@@ -223,32 +223,31 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
+    Sitekey:
+      name: sitekey
+      in: path
+      required: true
+      description: The site key of the Turnstile widget.
+      schema:
+        type: string
   schemas:
-    WidgetInput:
+    WidgetListResponse:
       type: object
-      required:
-      - name
-      - domains
-      - mode
       properties:
-        name:
-          type: string
-          description: Name for the widget.
-          example: Example Title
-        domains:
+        result:
           type: array
           items:
-            type: string
-          description: Allowed domains.
+            $ref: '#/components/schemas/Widget'
           example: []
-        mode:
-          type: string
-          enum:
-          - managed
-          - non-interactive
-          - invisible
-          example: managed
-        bot_fight_mode:
+        success:
           type: boolean
           example: true
     Widget:
@@ -292,15 +291,31 @@ components:
           type: string
           format: date-time
           example: '2026-01-15T10:30:00Z'
-    WidgetListResponse:
+    WidgetInput:
       type: object
+      required:
+      - name
+      - domains
+      - mode
       properties:
-        result:
+        name:
+          type: string
+          description: Name for the widget.
+          example: Example Title
+        domains:
           type: array
           items:
-            $ref: '#/components/schemas/Widget'
+            type: string
+          description: Allowed domains.
           example: []
-        success:
+        mode:
+          type: string
+          enum:
+          - managed
+          - non-interactive
+          - invisible
+          example: managed
+        bot_fight_mode:
           type: boolean
           example: true
     WidgetResponse:
@@ -321,21 +336,6 @@ components:
           items:
             type: object
           example: []
-  parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
-    Sitekey:
-      name: sitekey
-      in: path
-      required: true
-      description: The site key of the Turnstile widget.
-      schema:
-        type: string
   securitySchemes:
     bearerAuth:
       type: http

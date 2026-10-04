@@ -1,0 +1,1672 @@
+openapi: 3.2.0
+info:
+  description: Welcome to Cloudflare's API documentation site.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  title: Cloudflare Rollouts API
+  version: 4.0.0
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Rollouts
+paths:
+  /accounts/{account_id}/containers/applications/{application_id}/rollouts:
+    parameters:
+    - $ref: '#/components/parameters/cc_AccountId'
+    post:
+      operationId: createApplicationRollout
+      summary: Create a new rollout for an application
+      description: 'Creates a rollout to update the application''s configuration across instances
+
+        with minimal downtime. Rollouts apply only to scheduler-backed applications
+
+        with `scheduling_policy: "default"`. Versions and rollouts do not apply to
+
+        applications with `scheduling_policy: "durable_object"`.'
+      parameters:
+      - name: application_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cc_ApplicationID'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/cc_ContainersCreateApplicationRolloutRequest'
+      responses:
+        '201':
+          description: Application rollout created successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/cc_V4BaseResponse'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/cc_ApplicationRollout'
+                  required:
+                  - result
+                  type: object
+        '400':
+          description: Can't update the application rollout because it has bad inputs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '403':
+          description: The account is deactivated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '404':
+          description: Response body when an Application is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '500':
+          description: An internal error has occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Rollouts
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: containers.applications.rollouts
+      x-fern-sdk-method-name: create
+components:
+  schemas:
+    cc_ApplicationHealth:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/cc_ApplicationHealthErrors'
+        instances:
+          $ref: '#/components/schemas/cc_ApplicationHealthInstances'
+        summary:
+          description: 'High-level health assessment. Only populated for "new_instances" strategy.
+
+            Based on a sample of target-version instances rather than a full count.
+
+            - "pending": Zero target-version instances exist yet.
+
+            - "healthy": Every sampled target-version instance reports running or active.
+
+            - "degraded": Some sampled instances remain starting or scheduling.
+
+            - "unhealthy": One or more sampled instances have failed.
+
+            '
+          type: string
+          enum:
+          - healthy
+          - degraded
+          - unhealthy
+          - pending
+      required:
+      - instances
+      - errors
+    cc_ApplicationHealthInstances:
+      description: Shows a count of application instance states.
+      type: object
+      properties:
+        active:
+          description: 'Number of instances whose runtime reports the container as running (container_status = "running"). This is a subset of the placements that remain up: an instance that is already bound to a Durable Object and serving traffic is counted under "assigned" until its container_status catches up to "running", so container_status can briefly lag Durable Object attachment under churn. To estimate running, Durable-Object-bound instances, sum "active" + "assigned" rather than reading "active" alone.
+
+            '
+          type: integer
+        assigned:
+          description: 'Number of instances bound to a Durable Object with a running placement whose container_status remains behind "running". These count as live, serving instances; "active" + "assigned" approximates the running, Durable-Object-bound count.
+
+            '
+          type: integer
+      required:
+      - active
+      - assigned
+    cc_ApplicationHealthErrors:
+      type: array
+      items:
+        $ref: '#/components/schemas/cc_ApplicationHealthError'
+    cc_V4BaseErrorResponse:
+      type: object
+      properties:
+        errors:
+          example:
+          - code: 7003
+            message: No route for the URI
+          allOf:
+          - $ref: '#/components/schemas/cc_Messages'
+          minLength: 1
+        messages:
+          example: []
+          allOf:
+          - $ref: '#/components/schemas/cc_Messages'
+        result:
+          type:
+          - object
+          - 'null'
+          enum:
+          - null
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    cc_InstanceType:
+      description: 'The instance type configures vCPU, memory, and disk.
+
+
+        - "lite": 1/16 vCPU, 256 MiB memory, 2 GB disk
+
+        - "basic": 1/4 vCPU, 1 GiB memory, 4 GB disk
+
+        - "standard-1": 1/2 vCPU, 4 GiB memory, 8 GB disk
+
+        - "standard-2": 1 vCPU, 6 GiB memory, 12 GB disk
+
+        - "standard-3": 2 vCPU, 8 GiB memory, 16 GB disk
+
+        - "standard-4": 4 vCPU, 12 GiB memory, 20 GB disk
+
+        '
+      type: string
+      example: lite
+      default: lite
+      anyOf:
+      - enum:
+        - lite
+        - basic
+        - standard-1
+        - standard-2
+        - standard-3
+        - standard-4
+        type: string
+    cc_UserSSHPublicKey:
+      description: User-provided SSH public key.
+      type: object
+      properties:
+        name:
+          description: Optional human readable name for this key.
+          type: string
+        public_key:
+          $ref: '#/components/schemas/cc_SSHPublicKey'
+      required:
+      - public_key
+    cc_V4BaseResponse:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/cc_Messages'
+        messages:
+          $ref: '#/components/schemas/cc_Messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: true
+      required:
+      - success
+      - errors
+      - messages
+    cc_SSHPublicKey:
+      description: An SSH public key.
+      type: string
+    cc_Entrypoint:
+      description: 'The entry point for the container, specifying the executable to run when the container starts.
+
+        You can override this at run-time. If you do, the default command from the image is ignored.
+
+        Specify both entrypoint and command at run-time to completely replace the image defaults.
+
+        '
+      type: array
+      items:
+        $ref: '#/components/schemas/cc_ExecFormParam'
+      example:
+      - /bin/bash
+    cc_RolloutID:
+      description: An identifier for a specific rollout within an application.
+      type: string
+    cc_ISO8601Timestamp:
+      description: UTC timestamp string in ISO 8601 format.
+      type: string
+      example: '2021-04-01T12:32:41.488Z'
+    cc_ExecFormParam:
+      type: string
+    cc_Command:
+      description: 'The command that runs when the container starts, passed to the entrypoint.
+
+        You can override this at run-time. If you override only the command,
+
+        it gets passed to the default entrypoint specified in the image.
+
+        '
+      type: array
+      items:
+        $ref: '#/components/schemas/cc_ExecFormParam'
+      example:
+      - myapp
+      - --default-option
+    cc_RolloutStepRequest:
+      description: Steps defining the rollout process.
+      type: object
+      properties:
+        description:
+          description: Description of the rollout step.
+          type: string
+        step_size:
+          type: object
+          properties:
+            percentage:
+              description: Percentage of instances affected in this step. Min 10% and Max 100%.
+              type: integer
+          required:
+          - percentage
+      required:
+      - step_size
+      - description
+    cc_Image:
+      description: Image url.
+      type: string
+    cc_EnvironmentVariableName:
+      description: An environment variable name.
+      type: string
+    cc_RolloutStep:
+      description: Steps within the rollout process.
+      type: object
+      properties:
+        completed_at:
+          $ref: '#/components/schemas/cc_ISO8601Timestamp'
+        description:
+          description: Description of the rollout step.
+          type: string
+        id:
+          description: The sequential order of the rollout step, automatically assigned starting from 1, based on the total number of steps in the rollout process.
+          type: integer
+        reason:
+          description: Reason for the step's current status.
+          type: string
+        started_at:
+          $ref: '#/components/schemas/cc_ISO8601Timestamp'
+        status:
+          description: Status of the rollout step.
+          type: string
+          enum:
+          - pending
+          - progressing
+          - reverting
+          - completed
+          - reverted
+        step_size:
+          type: object
+          properties:
+            percentage:
+              description: Percentage of instances affected in this step. Min 10% and Max 100%.
+              type: integer
+          required:
+          - percentage
+      required:
+      - id
+      - step_size
+      - description
+      - status
+    cc_ApplicationID:
+      description: An Application ID represents an identifier of an application.
+      type: string
+    cc_DeploymentObservability:
+      description: Settings for deployment observability such as logging.
+      type: object
+      properties:
+        logs:
+          $ref: '#/components/schemas/cc_ObservabilityLogs'
+    cc_EnvironmentVariable:
+      description: An environment variable with a value set.
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/cc_EnvironmentVariableName'
+        value:
+          $ref: '#/components/schemas/cc_EnvironmentVariableValue'
+      required:
+      - name
+      - value
+    cc_EventName:
+      description: "Name of the event that describes the kind event that happened.\n  - SchedulerPlaced: It's the first event that creates a container placement. It happens when the Containers runtime was able to retrieve deployment resources and start verifying everything is correct.\n  - NetworkingIPAssigned: It's sent when the Containers runtime maps the IP to the container.\n  - VMStarted: It's sent when the Containers runtime starts the VM. The container might remain unhealthy at this point.\n  - ImagePulled: It's sent when the Containers runtime pulls the image successfully.\n  - ImagePullError: It's sent when the Containers runtime is having issues pulling the image. The message and details have more information on what happened for debugging.\n  - VMFailedToStart: It's sent when the Containers runtime was unable to boot the VM.\n  - VMStopping: It's sent when the scheduler is stopping the VM.\n  - VMStopped: It's sent when the VM finally exits.\n  - VMFailed: It's sent when the scheduling of the VM failed in the current location.\n  - RuntimeStartFailed: It's sent when the runtime hits an internal error.\n  - SSHStarted: It's sent when the container gains network connectivity and opens the SSH port. Containers only send this event when SSH keys exist.\n  - CheckUpdate: Sent when the status of a health or readiness check changes. This may also affect the health status of the placement.\n  - DurableObjectConnected: Sent when a durable object instance connects and gains control of the deployment.\n    This event is only sent for durable object deployments. It is sent after VMStarted.\n  - ContainerStarted: It's sent when the container starts running.\n"
+      type: string
+      enum:
+      - SchedulerPlaced
+      - NetworkingIPAssigned
+      - VMStarted
+      - ImagePulled
+      - ImagePullError
+      - VMFailedToStart
+      - NetworkingIPAssignmentFailed
+      - VMRunning
+      - VMStopping
+      - VMStopped
+      - VMFailed
+      - RuntimeStartFailed
+      - SSHStarted
+      - ServiceHealthUpdates
+      - CheckUpdate
+      - DurableObjectConnected
+      - ContainerStarted
+    cc_ApplicationHealthError:
+      type: object
+      properties:
+        event:
+          $ref: '#/components/schemas/cc_PlacementEvent'
+        instance_id:
+          $ref: '#/components/schemas/cc_InstanceID'
+      required:
+      - instance_id
+      - event
+    cc_ApplicationRollout:
+      description: 'Represents the status and metadata of a rollout process for an application.
+
+        For "rolling" strategy: includes steps and progress with instance counts.
+
+        For "new_instances" strategy: the response omits steps and progress. Use percentage,
+
+        version_distribution, and health.summary for status.
+
+        '
+      type: object
+      properties:
+        created_at:
+          $ref: '#/components/schemas/cc_ISO8601Timestamp'
+        current_configuration:
+          $ref: '#/components/schemas/cc_ModifyUserDeploymentConfiguration'
+        current_version:
+          description: Current application version before the rollout.
+          type: integer
+        description:
+          type: string
+        health:
+          $ref: '#/components/schemas/cc_ApplicationHealth'
+        id:
+          $ref: '#/components/schemas/cc_RolloutID'
+        kind:
+          description: "Kind of the rollout process.\n - \"full_auto\": For rolling rollouts, starts progressing steps upon rollout creation. For new_instances rollouts, advances percentage targets automatically after target-version health is observed.\n - \"full_manual\": Requires manually progressing each step in the rollout using the UpdateRollout's action paramater.\n - \"durable_objects_auto\": Default when the application is a DO application.\n"
+          type: string
+          enum:
+          - full_auto
+          - full_manual
+          - durable_objects_auto
+        last_updated_at:
+          description: Timestamp of the most recent update to status, health, or progress.
+          allOf:
+          - $ref: '#/components/schemas/cc_ISO8601Timestamp'
+        percentage:
+          description: 'Current target version percentage (0-100). Only present for "new_instances" strategy.
+
+            '
+          type: integer
+        progress:
+          $ref: '#/components/schemas/cc_ApplicationRolloutProgress'
+        started_at:
+          description: Timestamp when the rollout started.
+          type: string
+          format: date-time
+        status:
+          description: Current status of the rollout.
+          type: string
+          enum:
+          - pending
+          - progressing
+          - completed
+          - reverted
+          - replaced
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/cc_RolloutStep'
+        strategy:
+          description: 'The rollout strategy.
+
+            - "rolling": Step-based rollout with health gates. Actively replaces instances to reach each step''s target percentage. Response includes steps and progress.
+
+            - "new_instances": Percentage control over version distribution. Version sync actively replaces instances to match the configured percentage. "full_auto" ramps through fixed percentage targets after target-version health is observed. Response includes percentage, version_distribution, and health.summary.
+
+            '
+          type: string
+          enum:
+          - rolling
+          - new_instances
+        target_configuration:
+          $ref: '#/components/schemas/cc_ModifyUserDeploymentConfiguration'
+        target_version:
+          description: Target application version after the rollout is complete and applied to all current instances.
+          type: integer
+        version_distribution:
+          description: 'Version percentage distribution. Only present for "new_instances" strategy.
+
+            For "rolling" strategy, see progress.version_distribution instead.
+
+            '
+          type: object
+          properties:
+            current_version_percentage:
+              description: Percentage of instances on the current (old) version.
+              type: integer
+            target_version_percentage:
+              description: Percentage of instances on the target (new) version.
+              type: integer
+          required:
+          - target_version_percentage
+          - current_version_percentage
+      required:
+      - id
+      - created_at
+      - last_updated_at
+      - description
+      - kind
+      - strategy
+      - current_version
+      - target_version
+      - current_configuration
+      - target_configuration
+      - status
+      - health
+    cc_ContainersCreateApplicationRolloutRequest:
+      description: Request body to create a new rollout for a scheduler-backed application.
+      type: object
+      properties:
+        description:
+          description: Description of the rollout process.
+          type: string
+        kind:
+          description: "Kind of the rollout process. Defaults to \"full_auto\".\n - \"full_auto\": For rolling rollouts, starts progressing steps upon rollout creation. For new_instances rollouts, advances percentage targets automatically after target-version health is observed.\n - \"full_manual\": Requires manually progressing each step in the rollout using the UpdateRollout's action parameter.\n"
+          type: string
+          default: full_auto
+          enum:
+          - full_auto
+          - full_manual
+        percentage:
+          description: 'Initial target version percentage (0-100). Version sync actively replaces instances to match.
+
+            Required when strategy is "new_instances" and kind is "full_manual". When strategy is "new_instances" and kind is "full_auto", omitted percentage starts at 10% or the smallest percentage that targets at least one instance. Unused for "rolling".
+
+            '
+          type: integer
+          maximum: 100
+          minimum: 0
+        step_percentage:
+          description: 'Percentage of rollout to increase in each step when "steps" is absent. Applicable values: 5, 10, 20, 25, 50, 100.
+
+            These create rollouts with 20, 10, 5, 4, 2, 1 steps respectively.
+
+            Only valid for "rolling" strategy.
+
+            '
+          type: integer
+          enum:
+          - 5
+          - 10
+          - 20
+          - 25
+          - 50
+          - 100
+        steps:
+          description: 'Steps defining the rollout process, used when "step_percentage" is absent.
+
+            Specify only one of "step_percentage" or "steps" when creating a rollout.
+
+            "steps" allow granular control over each step.
+
+            Only valid for "rolling" strategy.
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/cc_RolloutStepRequest'
+        strategy:
+          description: 'Strategy used for the rollout.
+
+            - "rolling": Step-based rollout with health gates. Actively replaces instances to reach each step''s target percentage.
+
+            - "new_instances": Percentage control over version distribution. Version sync actively replaces instances to match the configured percentage. The "full_auto" kind advances through fixed percentage targets after target-version health is observed.
+
+            '
+          type: string
+          enum:
+          - rolling
+          - new_instances
+        target_configuration:
+          $ref: '#/components/schemas/cc_ModifyUserDeploymentConfiguration'
+      required:
+      - target_configuration
+      - strategy
+      - description
+    cc_EventType:
+      type: string
+      enum:
+      - Info
+      - Error
+      - Warn
+      - UserError
+      - SystemError
+    cc_EnvironmentVariableValue:
+      description: An environment variable value.
+      type: string
+    cc_InstanceID:
+      description: An instance ID represents an identifier of an instance configuration that maintains an underlying placement.
+      type: string
+    cc_ModifyUserDeploymentConfiguration:
+      description: User-specified container configuration changes.
+      type: object
+      properties:
+        authorized_keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/cc_UserSSHPublicKey'
+        command:
+          $ref: '#/components/schemas/cc_Command'
+        entrypoint:
+          $ref: '#/components/schemas/cc_Entrypoint'
+        environment_variables:
+          description: Container environment variables.
+          type: array
+          items:
+            $ref: '#/components/schemas/cc_EnvironmentVariable'
+        image:
+          $ref: '#/components/schemas/cc_Image'
+        instance_type:
+          $ref: '#/components/schemas/cc_InstanceType'
+        observability:
+          $ref: '#/components/schemas/cc_DeploymentObservability'
+    cc_ObservabilityLogs:
+      description: Observability logging settings.
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          default: false
+    cc_PlacementEvent:
+      description: An event within a Placement or a Job.
+      type: object
+      properties:
+        details:
+          type: object
+          additionalProperties: true
+        id:
+          type: string
+        message:
+          type: string
+        name:
+          $ref: '#/components/schemas/cc_EventName'
+        statusChange:
+          type: object
+          additionalProperties: true
+        time:
+          $ref: '#/components/schemas/cc_ISO8601Timestamp'
+        type:
+          $ref: '#/components/schemas/cc_EventType'
+      required:
+      - id
+      - time
+      - type
+      - name
+      - message
+      - details
+      - statusChange
+    cc_ApplicationRolloutProgress:
+      description: Progress details of an application rollout.
+      type: object
+      properties:
+        current_step:
+          description: Current step being executed in the rollout process. Initialized to 0.
+          type: integer
+        total_instances:
+          description: Total number of instances the rollout affects.
+          type: integer
+        total_steps:
+          description: Total number of steps in the rollout.
+          type: integer
+        updated_instances:
+          description: Number of instances updated in the rollout process.
+          type: integer
+        version_distribution:
+          description: 'Expected distribution of instances per version, based on the current percentage split.
+
+            Populated during active rollouts. Values derive from the version percentage weights
+
+            rather than actual running instance counts.
+
+            '
+          type: object
+          properties:
+            current_version_instances:
+              description: Expected number of instances remaining on the current (old) version based on the current percentage split. Only populated for "rolling" strategy.
+              type: integer
+            current_version_percentage:
+              description: 'The percentage of new instances being scheduled on the current version (100 - target_version_percentage).
+
+                Only populated for "new_instances" strategy.
+
+                '
+              type: integer
+            target_version_instances:
+              description: Expected number of instances scheduled for the target (new) version based on the current percentage split. Only populated for "rolling" strategy.
+              type: integer
+            target_version_percentage:
+              description: 'The active percentage of new instances being scheduled on the target version.
+
+                For "rolling", this reflects the step_size.percentage of the current active step.
+
+                For "new_instances", this reflects the user-set percentage.
+
+                '
+              type: integer
+      required:
+      - total_steps
+      - current_step
+      - updated_instances
+      - total_instances
+    cc_Messages:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          documentation_url:
+            type: string
+          message:
+            type: string
+          source:
+            type: object
+            properties:
+              pointer:
+                type: string
+        required:
+        - code
+        - message
+        type: object
+        uniqueItems: true
+      example: []
+  parameters:
+    cc_AccountId:
+      description: Account identifier.
+      in: path
+      name: account_id
+      required: true
+      schema:
+        type: string
+        example: account-123
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-forge-commands:
+  abuse-reports:
+    description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
+    groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
+      emails:
+        description: Emails sent for abuse reports
+      mitigations:
+        description: Mitigation actions taken in response to abuse reports
+  accounts:
+    description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
+    groups:
+      applications:
+        description: Applications operations
+      categories:
+        description: Categories operations
+      organizations:
+        description: Move accounts between organizations
+      profile:
+        description: View and manage the profile for a Cloudflare account
+      roles:
+        description: View the roles available for assigning to account members, each defining a set of permissions
+      subscriptions:
+        description: View and manage plan subscriptions attached to this account
+      tokens:
+        description: Create and manage scoped API tokens for programmatic access to the Cloudflare API
+  ai-gateway:
+    description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
+    groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
+      datasets:
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
+      dynamic-routing:
+        description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
+      evaluation-types:
+        description: 'Deprecated: list the evaluator types that evaluations can use'
+      evaluations:
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
+      logs:
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
+  ai-search:
+    description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
+    groups:
+      items:
+        description: Content indexed by AI Search instances
+      jobs:
+        description: Indexing job lifecycle for AI Search instances
+      namespace:
+        description: Logical groupings for organizing AI Search instances
+      tokens:
+        description: Credentials used by AI Search instances
+  ai-security:
+    description: Detect prompt injection, PII, and unsafe topics in traffic to your AI applications
+    groups:
+      custom-topics:
+        description: Organization-specific topic categories used by AI Security for Apps content detection
+  analytics:
+    description: Zone-level traffic analytics — dashboard summaries, per-colo breakdowns, and Argo latency metrics
+    groups:
+      colo:
+        description: Per-data-center (colo) traffic analytics breakdown for the zone
+      dashboard:
+        description: Aggregated zone dashboard analytics — requests, bandwidth, threats, and page views
+      latency:
+        description: Argo Smart Routing latency analytics showing time-to-first-byte improvements
+  argo:
+    description: Network optimization features that speed up and improve reliability of traffic to your origins
+    groups:
+      smart-routing:
+        description: Route traffic through the fastest network paths to your origin using real-time latency data
+      tiered-caching:
+        description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  billing:
+    description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
+    groups:
+      profiles:
+        description: Billing profile with payment method, address, and invoice preferences
+      usage:
+        description: Metered usage data for billed services — requests, bandwidth, and feature consumption
+  botnet-feed:
+    description: Botnet threat intelligence feeds — IP and ASN-level data on known command-and-control infrastructure
+    groups:
+      asn:
+        description: ASN-level botnet activity data showing networks with known C2 infrastructure
+      configs:
+        description: Botnet feed subscription configuration and notification preferences
+  builds:
+    description: Build and deploy Workers from connected repositories, then inspect build status and logs.
+    groups:
+      deploy-hooks:
+        description: Manage branch-specific HTTP hooks that start builds.
+      limits:
+        description: View build-minute availability and refresh information.
+      logs:
+        description: Retrieve build logs.
+      repos:
+        description: Manage source repository connections for Workers Builds.
+      tokens:
+        description: Manage credentials used by Workers Builds to deploy Workers.
+      triggers:
+        description: Configure how repository changes build and deploy Workers.
+      versions:
+        description: Find builds associated with Worker versions.
+      workers:
+        description: Manage repository-backed build configuration for Workers.
+  cache:
+    description: Purge cached content and configure Cache Reserve, tiered caching, and variant serving
+    groups:
+      origin-cloud-regions:
+        description: Manage Origin Cloud Regions routing and failover configurations
+      settings:
+        description: Configure Cache Reserve, tiered caching, and variant serving
+      settings.regional-tiered-cache:
+        description: Restrict tiered cache topology to data centers within a specific geographic region
+      settings.reserve:
+        description: Persistent storage tier that keeps cached assets even after eviction from edge caches
+      settings.smart-tiered-cache:
+        description: Automatically determine the best upper-tier data centers for tiered cache topology
+      settings.variants:
+        description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
+  client-side-security:
+    description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
+    groups:
+      connections:
+        description: Third-party connections made by scripts on your pages — track data exfiltration risks
+      cookies:
+        description: Cookies set by your pages with classification and same-site attribute tracking
+      policies:
+        description: Content Security Policies that control which scripts and connections are allowed on your pages
+      scripts:
+        description: JavaScript files detected on your pages with change tracking and malicious code detection
+      settings:
+        description: Fine tune Client-Side Security behaviors
+  cloud-connector:
+    description: Route traffic from Cloudflare directly to cloud provider services (AWS, Azure, GCP) without origin servers
+    groups:
+      rules:
+        description: Routing rules that map request patterns to cloud provider endpoints
+  cloudforce-one:
+    description: Detection rule management APIs
+    groups:
+      binary-storage:
+        description: Upload and retrieve malware samples and suspicious binaries for analysis
+      requests:
+        description: Additional request operations — priority listing and asset creation
+      rules:
+        description: Rule management operations
+        groups:
+          approvals:
+            description: Approval workflow operations
+          email:
+            description: Email rule operations
+          exemptions:
+            description: Exemption rule operations
+          managed:
+            description: Managed rule operations
+          stats:
+            description: Rule statistics operations
+          tree:
+            description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
+  containers:
+    description: Deploy and manage Containers applications on Cloudflare's global network
+    groups:
+      applications:
+        description: Manage Containers applications
+      applications.instances:
+        description: Inspect Containers instances belonging to applications
+      applications.rollouts:
+        description: Manage rollouts for scheduler-backed applications
+      applications.versions:
+        description: Inspect versions of scheduler-backed applications
+      registries:
+        description: Manage Containers image registries
+      registries.credentials:
+        description: Generate image registry credentials
+  content-scan:
+    description: Malicious uploads detection, scan uploaded content in HTTP requests for malware and malicious payloads
+    groups:
+      expressions:
+        description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
+  custom-pages:
+    description: Manage custom error and challenge pages and their assets for accounts and zones
+    groups:
+      account-custom-pages:
+        description: Manage account-level custom pages
+      account-custom-pages.preview-tokens:
+        description: Preview tokens for account-level custom pages
+      assets:
+        description: Manage account- and zone-level custom assets
+      zone-custom-pages:
+        description: Manage zone-level custom pages
+      zone-custom-pages.preview-tokens:
+        description: Preview tokens for zone-level custom pages
+  d1:
+    description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
+    groups:
+      time-travel:
+        description: use specific point-in-time backups of your D1 database
+        x-forge-epilogue: For more information about Time Travel, see https://developers.cloudflare.com/d1/reference/time-travel
+  diagnostics:
+    description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
+    groups:
+      endpoint-healthchecks:
+        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+      traceroutes:
+        description: Run traceroutes from Cloudflare data centers to diagnose network path issues
+  email-routing:
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
+    groups:
+      addresses:
+        description: Verified destination email addresses that can receive forwarded mail
+      dns:
+        description: Inspect or unlock the DNS records required by Email Routing
+      rules:
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
+  email-security:
+    description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
+    groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
+      investigate:
+        description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
+      phishguard:
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
+      settings:
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
+      submissions:
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
+  email-sending:
+    description: Send transactional email and manage sending subdomains and their DNS configuration
+    groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
+      subdomains:
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
+  filters:
+    description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
+  firewall:
+    description: Legacy firewall rules, zone lockdowns, access rules, user-agent blocking, and WAF packages
+    groups:
+      access-rules:
+        description: IP-based access rules that allow, block, challenge, or whitelist traffic globally or per-zone
+      lockdowns:
+        description: Zone lockdown rules that restrict access to URLs by IP address or range
+      rules:
+        description: Legacy firewall rules with filter expressions — prefer Rulesets for new configurations
+      ua-rules:
+        description: Block or challenge requests based on the User-Agent header string
+      waf:
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
+      zone-access-rules:
+        description: Zone-scoped IP access rules for blocking or allowing traffic
+  google-tag-gateway:
+    description: Google Tag Gateway operations
+    groups:
+      config:
+        description: Google Tag Gateway config operations
+  healthchecks:
+    description: Standalone health checks that monitor origin server availability from Cloudflare's edge
+    groups:
+      previews:
+        description: Test a health check configuration before deploying it to production
+  hyperdrive:
+    description: Accelerate access to existing databases by caching queries and pooling connections at the edge
+  iam:
+    description: Identity and access management — permission groups, resource groups, user groups, and SSO connectors
+    groups:
+      permission-groups:
+        description: View the permission groups that can be assigned to API tokens and policies
+      resource-groups:
+        description: Define scopes that limit which account resources a policy or token can access
+      sso:
+        description: Configure single sign-on connectors to authenticate account members through an external identity provider
+      user-groups:
+        description: Organize account members into groups for easier permission assignment
+  images:
+    description: Store, resize, and deliver optimized images globally — variants, signing keys, and direct uploads
+    groups:
+      flows:
+        description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
+      keys:
+        description: Manage signing keys for generating private image URLs
+      variants:
+        description: Manage named resize variants for transforming images on delivery
+  intel:
+    description: Threat intelligence lookups — IP reputation, domain info, ASN details, WHOIS, and indicator feeds
+    groups:
+      asn:
+        description: ASN intelligence — ownership, geolocation, and subnet details for autonomous systems
+      attack-surface-report:
+        description: Attack surface intelligence — exposed assets, vulnerabilities, and infrastructure mapping
+      dns:
+        description: Passive DNS data showing historical DNS resolution records for domains
+      domain-history:
+        description: Historical domain registration and categorization changes over time
+      domains:
+        description: Domain intelligence — risk scores, categories, and associated infrastructure
+      indicator-feeds:
+        description: Threat indicator feeds — subscribe to and manage curated lists of malicious IPs, domains, and URLs
+      ip-lists:
+        description: Curated IP lists used for threat detection and policy enforcement
+      ips:
+        description: IP address intelligence — geolocation, risk assessment, and hosting provider details
+      miscategorizations:
+        description: Report and track domain miscategorization corrections
+      whois:
+        description: WHOIS registration data for domains including registrant, registrar, and nameservers
+  k2:
+    description: Durable, ordered event streams that you produce records to and consume from with subscriptions
+    groups:
+      streams:
+        description: K2 streams, their retention, and the HTTP and Workers binding inputs used to produce records
+      streams.subscriptions:
+        description: Subscriptions that consume a K2 stream, with committed-position lag
+  leaked-credential-checks:
+    description: Detect compromised credentials in login requests by checking against known breach databases
+    groups:
+      detections:
+        description: Custom detection locations that tell the WAF where to find usernames and passwords in requests
+  load-balancers:
+    description: Distribute traffic across origin pools with health monitoring, geo-steering, and failover
+    groups:
+      monitor-groups:
+        description: Group monitors together for shared configuration and bulk management
+      monitor-groups.references:
+        description: List references to monitor groups used by load balancer pools
+      monitors:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.previews:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.references:
+        description: Health check configurations that probe origin servers and determine pool availability
+      pools:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.health:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.references:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      previews:
+        description: Preview the result of a health check monitor configuration before applying it
+      regions:
+        description: Geographic regions used for regional pool steering and traffic policies
+      searches:
+        description: Search across all load balancer resources (pools, monitors, load balancers) by name or reference
+  logs:
+    description: Log control, retention, and raw log access — CMB config, ray ID lookups, and received fields
+    groups:
+      control:
+        description: Log control operations
+      received:
+        description: Received log operations
+  magic-network-monitoring:
+    description: Flow-based network traffic monitoring with configurable alerting rules and VPC flow ingestion
+    groups:
+      configs:
+        description: Account-level monitoring configuration — sampling rates, thresholds, and notification settings
+      rules:
+        description: Monitoring rules that define traffic thresholds and trigger alerts or prefix advertisements
+      vpc-flows:
+        description: Ingest VPC flow logs from cloud providers for network visibility and anomaly detection
+  magic-transit:
+    description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
+    groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
+      apps:
+        description: Application-aware traffic policies for Magic WAN that steer traffic by app type
+      bgp-filter-profiles:
+        description: BGP filter profiles for controlling which routes are allowed or denied on Magic Transit tunnels
+      bgp-settings:
+        description: BGP settings for controlling default ASN and route redistribution on Magic Transit tunnels
+      cf-interconnects:
+        description: Cloudflare Network Interconnect (CNI) links for direct physical or virtual peering
+      gre-tunnels:
+        description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
+      ipsec-tunnels:
+        description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
+      routes:
+        description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
+      sites:
+        description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
+  mcp:
+    description: Manage MCP portals and upstream MCP servers for Cloudflare Access AI controls
+    groups:
+      portals:
+        description: Manage MCP portals, attached servers, and Code Mode settings
+      servers:
+        description: Manage upstream MCP servers, credentials, capabilities, and sync state
+  network-interconnects:
+    description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
+    groups:
+      cnis:
+        description: Cloud Network Interconnect (CNI) connections — private links from cloud providers to Cloudflare
+      interconnects:
+        description: Physical cross-connect and partner interconnect sessions with LOA and status tracking
+      settings:
+        description: Account-level interconnect settings and default configurations
+      slots:
+        description: Available interconnect facility slots showing port capacity at Cloudflare data centers
+  organizations:
+    description: Multi-user organizations that group accounts, members, and shared settings under a single entity
+    groups:
+      account-organizations:
+        description: List organizations associated with a specific account
+      accounts:
+        description: Accounts operations
+      members:
+        description: Members operations
+      members-batch-create:
+        description: Members Batch Create operations
+      organization-profile:
+        description: View and update the public profile information for an organization
+      shares:
+        description: Shares operations
+  origin-post-quantum-encryption:
+    description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
+  pages:
+    description: Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains
+    groups:
+      projects:
+        description: Pages projects, deployments, build logs, and custom domain bindings
+  pipelines:
+    description: Ingest, transform, and route event streams into R2, analytics, or other destinations in real time
+    groups:
+      sinks:
+        description: Destinations where pipeline data is written — R2 buckets, HTTP endpoints, or other storage
+      streams:
+        description: Inbound data streams that feed events into a pipeline for processing
+  precursor:
+    description: Precursor settings for a zone
+  queues:
+    description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
+    groups:
+      consumers:
+        description: Workers that automatically receive and process messages from a queue
+      messages:
+        description: Push messages to a queue and pull or acknowledge them from consumers
+      purge:
+        description: Remove all pending messages from a queue
+      subscriptions:
+        description: Manage queue subscriptions for event-driven message routing
+  r2:
+    description: S3-compatible object storage with zero egress fees — buckets, lifecycle rules, event notifications, and data migration
+    groups:
+      buckets:
+        description: Create and configure R2 buckets including CORS, lifecycle, custom domains, event notifications, and object locks
+      buckets.jobs:
+        description: Create and inspect background jobs for an R2 bucket
+      buckets.local-uploads:
+        description: R2 bucket local upload configuration
+      super-slurper:
+        description: Migrate data from external S3-compatible storage into R2 buckets with resumable transfer jobs
+      temporary-credentials:
+        description: Generate short-lived S3-compatible credentials scoped to specific buckets and operations
+  r2-data-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  radar:
+    description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
+    groups:
+      agent-readiness:
+        description: Agent readiness summary statistics across the Cloudflare network
+      ai:
+        description: AI inference trends and model usage statistics across the Cloudflare network
+      annotations:
+        description: Radar annotations marking significant Internet events (outages, cable cuts, etc.)
+      as112:
+        description: AS112 DNS sinkhole statistics — reverse DNS query volumes for private address space
+      attacks:
+        description: DDoS and application-layer attack trends, vectors, and target analysis
+      bgp:
+        description: BGP routing data — prefix announcements, AS-level stats, route leaks, and hijack events
+      bots:
+        description: Internet-wide bot traffic trends, categories, and distribution statistics
+      ct:
+        description: Certificate Transparency log monitoring and newly-issued certificate discovery
+      datasets:
+        description: Downloadable Radar datasets for offline analysis and research
+      dns:
+        description: Global DNS query trends — top domains, resolver stats, and DNSSEC adoption
+      email:
+        description: Email security trends — DMARC/SPF/DKIM adoption, spam, and phishing statistics
+      entities:
+        description: Look up ASNs, IPs, domains, and locations with metadata and traffic summaries
+      geolocations:
+        description: Geographic location metadata used for regional traffic analysis
+      http:
+        description: HTTP protocol trends — TLS versions, HTTP versions, browser share, and OS distribution
+      leaked-credentials:
+        description: Leaked credential detection trends and exposure statistics
+      netflows:
+        description: Network-layer traffic flow data and volumetric trend analysis
+      origins:
+        description: Cloud and hosting origin providers (e.g. Amazon, by region) and their traffic metrics
+      post-quantum:
+        description: Post-quantum encryption adoption and deployment trends across the Internet
+      quality:
+        description: Internet connection quality metrics — speed, latency, and jitter by geography and ASN
+      ranking:
+        description: Top domain rankings based on DNS query popularity across the Cloudflare network
+      robots-txt:
+        description: Robots.txt adoption and crawler directive trends across the web
+      search:
+        description: Search Radar data across IPs, ASNs, domains, and locations
+      tcp-resets-timeouts:
+        description: TCP connection reset and timeout statistics indicating network health issues
+      tlds:
+        description: Top-level domain (TLD) metadata and performance trends
+      traffic-anomalies:
+        description: Detected traffic anomalies and unusual patterns in Internet traffic flows
+      verified-bots:
+        description: Catalog of known good bots (Googlebot, Bingbot, etc.) and their traffic patterns
+  rate-limits:
+    description: Legacy per-zone rate limiting rules — prefer Advanced Rate Limiting in Rulesets for new configurations
+  realtime:
+    description: Real-time audio, video, and data services on Cloudflare's global network
+    groups:
+      kit:
+        description: SDK-backed meetings, participants, recordings, livestreams, and webhooks
+      kit.analytics:
+        description: Usage and livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams:
+        description: Livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams.daily:
+        description: Daily livestream analytics for RealtimeKit applications
+      kit.analytics.usage:
+        description: Usage analytics for RealtimeKit applications
+      kit.apps:
+        description: RealtimeKit applications that group meetings, sessions, and configuration
+      kit.livestreams:
+        description: Independent and meeting-based livestreams and their sessions
+      kit.livestreams.sessions:
+        description: Sessions for RealtimeKit livestreams
+      kit.meetings:
+        description: Meetings, participants, access tokens, and meeting livestreams
+      kit.meetings.active:
+        description: Live meeting state and participant controls
+      kit.meetings.active.polls:
+        description: Polls for active meeting sessions
+      kit.meetings.livestream:
+        description: Livestream operations associated with RealtimeKit meetings
+      kit.meetings.participants:
+        description: Participants in RealtimeKit meetings
+      kit.meetings.participants.tokens:
+        description: Access tokens for RealtimeKit meeting participants
+      kit.presets:
+        description: Reusable meeting configuration for media, permissions, and interface behavior
+      kit.recordings:
+        description: Meeting and participant-track recordings and recording controls
+      kit.recordings.active:
+        description: Active recordings for RealtimeKit meetings
+      kit.recordings.tracks:
+        description: Participant-track recordings for RealtimeKit meetings
+      kit.sessions:
+        description: Historical session data, participants, chat, transcripts, and summaries
+      kit.sessions.chat:
+        description: Chat messages from historical RealtimeKit sessions
+      kit.sessions.livestreams:
+        description: Livestreams associated with historical RealtimeKit sessions
+      kit.sessions.participants:
+        description: Participants in historical RealtimeKit sessions
+      kit.sessions.peers:
+        description: Peer details from historical RealtimeKit sessions
+      kit.sessions.summaries:
+        description: Summaries of historical RealtimeKit sessions
+      kit.sessions.transcripts:
+        description: Transcripts from historical RealtimeKit sessions
+      kit.webhooks:
+        description: Webhook endpoints and supported events for RealtimeKit notifications
+      kit.webhooks.events:
+        description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
+  request-tracers:
+    description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
+    groups:
+      traces:
+        description: Simulate request processing to debug rule matches, transforms, and routing decisions
+  resource-sharing:
+    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    groups:
+      recipients:
+        description: Update share recipients
+      resources:
+        description: Individual resources (zones, configs) that have been shared with recipients
+  rules:
+    description: Resources used by Cloudflare rules and rulesets
+    groups:
+      lists:
+        description: Custom account-level lists of IPs, hostnames, ASNs, or redirects used in rule expressions
+  rum:
+    description: Real User Measurement (Web Analytics) — track page loads, Core Web Vitals, and visitor metrics
+    groups:
+      rules:
+        description: Rules that control which pages and paths are tracked by Web Analytics
+      site-info:
+        description: Web Analytics sites — register domains and get the JavaScript beacon snippet
+  scim:
+    description: SCIM 2.0 provisioning — manage users, groups, and identity provider sync for your account
+    groups:
+      groups:
+        description: Groups operations
+      resource-types:
+        description: Resource Types operations
+      schemas:
+        description: Schemas operations
+      service-provider-config:
+        description: Service Provider Config operations
+      users:
+        description: Users operations
+  secrets-store:
+    description: Centralized secret management — store API keys, tokens, and credentials for use across Workers and other products
+    groups:
+      quota:
+        description: Account quota limits for secrets stores, secrets count, and storage capacity
+      secrets:
+        description: Encrypted key-value secrets within a store. Pass --store-id to scope.
+      stores:
+        description: Secret stores that hold encrypted key-value secrets accessible by Workers and services
+  security-center:
+    description: Security posture dashboard — view and manage security insights, misconfigurations, and vulnerabilities
+    groups:
+      insights:
+        description: Security findings and recommendations across your account — DNS, SSL, WAF misconfigurations, etc.
+      zone-insights:
+        description: Zone-scoped security insights — counts by class, severity, type, and dismissal
+  security-txt:
+    description: Manage the /.well-known/security.txt file that tells security researchers how to report vulnerabilities
+  smart-shield:
+    description: Smart Shield settings, health checks, and cache reserve management
+    groups:
+      cache-reserve-clear:
+        description: Cache Reserve Clear operations
+      health-checks:
+        description: Health checks operations
+  spectrum:
+    description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
+    groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
+      apps:
+        description: Spectrum application configurations that map protocols and ports to origin servers
+  speed:
+    description: Observatory speed tests — run Lighthouse audits, track performance trends, and schedule recurring tests
+    groups:
+      availabilities:
+        description: Check which speed test regions and configurations are available for your zone
+      pages:
+        description: Tested pages with their performance history, trends, and individual test results
+      schedule:
+        description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
+  stream:
+    description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
+    groups:
+      audio-tracks:
+        description: Add, edit, or remove additional audio tracks on a video
+      captions:
+        description: Upload, generate, or retrieve captions and subtitles for videos in multiple languages
+      clip:
+        description: Create a new video clip from an existing video by specifying start and end times
+      copy:
+        description: Import a video from a URL into Stream for processing and delivery
+      direct-upload:
+        description: Generate a tokenized URL that lets end-users upload video directly to Stream
+      downloads:
+        description: Create downloadable MP4 renditions of a video for offline viewing
+      embed:
+        description: Retrieve the HTML embed code snippet for a video
+      keys:
+        description: Signing keys used to generate short-lived signed URLs for private video playback
+      live-inputs:
+        description: Enable and disable live input streams
+      token:
+        description: Generate short-lived signed URL tokens for secure private video playback
+      typed-downloads:
+        description: Type-specific stream download creation and deletion
+      videos:
+        description: Aggregate video storage usage statistics for the account
+      watermarks:
+        description: Watermark profiles that overlay an image on every video in the account
+      webhooks:
+        description: Webhook notifications for video lifecycle events (ready, error, etc.)
+  tenants:
+    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    groups:
+      account-types:
+        description: Account Types operations
+      accounts:
+        description: Accounts operations
+      entitlements:
+        description: Entitlements operations
+      memberships:
+        description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
+  url-scanner:
+    description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
+    groups:
+      response:
+        description: Response operations
+      responses:
+        description: Raw HTTP response data captured during URL scans
+      scan:
+        description: Scan operations
+      scans:
+        description: URL scan requests and results — submit URLs for analysis and retrieve threat verdicts
+  user:
+    description: Your Cloudflare user profile, invitations, organizations, billing, and personal API tokens
+    groups:
+      billing:
+        description: View billing history and payment profile for your user (deprecated — prefer account-level billing)
+      firewall:
+        description: Firewall operations
+      load-balancers.monitors:
+        description: Load Balancers operations
+      load-balancers.monitors.preview:
+        description: Load Balancers operations
+      load-balancers.monitors.references:
+        description: Load Balancers operations
+      load-balancers.pools:
+        description: Load Balancers operations
+      load-balancers.pools.edit.pools:
+        description: Load Balancers operations
+      load-balancers.pools.health:
+        description: Load Balancers operations
+      load-balancers.pools.preview:
+        description: Load Balancers operations
+      load-balancers.pools.references:
+        description: Load Balancers operations
+      load-balancers.preview:
+        description: Load Balancers operations
+      load-balancing-analytics.events:
+        description: Load Balancing Analytics operations
+      subscriptions:
+        description: View and manage zone-level plan subscriptions owned by your user
+      tenants:
+        description: Tenants operations
+      tokens:
+        description: Create and manage personal API tokens scoped to your user for programmatic API access
+  user.analytics:
+    description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
+  waiting-rooms:
+    description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
+    groups:
+      account-waiting-rooms:
+        description: Account-scoped waiting room listing
+      events:
+        description: Scheduled events that temporarily override waiting room settings for sales, launches, etc.
+      page:
+        description: Custom HTML waiting page templates and preview rendering
+      rules:
+        description: Rules that bypass or modify waiting room behavior for specific request patterns
+      settings:
+        description: Zone-level waiting room defaults and cookie configuration
+      statuses:
+        description: Real-time queue status showing active users, queued users, and estimated wait times
+  workflows:
+    description: Durable, multi-step workflows that run on Workers with automatic retries and state persistence
+    groups:
+      instances:
+        description: Workflow instance operations
+      versions:
+        description: Workflow version operations
+  zaraz:
+    description: Server-side tag manager — load third-party tools (analytics, pixels, etc.) from Cloudflare's edge without client-side JS
+    groups:
+      config:
+        description: Full Zaraz configuration including tools, triggers, and variables for the zone
+      default:
+        description: Default Zaraz configuration template used as a starting point for new zones
+      export:
+        description: Export the current Zaraz configuration as a portable JSON document
+      history:
+        description: Configuration version history — browse and restore previous Zaraz configurations
+      publish:
+        description: Publish pending Zaraz configuration changes to make them live on the zone
+      workflow:
+        description: Workflow state for Zaraz configuration changes (draft vs. published)
+  zero-trust:
+    description: Cloudflare's SASE platform — secure access, device posture, DLP, tunnels, gateway policies, and network segmentation
+    groups:
+      dex:
+        description: Digital Experience Monitoring — synthetic tests, fleet-wide device metrics, and network path diagnostics
+      dlp.custom-prompt-topics:
+        description: Data Loss Prevention - manage custom prompt topics for AI-based content detection
+      dlp.data-classes:
+        description: Data Loss Prevention - manage data classes used to classify sensitive information
+      dlp.data-tag-categories:
+        description: Data Loss Prevention - manage categories that organize data tags
+      dlp.data-tag-category-templates:
+        description: Data Loss Prevention - browse templates for creating data tag categories
+      dlp.data-tags:
+        description: Data Loss Prevention - manage tags used to classify and organize sensitive data
+      dlp.datasets:
+        description: Data Loss Prevention - manage datasets, versions, and uploads
+      dlp.document-fingerprints:
+        description: Data Loss Prevention - manage document fingerprints for detecting matching documents
+      dlp.email.account-mapping:
+        description: Data Loss Prevention - configure account mappings for outbound email scanning
+      dlp.email.rules:
+        description: Data Loss Prevention - manage outbound email scanning rules and their priorities
+      dlp.entries:
+        description: Data Loss Prevention - list and manage detection entries
+      dlp.limits:
+        description: Data Loss Prevention - view account limits and resource quotas
+      dlp.patterns:
+        description: Data Loss Prevention - validate regular expressions used for content detection
+      dlp.profiles:
+        description: Data Loss Prevention - list and retrieve profiles
+      dlp.profiles.custom:
+        description: Data Loss Prevention - manage custom profiles
+      dlp.profiles.predefined:
+        description: Data Loss Prevention - manage predefined profiles
+      dlp.sensitivity-group-templates:
+        description: Data Loss Prevention - browse templates for creating sensitivity groups
+      dlp.sensitivity-groups:
+        description: Data Loss Prevention - manage sensitivity groups and their level ordering
+      dlp.sensitivity-levels:
+        description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
+      dlp.settings:
+        description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.integrations:
+        description: User Risk Scoring - manage integrations that provide risk score signals
+      risk-scoring.integrations.references:
+        description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
+  zones:
+    description: Zones are domains on Cloudflare — list, create, and configure domain settings
+    groups:
+      aegis:
+        description: Aegis operations
+      fonts:
+        description: Fonts operations
+      origin-h2-max-streams:
+        description: Origin H2 Max Streams operations
+      origin-max-http-version:
+        description: Origin Max Http Version operations
+      origin-tls-compliance-modes:
+        description: Manage zone Origin TLS Compliance Modes setting
+      rum:
+        description: Rum operations
+      speed-brain:
+        description: Speed Brain operations

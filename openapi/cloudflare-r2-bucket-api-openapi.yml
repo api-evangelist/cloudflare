@@ -1,0 +1,4333 @@
+openapi: 3.2.0
+info:
+  description: Welcome to Cloudflare's API documentation site.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  title: Cloudflare R2 Bucket API
+  version: 4.0.0
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: R2 Bucket
+paths:
+  /accounts/{account_id}/event_notifications/r2/{bucket_name}/configuration:
+    get:
+      operationId: r2-get-event-notification-configs
+      summary: List Event Notification Rules
+      description: Lists event notification rules for an R2 bucket, grouped by the Cloudflare Queue that receives matching object events.
+      parameters:
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Read Configuration response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_bucket-config'
+                  type: object
+        '404':
+          description: No Configuration Found response.
+          content:
+            application/json:
+              example:
+                errors:
+                - code: 11015
+                  message: workers.api.error.no_configs_found_for_bucket
+                messages:
+                - Request failed.
+                result: null
+                success: false
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+        4XX:
+          description: Read Configuration failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-api-token-group:
+      - Workers R2 Storage Write
+      - Workers R2 Storage Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.event-notifications
+      x-fern-sdk-method-name: list
+  /accounts/{account_id}/event_notifications/r2/{bucket_name}/configuration/queues/{queue_id}:
+    delete:
+      operationId: r2-event-notification-delete-config
+      summary: Delete Event Notification Rules
+      description: Deletes the specified event notification rules for an R2 bucket and Cloudflare Queue. Provide ruleIds in the request body to select rules. If no body is provided, all rules for that bucket and queue are deleted.
+      parameters:
+      - name: queue_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_queue_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ruleIds:
+                  description: Array of rule ids to delete.
+                  type: array
+                  items:
+                    description: rule ids to be deleted.
+                    type: string
+      responses:
+        '200':
+          description: Delete Configuration response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - type: object
+        4XX:
+          description: Delete Configuration failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-api-token-group:
+      - Workers R2 Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.event-notifications
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This deletes event notification rules for the selected R2 bucket and queue. Without a request body, all rules for that bucket and queue are deleted.
+    get:
+      operationId: r2-get-event-notification-config
+      summary: Get Event Notification Rules for a Queue
+      description: Gets the event notification rules for the specified R2 bucket and Cloudflare Queue. The response includes the queue's configuration and its array of rules.
+      parameters:
+      - name: queue_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_queue_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Read Configuration response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_queues-config'
+                  type: object
+        '404':
+          description: No Configuration Found response.
+          content:
+            application/json:
+              example:
+                errors:
+                - code: 11015
+                  message: workers.api.error.no_configs_found_for_bucket
+                messages:
+                - Request failed.
+                result: null
+                success: false
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+        4XX:
+          description: Read Configuration failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-api-token-group:
+      - Workers R2 Storage Write
+      - Workers R2 Storage Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.event-notifications
+      x-fern-sdk-method-name: get
+    put:
+      operationId: r2-put-event-notification-config
+      summary: Create Event Notification Rules
+      description: Creates rules that send notifications for matching R2 object events to the specified Cloudflare Queue. Rules can filter objects by key prefix and suffix. New rules are added to any existing rules for the queue; a rule that overlaps an existing rule is rejected.
+      parameters:
+      - name: queue_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_queue_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rules:
+                  description: Array of rules to drive notifications.
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/r2_rule'
+                  minItems: 1
+              required:
+              - rules
+      responses:
+        '200':
+          description: Create Configuration response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - type: object
+        4XX:
+          description: Create Configuration failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-api-token-group:
+      - Workers R2 Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.event-notifications
+      x-fern-sdk-method-name: update
+  /accounts/{account_id}/r2/buckets:
+    get:
+      operationId: r2-list-buckets
+      summary: List Buckets
+      description: Lists a page of R2 buckets in the account and selected jurisdiction. Use the returned cursor to retrieve the next page.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: name_contains
+        in: query
+        schema:
+          description: Bucket names to filter by. Only buckets with this phrase in their name will be returned.
+          type: string
+          example: my-bucket
+      - name: start_after
+        in: query
+        schema:
+          description: Bucket name to start searching after. Buckets are ordered lexicographically.
+          type: string
+          example: my-bucket
+      - name: per_page
+        in: query
+        schema:
+          description: Maximum number of buckets to return in a single call.
+          type: number
+          default: 20
+          maximum: 1000
+          minimum: 1
+      - name: order
+        in: query
+        schema:
+          description: Field to order buckets by.
+          type: string
+          enum:
+          - name
+      - name: direction
+        in: query
+        schema:
+          description: Direction to order buckets.
+          type: string
+          example: desc
+          enum:
+          - asc
+          - desc
+      - name: cursor
+        in: query
+        schema:
+          description: Pagination cursor received during the last List Buckets call. R2 buckets are paginated using cursors instead of page numbers.
+          type: string
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: List Buckets response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response_list'
+                - properties:
+                    result:
+                      type: object
+                      properties:
+                        buckets:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/r2_bucket'
+                  type: object
+        4XX:
+          description: List Buckets response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-api-token-group:
+      - Workers R2 Storage Write
+      - Workers R2 Storage Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets
+      x-fern-sdk-method-name: list
+    post:
+      operationId: r2-create-bucket
+      summary: Create Bucket
+      description: Creates an R2 bucket in the account and selected jurisdiction, with an optional location hint and default storage class.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                locationHint:
+                  $ref: '#/components/schemas/r2_bucket_location'
+                name:
+                  $ref: '#/components/schemas/r2_bucket_name'
+                storageClass:
+                  $ref: '#/components/schemas/r2_storage_class'
+              example: '{"name": "example-bucket"}'
+              required:
+              - name
+      responses:
+        '200':
+          description: Create Bucket response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_bucket'
+                  type: object
+        4XX:
+          description: Create Bucket response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-api-token-group:
+      - Workers R2 Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/r2/buckets/{bucket_name}:
+    delete:
+      operationId: r2-delete-bucket
+      summary: Delete Bucket
+      description: Deletes an empty R2 bucket and its configuration. The bucket must have no objects, no in-progress multipart uploads, and no event notification rules; otherwise the request fails.
+      parameters:
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Delete Bucket response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response'
+        4XX:
+          description: Delete Bucket response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-api-token-group:
+      - Workers R2 Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This permanently deletes the empty R2 bucket and its configuration.
+    get:
+      operationId: r2-get-bucket
+      summary: Get Bucket
+      description: Gets properties of an existing R2 bucket.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Get Bucket response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_bucket'
+                  type: object
+        4XX:
+          description: Get Bucket response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.edge.r2.bucket.read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets
+      x-fern-sdk-method-name: get
+    patch:
+      operationId: r2-patch-bucket
+      summary: Patch Bucket
+      description: Changes the default storage class for newly uploaded objects in an existing R2 bucket. Existing objects retain their storage class, and individual uploads can override the bucket default.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      - name: cf-r2-storage-class
+        in: header
+        required: true
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/r2_storage_class'
+          x-stainless-param: storage_class
+      responses:
+        '200':
+          description: Patch Bucket response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_bucket'
+                  type: object
+        4XX:
+          description: Get Bucket response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.edge.r2.bucket.write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets
+      x-fern-sdk-method-name: edit
+    put:
+      operationId: r2-create-bucket-by-name
+      summary: Create Bucket (by name)
+      description: Creates a new R2 bucket using the name from the URL path. Similar to `r2-create-bucket` (POST), but the bucket name comes from the path and the optional storage class is supplied via the `cf-r2-storage-class` header. There is no request body. Unlike the POST variant, this endpoint does not accept a location hint — the bucket is placed in the R2 region for the caller's edge colo. Use the POST variant if you need to set a `locationHint`.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      - name: cf-r2-storage-class
+        in: header
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/r2_storage_class'
+          x-stainless-param: storage_class
+      responses:
+        '200':
+          description: Create Bucket response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_bucket'
+                  type: object
+        4XX:
+          description: Create Bucket response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-api-token-group:
+      - Workers R2 Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets
+      x-fern-sdk-method-name: create-by-name
+      x-forge-hidden: true
+  /accounts/{account_id}/r2/buckets/{bucket_name}/cors:
+    delete:
+      operationId: r2-delete-bucket-cors-policy
+      summary: Delete Bucket CORS Policy
+      description: Delete the CORS policy for a bucket.
+      parameters:
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Success Response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - type: object
+        4XX:
+          description: Error Response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.cors
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This removes the R2 bucket's CORS policy. Browser requests that depend on these cross-origin permissions may fail.
+    get:
+      operationId: r2-get-bucket-cors-policy
+      summary: Get Bucket CORS Policy
+      description: Get the CORS policy for a bucket.
+      parameters:
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Success Response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      type: object
+                      properties:
+                        rules:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/r2_cors-rule'
+                  type: object
+        4XX:
+          description: Error Response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.cors
+      x-fern-sdk-method-name: get
+    put:
+      operationId: r2-put-bucket-cors-policy
+      summary: Set Bucket CORS Policy
+      description: Replaces the Cross-Origin Resource Sharing (CORS) rules for an R2 bucket. Rules specify which origins, methods, and headers are allowed for browser requests to objects in the bucket.
+      parameters:
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rules:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/r2_cors-rule'
+      responses:
+        '200':
+          description: Success Response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - type: object
+        4XX:
+          description: Error Response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.cors
+      x-fern-sdk-method-name: update
+      x-forge-require-confirmation: This replaces the R2 bucket's CORS policy. Browser requests that relied on the previous rules may fail.
+  /accounts/{account_id}/r2/buckets/{bucket_name}/domains/custom:
+    get:
+      operationId: r2-list-custom-domains
+      summary: List Custom Domains of Bucket
+      description: Gets a list of all custom domains registered with an existing R2 bucket.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: List Custom Domains response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_list_custom_domains_response'
+                  type: object
+        4XX:
+          description: List Custom Domains response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.edge.r2.bucket.read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.domains.custom
+      x-fern-sdk-method-name: list
+    post:
+      operationId: r2-add-custom-domain
+      summary: Attach Custom Domain To Bucket
+      description: Register a new custom domain for an existing R2 bucket.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/r2_add_custom_domain_request'
+      responses:
+        '200':
+          description: Add Custom Domain response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_add_custom_domain_response'
+                  type: object
+        4XX:
+          description: Add Custom Domain response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.edge.r2.bucket.write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.domains.custom
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/r2/buckets/{bucket_name}/domains/custom/{domain}:
+    delete:
+      operationId: r2-delete-custom-domain
+      summary: Remove Custom Domain From Bucket
+      description: Disconnects a custom domain from an R2 bucket and removes its configuration. Access through other enabled custom domains or the bucket's r2.dev domain is unaffected.
+      parameters:
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: domain
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_domain_name'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Delete Custom Domain response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_remove_custom_domain_response'
+                  type: object
+        4XX:
+          description: Delete Custom Domain response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-api-token-group:
+      - Workers R2 Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.domains.custom
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This disconnects the custom domain from the R2 bucket. Access through other enabled domains remains available.
+    get:
+      operationId: r2-get-custom-domain-settings
+      summary: Get Custom Domain Settings
+      description: Get the configuration for a custom domain on an existing R2 bucket.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: domain
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_domain_name'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Get Custom Domain Configuration response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      allOf:
+                      - $ref: '#/components/schemas/r2_get_custom_domain_response'
+                  type: object
+        4XX:
+          description: Get Custom Domain Configuration response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-api-token-group:
+      - Workers R2 Storage Write
+      - Workers R2 Storage Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.domains.custom
+      x-fern-sdk-method-name: get
+    put:
+      operationId: r2-edit-custom-domain-settings
+      summary: Configure Custom Domain Settings
+      description: Edit the configuration for a custom domain on an existing R2 bucket.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: domain
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_domain_name'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/r2_edit_custom_domain_request'
+      responses:
+        '200':
+          description: Edit Custom Domain Configuration response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      allOf:
+                      - $ref: '#/components/schemas/r2_edit_custom_domain_response'
+                  type: object
+        4XX:
+          description: Edit Custom Domain Configuration response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.edge.r2.bucket.write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.domains.custom
+      x-fern-sdk-method-name: update
+  /accounts/{account_id}/r2/buckets/{bucket_name}/domains/managed:
+    get:
+      operationId: r2-get-bucket-public-policy
+      summary: Get r2.dev Domain of Bucket
+      description: Gets the R2 bucket's managed r2.dev domain and whether public access is enabled. The r2.dev domain is rate-limited and intended for development use.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Get Managed Subdomain response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_managed_domain_response'
+                  type: object
+        4XX:
+          description: Get Managed Subdomain response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.edge.r2.bucket.read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.domains.managed
+      x-fern-sdk-method-name: list
+    put:
+      operationId: r2-put-bucket-public-policy
+      summary: Update r2.dev Domain of Bucket
+      description: Enables or disables public access to the R2 bucket through its managed r2.dev domain. Custom domain access is unaffected. The r2.dev domain is rate-limited and intended for development use.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/r2_edit_managed_domain_request'
+      responses:
+        '200':
+          description: Update Managed Subdomain response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_managed_domain_response'
+                  type: object
+        4XX:
+          description: Update Managed Subdomain response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.edge.r2.bucket.write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.domains.managed
+      x-fern-sdk-method-name: update
+      x-forge-require-confirmation: This changes public access to the R2 bucket through its r2.dev domain.
+  /accounts/{account_id}/r2/buckets/{bucket_name}/jobs:
+    get:
+      operationId: r2-list-bucket-jobs
+      summary: List Bucket Jobs
+      description: 'Lists background jobs for an R2 bucket, including prefix-delete (and bucket-emptying)
+
+        jobs and storage-class migration jobs. Jobs of every type are returned unless `jobType`
+
+        is provided.'
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      - name: jobType
+        in: query
+        description: Restricts results to jobs of the specified type.
+        schema:
+          type: string
+          enum:
+          - prefixDelete
+          - storageClassMigration
+      - name: status
+        in: query
+        description: Restricts results to jobs with the specified status. `jobType` is required when this parameter is provided.
+        schema:
+          $ref: '#/components/schemas/r2_r2_bucket_job_status'
+      - name: maxKeys
+        in: query
+        description: Maximum number of jobs to return.
+        schema:
+          type: integer
+          maximum: 1000
+          minimum: 0
+      - name: continuationToken
+        in: query
+        description: Pagination token received as `nextContinuationToken` in the previous response.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List Bucket Jobs response.
+          content:
+            application/json:
+              examples:
+                running-job:
+                  summary: A bucket-emptying job is still running
+                  value:
+                    errors: []
+                    messages: []
+                    result:
+                      jobs:
+                      - id: 7f24658b-31d7-4b91-9a12-cb5a2c99b294
+                        jobType: prefixDelete
+                        prefixDelete:
+                          deletedObjects: 1350
+                          isBucketClear: true
+                          prefix: ''
+                        startTime: '2026-07-20T12:00:00Z'
+                        status: RUNNING
+                      nextContinuationToken: eyJ2IjoxLCJzdGFydEFmdGVyIjoiLi4uIn0=
+                    success: true
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_r2_bucket_jobs_result'
+                  type: object
+        4XX:
+          description: List Bucket Jobs response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.edge.r2.bucket.read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.jobs
+      x-fern-sdk-method-name: list
+    post:
+      operationId: r2-create-bucket-job
+      summary: Create Bucket Job
+      description: 'Creates a background job for an R2 bucket. The `jobType` field selects the job:
+
+
+        - **`prefixDelete`**: deletes every object whose key begins with `prefix`. A non-empty
+
+        prefix must end in `/`. An empty prefix (`""`) empties the entire bucket.
+
+        - **`storageClassMigration`**: migrates every object in the bucket between storage
+
+        classes. `sourceStorageClass` and `destinationStorageClass` must be provided together
+
+        and must differ; omitting both migrates from `InfrequentAccess` to `Standard`.
+
+
+        Poll the returned `id` with the Get Bucket Job endpoint. Small prefix-delete jobs can
+
+        finish synchronously and return `COMPLETED`. Objects uploaded after a background job
+
+        starts are not affected by that job.
+
+
+        For prefix-delete jobs: abort active multipart uploads before submitting the request,
+
+        since a synchronously completed job does not abort them, and avoid writing objects or
+
+        starting multipart uploads while a bucket-emptying job is in progress. Each request
+
+        creates a distinct job, and the number of active prefix-delete jobs is limited per
+
+        bucket; wait for an existing job to finish before retrying a request rejected with
+
+        HTTP 429. A bucket cannot be emptied while event notifications are configured (HTTP 409
+
+        / error code 10083). To protect a bucket with R2 Data Catalog enabled, send the
+
+        `cf-r2-data-catalog-check` header; a conflict is returned with HTTP 409 / error code
+
+        10081.
+
+
+        Prefix-delete jobs require permission to delete objects; storage-class migration jobs
+
+        require permission to write to the bucket.'
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      - name: cf-r2-data-catalog-check
+        in: header
+        description: For prefix-delete jobs, set this header to reject the request when R2 Data Catalog is enabled for the bucket.
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            examples:
+              delete-prefix:
+                summary: Delete every object under a prefix
+                value:
+                  jobType: prefixDelete
+                  prefix: logs/2026/
+              empty-bucket:
+                summary: Empty the entire bucket
+                value:
+                  jobType: prefixDelete
+                  prefix: ''
+              migrate-to-infrequent-access:
+                summary: Migrate every object to Infrequent Access
+                value:
+                  destinationStorageClass: InfrequentAccess
+                  jobType: storageClassMigration
+                  sourceStorageClass: Standard
+            schema:
+              discriminator:
+                mapping:
+                  prefixDelete: '#/components/schemas/r2_create_prefix_delete_job_request'
+                  storageClassMigration: '#/components/schemas/r2_create_storage_class_migration_job_request'
+                propertyName: jobType
+              oneOf:
+              - $ref: '#/components/schemas/r2_r2_create_prefix_delete_job_request'
+              - $ref: '#/components/schemas/r2_r2_create_storage_class_migration_job_request'
+      responses:
+        '200':
+          description: The created job.
+          content:
+            application/json:
+              examples:
+                empty-bucket-completed:
+                  summary: A small or already empty bucket completed immediately
+                  value:
+                    errors: []
+                    messages: []
+                    result:
+                      endTime: '2026-07-20T12:00:00Z'
+                      id: 69f94626-a3fe-47bc-9615-e791b4d53c53
+                      jobType: prefixDelete
+                      prefixDelete:
+                        deletedObjects: 0
+                        isBucketClear: true
+                        prefix: ''
+                      startTime: '2026-07-20T12:00:00Z'
+                      status: COMPLETED
+                    success: true
+                empty-bucket-submitted:
+                  summary: Empty Bucket job submitted
+                  value:
+                    errors: []
+                    messages: []
+                    result:
+                      id: 7f24658b-31d7-4b91-9a12-cb5a2c99b294
+                      jobType: prefixDelete
+                      prefixDelete:
+                        deletedObjects: 0
+                        isBucketClear: true
+                        prefix: ''
+                      startTime: '2026-07-20T12:00:00Z'
+                      status: ENQUEUED
+                    success: true
+                migration-submitted:
+                  summary: Storage-class migration job submitted
+                  value:
+                    errors: []
+                    messages: []
+                    result:
+                      id: 3c1f9a52-0b8e-4f5d-9d0e-4a1b2c3d4e5f
+                      jobType: storageClassMigration
+                      startTime: '2026-09-04T12:00:00Z'
+                      status: ENQUEUED
+                      storageClassMigration:
+                        destinationStorageClass: InfrequentAccess
+                        migratedObjects: 0
+                        sourceStorageClass: Standard
+                    success: true
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_r2_bucket_job'
+                  type: object
+        '409':
+          description: 'Prefix-delete conflict. Event notification rules are still configured (error code
+
+            10083), or the Data Catalog check was requested and R2 Data Catalog is enabled for
+
+            the bucket (error code 10081). Remove the conflicting configuration before retrying.
+
+            '
+          content:
+            application/json:
+              examples:
+                event-notifications-active:
+                  summary: Event notification rules must be removed first
+                  value:
+                    errors:
+                    - code: 10083
+                      message: Remove all event notification rules from bucket (example-bucket) before emptying it (account 023e105f4ecef8ad9ca31a8372d0c353).
+                    messages:
+                    - Request failed.
+                    result: null
+                    success: false
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+        '429':
+          description: Too many active prefix-delete or bucket-emptying jobs. Wait for an existing job to finish, then retry.
+          content:
+            application/json:
+              examples:
+                too-many-jobs:
+                  summary: The per-bucket active job limit was reached
+                  value:
+                    errors:
+                    - code: 10058
+                      message: Too many concurrent prefix delete jobs for this bucket. Please wait for existing jobs to complete.
+                    messages:
+                    - Request failed.
+                    result: null
+                    success: false
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+        4XX:
+          description: Create Bucket Job response failure. The request body may be invalid, the bucket may not exist, or the caller may not be authorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-api-token-group:
+      - Workers R2 Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.jobs
+      x-fern-sdk-method-name: create
+      x-forge-require-confirmation: This starts a background job that either permanently deletes every object under the given prefix (every object in the bucket for an empty prefix) or migrates every object in the bucket between storage classes.
+  /accounts/{account_id}/r2/buckets/{bucket_name}/jobs/{job_id}:
+    get:
+      operationId: r2-get-bucket-job
+      summary: Get Bucket Job
+      description: 'Gets the current status of a background job of any type for an R2 bucket. Poll this
+
+        endpoint with the job identifier returned by Create Bucket Job until the status is
+
+        `COMPLETED`, `FAILED`, or `CANCELLED`.'
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: job_id
+        in: path
+        description: Identifier returned when the background job was submitted.
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Get Bucket Job response.
+          content:
+            application/json:
+              examples:
+                completed-empty-bucket:
+                  summary: A bucket-emptying job has completed
+                  value:
+                    errors: []
+                    messages: []
+                    result:
+                      endTime: '2026-07-20T12:14:31Z'
+                      id: 7f24658b-31d7-4b91-9a12-cb5a2c99b294
+                      jobType: prefixDelete
+                      prefixDelete:
+                        deletedObjects: 2481
+                        isBucketClear: true
+                        prefix: ''
+                      startTime: '2026-07-20T12:00:00Z'
+                      status: COMPLETED
+                    success: true
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_r2_bucket_job'
+                  type: object
+        4XX:
+          description: Get Bucket Job response failure. The bucket or job may not exist, or the caller may not be authorized to access it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.edge.r2.bucket.read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.jobs
+      x-fern-sdk-method-name: get
+  /accounts/{account_id}/r2/buckets/{bucket_name}/lifecycle:
+    get:
+      operationId: r2-get-bucket-lifecycle-configuration
+      summary: Get Object Lifecycle Rules
+      description: Get object lifecycle rules for a bucket.
+      parameters:
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Success Response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_lifecycle-config'
+                  type: object
+        4XX:
+          description: Error Response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.lifecycle
+      x-fern-sdk-method-name: get
+    put:
+      operationId: r2-put-bucket-lifecycle-configuration
+      summary: Set Object Lifecycle Rules
+      description: Replaces the object lifecycle rules for an R2 bucket. Rules match object-key prefixes and can expire objects, abort incomplete multipart uploads, or transition objects to Infrequent Access storage.
+      parameters:
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rules:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/r2_lifecycle-rule'
+      responses:
+        '200':
+          description: Success Response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - type: object
+        4XX:
+          description: Error Response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.lifecycle
+      x-fern-sdk-method-name: update
+      x-forge-require-confirmation: This replaces the R2 bucket's object lifecycle rules and can schedule object deletion or abort multipart uploads.
+  /accounts/{account_id}/r2/buckets/{bucket_name}/local-uploads:
+    get:
+      operationId: r2-get-bucket-local-uploads-configuration
+      summary: Get Local Uploads Configuration
+      description: Gets the Local Uploads configuration for an R2 bucket. When enabled, object data is written near the client before being asynchronously copied to the bucket's primary region. Local Uploads is only supported in the default jurisdiction.
+      parameters:
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      responses:
+        '200':
+          description: Success Response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_local_uploads_configuration'
+                  type: object
+        4XX:
+          description: Error Response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.edge.r2.bucket.read
+      x-fern-availability: beta
+      x-fern-sdk-group-name: r2.buckets.local-uploads
+      x-fern-sdk-method-name: get
+    put:
+      operationId: r2-put-bucket-local-uploads-configuration
+      summary: Set Local Uploads Configuration
+      description: Enables or disables Local Uploads for an R2 bucket in the default jurisdiction. When enabled, object data is written near the client before being asynchronously copied to the bucket's primary region. Disabling Local Uploads allows existing replication to finish.
+      parameters:
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enabled:
+                  description: Whether to enable local uploads for this bucket.
+                  type: boolean
+                  x-auditable: true
+              required:
+              - enabled
+      responses:
+        '200':
+          description: Success Response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - type: object
+        4XX:
+          description: Error Response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.edge.r2.bucket.write
+      x-fern-availability: beta
+      x-fern-sdk-group-name: r2.buckets.local-uploads
+      x-fern-sdk-method-name: update
+  /accounts/{account_id}/r2/buckets/{bucket_name}/lock:
+    delete:
+      operationId: r2-delete-bucket-lock-configuration
+      summary: Delete Bucket Lock Rules
+      description: Delete all lock rules for a bucket.
+      parameters:
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Success Response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - type: object
+        4XX:
+          description: Error Response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.locks
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This removes all lock rules from the R2 bucket, removing their protection against object deletion and overwriting.
+    get:
+      operationId: r2-get-bucket-lock-configuration
+      summary: Get Bucket Lock Rules
+      description: Get lock rules for a bucket.
+      parameters:
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Success Response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_bucket-lock-rule-config'
+                  type: object
+        4XX:
+          description: Error Response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.locks
+      x-fern-sdk-method-name: get
+    put:
+      operationId: r2-put-bucket-lock-configuration
+      summary: Set Bucket Lock Rules
+      description: Replaces the lock rules for an R2 bucket. Enabled rules prevent matching objects from being overwritten or deleted for a duration, until a date, or indefinitely. Rules apply to existing and newly uploaded objects.
+      parameters:
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rules:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/r2_bucket-lock-rule'
+      responses:
+        '200':
+          description: Success Response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - type: object
+        4XX:
+          description: Error Response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.locks
+      x-fern-sdk-method-name: update
+      x-forge-require-confirmation: This replaces the R2 bucket's lock rules. Removing or shortening retention can allow objects to be overwritten or deleted.
+  /accounts/{account_id}/r2/buckets/{bucket_name}/sippy:
+    delete:
+      operationId: r2-delete-bucket-sippy-config
+      summary: Disable Sippy
+      description: Disables Sippy on-demand migration for an R2 bucket. Requests no longer fetch missing objects from the source storage provider. Objects already copied to R2 remain in the bucket.
+      parameters:
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Delete Sippy Configuration response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      type: object
+                      properties:
+                        enabled:
+                          type: boolean
+                          enum:
+                          - false
+                  type: object
+        4XX:
+          description: Delete Sippy Configuration response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-api-token-group:
+      - Workers R2 Storage Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.sippy
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This disables Sippy on-demand migration for the R2 bucket. Objects already copied to R2 remain in the bucket.
+    get:
+      operationId: r2-get-bucket-sippy-config
+      summary: Get Sippy Configuration
+      description: Gets configuration for Sippy for an existing R2 bucket.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      responses:
+        '200':
+          description: Get Sippy Configuration response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_sippy'
+                  type: object
+        4XX:
+          description: Get Sippy Configuration response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.edge.r2.bucket.read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.sippy
+      x-fern-sdk-method-name: get
+    put:
+      operationId: r2-put-bucket-sippy-config
+      summary: Enable Sippy
+      description: Configures and enables Sippy on-demand migration for an R2 bucket. When a requested object is missing from R2, Sippy serves it from the configured source storage provider and copies it to R2.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      - name: bucket_name
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_bucket_name'
+      - $ref: '#/components/parameters/r2_cf-r2-jurisdiction'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/r2_enable_sippy_aws'
+              - $ref: '#/components/schemas/r2_enable_sippy_gcs'
+              - $ref: '#/components/schemas/r2_enable_sippy_s3'
+              - $ref: '#/components/schemas/r2_enable_sippy_azure'
+      responses:
+        '200':
+          description: Set Sippy Configuration response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_sippy'
+                  type: object
+        4XX:
+          description: Get Sippy Configuration response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-cfPermissionsRequired:
+        enum:
+        - com.cloudflare.edge.r2.bucket.write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.buckets.sippy
+      x-fern-sdk-method-name: update
+  /accounts/{account_id}/r2/temp-access-credentials:
+    post:
+      operationId: r2-create-temp-access-credentials
+      summary: Create Temporary Access Credentials
+      description: Creates temporary access credentials on a bucket that can be optionally scoped to prefixes or objects.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/r2_account_identifier'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/r2_temp_access_creds_request'
+      responses:
+        '200':
+          description: Create temporary access credentials response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/r2_v4_response'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/r2_temp_access_creds_response'
+                  type: object
+        4XX:
+          description: Create temporary access credentials response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/r2_v4_response_failure'
+      security:
+      - api_token: []
+      tags:
+      - R2 Bucket
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: r2.temporary-credentials
+      x-fern-sdk-method-name: create
+components:
+  schemas:
+    r2_enable_sippy_aws:
+      properties:
+        destination:
+          description: R2 bucket to copy objects to.
+          type: object
+          properties:
+            accessKeyId:
+              description: 'ID of a Cloudflare API token.
+
+                This is the value labelled "Access Key ID" when creating an API.
+
+                token from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).
+
+
+                Sippy will use this token when writing objects to R2, so it is
+
+                best to scope this token to the bucket you''re enabling Sippy for.
+
+                '
+              type: string
+            provider:
+              type: string
+              enum:
+              - r2
+              x-auditable: true
+            secretAccessKey:
+              description: 'Value of a Cloudflare API token.
+
+                This is the value labelled "Secret Access Key" when creating an API.
+
+                token from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).
+
+
+                Sippy will use this token when writing objects to R2, so it is
+
+                best to scope this token to the bucket you''re enabling Sippy for.
+
+                '
+              type: string
+              x-sensitive: true
+        source:
+          description: AWS S3 bucket to copy objects from.
+          type: object
+          properties:
+            accessKeyId:
+              description: Access Key ID of an IAM credential (ideally scoped to a single S3 bucket).
+              type: string
+            bucket:
+              description: Name of the AWS S3 bucket.
+              type: string
+              x-auditable: true
+            provider:
+              type: string
+              enum:
+              - aws
+              x-auditable: true
+            region:
+              description: AWS region containing the source S3 bucket.
+              type: string
+              x-auditable: true
+            secretAccessKey:
+              description: Secret Access Key of an IAM credential (ideally scoped to a single S3 bucket).
+              type: string
+              x-sensitive: true
+    r2_managed_domain_response:
+      type: object
+      properties:
+        bucketId:
+          description: Bucket ID.
+          type: string
+          maxLength: 32
+          x-auditable: true
+        domain:
+          description: Domain name of the bucket's r2.dev domain.
+          type: string
+          x-auditable: true
+        enabled:
+          description: Whether this bucket is publicly accessible at the r2.dev domain.
+          type: boolean
+          x-auditable: true
+      example:
+        bucketId: 0113a9e4549cf9b1ff1bf56e04da0cef
+        domain: pub-0113a9e4549cf9b1ff1bf56e04da0cef.r2.dev
+        enabled: true
+      required:
+      - bucketId
+      - domain
+      - enabled
+    r2_r2_create_storage_class_migration_job_request:
+      description: Request body that creates a storage-class migration job.
+      type: object
+      properties:
+        destinationStorageClass:
+          type: string
+          enum:
+          - Standard
+          - InfrequentAccess
+        jobType:
+          type: string
+          enum:
+          - storageClassMigration
+        sourceStorageClass:
+          type: string
+          enum:
+          - Standard
+          - InfrequentAccess
+      additionalProperties: false
+      required:
+      - jobType
+      title: Storage Class Migration Job
+    r2_add_custom_domain_request:
+      type: object
+      properties:
+        ciphers:
+          description: An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.
+          type: array
+          items:
+            type: string
+          x-auditable: true
+        domain:
+          description: Name of the custom domain to be added.
+          type: string
+          x-auditable: true
+        enabled:
+          description: Whether to enable public bucket access at the custom domain. If undefined, the domain will be enabled.
+          type: boolean
+          x-auditable: true
+        minTLS:
+          description: Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.
+          type: string
+          enum:
+          - '1.0'
+          - '1.1'
+          - '1.2'
+          - '1.3'
+          x-auditable: true
+        zoneId:
+          description: Zone ID of the custom domain.
+          type: string
+          x-auditable: true
+      example:
+        domain: prefix.example-domain.com
+        enabled: true
+        zoneId: 36ca64a6d92827b8a6b90be344bb1bfd
+      required:
+      - domain
+      - zoneId
+      - enabled
+    r2_sippy:
+      type: object
+      properties:
+        destination:
+          description: Details about the configured destination bucket.
+          type: object
+          properties:
+            accessKeyId:
+              description: 'ID of the Cloudflare API token used when writing objects to this
+
+                bucket.
+
+                '
+              type: string
+            account:
+              type: string
+              x-auditable: true
+            bucket:
+              description: Name of the bucket on the provider.
+              type: string
+              x-auditable: true
+            provider:
+              type: string
+              enum:
+              - r2
+              x-auditable: true
+        enabled:
+          description: State of Sippy for this bucket.
+          type: boolean
+          x-auditable: true
+        source:
+          description: Details about the configured source bucket.
+          type: object
+          properties:
+            bucket:
+              description: Name of the bucket on the provider (AWS, GCS only).
+              type:
+              - string
+              - 'null'
+              x-auditable: true
+            bucketUrl:
+              description: S3-compatible URL (Generic S3-compatible providers only).
+              type:
+              - string
+              - 'null'
+              x-auditable: true
+            container:
+              description: Name of the Azure Blob Storage container (Azure only).
+              type:
+              - string
+              - 'null'
+              x-auditable: true
+            provider:
+              type: string
+              enum:
+              - aws
+              - gcs
+              - s3
+              - azure
+              x-auditable: true
+            region:
+              description: Region where the bucket resides (AWS only).
+              type:
+              - string
+              - 'null'
+              x-auditable: true
+    r2_bucket:
+      description: A single R2 bucket.
+      type: object
+      properties:
+        creation_date:
+          description: Creation timestamp.
+          type: string
+        jurisdiction:
+          $ref: '#/components/schemas/r2_jurisdiction'
+        location:
+          $ref: '#/components/schemas/r2_bucket_location'
+        name:
+          $ref: '#/components/schemas/r2_bucket_name'
+        storage_class:
+          $ref: '#/components/schemas/r2_storage_class'
+    r2_lifecycle-age-condition:
+      description: Condition for lifecycle transitions to apply after an object reaches an age in seconds.
+      type: object
+      properties:
+        maxAge:
+          type: integer
+          x-auditable: true
+        type:
+          type: string
+          enum:
+          - Age
+          x-auditable: true
+      required:
+      - type
+      - maxAge
+    r2_get_custom_domain_response:
+      type: object
+      properties:
+        ciphers:
+          description: An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.
+          type: array
+          items:
+            type: string
+          x-auditable: true
+        domain:
+          description: Domain name of the custom domain to be added.
+          type: string
+          x-auditable: true
+        enabled:
+          description: Whether this bucket is publicly accessible at the specified custom domain.
+          type: boolean
+          x-auditable: true
+        minTLS:
+          description: Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.
+          type: string
+          enum:
+          - '1.0'
+          - '1.1'
+          - '1.2'
+          - '1.3'
+          x-auditable: true
+        status:
+          type: object
+          properties:
+            ownership:
+              description: Ownership status of the domain.
+              type: string
+              enum:
+              - pending
+              - active
+              - deactivated
+              - blocked
+              - error
+              - unknown
+              x-auditable: true
+            ssl:
+              description: SSL certificate status.
+              type: string
+              enum:
+              - initializing
+              - pending
+              - active
+              - deactivated
+              - error
+              - unknown
+              x-auditable: true
+          required:
+          - ssl
+          - ownership
+        zoneId:
+          description: Zone ID of the custom domain resides in.
+          type: string
+          x-auditable: true
+        zoneName:
+          description: Zone that the custom domain resides in.
+          type: string
+          x-auditable: true
+      example:
+        domain: prefix.example-domain.one.com
+        enabled: false
+        status:
+          ownership: deactivated
+          ssl: pending
+        zoneId: 36ca64a6d92827b8a6b90be344bb1bfd
+        zoneName: example-domain.one.com
+      required:
+      - domain
+      - status
+      - enabled
+    r2_remove_custom_domain_response:
+      type: object
+      properties:
+        domain:
+          description: Name of the removed custom domain.
+          type: string
+          x-auditable: true
+      example:
+        domain: example-domain/custom-domain.com
+      required:
+      - domain
+    r2_cors-rule:
+      type: object
+      properties:
+        allowed:
+          description: Object specifying allowed origins, methods and headers for this CORS rule.
+          type: object
+          properties:
+            headers:
+              description: Specifies the value for the Access-Control-Allow-Headers header R2 sets when requesting objects in this bucket from a browser. Cross-origin requests that include custom headers (e.g. x-user-id) should specify these headers as AllowedHeaders.
+              type: array
+              items:
+                example: x-requested-by
+                type: string
+                x-auditable: true
+            methods:
+              description: Specifies the value for the Access-Control-Allow-Methods header R2 sets when requesting objects in a bucket from a browser.
+              type: array
+              items:
+                enum:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+                - HEAD
+                type: string
+                x-auditable: true
+            origins:
+              description: Specifies the value for the Access-Control-Allow-Origin header R2 sets when requesting objects in a bucket from a browser.
+              type: array
+              items:
+                example: http://localhost:3000
+                type: string
+                x-auditable: true
+          required:
+          - methods
+          - origins
+        exposeHeaders:
+          description: Specifies the headers that can be exposed back, and accessed by, the JavaScript making the cross-origin request. If you need to access headers beyond the safelisted response headers, such as Content-Encoding or cf-cache-status, you must specify it here.
+          type: array
+          items:
+            example: Content-Encoding
+            type: string
+            x-auditable: true
+        id:
+          description: Identifier for this rule.
+          type: string
+          example: Allow Local Development
+          x-auditable: true
+        maxAgeSeconds:
+          description: Specifies the amount of time (in seconds) browsers are allowed to cache CORS preflight responses. Browsers may limit this to 2 hours or less, even if the maximum value (86400) is specified.
+          type: number
+          example: 3600
+          x-auditable: true
+      required:
+      - allowed
+    r2_lock-rule-indefinite-condition:
+      description: Condition to apply a lock rule indefinitely.
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - Indefinite
+          x-auditable: true
+      required:
+      - type
+    r2_lock-rule-age-condition:
+      description: Condition to apply a lock rule to an object for how long in seconds.
+      type: object
+      properties:
+        maxAgeSeconds:
+          type: integer
+          example: 100
+          x-auditable: true
+        type:
+          type: string
+          enum:
+          - Age
+          x-auditable: true
+      required:
+      - type
+      - maxAgeSeconds
+    r2_add_custom_domain_response:
+      type: object
+      properties:
+        ciphers:
+          description: An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.
+          type: array
+          items:
+            type: string
+          x-auditable: true
+        domain:
+          description: Domain name of the affected custom domain.
+          type: string
+          x-auditable: true
+        enabled:
+          description: Whether this bucket is publicly accessible at the specified custom domain.
+          type: boolean
+        minTLS:
+          description: Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.
+          type: string
+          enum:
+          - '1.0'
+          - '1.1'
+          - '1.2'
+          - '1.3'
+          x-auditable: true
+        zoneId:
+          description: Zone ID of the custom domain.
+          type: string
+          x-auditable: true
+      example:
+        domain: example-domain.com
+        enabled: true
+        zoneId: 36ca64a6d92827b8a6b90be344bb1bfd
+      required:
+      - domain
+      - enabled
+      - zoneId
+    r2_queue_identifier:
+      description: ID of the Cloudflare Queue that receives notifications for matching R2 object events.
+      type: string
+      example: 11111aa1-11aa-111a-a1a1-a1a111a11a11
+      maxLength: 32
+      x-auditable: true
+    r2_lock-rule-date-condition:
+      description: Condition to apply a lock rule to an object until a specific date.
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+          x-auditable: true
+        type:
+          type: string
+          enum:
+          - Date
+          x-auditable: true
+      required:
+      - type
+      - date
+    r2_r2-action:
+      type: string
+      enum:
+      - PutObject
+      - CopyObject
+      - DeleteObject
+      - CompleteMultipartUpload
+      - LifecycleDeletion
+      x-auditable: true
+    r2_r2_prefix_delete_job:
+      description: 'Descriptor of a prefix-delete job. An empty prefix indicates a job that empties the
+
+        whole bucket.
+
+        '
+      type: object
+      properties:
+        endTime:
+          description: 'When the job finished. Absent while the job is still `ENQUEUED` or `RUNNING`.
+
+            '
+          type: string
+          format: date-time
+        id:
+          description: Unique identifier used to poll the job.
+          type: string
+        jobType:
+          description: The job kind.
+          type: string
+          enum:
+          - prefixDelete
+        prefixDelete:
+          description: Details specific to the prefix-delete job.
+          type: object
+          properties:
+            deletedObjects:
+              description: Number of objects deleted by the job so far.
+              type: integer
+              example: 0
+            isBucketClear:
+              description: 'True when the job was created to clear the entire bucket. This field can be absent
+
+                on jobs created before Empty Bucket job tracking was introduced.
+
+                '
+              type: boolean
+            prefix:
+              description: The prefix matched against object keys. An empty string means the entire bucket.
+              type: string
+              example: path/to/
+          required:
+          - prefix
+          - deletedObjects
+        startTime:
+          description: When the job was created.
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/r2_r2_bucket_job_status'
+      required:
+      - id
+      - jobType
+      - status
+      - startTime
+      - prefixDelete
+    r2_messages:
+      type: array
+      items:
+        type: string
+    r2_v4_response:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/r2_errors'
+        messages:
+          $ref: '#/components/schemas/r2_messages'
+        result:
+          type: object
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          enum:
+          - true
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    r2_result_info:
+      type: object
+      properties:
+        cursor:
+          description: A continuation token that should be used to fetch the next page of results.
+          type: string
+          example: 1-JTdCJTIydiUyMiUzQTElMkMlMjJzdGFydEFmdGVyJTIyJTNBJTIyZGF2aWRwdWJsaWMlMjIlN0Q=
+        per_page:
+          description: Maximum number of results on this page.
+          type: number
+          example: 20
+    r2_temp_access_creds_request:
+      type: object
+      properties:
+        bucket:
+          description: Name of the R2 bucket.
+          type: string
+          x-auditable: true
+        objects:
+          description: Optional object paths to scope the credentials to.
+          type: array
+          items:
+            type: string
+            x-auditable: true
+        parentAccessKeyId:
+          description: Access key ID of the parent R2 API token. The temporary credentials cannot exceed this token's permissions.
+          type: string
+        permission:
+          description: Permissions allowed on the credentials.
+          type: string
+          enum:
+          - admin-read-write
+          - admin-read-only
+          - object-read-write
+          - object-read-only
+          x-auditable: true
+        prefixes:
+          description: Optional prefix paths to scope the credentials to.
+          type: array
+          items:
+            type: string
+            x-auditable: true
+        ttlSeconds:
+          description: Lifetime of the temporary credentials in seconds, up to 604800 seconds (7 days).
+          type: number
+          default: 900
+          maximum: 604800
+          x-auditable: true
+      example:
+        bucket: example-bucket
+        objects:
+        - example-object
+        parentAccessKeyId: example-access-key-id
+        permission: object-read-write
+        prefixes:
+        - example-prefix/
+        ttlSeconds: 3600
+      required:
+      - bucket
+      - permission
+      - ttlSeconds
+      - parentAccessKeyId
+    r2_v4_response_list:
+      allOf:
+      - $ref: '#/components/schemas/r2_v4_response'
+      - properties:
+          result_info:
+            $ref: '#/components/schemas/r2_result_info'
+        type: object
+    r2_enable_sippy_gcs:
+      properties:
+        destination:
+          description: R2 bucket to copy objects to.
+          type: object
+          properties:
+            accessKeyId:
+              description: 'ID of a Cloudflare API token.
+
+                This is the value labelled "Access Key ID" when creating an API.
+
+                token from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).
+
+
+                Sippy will use this token when writing objects to R2, so it is
+
+                best to scope this token to the bucket you''re enabling Sippy for.
+
+                '
+              type: string
+            provider:
+              type: string
+              enum:
+              - r2
+            secretAccessKey:
+              description: 'Value of a Cloudflare API token.
+
+                This is the value labelled "Secret Access Key" when creating an API.
+
+                token from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).
+
+
+                Sippy will use this token when writing objects to R2, so it is
+
+                best to scope this token to the bucket you''re enabling Sippy for.
+
+                '
+              type: string
+              x-sensitive: true
+        source:
+          description: GCS bucket to copy objects from.
+          type: object
+          properties:
+            bucket:
+              description: Name of the GCS bucket.
+              type: string
+              x-auditable: true
+            clientEmail:
+              description: Client email of an IAM credential (ideally scoped to a single GCS bucket).
+              type: string
+            privateKey:
+              description: Private Key of an IAM credential (ideally scoped to a single GCS bucket).
+              type: string
+              x-sensitive: true
+            provider:
+              type: string
+              enum:
+              - gcs
+    r2_queues-config:
+      type: object
+      properties:
+        queueId:
+          description: Queue ID.
+          type: string
+          example: 11111aa1-11aa-111a-a1a1-a1a111a11a11
+          x-auditable: true
+        queueName:
+          description: Name of the queue.
+          type: string
+          example: first-queue
+          x-auditable: true
+        rules:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/r2_rule'
+            - properties:
+                createdAt:
+                  description: Timestamp when the rule was created.
+                  type: string
+                  example: '2024-09-19T21:54:48.405Z'
+                  x-auditable: true
+                description:
+                  description: A description that can be used to identify the event notification rule after creation.
+                  type: string
+                  example: Notifications from source bucket to queue
+                  x-auditable: true
+                ruleId:
+                  description: Rule ID.
+                  type: string
+                  example: 11111aa1-11aa-111a-a1a1-a1a111a11a11
+                  x-auditable: true
+              type: object
+    r2_lifecycle-config:
+      type: object
+      properties:
+        rules:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/r2_lifecycle-rule'
+    r2_errors:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          message:
+            type: string
+        required:
+        - code
+        - message
+        type: object
+        uniqueItems: true
+    r2_bucket-lock-rule:
+      type: object
+      properties:
+        condition:
+          oneOf:
+          - $ref: '#/components/schemas/r2_lock-rule-age-condition'
+          - $ref: '#/components/schemas/r2_lock-rule-date-condition'
+          - $ref: '#/components/schemas/r2_lock-rule-indefinite-condition'
+        enabled:
+          description: Whether or not this rule is in effect.
+          type: boolean
+          x-auditable: true
+        id:
+          description: Unique identifier for this rule.
+          type: string
+          example: Lock all objects for 24 hours
+          x-auditable: true
+        prefix:
+          description: Rule will only apply to objects/uploads in the bucket that start with the given prefix, an empty prefix can be provided to scope rule to all objects/uploads.
+          type: string
+          x-auditable: true
+      required:
+      - id
+      - condition
+      - enabled
+    r2_local_uploads_configuration:
+      description: Configuration for local uploads on a bucket.
+      type: object
+      properties:
+        enabled:
+          description: Whether local uploads is enabled for this bucket. When enabled, object's data is written to the nearest region first, then asynchronously replicated to the bucket's primary region.
+          type: boolean
+          x-auditable: true
+    r2_jurisdiction:
+      description: Jurisdiction where objects in this bucket are guaranteed to be stored.
+      type: string
+      default: default
+      enum:
+      - default
+      - eu
+      - us
+      - fedramp
+      - fedramp-high
+      x-auditable: true
+      x-stainless-param: jurisdiction
+    r2_r2_bucket_jobs_result:
+      type: object
+      properties:
+        jobs:
+          description: Bucket jobs in the current page.
+          type: array
+          items:
+            $ref: '#/components/schemas/r2_r2_bucket_job'
+        nextContinuationToken:
+          description: Token to pass as `continuationToken` to retrieve the next page.
+          type: string
+      required:
+      - jobs
+    r2_enable_sippy_azure:
+      properties:
+        destination:
+          description: R2 bucket to copy objects to.
+          type: object
+          properties:
+            accessKeyId:
+              description: 'ID of a Cloudflare API token.
+
+                This is the value labelled "Access Key ID" when creating an API.
+
+                token from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).
+
+
+                Sippy will use this token when writing objects to R2, so it is
+
+                best to scope this token to the bucket you''re enabling Sippy for.
+
+                '
+              type: string
+            provider:
+              type: string
+              enum:
+              - r2
+              x-auditable: true
+            secretAccessKey:
+              description: 'Value of a Cloudflare API token.
+
+                This is the value labelled "Secret Access Key" when creating an API.
+
+                token from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).
+
+
+                Sippy will use this token when writing objects to R2, so it is
+
+                best to scope this token to the bucket you''re enabling Sippy for.
+
+                '
+              type: string
+              x-sensitive: true
+        source:
+          description: Azure Blob Storage container to copy objects from.
+          type: object
+          properties:
+            accountKey:
+              description: Access key for the Azure Storage account. Mutually exclusive with sasToken.
+              type: string
+              x-sensitive: true
+            accountName:
+              description: Name of the Azure Storage account.
+              type: string
+              x-auditable: true
+            container:
+              description: Name of the Azure Blob Storage container.
+              type: string
+              x-auditable: true
+            provider:
+              type: string
+              enum:
+              - azure
+              x-auditable: true
+            sasToken:
+              description: Shared Access Signature token for the Azure Storage account. Mutually exclusive with accountKey.
+              type: string
+              x-sensitive: true
+    r2_lifecycle-rule:
+      type: object
+      properties:
+        abortMultipartUploadsTransition:
+          description: Transition to abort ongoing multipart uploads.
+          type: object
+          properties:
+            condition:
+              allOf:
+              - $ref: '#/components/schemas/r2_lifecycle-age-condition'
+        conditions:
+          description: Conditions that apply to all transitions of this rule.
+          type: object
+          properties:
+            prefix:
+              description: Transitions will only apply to objects/uploads in the bucket that start with the given prefix, an empty prefix can be provided to scope rule to all objects/uploads.
+              type: string
+              x-auditable: true
+          required:
+          - prefix
+        deleteObjectsTransition:
+          description: Transition to delete objects.
+          type: object
+          properties:
+            condition:
+              oneOf:
+              - $ref: '#/components/schemas/r2_lifecycle-age-condition'
+              - $ref: '#/components/schemas/r2_lifecycle-date-condition'
+        enabled:
+          description: Whether or not this rule is in effect.
+          type: boolean
+          x-auditable: true
+        id:
+          description: Unique identifier for this rule.
+          type: string
+          example: Expire all objects older than 24 hours
+          x-auditable: true
+        storageClassTransitions:
+          description: Transitions to change the storage class of objects.
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/r2_lifecycle-storage-transition'
+      required:
+      - id
+      - conditions
+      - enabled
+    r2_v4_response_failure:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/r2_errors'
+        messages:
+          $ref: '#/components/schemas/r2_messages'
+        result:
+          type:
+          - object
+          - 'null'
+          enum:
+          - null
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: false
+          enum:
+          - false
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    r2_bucket_name:
+      description: Name of the bucket.
+      type: string
+      example: example-bucket
+      maxLength: 64
+      minLength: 3
+      pattern: ^[a-z0-9][a-z0-9-]*[a-z0-9]
+      x-auditable: true
+    r2_list_custom_domains_response:
+      type: object
+      properties:
+        domains:
+          type: array
+          items:
+            properties:
+              ciphers:
+                description: An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.
+                type: array
+                items:
+                  type: string
+                x-auditable: true
+              domain:
+                description: Domain name of the custom domain to be added.
+                type: string
+                x-auditable: true
+              enabled:
+                description: Whether this bucket is publicly accessible at the specified custom domain.
+                type: boolean
+                x-auditable: true
+              minTLS:
+                description: Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.
+                type: string
+                enum:
+                - '1.0'
+                - '1.1'
+                - '1.2'
+                - '1.3'
+                x-auditable: true
+              status:
+                type: object
+                properties:
+                  ownership:
+                    description: Ownership status of the domain.
+                    type: string
+                    enum:
+                    - pending
+                    - active
+                    - deactivated
+                    - blocked
+                    - error
+                    - unknown
+                    x-auditable: true
+                  ssl:
+                    description: SSL certificate status.
+                    type: string
+                    enum:
+                    - initializing
+                    - pending
+                    - active
+                    - deactivated
+                    - error
+                    - unknown
+                    x-auditable: true
+                required:
+                - ssl
+                - ownership
+              zoneId:
+                description: Zone ID of the custom domain resides in.
+                type: string
+                x-auditable: true
+              zoneName:
+                description: Zone that the custom domain resides in.
+                type: string
+                x-auditable: true
+            required:
+            - domain
+            - status
+            - enabled
+            type: object
+      example:
+        domains:
+        - domain: prefix.example-domain.one.com
+          enabled: false
+          status:
+            ownership: deactivated
+            ssl: pending
+          zoneId: 36ca64a6d92827b8a6b90be344bb1bfd
+          zoneName: example-domain.one.com
+        - domain: prefix.example-domain.two.com
+          enabled: true
+          status:
+            ownership: active
+            ssl: active
+          zoneId: d9d28585d5f8f5b0f857b055bf574f19
+      required:
+      - domains
+    r2_temp_access_creds_response:
+      type: object
+      properties:
+        accessKeyId:
+          description: ID for new access key.
+          type: string
+        secretAccessKey:
+          description: Secret access key.
+          type: string
+          x-sensitive: true
+        sessionToken:
+          description: Security token.
+          type: string
+          x-sensitive: true
+      example:
+        accessKeyId: example-access-key-id
+        secretAccessKey: example-secret-key
+        sessionToken: example-session-token
+    r2_bucket_location:
+      description: Location of the bucket.
+      type: string
+      enum:
+      - apac
+      - eeur
+      - enam
+      - weur
+      - wnam
+      - oc
+      x-auditable: true
+      x-stainless-terraform-configurability: computed_optional
+    r2_bucket-config:
+      type: object
+      properties:
+        bucketName:
+          description: Name of the bucket.
+          type: string
+          x-auditable: true
+        queues:
+          description: List of queues associated with the bucket.
+          type: array
+          items:
+            $ref: '#/components/schemas/r2_queues-config'
+    r2_r2_storage_class_migration_job:
+      description: Descriptor of a bucket-wide storage-class migration job.
+      type: object
+      properties:
+        endTime:
+          description: 'When the job finished. Absent while the job is still `ENQUEUED` or `RUNNING`.
+
+            '
+          type: string
+          format: date-time
+        id:
+          description: Unique identifier used to poll the job.
+          type: string
+        jobType:
+          description: The job kind.
+          type: string
+          enum:
+          - storageClassMigration
+        startTime:
+          description: When the job was created.
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/r2_r2_bucket_job_status'
+        storageClassMigration:
+          type: object
+          properties:
+            destinationStorageClass:
+              description: 'The storage class objects are migrated to. The source and destination storage
+
+                classes always differ.
+
+                '
+              type: string
+              enum:
+              - Standard
+              - InfrequentAccess
+            failedBytes:
+              description: Payload bytes belonging to failed object versions.
+              type: integer
+              minimum: 0
+            failedObjects:
+              description: Number of object versions that failed migration.
+              type: integer
+              minimum: 0
+            migratedBytes:
+              description: Object payload bytes migrated successfully. Present for Metadata Worker jobs.
+              type: integer
+              minimum: 0
+            migratedMetadataBytes:
+              description: Object metadata bytes migrated successfully. Present for Metadata Worker jobs.
+              type: integer
+              minimum: 0
+            migratedObjects:
+              description: Number of object versions migrated successfully.
+              type: integer
+              minimum: 0
+            skippedBytes:
+              description: Payload bytes belonging to skipped object versions.
+              type: integer
+              minimum: 0
+            skippedObjects:
+              description: Number of object versions skipped.
+              type: integer
+              minimum: 0
+            sourceStorageClass:
+              description: The storage class objects are migrated from.
+              type: string
+              enum:
+              - Standard
+              - InfrequentAccess
+          required:
+          - sourceStorageClass
+          - destinationStorageClass
+          - migratedObjects
+      required:
+      - id
+      - jobType
+      - status
+      - startTime
+      - storageClassMigration
+    r2_account_identifier:
+      description: Cloudflare account ID that owns the R2 resource.
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+    r2_lifecycle-date-condition:
+      description: Condition for lifecycle transitions to apply on a specific date.
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+          x-auditable: true
+        type:
+          type: string
+          enum:
+          - Date
+          x-auditable: true
+      required:
+      - type
+      - date
+    r2_enable_sippy_s3:
+      properties:
+        destination:
+          description: R2 bucket to copy objects to.
+          type: object
+          properties:
+            accessKeyId:
+              description: 'ID of a Cloudflare API token.
+
+                This is the value labelled "Access Key ID" when creating an API.
+
+                token from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).
+
+
+                Sippy will use this token when writing objects to R2, so it is
+
+                best to scope this token to the bucket you''re enabling Sippy for.
+
+                '
+              type: string
+            provider:
+              type: string
+              enum:
+              - r2
+              x-auditable: true
+            secretAccessKey:
+              description: 'Value of a Cloudflare API token.
+
+                This is the value labelled "Secret Access Key" when creating an API.
+
+                token from the [R2 dashboard](https://dash.cloudflare.com/?to=/:account/r2/api-tokens).
+
+
+                Sippy will use this token when writing objects to R2, so it is
+
+                best to scope this token to the bucket you''re enabling Sippy for.
+
+                '
+              type: string
+              x-sensitive: true
+        source:
+          description: General S3-compatible provider to copy objects from.
+          type: object
+          properties:
+            accessKeyId:
+              description: Access Key ID of an IAM credential (ideally scoped to a single S3 bucket).
+              type: string
+            bucketUrl:
+              description: URL to the S3-compatible API of the bucket.
+              type: string
+              x-auditable: true
+            provider:
+              type: string
+              enum:
+              - s3
+              x-auditable: true
+            secretAccessKey:
+              description: Secret Access Key of an IAM credential (ideally scoped to a single S3 bucket).
+              type: string
+              x-sensitive: true
+    r2_edit_custom_domain_request:
+      type: object
+      properties:
+        ciphers:
+          description: An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.
+          type: array
+          items:
+            type: string
+          x-auditable: true
+        enabled:
+          description: Whether to enable public bucket access at the specified custom domain.
+          type: boolean
+          x-auditable: true
+        minTLS:
+          description: Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to previous value.
+          type: string
+          enum:
+          - '1.0'
+          - '1.1'
+          - '1.2'
+          - '1.3'
+          x-auditable: true
+      example:
+        enabled: true
+        minTLS: '1.2'
+    r2_storage_class:
+      description: Storage class for newly uploaded objects, unless specified otherwise.
+      type: string
+      default: Standard
+      enum:
+      - Standard
+      - InfrequentAccess
+      x-auditable: true
+    r2_edit_custom_domain_response:
+      type: object
+      properties:
+        ciphers:
+          description: An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.
+          type: array
+          items:
+            type: string
+          x-auditable: true
+        domain:
+          description: Domain name of the affected custom domain.
+          type: string
+          x-auditable: true
+        enabled:
+          description: Whether this bucket is publicly accessible at the specified custom domain.
+          type: boolean
+          x-auditable: true
+        minTLS:
+          description: Minimum TLS Version the custom domain will accept for incoming connections. If not set, defaults to 1.0.
+          type: string
+          enum:
+          - '1.0'
+          - '1.1'
+          - '1.2'
+          - '1.3'
+          x-auditable: true
+      example:
+        domain: example-domain.com
+        enabled: true
+      required:
+      - domain
+    r2_r2_create_prefix_delete_job_request:
+      description: Request body that creates a prefix-delete job.
+      type: object
+      properties:
+        jobType:
+          type: string
+          enum:
+          - prefixDelete
+        prefix:
+          description: 'Prefix matched against object keys. A non-empty value must end in `/`.
+
+            An empty string empties the entire bucket.
+
+            '
+          type: string
+          example: path/to/
+      additionalProperties: false
+      required:
+      - jobType
+      - prefix
+      title: Prefix Delete Job
+    r2_rule:
+      type: object
+      properties:
+        actions:
+          description: Array of R2 object actions that will trigger notifications.
+          type: array
+          items:
+            $ref: '#/components/schemas/r2_r2-action'
+          example:
+          - PutObject
+          - CopyObject
+          uniqueItems: true
+        description:
+          description: A description that can be used to identify the event notification rule after creation.
+          type: string
+          example: Notifications from source bucket to queue
+          x-auditable: true
+        prefix:
+          description: Notifications will be sent only for objects with this prefix.
+          type: string
+          example: img/
+          x-auditable: true
+        suffix:
+          description: Notifications will be sent only for objects with this suffix.
+          type: string
+          example: .jpeg
+          x-auditable: true
+      required:
+      - actions
+    r2_r2_bucket_job_status:
+      description: Lifecycle status of a bucket background job.
+      type: string
+      enum:
+      - ENQUEUED
+      - RUNNING
+      - COMPLETED
+      - FAILED
+      - CANCELLED
+    r2_r2_bucket_job:
+      description: 'Descriptor of a bucket background job, discriminated by `jobType`. Returned by the
+
+        Create Bucket Job, Get Bucket Job and List Bucket Jobs endpoints. A small operation can
+
+        already be `COMPLETED` when it is returned.
+
+        '
+      discriminator:
+        mapping:
+          prefixDelete: '#/components/schemas/r2_prefix_delete_job'
+          storageClassMigration: '#/components/schemas/r2_storage_class_migration_job'
+        propertyName: jobType
+      oneOf:
+      - $ref: '#/components/schemas/r2_r2_prefix_delete_job'
+      - $ref: '#/components/schemas/r2_r2_storage_class_migration_job'
+    r2_edit_managed_domain_request:
+      type: object
+      properties:
+        enabled:
+          description: Whether to enable public bucket access at the r2.dev domain.
+          type: boolean
+          x-auditable: true
+      example:
+        enabled: true
+      required:
+      - enabled
+    r2_domain_name:
+      description: Name of the custom domain.
+      type: string
+      example: example-domain/custom-domain.com
+      x-auditable: true
+    r2_bucket-lock-rule-config:
+      type: object
+      properties:
+        rules:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/r2_bucket-lock-rule'
+    r2_lifecycle-storage-transition:
+      type: object
+      properties:
+        condition:
+          oneOf:
+          - $ref: '#/components/schemas/r2_lifecycle-age-condition'
+          - $ref: '#/components/schemas/r2_lifecycle-date-condition'
+        storageClass:
+          type: string
+          enum:
+          - InfrequentAccess
+          x-auditable: true
+      required:
+      - condition
+      - storageClass
+  parameters:
+    r2_cf-r2-jurisdiction:
+      description: Jurisdiction where objects in this bucket are guaranteed to be stored.
+      in: header
+      name: cf-r2-jurisdiction
+      schema:
+        type: string
+        default: default
+        enum:
+        - default
+        - eu
+        - us
+        - fedramp
+        - fedramp-high
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-forge-commands:
+  abuse-reports:
+    description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
+    groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
+      emails:
+        description: Emails sent for abuse reports
+      mitigations:
+        description: Mitigation actions taken in response to abuse reports
+  accounts:
+    description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
+    groups:
+      applications:
+        description: Applications operations
+      categories:
+        description: Categories operations
+      organizations:
+        description: Move accounts between organizations
+      profile:
+        description: View and manage the profile for a Cloudflare account
+      roles:
+        description: View the roles available for assigning to account members, each defining a set of permissions
+      subscriptions:
+        description: View and manage plan subscriptions attached to this account
+      tokens:
+        description: Create and manage scoped API tokens for programmatic access to the Cloudflare API
+  ai-gateway:
+    description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
+    groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
+      datasets:
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
+      dynamic-routing:
+        description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
+      evaluation-types:
+        description: 'Deprecated: list the evaluator types that evaluations can use'
+      evaluations:
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
+      logs:
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
+  ai-search:
+    description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
+    groups:
+      items:
+        description: Content indexed by AI Search instances
+      jobs:
+        description: Indexing job lifecycle for AI Search instances
+      namespace:
+        description: Logical groupings for organizing AI Search instances
+      tokens:
+        description: Credentials used by AI Search instances
+  ai-security:
+    description: Detect prompt injection, PII, and unsafe topics in traffic to your AI applications
+    groups:
+      custom-topics:
+        description: Organization-specific topic categories used by AI Security for Apps content detection
+  analytics:
+    description: Zone-level traffic analytics — dashboard summaries, per-colo breakdowns, and Argo latency metrics
+    groups:
+      colo:
+        description: Per-data-center (colo) traffic analytics breakdown for the zone
+      dashboard:
+        description: Aggregated zone dashboard analytics — requests, bandwidth, threats, and page views
+      latency:
+        description: Argo Smart Routing latency analytics showing time-to-first-byte improvements
+  argo:
+    description: Network optimization features that speed up and improve reliability of traffic to your origins
+    groups:
+      smart-routing:
+        description: Route traffic through the fastest network paths to your origin using real-time latency data
+      tiered-caching:
+        description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  billing:
+    description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
+    groups:
+      profiles:
+        description: Billing profile with payment method, address, and invoice preferences
+      usage:
+        description: Metered usage data for billed services — requests, bandwidth, and feature consumption
+  botnet-feed:
+    description: Botnet threat intelligence feeds — IP and ASN-level data on known command-and-control infrastructure
+    groups:
+      asn:
+        description: ASN-level botnet activity data showing networks with known C2 infrastructure
+      configs:
+        description: Botnet feed subscription configuration and notification preferences
+  builds:
+    description: Build and deploy Workers from connected repositories, then inspect build status and logs.
+    groups:
+      deploy-hooks:
+        description: Manage branch-specific HTTP hooks that start builds.
+      limits:
+        description: View build-minute availability and refresh information.
+      logs:
+        description: Retrieve build logs.
+      repos:
+        description: Manage source repository connections for Workers Builds.
+      tokens:
+        description: Manage credentials used by Workers Builds to deploy Workers.
+      triggers:
+        description: Configure how repository changes build and deploy Workers.
+      versions:
+        description: Find builds associated with Worker versions.
+      workers:
+        description: Manage repository-backed build configuration for Workers.
+  cache:
+    description: Purge cached content and configure Cache Reserve, tiered caching, and variant serving
+    groups:
+      origin-cloud-regions:
+        description: Manage Origin Cloud Regions routing and failover configurations
+      settings:
+        description: Configure Cache Reserve, tiered caching, and variant serving
+      settings.regional-tiered-cache:
+        description: Restrict tiered cache topology to data centers within a specific geographic region
+      settings.reserve:
+        description: Persistent storage tier that keeps cached assets even after eviction from edge caches
+      settings.smart-tiered-cache:
+        description: Automatically determine the best upper-tier data centers for tiered cache topology
+      settings.variants:
+        description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
+  client-side-security:
+    description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
+    groups:
+      connections:
+        description: Third-party connections made by scripts on your pages — track data exfiltration risks
+      cookies:
+        description: Cookies set by your pages with classification and same-site attribute tracking
+      policies:
+        description: Content Security Policies that control which scripts and connections are allowed on your pages
+      scripts:
+        description: JavaScript files detected on your pages with change tracking and malicious code detection
+      settings:
+        description: Fine tune Client-Side Security behaviors
+  cloud-connector:
+    description: Route traffic from Cloudflare directly to cloud provider services (AWS, Azure, GCP) without origin servers
+    groups:
+      rules:
+        description: Routing rules that map request patterns to cloud provider endpoints
+  cloudforce-one:
+    description: Detection rule management APIs
+    groups:
+      binary-storage:
+        description: Upload and retrieve malware samples and suspicious binaries for analysis
+      requests:
+        description: Additional request operations — priority listing and asset creation
+      rules:
+        description: Rule management operations
+        groups:
+          approvals:
+            description: Approval workflow operations
+          email:
+            description: Email rule operations
+          exemptions:
+            description: Exemption rule operations
+          managed:
+            description: Managed rule operations
+          stats:
+            description: Rule statistics operations
+          tree:
+            description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
+  containers:
+    description: Deploy and manage Containers applications on Cloudflare's global network
+    groups:
+      applications:
+        description: Manage Containers applications
+      applications.instances:
+        description: Inspect Containers instances belonging to applications
+      applications.rollouts:
+        description: Manage rollouts for scheduler-backed applications
+      applications.versions:
+        description: Inspect versions of scheduler-backed applications
+      registries:
+        description: Manage Containers image registries
+      registries.credentials:
+        description: Generate image registry credentials
+  content-scan:
+    description: Malicious uploads detection, scan uploaded content in HTTP requests for malware and malicious payloads
+    groups:
+      expressions:
+        description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
+  custom-pages:
+    description: Manage custom error and challenge pages and their assets for accounts and zones
+    groups:
+      account-custom-pages:
+        description: Manage account-level custom pages
+      account-custom-pages.preview-tokens:
+        description: Preview tokens for account-level custom pages
+      assets:
+        description: Manage account- and zone-level custom assets
+      zone-custom-pages:
+        description: Manage zone-level custom pages
+      zone-custom-pages.preview-tokens:
+        description: Preview tokens for zone-level custom pages
+  d1:
+    description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
+    groups:
+      time-travel:
+        description: use specific point-in-time backups of your D1 database
+        x-forge-epilogue: For more information about Time Travel, see https://developers.cloudflare.com/d1/reference/time-travel
+  diagnostics:
+    description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
+    groups:
+      endpoint-healthchecks:
+        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+      traceroutes:
+        description: Run traceroutes from Cloudflare data centers to diagnose network path issues
+  email-routing:
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
+    groups:
+      addresses:
+        description: Verified destination email addresses that can receive forwarded mail
+      dns:
+        description: Inspect or unlock the DNS records required by Email Routing
+      rules:
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
+  email-security:
+    description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
+    groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
+      investigate:
+        description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
+      phishguard:
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
+      settings:
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
+      submissions:
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
+  email-sending:
+    description: Send transactional email and manage sending subdomains and their DNS configuration
+    groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
+      subdomains:
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
+  filters:
+    description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
+  firewall:
+    description: Legacy firewall rules, zone lockdowns, access rules, user-agent blocking, and WAF packages
+    groups:
+      access-rules:
+        description: IP-based access rules that allow, block, challenge, or whitelist traffic globally or per-zone
+      lockdowns:
+        description: Zone lockdown rules that restrict access to URLs by IP address or range
+      rules:
+        description: Legacy firewall rules with filter expressions — prefer Rulesets for new configurations
+      ua-rules:
+        description: Block or challenge requests based on the User-Agent header string
+      waf:
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
+      zone-access-rules:
+        description: Zone-scoped IP access rules for blocking or allowing traffic
+  google-tag-gateway:
+    description: Google Tag Gateway operations
+    groups:
+      config:
+        description: Google Tag Gateway config operations
+  healthchecks:
+    description: Standalone health checks that monitor origin server availability from Cloudflare's edge
+    groups:
+      previews:
+        description: Test a health check configuration before deploying it to production
+  hyperdrive:
+    description: Accelerate access to existing databases by caching queries and pooling connections at the edge
+  iam:
+    description: Identity and access management — permission groups, resource groups, user groups, and SSO connectors
+    groups:
+      permission-groups:
+        description: View the permission groups that can be assigned to API tokens and policies
+      resource-groups:
+        description: Define scopes that limit which account resources a policy or token can access
+      sso:
+        description: Configure single sign-on connectors to authenticate account members through an external identity provider
+      user-groups:
+        description: Organize account members into groups for easier permission assignment
+  images:
+    description: Store, resize, and deliver optimized images globally — variants, signing keys, and direct uploads
+    groups:
+      flows:
+        description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
+      keys:
+        description: Manage signing keys for generating private image URLs
+      variants:
+        description: Manage named resize variants for transforming images on delivery
+  intel:
+    description: Threat intelligence lookups — IP reputation, domain info, ASN details, WHOIS, and indicator feeds
+    groups:
+      asn:
+        description: ASN intelligence — ownership, geolocation, and subnet details for autonomous systems
+      attack-surface-report:
+        description: Attack surface intelligence — exposed assets, vulnerabilities, and infrastructure mapping
+      dns:
+        description: Passive DNS data showing historical DNS resolution records for domains
+      domain-history:
+        description: Historical domain registration and categorization changes over time
+      domains:
+        description: Domain intelligence — risk scores, categories, and associated infrastructure
+      indicator-feeds:
+        description: Threat indicator feeds — subscribe to and manage curated lists of malicious IPs, domains, and URLs
+      ip-lists:
+        description: Curated IP lists used for threat detection and policy enforcement
+      ips:
+        description: IP address intelligence — geolocation, risk assessment, and hosting provider details
+      miscategorizations:
+        description: Report and track domain miscategorization corrections
+      whois:
+        description: WHOIS registration data for domains including registrant, registrar, and nameservers
+  k2:
+    description: Durable, ordered event streams that you produce records to and consume from with subscriptions
+    groups:
+      streams:
+        description: K2 streams, their retention, and the HTTP and Workers binding inputs used to produce records
+      streams.subscriptions:
+        description: Subscriptions that consume a K2 stream, with committed-position lag
+  leaked-credential-checks:
+    description: Detect compromised credentials in login requests by checking against known breach databases
+    groups:
+      detections:
+        description: Custom detection locations that tell the WAF where to find usernames and passwords in requests
+  load-balancers:
+    description: Distribute traffic across origin pools with health monitoring, geo-steering, and failover
+    groups:
+      monitor-groups:
+        description: Group monitors together for shared configuration and bulk management
+      monitor-groups.references:
+        description: List references to monitor groups used by load balancer pools
+      monitors:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.previews:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.references:
+        description: Health check configurations that probe origin servers and determine pool availability
+      pools:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.health:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.references:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      previews:
+        description: Preview the result of a health check monitor configuration before applying it
+      regions:
+        description: Geographic regions used for regional pool steering and traffic policies
+      searches:
+        description: Search across all load balancer resources (pools, monitors, load balancers) by name or reference
+  logs:
+    description: Log control, retention, and raw log access — CMB config, ray ID lookups, and received fields
+    groups:
+      control:
+        description: Log control operations
+      received:
+        description: Received log operations
+  magic-network-monitoring:
+    description: Flow-based network traffic monitoring with configurable alerting rules and VPC flow ingestion
+    groups:
+      configs:
+        description: Account-level monitoring configuration — sampling rates, thresholds, and notification settings
+      rules:
+        description: Monitoring rules that define traffic thresholds and trigger alerts or prefix advertisements
+      vpc-flows:
+        description: Ingest VPC flow logs from cloud providers for network visibility and anomaly detection
+  magic-transit:
+    description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
+    groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
+      apps:
+        description: Application-aware traffic policies for Magic WAN that steer traffic by app type
+      bgp-filter-profiles:
+        description: BGP filter profiles for controlling which routes are allowed or denied on Magic Transit tunnels
+      bgp-settings:
+        description: BGP settings for controlling default ASN and route redistribution on Magic Transit tunnels
+      cf-interconnects:
+        description: Cloudflare Network Interconnect (CNI) links for direct physical or virtual peering
+      gre-tunnels:
+        description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
+      ipsec-tunnels:
+        description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
+      routes:
+        description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
+      sites:
+        description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
+  mcp:
+    description: Manage MCP portals and upstream MCP servers for Cloudflare Access AI controls
+    groups:
+      portals:
+        description: Manage MCP portals, attached servers, and Code Mode settings
+      servers:
+        description: Manage upstream MCP servers, credentials, capabilities, and sync state
+  network-interconnects:
+    description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
+    groups:
+      cnis:
+        description: Cloud Network Interconnect (CNI) connections — private links from cloud providers to Cloudflare
+      interconnects:
+        description: Physical cross-connect and partner interconnect sessions with LOA and status tracking
+      settings:
+        description: Account-level interconnect settings and default configurations
+      slots:
+        description: Available interconnect facility slots showing port capacity at Cloudflare data centers
+  organizations:
+    description: Multi-user organizations that group accounts, members, and shared settings under a single entity
+    groups:
+      account-organizations:
+        description: List organizations associated with a specific account
+      accounts:
+        description: Accounts operations
+      members:
+        description: Members operations
+      members-batch-create:
+        description: Members Batch Create operations
+      organization-profile:
+        description: View and update the public profile information for an organization
+      shares:
+        description: Shares operations
+  origin-post-quantum-encryption:
+    description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
+  pages:
+    description: Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains
+    groups:
+      projects:
+        description: Pages projects, deployments, build logs, and custom domain bindings
+  pipelines:
+    description: Ingest, transform, and route event streams into R2, analytics, or other destinations in real time
+    groups:
+      sinks:
+        description: Destinations where pipeline data is written — R2 buckets, HTTP endpoints, or other storage
+      streams:
+        description: Inbound data streams that feed events into a pipeline for processing
+  precursor:
+    description: Precursor settings for a zone
+  queues:
+    description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
+    groups:
+      consumers:
+        description: Workers that automatically receive and process messages from a queue
+      messages:
+        description: Push messages to a queue and pull or acknowledge them from consumers
+      purge:
+        description: Remove all pending messages from a queue
+      subscriptions:
+        description: Manage queue subscriptions for event-driven message routing
+  r2:
+    description: S3-compatible object storage with zero egress fees — buckets, lifecycle rules, event notifications, and data migration
+    groups:
+      buckets:
+        description: Create and configure R2 buckets including CORS, lifecycle, custom domains, event notifications, and object locks
+      buckets.jobs:
+        description: Create and inspect background jobs for an R2 bucket
+      buckets.local-uploads:
+        description: R2 bucket local upload configuration
+      super-slurper:
+        description: Migrate data from external S3-compatible storage into R2 buckets with resumable transfer jobs
+      temporary-credentials:
+        description: Generate short-lived S3-compatible credentials scoped to specific buckets and operations
+  r2-data-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  radar:
+    description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
+    groups:
+      agent-readiness:
+        description: Agent readiness summary statistics across the Cloudflare network
+      ai:
+        description: AI inference trends and model usage statistics across the Cloudflare network
+      annotations:
+        description: Radar annotations marking significant Internet events (outages, cable cuts, etc.)
+      as112:
+        description: AS112 DNS sinkhole statistics — reverse DNS query volumes for private address space
+      attacks:
+        description: DDoS and application-layer attack trends, vectors, and target analysis
+      bgp:
+        description: BGP routing data — prefix announcements, AS-level stats, route leaks, and hijack events
+      bots:
+        description: Internet-wide bot traffic trends, categories, and distribution statistics
+      ct:
+        description: Certificate Transparency log monitoring and newly-issued certificate discovery
+      datasets:
+        description: Downloadable Radar datasets for offline analysis and research
+      dns:
+        description: Global DNS query trends — top domains, resolver stats, and DNSSEC adoption
+      email:
+        description: Email security trends — DMARC/SPF/DKIM adoption, spam, and phishing statistics
+      entities:
+        description: Look up ASNs, IPs, domains, and locations with metadata and traffic summaries
+      geolocations:
+        description: Geographic location metadata used for regional traffic analysis
+      http:
+        description: HTTP protocol trends — TLS versions, HTTP versions, browser share, and OS distribution
+      leaked-credentials:
+        description: Leaked credential detection trends and exposure statistics
+      netflows:
+        description: Network-layer traffic flow data and volumetric trend analysis
+      origins:
+        description: Cloud and hosting origin providers (e.g. Amazon, by region) and their traffic metrics
+      post-quantum:
+        description: Post-quantum encryption adoption and deployment trends across the Internet
+      quality:
+        description: Internet connection quality metrics — speed, latency, and jitter by geography and ASN
+      ranking:
+        description: Top domain rankings based on DNS query popularity across the Cloudflare network
+      robots-txt:
+        description: Robots.txt adoption and crawler directive trends across the web
+      search:
+        description: Search Radar data across IPs, ASNs, domains, and locations
+      tcp-resets-timeouts:
+        description: TCP connection reset and timeout statistics indicating network health issues
+      tlds:
+        description: Top-level domain (TLD) metadata and performance trends
+      traffic-anomalies:
+        description: Detected traffic anomalies and unusual patterns in Internet traffic flows
+      verified-bots:
+        description: Catalog of known good bots (Googlebot, Bingbot, etc.) and their traffic patterns
+  rate-limits:
+    description: Legacy per-zone rate limiting rules — prefer Advanced Rate Limiting in Rulesets for new configurations
+  realtime:
+    description: Real-time audio, video, and data services on Cloudflare's global network
+    groups:
+      kit:
+        description: SDK-backed meetings, participants, recordings, livestreams, and webhooks
+      kit.analytics:
+        description: Usage and livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams:
+        description: Livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams.daily:
+        description: Daily livestream analytics for RealtimeKit applications
+      kit.analytics.usage:
+        description: Usage analytics for RealtimeKit applications
+      kit.apps:
+        description: RealtimeKit applications that group meetings, sessions, and configuration
+      kit.livestreams:
+        description: Independent and meeting-based livestreams and their sessions
+      kit.livestreams.sessions:
+        description: Sessions for RealtimeKit livestreams
+      kit.meetings:
+        description: Meetings, participants, access tokens, and meeting livestreams
+      kit.meetings.active:
+        description: Live meeting state and participant controls
+      kit.meetings.active.polls:
+        description: Polls for active meeting sessions
+      kit.meetings.livestream:
+        description: Livestream operations associated with RealtimeKit meetings
+      kit.meetings.participants:
+        description: Participants in RealtimeKit meetings
+      kit.meetings.participants.tokens:
+        description: Access tokens for RealtimeKit meeting participants
+      kit.presets:
+        description: Reusable meeting configuration for media, permissions, and interface behavior
+      kit.recordings:
+        description: Meeting and participant-track recordings and recording controls
+      kit.recordings.active:
+        description: Active recordings for RealtimeKit meetings
+      kit.recordings.tracks:
+        description: Participant-track recordings for RealtimeKit meetings
+      kit.sessions:
+        description: Historical session data, participants, chat, transcripts, and summaries
+      kit.sessions.chat:
+        description: Chat messages from historical RealtimeKit sessions
+      kit.sessions.livestreams:
+        description: Livestreams associated with historical RealtimeKit sessions
+      kit.sessions.participants:
+        description: Participants in historical RealtimeKit sessions
+      kit.sessions.peers:
+        description: Peer details from historical RealtimeKit sessions
+      kit.sessions.summaries:
+        description: Summaries of historical RealtimeKit sessions
+      kit.sessions.transcripts:
+        description: Transcripts from historical RealtimeKit sessions
+      kit.webhooks:
+        description: Webhook endpoints and supported events for RealtimeKit notifications
+      kit.webhooks.events:
+        description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
+  request-tracers:
+    description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
+    groups:
+      traces:
+        description: Simulate request processing to debug rule matches, transforms, and routing decisions
+  resource-sharing:
+    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    groups:
+      recipients:
+        description: Update share recipients
+      resources:
+        description: Individual resources (zones, configs) that have been shared with recipients
+  rules:
+    description: Resources used by Cloudflare rules and rulesets
+    groups:
+      lists:
+        description: Custom account-level lists of IPs, hostnames, ASNs, or redirects used in rule expressions
+  rum:
+    description: Real User Measurement (Web Analytics) — track page loads, Core Web Vitals, and visitor metrics
+    groups:
+      rules:
+        description: Rules that control which pages and paths are tracked by Web Analytics
+      site-info:
+        description: Web Analytics sites — register domains and get the JavaScript beacon snippet
+  scim:
+    description: SCIM 2.0 provisioning — manage users, groups, and identity provider sync for your account
+    groups:
+      groups:
+        description: Groups operations
+      resource-types:
+        description: Resource Types operations
+      schemas:
+        description: Schemas operations
+      service-provider-config:
+        description: Service Provider Config operations
+      users:
+        description: Users operations
+  secrets-store:
+    description: Centralized secret management — store API keys, tokens, and credentials for use across Workers and other products
+    groups:
+      quota:
+        description: Account quota limits for secrets stores, secrets count, and storage capacity
+      secrets:
+        description: Encrypted key-value secrets within a store. Pass --store-id to scope.
+      stores:
+        description: Secret stores that hold encrypted key-value secrets accessible by Workers and services
+  security-center:
+    description: Security posture dashboard — view and manage security insights, misconfigurations, and vulnerabilities
+    groups:
+      insights:
+        description: Security findings and recommendations across your account — DNS, SSL, WAF misconfigurations, etc.
+      zone-insights:
+        description: Zone-scoped security insights — counts by class, severity, type, and dismissal
+  security-txt:
+    description: Manage the /.well-known/security.txt file that tells security researchers how to report vulnerabilities
+  smart-shield:
+    description: Smart Shield settings, health checks, and cache reserve management
+    groups:
+      cache-reserve-clear:
+        description: Cache Reserve Clear operations
+      health-checks:
+        description: Health checks operations
+  spectrum:
+    description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
+    groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
+      apps:
+        description: Spectrum application configurations that map protocols and ports to origin servers
+  speed:
+    description: Observatory speed tests — run Lighthouse audits, track performance trends, and schedule recurring tests
+    groups:
+      availabilities:
+        description: Check which speed test regions and configurations are available for your zone
+      pages:
+        description: Tested pages with their performance history, trends, and individual test results
+      schedule:
+        description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
+  stream:
+    description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
+    groups:
+      audio-tracks:
+        description: Add, edit, or remove additional audio tracks on a video
+      captions:
+        description: Upload, generate, or retrieve captions and subtitles for videos in multiple languages
+      clip:
+        description: Create a new video clip from an existing video by specifying start and end times
+      copy:
+        description: Import a video from a URL into Stream for processing and delivery
+      direct-upload:
+        description: Generate a tokenized URL that lets end-users upload video directly to Stream
+      downloads:
+        description: Create downloadable MP4 renditions of a video for offline viewing
+      embed:
+        description: Retrieve the HTML embed code snippet for a video
+      keys:
+        description: Signing keys used to generate short-lived signed URLs for private video playback
+      live-inputs:
+        description: Enable and disable live input streams
+      token:
+        description: Generate short-lived signed URL tokens for secure private video playback
+      typed-downloads:
+        description: Type-specific stream download creation and deletion
+      videos:
+        description: Aggregate video storage usage statistics for the account
+      watermarks:
+        description: Watermark profiles that overlay an image on every video in the account
+      webhooks:
+        description: Webhook notifications for video lifecycle events (ready, error, etc.)
+  tenants:
+    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    groups:
+      account-types:
+        description: Account Types operations
+      accounts:
+        description: Accounts operations
+      entitlements:
+        description: Entitlements operations
+      memberships:
+        description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
+  url-scanner:
+    description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
+    groups:
+      response:
+        description: Response operations
+      responses:
+        description: Raw HTTP response data captured during URL scans
+      scan:
+        description: Scan operations
+      scans:
+        description: URL scan requests and results — submit URLs for analysis and retrieve threat verdicts
+  user:
+    description: Your Cloudflare user profile, invitations, organizations, billing, and personal API tokens
+    groups:
+      billing:
+        description: View billing history and payment profile for your user (deprecated — prefer account-level billing)
+      firewall:
+        description: Firewall operations
+      load-balancers.monitors:
+        description: Load Balancers operations
+      load-balancers.monitors.preview:
+        description: Load Balancers operations
+      load-balancers.monitors.references:
+        description: Load Balancers operations
+      load-balancers.pools:
+        description: Load Balancers operations
+      load-balancers.pools.edit.pools:
+        description: Load Balancers operations
+      load-balancers.pools.health:
+        description: Load Balancers operations
+      load-balancers.pools.preview:
+        description: Load Balancers operations
+      load-balancers.pools.references:
+        description: Load Balancers operations
+      load-balancers.preview:
+        description: Load Balancers operations
+      load-balancing-analytics.events:
+        description: Load Balancing Analytics operations
+      subscriptions:
+        description: View and manage zone-level plan subscriptions owned by your user
+      tenants:
+        description: Tenants operations
+      tokens:
+        description: Create and manage personal API tokens scoped to your user for programmatic API access
+  user.analytics:
+    description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
+  waiting-rooms:
+    description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
+    groups:
+      account-waiting-rooms:
+        description: Account-scoped waiting room listing
+      events:
+        description: Scheduled events that temporarily override waiting room settings for sales, launches, etc.
+      page:
+        description: Custom HTML waiting page templates and preview rendering
+      rules:
+        description: Rules that bypass or modify waiting room behavior for specific request patterns
+      settings:
+        description: Zone-level waiting room defaults and cookie configuration
+      statuses:
+        description: Real-time queue status showing active users, queued users, and estimated wait times
+  workflows:
+    description: Durable, multi-step workflows that run on Workers with automatic retries and state persistence
+    groups:
+      instances:
+        description: Workflow instance operations
+      versions:
+        description: Workflow version operations
+  zaraz:
+    description: Server-side tag manager — load third-party tools (analytics, pixels, etc.) from Cloudflare's edge without client-side JS
+    groups:
+      config:
+        description: Full Zaraz configuration including tools, triggers, and variables for the zone
+      default:
+        description: Default Zaraz configuration template used as a starting point for new zones
+      export:
+        description: Export the current Zaraz configuration as a portable JSON document
+      history:
+        description: Configuration version history — browse and restore previous Zaraz configurations
+      publish:
+        description: Publish pending Zaraz configuration changes to make them live on the zone
+      workflow:
+        description: Workflow state for Zaraz configuration changes (draft vs. published)
+  zero-trust:
+    description: Cloudflare's SASE platform — secure access, device posture, DLP, tunnels, gateway policies, and network segmentation
+    groups:
+      dex:
+        description: Digital Experience Monitoring — synthetic tests, fleet-wide device metrics, and network path diagnostics
+      dlp.custom-prompt-topics:
+        description: Data Loss Prevention - manage custom prompt topics for AI-based content detection
+      dlp.data-classes:
+        description: Data Loss Prevention - manage data classes used to classify sensitive information
+      dlp.data-tag-categories:
+        description: Data Loss Prevention - manage categories that organize data tags
+      dlp.data-tag-category-templates:
+        description: Data Loss Prevention - browse templates for creating data tag categories
+      dlp.data-tags:
+        description: Data Loss Prevention - manage tags used to classify and organize sensitive data
+      dlp.datasets:
+        description: Data Loss Prevention - manage datasets, versions, and uploads
+      dlp.document-fingerprints:
+        description: Data Loss Prevention - manage document fingerprints for detecting matching documents
+      dlp.email.account-mapping:
+        description: Data Loss Prevention - configure account mappings for outbound email scanning
+      dlp.email.rules:
+        description: Data Loss Prevention - manage outbound email scanning rules and their priorities
+      dlp.entries:
+        description: Data Loss Prevention - list and manage detection entries
+      dlp.limits:
+        description: Data Loss Prevention - view account limits and resource quotas
+      dlp.patterns:
+        description: Data Loss Prevention - validate regular expressions used for content detection
+      dlp.profiles:
+        description: Data Loss Prevention - list and retrieve profiles
+      dlp.profiles.custom:
+        description: Data Loss Prevention - manage custom profiles
+      dlp.profiles.predefined:
+        description: Data Loss Prevention - manage predefined profiles
+      dlp.sensitivity-group-templates:
+        description: Data Loss Prevention - browse templates for creating sensitivity groups
+      dlp.sensitivity-groups:
+        description: Data Loss Prevention - manage sensitivity groups and their level ordering
+      dlp.sensitivity-levels:
+        description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
+      dlp.settings:
+        description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.integrations:
+        description: User Risk Scoring - manage integrations that provide risk score signals
+      risk-scoring.integrations.references:
+        description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
+  zones:
+    description: Zones are domains on Cloudflare — list, create, and configure domain settings
+    groups:
+      aegis:
+        description: Aegis operations
+      fonts:
+        description: Fonts operations
+      origin-h2-max-streams:
+        description: Origin H2 Max Streams operations
+      origin-max-http-version:
+        description: Origin Max Http Version operations
+      origin-tls-compliance-modes:
+        description: Manage zone Origin TLS Compliance Modes setting
+      rum:
+        description: Rum operations
+      speed-brain:
+        description: Speed Brain operations

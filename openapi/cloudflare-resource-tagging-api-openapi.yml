@@ -1,0 +1,2889 @@
+openapi: 3.2.0
+info:
+  description: Welcome to Cloudflare's API documentation site.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  title: Cloudflare Resource Tagging API
+  version: 4.0.0
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Resource Tagging
+paths:
+  /accounts/{account_id}/tags:
+    delete:
+      operationId: tags-delete
+      summary: Delete tags from an account-level resource
+      description: Removes all tags from a specific account-level resource.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/resource-tagging_account_id'
+      - $ref: '#/components/parameters/resource-tagging_if_match'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resource-tagging_delete_tags_request_account_level'
+      responses:
+        '204':
+          description: Tags successfully deleted (no content).
+        '412':
+          description: Precondition failed. The resource has been modified since the provided ETag was obtained.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+        4XX:
+          description: Delete tags response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+        5XX:
+          description: Delete tags response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Resource Tagging
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: beta
+      x-fern-sdk-group-name: account-tags
+      x-fern-sdk-method-name: delete
+      x-stability: beta
+    get:
+      operationId: tags-get
+      summary: Get tags for an account-level resource
+      description: Retrieves tags for a specific account-level resource.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/resource-tagging_account_id'
+      - name: resource_id
+        in: query
+        description: The ID of the resource to retrieve tags for.
+        required: true
+        schema:
+          $ref: '#/components/schemas/resource-tagging_resource_id'
+      - name: resource_type
+        in: query
+        description: The type of the resource.
+        required: true
+        schema:
+          $ref: '#/components/schemas/resource-tagging_account_resource_type'
+      - name: worker_id
+        in: query
+        description: Worker identifier. Required for worker_version resources.
+        schema:
+          $ref: '#/components/schemas/resource-tagging_worker_id'
+      responses:
+        '200':
+          description: Get tags for single resource response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_tagged_resource_response_single'
+        4XX:
+          description: Get tags for single resource response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+        5XX:
+          description: Get tags for single resource response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Resource Tagging
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: beta
+      x-fern-sdk-group-name: account-tags
+      x-fern-sdk-method-name: get
+      x-stability: beta
+    put:
+      operationId: tags-set
+      summary: Set tags for an account-level resource
+      description: Creates or updates tags for a specific account-level resource. Replaces all existing tags for the resource.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/resource-tagging_account_id'
+      - $ref: '#/components/parameters/resource-tagging_if_match'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resource-tagging_set_tags_request_account_level'
+      responses:
+        '200':
+          description: Set tags response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_tagged_resource_response_single'
+        '412':
+          description: Precondition failed. The resource has been modified since the provided ETag was obtained.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+        4XX:
+          description: Set tags response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+        5XX:
+          description: Set tags response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Resource Tagging
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: beta
+      x-fern-sdk-group-name: account-tags
+      x-fern-sdk-method-name: update
+      x-stability: beta
+  /accounts/{account_id}/tags/keys:
+    get:
+      operationId: tags-list-keys
+      summary: List tag keys
+      description: Lists all distinct tag keys used across resources in an account.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/resource-tagging_account_id'
+      - $ref: '#/components/parameters/resource-tagging_cursor'
+      responses:
+        '200':
+          description: List tag keys response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_tag_keys_response_collection'
+        4XX:
+          description: List tag keys response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+        5XX:
+          description: List tag keys response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Resource Tagging
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: beta
+      x-fern-sdk-group-name: keys
+      x-fern-sdk-method-name: list
+      x-stability: beta
+  /accounts/{account_id}/tags/resources:
+    get:
+      operationId: tags-list
+      summary: List tagged resources
+      description: Lists all tagged resources for an account.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/resource-tagging_account_id'
+      - name: type
+        in: query
+        description: 'Filter by resource type. Can be repeated to filter by multiple types (OR logic). Example: ?type=zone&type=worker'
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/resource-tagging_resource_type'
+        explode: true
+        style: form
+      - name: name
+        in: query
+        description: 'Filter by resource name. Performs a case-insensitive substring match. Example: ?name=my-zone'
+        schema:
+          type: string
+          maxLength: 256
+      - name: id
+        in: query
+        description: 'Filter by resource ID. Can be repeated up to 50 times to filter by multiple IDs. Example: ?id=abc&id=def'
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/resource-tagging_resource_id'
+          maxItems: 50
+        explode: true
+        style: form
+      - name: case_insensitive
+        in: query
+        description: 'Match `tag` keys and values case-insensitively. Stored casing is unchanged. Example: ?tag=environment=production&case_insensitive=true'
+        schema:
+          type: boolean
+          default: false
+      - $ref: '#/components/parameters/resource-tagging_tag'
+      - $ref: '#/components/parameters/resource-tagging_cursor'
+      responses:
+        '200':
+          description: List tagged resources response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_tagged_resource_response_collection'
+        4XX:
+          description: List tagged resources response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+        5XX:
+          description: List tagged resources response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Resource Tagging
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: beta
+      x-fern-sdk-group-name: tags.resources
+      x-fern-sdk-method-name: list
+      x-stability: beta
+  /accounts/{account_id}/tags/summary:
+    get:
+      operationId: tags-list-key-summary
+      summary: List tag key summary
+      description: Lists all distinct tag keys and their distinct values across resources in an account.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/resource-tagging_account_id'
+      - $ref: '#/components/parameters/resource-tagging_cursor'
+      responses:
+        '200':
+          description: List tag key summary response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_tag_key_summary_response_collection'
+        4XX:
+          description: List tag key summary response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+        5XX:
+          description: List tag key summary response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Resource Tagging
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: beta
+      x-fern-sdk-group-name: resource-tagging.summary
+      x-fern-sdk-method-name: get
+      x-stability: beta
+  /accounts/{account_id}/tags/values/{tag_key}:
+    get:
+      operationId: tags-list-values
+      summary: List tag values
+      description: Lists all distinct values for a given tag key, optionally filtered by resource type.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/resource-tagging_account_id'
+      - name: tag_key
+        in: path
+        description: The tag key to retrieve values for.
+        required: true
+        schema:
+          type: string
+          example: environment
+      - $ref: '#/components/parameters/resource-tagging_type'
+      - $ref: '#/components/parameters/resource-tagging_cursor'
+      responses:
+        '200':
+          description: List tag values response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_tag_values_response_collection'
+        4XX:
+          description: List tag values response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+        5XX:
+          description: List tag values response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Resource Tagging
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: beta
+      x-fern-sdk-group-name: values
+      x-fern-sdk-method-name: list
+      x-stability: beta
+  /zones/{zone_id}/tags:
+    delete:
+      operationId: tags-zone-delete
+      summary: Delete tags from a zone-level resource
+      description: Removes all tags from a specific zone-level resource.
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/resource-tagging_zone_id'
+      - $ref: '#/components/parameters/resource-tagging_if_match'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resource-tagging_delete_tags_request_zone_level'
+      responses:
+        '204':
+          description: Tags successfully deleted (no content).
+        '412':
+          description: Precondition failed. The resource has been modified since the provided ETag was obtained.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+        4XX:
+          description: Delete tags response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+        5XX:
+          description: Delete tags response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Resource Tagging
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: beta
+      x-fern-sdk-group-name: zone-tags
+      x-fern-sdk-method-name: delete
+      x-stability: beta
+    get:
+      operationId: tags-zone-get
+      summary: Get tags for a zone-level resource
+      description: Retrieves tags for a specific zone-level resource.
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/resource-tagging_zone_id'
+      - name: resource_id
+        in: query
+        description: The ID of the resource to retrieve tags for.
+        required: true
+        schema:
+          $ref: '#/components/schemas/resource-tagging_resource_id'
+      - name: resource_type
+        in: query
+        description: The type of the resource.
+        required: true
+        schema:
+          $ref: '#/components/schemas/resource-tagging_zone_resource_type'
+      - name: access_application_id
+        in: query
+        description: Access application ID identifier. Required for access_application_policy resources.
+        schema:
+          $ref: '#/components/schemas/resource-tagging_access_application_id'
+      responses:
+        '200':
+          description: Get tags for single resource response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_tagged_resource_response_single'
+        4XX:
+          description: Get tags for single resource response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+        5XX:
+          description: Get tags for single resource response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Resource Tagging
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: beta
+      x-fern-sdk-group-name: zone-tags
+      x-fern-sdk-method-name: get
+      x-stability: beta
+    put:
+      operationId: tags-zone-set
+      summary: Set tags for a zone-level resource
+      description: Creates or updates tags for a specific zone-level resource. Replaces all existing tags for the resource.
+      parameters:
+      - name: zone_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/resource-tagging_zone_id'
+      - $ref: '#/components/parameters/resource-tagging_if_match'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resource-tagging_set_tags_request_zone_level'
+      responses:
+        '200':
+          description: Set tags response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_tagged_resource_response_single'
+        '412':
+          description: Precondition failed. The resource has been modified since the provided ETag was obtained.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+        4XX:
+          description: Set tags response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+        5XX:
+          description: Set tags response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource-tagging_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Resource Tagging
+      x-cfPlanAvailability:
+        business: false
+        enterprise: true
+        free: false
+        pro: false
+      x-fern-availability: beta
+      x-fern-sdk-group-name: zone-tags
+      x-fern-sdk-method-name: update
+      x-stability: beta
+components:
+  schemas:
+    resource-tagging_tagged_resource_object_zone_ruleset:
+      description: Response for zone_ruleset resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - zone_ruleset
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_zone_level_base'
+    resource-tagging_tagged_resource_object_kv_namespace:
+      description: Response for kv_namespace resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - kv_namespace
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_cws_policy_set:
+      description: Response for cws_policy_set resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - cws_policy_set
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_resource_name:
+      description: Human-readable name of the resource.
+      type: string
+      example: my-worker-script
+    resource-tagging_tagged_resource_object_access_group:
+      description: Response for access_group resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - access_group
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_stream_video:
+      description: Response for stream_video resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - stream_video
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_account_ruleset:
+      description: Response for account_ruleset resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - account_ruleset
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_vectorize_index:
+      description: Response for vectorize_index resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - vectorize_index
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_access_application:
+      description: Response for access_application resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - access_application
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_resource_type:
+      description: Identifies the type of resource.
+      type: string
+      example: zone
+      enum:
+      - access_application
+      - access_application_policy
+      - access_group
+      - account
+      - account_ruleset
+      - ai_gateway
+      - alerting_policy
+      - alerting_webhook
+      - api_gateway_operation
+      - cloudflared_tunnel
+      - custom_certificate
+      - custom_hostname
+      - cws_deployment
+      - cws_policy
+      - cws_policy_set
+      - cws_workload
+      - d1_database
+      - device
+      - dns_record
+      - durable_object_namespace
+      - gateway_list
+      - gateway_rule
+      - healthcheck
+      - image
+      - infrastructure_target
+      - kv_namespace
+      - load_balancer
+      - load_balancer_monitor
+      - load_balancer_pool
+      - managed_client_certificate
+      - pages_project
+      - queue
+      - r2_bucket
+      - resource_share
+      - stream_live_input
+      - stream_video
+      - vectorize_index
+      - worker
+      - worker_route
+      - worker_version
+      - zone
+      - zone_ruleset
+      x-auditable: true
+    resource-tagging_tagged_resource_object_infrastructure_target:
+      description: Response for infrastructure_target resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - infrastructure_target
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_delete_tags_request_account_level_base:
+      description: Request body schema for deleting tags from account-level resources.
+      type: object
+      properties:
+        resource_id:
+          $ref: '#/components/schemas/resource-tagging_resource_id'
+        resource_type:
+          $ref: '#/components/schemas/resource-tagging_account_resource_type_base_enum'
+      required:
+      - resource_type
+      - resource_id
+    resource-tagging_tags:
+      description: Contains key-value pairs of tags. Keys may contain at most 256 characters. Values may contain at most 1024 characters and may be empty for key-only tags.
+      type: object
+      example:
+        environment: production
+        team: engineering
+      additionalProperties:
+        maxLength: 1024
+        type: string
+      x-auditable: true
+    resource-tagging_tagged_resource_object_zone:
+      description: Response for zone resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - zone
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_zone_level_base'
+    resource-tagging_zone_resource_type_base_enum:
+      description: Enum for base zone-level resource types (those with no extra required fields).
+      type: string
+      example: zone
+      enum:
+      - api_gateway_operation
+      - custom_certificate
+      - custom_hostname
+      - dns_record
+      - healthcheck
+      - load_balancer
+      - managed_client_certificate
+      - worker_route
+      - zone
+      - zone_ruleset
+      x-auditable: true
+    resource-tagging_tagged_resource_object_managed_client_certificate:
+      description: Response for managed_client_certificate resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - managed_client_certificate
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_zone_level_base'
+    resource-tagging_access_application_id:
+      description: Access application ID is required only for access_application_policy resources
+      type: string
+      format: uuid
+      example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+    resource-tagging_tagged_resource_object_d1_database:
+      description: Response for d1_database resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - d1_database
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_etag:
+      description: 'ETag identifier for optimistic concurrency control. Formatted as "v1:<hash>" where
+
+        the hash is the base64url-encoded SHA-256 (truncated to 128 bits) of the tags map
+
+        canonicalized using RFC 8785 (JSON Canonicalization Scheme). Clients should treat
+
+        ETags as opaque strings and pass them back via the If-Match header on write operations.
+
+        '
+      type: string
+      example: v1:RBNvo1WzZ4oRRq0W9-hkng
+      readOnly: true
+    resource-tagging_tagged_resource_object_alerting_webhook:
+      description: Response for alerting_webhook resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - alerting_webhook
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_zone_id:
+      description: Zone ID is required only for zone-level resources
+      type: string
+      allOf:
+      - $ref: '#/components/schemas/resource-tagging_identifier'
+      minLength: 32
+    resource-tagging_delete_tags_request_account_level_worker_version:
+      description: Request body schema for deleting tags from worker_version resources.
+      type: object
+      properties:
+        resource_id:
+          $ref: '#/components/schemas/resource-tagging_resource_id'
+        resource_type:
+          $ref: '#/components/schemas/resource-tagging_account_resource_type_worker_version_enum'
+        worker_id:
+          $ref: '#/components/schemas/resource-tagging_worker_id'
+      required:
+      - resource_type
+      - resource_id
+      - worker_id
+    resource-tagging_delete_tags_request_account_level:
+      description: Request body schema for deleting tags from account-level resources. Use /zones/{zone_id}/tags for zone-level resources.
+      discriminator:
+        mapping:
+          access_application: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          access_group: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          account: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          account_ruleset: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          ai_gateway: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          alerting_policy: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          alerting_webhook: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          cloudflared_tunnel: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          cws_deployment: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          cws_policy: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          cws_policy_set: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          cws_workload: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          d1_database: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          device: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          durable_object_namespace: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          gateway_list: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          gateway_rule: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          image: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          infrastructure_target: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          kv_namespace: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          load_balancer_monitor: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          load_balancer_pool: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          pages_project: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          queue: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          r2_bucket: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          resource_share: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          stream_live_input: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          stream_video: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          vectorize_index: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          worker: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+          worker_version: '#/components/schemas/resource-tagging_delete_tags_request_account_level_worker_version'
+        propertyName: resource_type
+      oneOf:
+      - $ref: '#/components/schemas/resource-tagging_delete_tags_request_account_level_worker_version'
+      - $ref: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+    resource-tagging_tagged_resource_object_worker_version_base:
+      description: Base schema for worker_version resources (without type discriminator)
+      type: object
+      properties:
+        etag:
+          $ref: '#/components/schemas/resource-tagging_etag'
+        id:
+          $ref: '#/components/schemas/resource-tagging_resource_id'
+        name:
+          $ref: '#/components/schemas/resource-tagging_resource_name'
+        tags:
+          $ref: '#/components/schemas/resource-tagging_tags'
+        tags_updated_at:
+          $ref: '#/components/schemas/resource-tagging_tags_updated_at'
+        worker_id:
+          $ref: '#/components/schemas/resource-tagging_worker_id'
+      required:
+      - id
+      - tags
+      - name
+      - etag
+      - worker_id
+    resource-tagging_tagged_resource_object_cws_workload:
+      description: Response for cws_workload resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - cws_workload
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object:
+      type: object
+      discriminator:
+        mapping:
+          access_application: '#/components/schemas/resource-tagging_tagged_resource_object_access_application'
+          access_application_policy: '#/components/schemas/resource-tagging_tagged_resource_object_access_application_policy'
+          access_group: '#/components/schemas/resource-tagging_tagged_resource_object_access_group'
+          account: '#/components/schemas/resource-tagging_tagged_resource_object_account'
+          account_ruleset: '#/components/schemas/resource-tagging_tagged_resource_object_account_ruleset'
+          ai_gateway: '#/components/schemas/resource-tagging_tagged_resource_object_ai_gateway'
+          alerting_policy: '#/components/schemas/resource-tagging_tagged_resource_object_alerting_policy'
+          alerting_webhook: '#/components/schemas/resource-tagging_tagged_resource_object_alerting_webhook'
+          api_gateway_operation: '#/components/schemas/resource-tagging_tagged_resource_object_api_gateway_operation'
+          cloudflared_tunnel: '#/components/schemas/resource-tagging_tagged_resource_object_cloudflared_tunnel'
+          custom_certificate: '#/components/schemas/resource-tagging_tagged_resource_object_custom_certificate'
+          custom_hostname: '#/components/schemas/resource-tagging_tagged_resource_object_custom_hostname'
+          cws_deployment: '#/components/schemas/resource-tagging_tagged_resource_object_cws_deployment'
+          cws_policy: '#/components/schemas/resource-tagging_tagged_resource_object_cws_policy'
+          cws_policy_set: '#/components/schemas/resource-tagging_tagged_resource_object_cws_policy_set'
+          cws_workload: '#/components/schemas/resource-tagging_tagged_resource_object_cws_workload'
+          d1_database: '#/components/schemas/resource-tagging_tagged_resource_object_d1_database'
+          device: '#/components/schemas/resource-tagging_tagged_resource_object_device'
+          dns_record: '#/components/schemas/resource-tagging_tagged_resource_object_dns_record'
+          durable_object_namespace: '#/components/schemas/resource-tagging_tagged_resource_object_durable_object_namespace'
+          gateway_list: '#/components/schemas/resource-tagging_tagged_resource_object_gateway_list'
+          gateway_rule: '#/components/schemas/resource-tagging_tagged_resource_object_gateway_rule'
+          healthcheck: '#/components/schemas/resource-tagging_tagged_resource_object_healthcheck'
+          image: '#/components/schemas/resource-tagging_tagged_resource_object_image'
+          infrastructure_target: '#/components/schemas/resource-tagging_tagged_resource_object_infrastructure_target'
+          kv_namespace: '#/components/schemas/resource-tagging_tagged_resource_object_kv_namespace'
+          load_balancer: '#/components/schemas/resource-tagging_tagged_resource_object_load_balancer'
+          load_balancer_monitor: '#/components/schemas/resource-tagging_tagged_resource_object_load_balancer_monitor'
+          load_balancer_pool: '#/components/schemas/resource-tagging_tagged_resource_object_load_balancer_pool'
+          managed_client_certificate: '#/components/schemas/resource-tagging_tagged_resource_object_managed_client_certificate'
+          pages_project: '#/components/schemas/resource-tagging_tagged_resource_object_pages_project'
+          queue: '#/components/schemas/resource-tagging_tagged_resource_object_queue'
+          r2_bucket: '#/components/schemas/resource-tagging_tagged_resource_object_r2_bucket'
+          resource_share: '#/components/schemas/resource-tagging_tagged_resource_object_resource_share'
+          stream_live_input: '#/components/schemas/resource-tagging_tagged_resource_object_stream_live_input'
+          stream_video: '#/components/schemas/resource-tagging_tagged_resource_object_stream_video'
+          vectorize_index: '#/components/schemas/resource-tagging_tagged_resource_object_vectorize_index'
+          worker: '#/components/schemas/resource-tagging_tagged_resource_object_worker'
+          worker_route: '#/components/schemas/resource-tagging_tagged_resource_object_worker_route'
+          worker_version: '#/components/schemas/resource-tagging_tagged_resource_object_worker_version'
+          zone: '#/components/schemas/resource-tagging_tagged_resource_object_zone'
+          zone_ruleset: '#/components/schemas/resource-tagging_tagged_resource_object_zone_ruleset'
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_access_application'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_access_application_policy'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_access_group'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_ruleset'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_ai_gateway'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_alerting_policy'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_alerting_webhook'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_api_gateway_operation'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_cloudflared_tunnel'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_custom_certificate'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_custom_hostname'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_cws_deployment'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_cws_policy'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_cws_policy_set'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_cws_workload'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_d1_database'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_device'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_dns_record'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_durable_object_namespace'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_gateway_list'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_gateway_rule'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_healthcheck'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_image'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_infrastructure_target'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_kv_namespace'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_load_balancer'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_load_balancer_monitor'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_load_balancer_pool'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_managed_client_certificate'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_pages_project'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_queue'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_r2_bucket'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_resource_share'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_stream_live_input'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_stream_video'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_vectorize_index'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_worker'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_worker_route'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_worker_version'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_zone'
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_zone_ruleset'
+    resource-tagging_tagged_resource_object_resource_share:
+      description: Response for resource_share resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - resource_share
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_alerting_policy:
+      description: Response for alerting_policy resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - alerting_policy
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tag_key_summary_response_collection:
+      allOf:
+      - $ref: '#/components/schemas/resource-tagging_api-response-common'
+      - properties:
+          result:
+            description: Contains an array of tag keys with their distinct values.
+            type: array
+            items:
+              $ref: '#/components/schemas/resource-tagging_tag_key_summary'
+            example:
+            - key: environment
+              values:
+              - production
+              - staging
+            - key: team
+              values:
+              - engineering
+              - platform
+          result_info:
+            $ref: '#/components/schemas/resource-tagging_cursor_result_info'
+        type: object
+    resource-tagging_tagged_resource_object_access_application_policy_base:
+      description: Base schema for access_application_policy resources (without type discriminator)
+      type: object
+      properties:
+        access_application_id:
+          $ref: '#/components/schemas/resource-tagging_access_application_id'
+        etag:
+          $ref: '#/components/schemas/resource-tagging_etag'
+        id:
+          $ref: '#/components/schemas/resource-tagging_resource_id'
+        name:
+          $ref: '#/components/schemas/resource-tagging_resource_name'
+        tags:
+          $ref: '#/components/schemas/resource-tagging_tags'
+        tags_updated_at:
+          $ref: '#/components/schemas/resource-tagging_tags_updated_at'
+        zone_id:
+          $ref: '#/components/schemas/resource-tagging_zone_id'
+      required:
+      - id
+      - tags
+      - name
+      - etag
+      - zone_id
+      - access_application_id
+    resource-tagging_delete_tags_request_zone_level_access_application_policy:
+      description: Request body schema for deleting tags from access_application_policy resources.
+      type: object
+      properties:
+        access_application_id:
+          $ref: '#/components/schemas/resource-tagging_access_application_id'
+        resource_id:
+          $ref: '#/components/schemas/resource-tagging_resource_id'
+        resource_type:
+          $ref: '#/components/schemas/resource-tagging_zone_resource_type_access_application_policy_enum'
+      required:
+      - resource_type
+      - resource_id
+      - access_application_id
+    resource-tagging_set_tags_request_zone_level:
+      description: Request body schema for setting tags on zone-level resources.
+      discriminator:
+        mapping:
+          access_application_policy: '#/components/schemas/resource-tagging_set_tags_request_zone_level_access_application_policy'
+          api_gateway_operation: '#/components/schemas/resource-tagging_set_tags_request_zone_level_base'
+          custom_certificate: '#/components/schemas/resource-tagging_set_tags_request_zone_level_base'
+          custom_hostname: '#/components/schemas/resource-tagging_set_tags_request_zone_level_base'
+          dns_record: '#/components/schemas/resource-tagging_set_tags_request_zone_level_base'
+          healthcheck: '#/components/schemas/resource-tagging_set_tags_request_zone_level_base'
+          load_balancer: '#/components/schemas/resource-tagging_set_tags_request_zone_level_base'
+          managed_client_certificate: '#/components/schemas/resource-tagging_set_tags_request_zone_level_base'
+          worker_route: '#/components/schemas/resource-tagging_set_tags_request_zone_level_base'
+          zone: '#/components/schemas/resource-tagging_set_tags_request_zone_level_base'
+          zone_ruleset: '#/components/schemas/resource-tagging_set_tags_request_zone_level_base'
+        propertyName: resource_type
+      oneOf:
+      - $ref: '#/components/schemas/resource-tagging_set_tags_request_zone_level_base'
+      - $ref: '#/components/schemas/resource-tagging_set_tags_request_zone_level_access_application_policy'
+    resource-tagging_set_tags_request_account_level_base:
+      description: Request body schema for setting tags on account-level resources with no extra requirements.
+      allOf:
+      - $ref: '#/components/schemas/resource-tagging_delete_tags_request_account_level_base'
+      - properties:
+          tags:
+            $ref: '#/components/schemas/resource-tagging_tags'
+        type: object
+    resource-tagging_tagged_resource_object_zone_level_base:
+      description: Base schema for zone-level resources (without type discriminator)
+      type: object
+      properties:
+        etag:
+          $ref: '#/components/schemas/resource-tagging_etag'
+        id:
+          $ref: '#/components/schemas/resource-tagging_resource_id'
+        name:
+          $ref: '#/components/schemas/resource-tagging_resource_name'
+        tags:
+          $ref: '#/components/schemas/resource-tagging_tags'
+        tags_updated_at:
+          $ref: '#/components/schemas/resource-tagging_tags_updated_at'
+        zone_id:
+          $ref: '#/components/schemas/resource-tagging_zone_id'
+      required:
+      - id
+      - tags
+      - name
+      - etag
+      - zone_id
+    resource-tagging_set_tags_request_zone_level_access_application_policy:
+      description: Request body schema for setting tags on access_application_policy resources.
+      allOf:
+      - $ref: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_access_application_policy'
+      - properties:
+          tags:
+            $ref: '#/components/schemas/resource-tagging_tags'
+        type: object
+    resource-tagging_tagged_resource_object_device:
+      description: Response for device resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - device
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_account_level_base:
+      description: Base schema for account-level resources (without type discriminator)
+      type: object
+      properties:
+        etag:
+          $ref: '#/components/schemas/resource-tagging_etag'
+        id:
+          $ref: '#/components/schemas/resource-tagging_resource_id'
+        name:
+          $ref: '#/components/schemas/resource-tagging_resource_name'
+        tags:
+          $ref: '#/components/schemas/resource-tagging_tags'
+        tags_updated_at:
+          $ref: '#/components/schemas/resource-tagging_tags_updated_at'
+      required:
+      - id
+      - tags
+      - name
+      - etag
+    resource-tagging_set_tags_request_zone_level_base:
+      description: Request body schema for setting tags on zone-level resources with no extra requirements.
+      allOf:
+      - $ref: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
+      - properties:
+          tags:
+            $ref: '#/components/schemas/resource-tagging_tags'
+        type: object
+    resource-tagging_tagged_resource_object_worker:
+      description: Response for worker resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - worker
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_messages:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          documentation_url:
+            type: string
+          message:
+            type: string
+          source:
+            type: object
+            properties:
+              pointer:
+                type: string
+        required:
+        - code
+        - message
+        type: object
+        uniqueItems: true
+      example: []
+    resource-tagging_tagged_resource_object_worker_route:
+      description: Response for worker_route resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - worker_route
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_zone_level_base'
+    resource-tagging_tagged_resource_object_cws_deployment:
+      description: Response for cws_deployment resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - cws_deployment
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_pages_project:
+      description: Response for pages_project resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - pages_project
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_load_balancer_pool:
+      description: Response for load_balancer_pool resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - load_balancer_pool
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_gateway_rule:
+      description: Response for gateway_rule resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - gateway_rule
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_access_application_policy:
+      description: Response for access_application_policy resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - access_application_policy
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_access_application_policy_base'
+    resource-tagging_set_tags_request_account_level_worker_version:
+      description: Request body schema for setting tags on worker_version resources.
+      allOf:
+      - $ref: '#/components/schemas/resource-tagging_delete_tags_request_account_level_worker_version'
+      - properties:
+          tags:
+            $ref: '#/components/schemas/resource-tagging_tags'
+        type: object
+    resource-tagging_account_resource_type_worker_version_enum:
+      description: Enum for worker_version resource type.
+      type: string
+      example: worker_version
+      enum:
+      - worker_version
+      x-auditable: true
+    resource-tagging_account_resource_type:
+      description: Identifies the type of account-level resource.
+      type: string
+      example: worker
+      enum:
+      - access_application
+      - access_group
+      - account
+      - account_ruleset
+      - ai_gateway
+      - alerting_policy
+      - alerting_webhook
+      - cloudflared_tunnel
+      - cws_deployment
+      - cws_policy
+      - cws_policy_set
+      - cws_workload
+      - d1_database
+      - device
+      - durable_object_namespace
+      - gateway_list
+      - gateway_rule
+      - image
+      - infrastructure_target
+      - kv_namespace
+      - load_balancer_monitor
+      - load_balancer_pool
+      - pages_project
+      - queue
+      - r2_bucket
+      - resource_share
+      - stream_live_input
+      - stream_video
+      - vectorize_index
+      - worker
+      - worker_version
+      x-auditable: true
+    resource-tagging_tagged_resource_object_ai_gateway:
+      description: Response for ai_gateway resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - ai_gateway
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_delete_tags_request_zone_level_base:
+      description: Request body schema for deleting tags from zone-level resources. Zone ID comes from URL path.
+      type: object
+      properties:
+        resource_id:
+          $ref: '#/components/schemas/resource-tagging_resource_id'
+        resource_type:
+          $ref: '#/components/schemas/resource-tagging_zone_resource_type_base_enum'
+      required:
+      - resource_type
+      - resource_id
+    resource-tagging_api-response-common-failure:
+      type: object
+      properties:
+        errors:
+          example:
+          - code: 7003
+            message: No route for the URI
+          allOf:
+          - $ref: '#/components/schemas/resource-tagging_messages'
+          minLength: 1
+        messages:
+          example: []
+          allOf:
+          - $ref: '#/components/schemas/resource-tagging_messages'
+        result:
+          type:
+          - object
+          - 'null'
+          enum:
+          - null
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: false
+          enum:
+          - false
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    resource-tagging_zone_resource_type_access_application_policy_enum:
+      description: Enum for access_application_policy resource type.
+      type: string
+      example: access_application_policy
+      enum:
+      - access_application_policy
+      x-auditable: true
+    resource-tagging_tagged_resource_response_collection:
+      allOf:
+      - $ref: '#/components/schemas/resource-tagging_api-response-common'
+      - properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/resource-tagging_tagged_resource_object'
+          result_info:
+            $ref: '#/components/schemas/resource-tagging_cursor_result_info'
+        type: object
+    resource-tagging_api-response-common:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/resource-tagging_messages'
+        messages:
+          $ref: '#/components/schemas/resource-tagging_messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: true
+          enum:
+          - true
+      required:
+      - success
+      - errors
+      - messages
+    resource-tagging_delete_tags_request_zone_level:
+      description: Request body schema for deleting tags from zone-level resources.
+      discriminator:
+        mapping:
+          access_application_policy: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_access_application_policy'
+          api_gateway_operation: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
+          custom_certificate: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
+          custom_hostname: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
+          dns_record: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
+          healthcheck: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
+          load_balancer: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
+          managed_client_certificate: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
+          worker_route: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
+          zone: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
+          zone_ruleset: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
+        propertyName: resource_type
+      oneOf:
+      - $ref: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_base'
+      - $ref: '#/components/schemas/resource-tagging_delete_tags_request_zone_level_access_application_policy'
+    resource-tagging_tag_keys_response_collection:
+      allOf:
+      - $ref: '#/components/schemas/resource-tagging_api-response-common'
+      - properties:
+          result:
+            description: Contains an array of distinct tag keys.
+            type: array
+            items:
+              type: string
+            example:
+            - environment
+            - team
+            - region
+          result_info:
+            $ref: '#/components/schemas/resource-tagging_cursor_result_info'
+        type: object
+    resource-tagging_tagged_resource_object_queue:
+      description: Response for queue resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - queue
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_resource_id:
+      description: Identifies the unique resource.
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      x-auditable: true
+    resource-tagging_tagged_resource_object_healthcheck:
+      description: Response for healthcheck resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - healthcheck
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_zone_level_base'
+    resource-tagging_tagged_resource_object_stream_live_input:
+      description: Response for stream_live_input resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - stream_live_input
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_image:
+      description: Response for image resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - image
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_dns_record:
+      description: Response for dns_record resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - dns_record
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_zone_level_base'
+    resource-tagging_set_tags_request_account_level:
+      description: Request body schema for setting tags on account-level resources.
+      discriminator:
+        mapping:
+          access_application: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          access_group: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          account: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          account_ruleset: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          ai_gateway: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          alerting_policy: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          alerting_webhook: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          cloudflared_tunnel: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          cws_deployment: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          cws_policy: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          cws_policy_set: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          cws_workload: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          d1_database: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          device: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          durable_object_namespace: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          gateway_list: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          gateway_rule: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          image: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          infrastructure_target: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          kv_namespace: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          load_balancer_monitor: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          load_balancer_pool: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          pages_project: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          queue: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          r2_bucket: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          resource_share: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          stream_live_input: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          stream_video: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          vectorize_index: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          worker: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+          worker_version: '#/components/schemas/resource-tagging_set_tags_request_account_level_worker_version'
+        propertyName: resource_type
+      oneOf:
+      - $ref: '#/components/schemas/resource-tagging_set_tags_request_account_level_worker_version'
+      - $ref: '#/components/schemas/resource-tagging_set_tags_request_account_level_base'
+    resource-tagging_tagged_resource_object_custom_certificate:
+      description: Response for custom_certificate resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - custom_certificate
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_zone_level_base'
+    resource-tagging_tagged_resource_object_cws_policy:
+      description: Response for cws_policy resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - cws_policy
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_load_balancer_monitor:
+      description: Response for load_balancer_monitor resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - load_balancer_monitor
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_worker_id:
+      description: Worker ID is required only for worker_version resources
+      type: string
+      example: 3f72a691-44b3-4c11-8642-c18a88ddaa5e
+    resource-tagging_zone_resource_type:
+      description: Identifies the type of zone-level resource.
+      type: string
+      example: zone
+      enum:
+      - access_application_policy
+      - api_gateway_operation
+      - custom_certificate
+      - custom_hostname
+      - dns_record
+      - healthcheck
+      - load_balancer
+      - managed_client_certificate
+      - worker_route
+      - zone
+      - zone_ruleset
+      x-auditable: true
+    resource-tagging_identifier:
+      description: Identifier.
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      x-auditable: true
+    resource-tagging_cursor_result_info:
+      type: object
+      properties:
+        count:
+          description: Indicates the number of results returned in the current page.
+          type: integer
+          example: 20
+        cursor:
+          description: Provides a cursor for the next page of results. Include this value in the next request to continue pagination.
+          type:
+          - string
+          - 'null'
+          example: eyJhY2NvdW50X2lkIjoxMjM0NTY3ODkwfQ
+    resource-tagging_tagged_resource_object_worker_version:
+      description: Response for worker_version resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - worker_version
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_worker_version_base'
+    resource-tagging_tagged_resource_object_gateway_list:
+      description: Response for gateway_list resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - gateway_list
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tag_key_summary:
+      type: object
+      properties:
+        key:
+          description: A tag key.
+          type: string
+          example: environment
+        values:
+          description: All distinct values for this tag key.
+          type: array
+          items:
+            type: string
+          example:
+          - production
+          - staging
+      required:
+      - key
+      - values
+    resource-tagging_tagged_resource_object_custom_hostname:
+      description: Response for custom_hostname resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - custom_hostname
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_zone_level_base'
+    resource-tagging_account_id:
+      allOf:
+      - $ref: '#/components/schemas/resource-tagging_identifier'
+      minLength: 32
+    resource-tagging_tagged_resource_object_load_balancer:
+      description: Response for load_balancer resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - load_balancer
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_zone_level_base'
+    resource-tagging_tag_values_response_collection:
+      allOf:
+      - $ref: '#/components/schemas/resource-tagging_api-response-common'
+      - properties:
+          result:
+            type: array
+            items:
+              type: string
+            example:
+            - production
+            - staging
+          result_info:
+            $ref: '#/components/schemas/resource-tagging_cursor_result_info'
+        type: object
+    resource-tagging_tagged_resource_object_durable_object_namespace:
+      description: Response for durable_object_namespace resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - durable_object_namespace
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_account:
+      description: Response for account resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - account
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_api_gateway_operation:
+      description: Response for api_gateway_operation resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - api_gateway_operation
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_zone_level_base'
+    resource-tagging_tags_updated_at:
+      description: 'Monotonic version of the resource''s tags: the timestamp assigned when the
+
+        tags were last written. Returned by read endpoints, by 2PC prepare (the
+
+        version that will be assigned on commit, unless a concurrent write lands
+
+        first, in which case a newer version is assigned), and by 2PC commit (the
+
+        authoritative committed version). Omitted for untagged resources and
+
+        delete commits: a deleted resource has no current version, and deletions
+
+        are ordered by event order rather than by version.
+
+        '
+      type: string
+      format: date-time
+      example: '2024-01-15T10:30:00Z'
+      readOnly: true
+    resource-tagging_tagged_resource_response_single:
+      allOf:
+      - $ref: '#/components/schemas/resource-tagging_api-response-common'
+      - properties:
+          result:
+            $ref: '#/components/schemas/resource-tagging_tagged_resource_object'
+        type: object
+    resource-tagging_tagged_resource_object_cloudflared_tunnel:
+      description: Response for cloudflared_tunnel resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - cloudflared_tunnel
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_tagged_resource_object_r2_bucket:
+      description: Response for r2_bucket resources
+      allOf:
+      - properties:
+          type:
+            type: string
+            enum:
+            - r2_bucket
+        required:
+        - type
+        type: object
+      - $ref: '#/components/schemas/resource-tagging_tagged_resource_object_account_level_base'
+    resource-tagging_account_resource_type_base_enum:
+      description: Enum for base account-level resource types (those with no extra required fields).
+      type: string
+      example: worker
+      enum:
+      - access_application
+      - access_group
+      - account
+      - account_ruleset
+      - ai_gateway
+      - alerting_policy
+      - alerting_webhook
+      - cloudflared_tunnel
+      - cws_deployment
+      - cws_policy
+      - cws_policy_set
+      - cws_workload
+      - d1_database
+      - device
+      - durable_object_namespace
+      - gateway_list
+      - gateway_rule
+      - image
+      - infrastructure_target
+      - kv_namespace
+      - load_balancer_monitor
+      - load_balancer_pool
+      - pages_project
+      - queue
+      - r2_bucket
+      - resource_share
+      - stream_live_input
+      - stream_video
+      - vectorize_index
+      - worker
+      x-auditable: true
+  parameters:
+    resource-tagging_tag:
+      description: 'Filter resources by tag criteria. This parameter can be repeated multiple times, with AND logic between parameters.
+
+
+        Supported syntax:
+
+        - **Key-only**: `tag=<key>` - Resource must have the tag key (e.g., `tag=production`)
+
+        - **Key-value**: `tag=<key>=<value>` - Resource must have the tag with specific value (e.g., `tag=env=prod`)
+
+        - **Multiple values (OR)**: `tag=<key>=<v1>,<v2>` - Resource must have tag with any of the values (e.g., `tag=env=prod,staging`)
+
+        - **Negate key-only**: `tag=!<key>` - Resource must not have the tag key (e.g., `tag=!archived`)
+
+        - **Negate key-value**: `tag=<key>!=<value>` - Resource must not have the tag with specific value (e.g., `tag=region!=us-west-1`)
+
+
+        Multiple tag parameters are combined with AND logic.
+
+        '
+      explode: true
+      in: query
+      name: tag
+      schema:
+        type: array
+        items:
+          type: string
+        example:
+        - production
+        - env=prod
+        - env=prod,staging
+        - '!archived'
+        - region!=us-west-1
+    resource-tagging_if_match:
+      description: 'ETag value for optimistic concurrency control. When provided, the server will
+
+        verify the current resource ETag matches before applying the write. Returns
+
+        412 Precondition Failed if the resource has been modified since the ETag was
+
+        obtained. Omit this header for unconditional writes.
+
+        '
+      in: header
+      name: If-Match
+      schema:
+        type: string
+        example: '"v1:RBNvo1WzZ4oRRq0W9-hkng"'
+    resource-tagging_cursor:
+      description: Cursor for pagination.
+      in: query
+      name: cursor
+      schema:
+        type: string
+        example: eyJhY2NvdW50X2lkIjoxMjM0NTY3ODkwfQ
+    resource-tagging_type:
+      description: Filter by resource type.
+      in: query
+      name: type
+      schema:
+        $ref: '#/components/schemas/resource-tagging_resource_type'
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-forge-commands:
+  abuse-reports:
+    description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
+    groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
+      emails:
+        description: Emails sent for abuse reports
+      mitigations:
+        description: Mitigation actions taken in response to abuse reports
+  accounts:
+    description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
+    groups:
+      applications:
+        description: Applications operations
+      categories:
+        description: Categories operations
+      organizations:
+        description: Move accounts between organizations
+      profile:
+        description: View and manage the profile for a Cloudflare account
+      roles:
+        description: View the roles available for assigning to account members, each defining a set of permissions
+      subscriptions:
+        description: View and manage plan subscriptions attached to this account
+      tokens:
+        description: Create and manage scoped API tokens for programmatic access to the Cloudflare API
+  ai-gateway:
+    description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
+    groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
+      datasets:
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
+      dynamic-routing:
+        description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
+      evaluation-types:
+        description: 'Deprecated: list the evaluator types that evaluations can use'
+      evaluations:
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
+      logs:
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
+  ai-search:
+    description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
+    groups:
+      items:
+        description: Content indexed by AI Search instances
+      jobs:
+        description: Indexing job lifecycle for AI Search instances
+      namespace:
+        description: Logical groupings for organizing AI Search instances
+      tokens:
+        description: Credentials used by AI Search instances
+  ai-security:
+    description: Detect prompt injection, PII, and unsafe topics in traffic to your AI applications
+    groups:
+      custom-topics:
+        description: Organization-specific topic categories used by AI Security for Apps content detection
+  analytics:
+    description: Zone-level traffic analytics — dashboard summaries, per-colo breakdowns, and Argo latency metrics
+    groups:
+      colo:
+        description: Per-data-center (colo) traffic analytics breakdown for the zone
+      dashboard:
+        description: Aggregated zone dashboard analytics — requests, bandwidth, threats, and page views
+      latency:
+        description: Argo Smart Routing latency analytics showing time-to-first-byte improvements
+  argo:
+    description: Network optimization features that speed up and improve reliability of traffic to your origins
+    groups:
+      smart-routing:
+        description: Route traffic through the fastest network paths to your origin using real-time latency data
+      tiered-caching:
+        description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  billing:
+    description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
+    groups:
+      profiles:
+        description: Billing profile with payment method, address, and invoice preferences
+      usage:
+        description: Metered usage data for billed services — requests, bandwidth, and feature consumption
+  botnet-feed:
+    description: Botnet threat intelligence feeds — IP and ASN-level data on known command-and-control infrastructure
+    groups:
+      asn:
+        description: ASN-level botnet activity data showing networks with known C2 infrastructure
+      configs:
+        description: Botnet feed subscription configuration and notification preferences
+  builds:
+    description: Build and deploy Workers from connected repositories, then inspect build status and logs.
+    groups:
+      deploy-hooks:
+        description: Manage branch-specific HTTP hooks that start builds.
+      limits:
+        description: View build-minute availability and refresh information.
+      logs:
+        description: Retrieve build logs.
+      repos:
+        description: Manage source repository connections for Workers Builds.
+      tokens:
+        description: Manage credentials used by Workers Builds to deploy Workers.
+      triggers:
+        description: Configure how repository changes build and deploy Workers.
+      versions:
+        description: Find builds associated with Worker versions.
+      workers:
+        description: Manage repository-backed build configuration for Workers.
+  cache:
+    description: Purge cached content and configure Cache Reserve, tiered caching, and variant serving
+    groups:
+      origin-cloud-regions:
+        description: Manage Origin Cloud Regions routing and failover configurations
+      settings:
+        description: Configure Cache Reserve, tiered caching, and variant serving
+      settings.regional-tiered-cache:
+        description: Restrict tiered cache topology to data centers within a specific geographic region
+      settings.reserve:
+        description: Persistent storage tier that keeps cached assets even after eviction from edge caches
+      settings.smart-tiered-cache:
+        description: Automatically determine the best upper-tier data centers for tiered cache topology
+      settings.variants:
+        description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
+  client-side-security:
+    description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
+    groups:
+      connections:
+        description: Third-party connections made by scripts on your pages — track data exfiltration risks
+      cookies:
+        description: Cookies set by your pages with classification and same-site attribute tracking
+      policies:
+        description: Content Security Policies that control which scripts and connections are allowed on your pages
+      scripts:
+        description: JavaScript files detected on your pages with change tracking and malicious code detection
+      settings:
+        description: Fine tune Client-Side Security behaviors
+  cloud-connector:
+    description: Route traffic from Cloudflare directly to cloud provider services (AWS, Azure, GCP) without origin servers
+    groups:
+      rules:
+        description: Routing rules that map request patterns to cloud provider endpoints
+  cloudforce-one:
+    description: Detection rule management APIs
+    groups:
+      binary-storage:
+        description: Upload and retrieve malware samples and suspicious binaries for analysis
+      requests:
+        description: Additional request operations — priority listing and asset creation
+      rules:
+        description: Rule management operations
+        groups:
+          approvals:
+            description: Approval workflow operations
+          email:
+            description: Email rule operations
+          exemptions:
+            description: Exemption rule operations
+          managed:
+            description: Managed rule operations
+          stats:
+            description: Rule statistics operations
+          tree:
+            description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
+  containers:
+    description: Deploy and manage Containers applications on Cloudflare's global network
+    groups:
+      applications:
+        description: Manage Containers applications
+      applications.instances:
+        description: Inspect Containers instances belonging to applications
+      applications.rollouts:
+        description: Manage rollouts for scheduler-backed applications
+      applications.versions:
+        description: Inspect versions of scheduler-backed applications
+      registries:
+        description: Manage Containers image registries
+      registries.credentials:
+        description: Generate image registry credentials
+  content-scan:
+    description: Malicious uploads detection, scan uploaded content in HTTP requests for malware and malicious payloads
+    groups:
+      expressions:
+        description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
+  custom-pages:
+    description: Manage custom error and challenge pages and their assets for accounts and zones
+    groups:
+      account-custom-pages:
+        description: Manage account-level custom pages
+      account-custom-pages.preview-tokens:
+        description: Preview tokens for account-level custom pages
+      assets:
+        description: Manage account- and zone-level custom assets
+      zone-custom-pages:
+        description: Manage zone-level custom pages
+      zone-custom-pages.preview-tokens:
+        description: Preview tokens for zone-level custom pages
+  d1:
+    description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
+    groups:
+      time-travel:
+        description: use specific point-in-time backups of your D1 database
+        x-forge-epilogue: For more information about Time Travel, see https://developers.cloudflare.com/d1/reference/time-travel
+  diagnostics:
+    description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
+    groups:
+      endpoint-healthchecks:
+        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+      traceroutes:
+        description: Run traceroutes from Cloudflare data centers to diagnose network path issues
+  email-routing:
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
+    groups:
+      addresses:
+        description: Verified destination email addresses that can receive forwarded mail
+      dns:
+        description: Inspect or unlock the DNS records required by Email Routing
+      rules:
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
+  email-security:
+    description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
+    groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
+      investigate:
+        description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
+      phishguard:
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
+      settings:
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
+      submissions:
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
+  email-sending:
+    description: Send transactional email and manage sending subdomains and their DNS configuration
+    groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
+      subdomains:
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
+  filters:
+    description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
+  firewall:
+    description: Legacy firewall rules, zone lockdowns, access rules, user-agent blocking, and WAF packages
+    groups:
+      access-rules:
+        description: IP-based access rules that allow, block, challenge, or whitelist traffic globally or per-zone
+      lockdowns:
+        description: Zone lockdown rules that restrict access to URLs by IP address or range
+      rules:
+        description: Legacy firewall rules with filter expressions — prefer Rulesets for new configurations
+      ua-rules:
+        description: Block or challenge requests based on the User-Agent header string
+      waf:
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
+      zone-access-rules:
+        description: Zone-scoped IP access rules for blocking or allowing traffic
+  google-tag-gateway:
+    description: Google Tag Gateway operations
+    groups:
+      config:
+        description: Google Tag Gateway config operations
+  healthchecks:
+    description: Standalone health checks that monitor origin server availability from Cloudflare's edge
+    groups:
+      previews:
+        description: Test a health check configuration before deploying it to production
+  hyperdrive:
+    description: Accelerate access to existing databases by caching queries and pooling connections at the edge
+  iam:
+    description: Identity and access management — permission groups, resource groups, user groups, and SSO connectors
+    groups:
+      permission-groups:
+        description: View the permission groups that can be assigned to API tokens and policies
+      resource-groups:
+        description: Define scopes that limit which account resources a policy or token can access
+      sso:
+        description: Configure single sign-on connectors to authenticate account members through an external identity provider
+      user-groups:
+        description: Organize account members into groups for easier permission assignment
+  images:
+    description: Store, resize, and deliver optimized images globally — variants, signing keys, and direct uploads
+    groups:
+      flows:
+        description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
+      keys:
+        description: Manage signing keys for generating private image URLs
+      variants:
+        description: Manage named resize variants for transforming images on delivery
+  intel:
+    description: Threat intelligence lookups — IP reputation, domain info, ASN details, WHOIS, and indicator feeds
+    groups:
+      asn:
+        description: ASN intelligence — ownership, geolocation, and subnet details for autonomous systems
+      attack-surface-report:
+        description: Attack surface intelligence — exposed assets, vulnerabilities, and infrastructure mapping
+      dns:
+        description: Passive DNS data showing historical DNS resolution records for domains
+      domain-history:
+        description: Historical domain registration and categorization changes over time
+      domains:
+        description: Domain intelligence — risk scores, categories, and associated infrastructure
+      indicator-feeds:
+        description: Threat indicator feeds — subscribe to and manage curated lists of malicious IPs, domains, and URLs
+      ip-lists:
+        description: Curated IP lists used for threat detection and policy enforcement
+      ips:
+        description: IP address intelligence — geolocation, risk assessment, and hosting provider details
+      miscategorizations:
+        description: Report and track domain miscategorization corrections
+      whois:
+        description: WHOIS registration data for domains including registrant, registrar, and nameservers
+  k2:
+    description: Durable, ordered event streams that you produce records to and consume from with subscriptions
+    groups:
+      streams:
+        description: K2 streams, their retention, and the HTTP and Workers binding inputs used to produce records
+      streams.subscriptions:
+        description: Subscriptions that consume a K2 stream, with committed-position lag
+  leaked-credential-checks:
+    description: Detect compromised credentials in login requests by checking against known breach databases
+    groups:
+      detections:
+        description: Custom detection locations that tell the WAF where to find usernames and passwords in requests
+  load-balancers:
+    description: Distribute traffic across origin pools with health monitoring, geo-steering, and failover
+    groups:
+      monitor-groups:
+        description: Group monitors together for shared configuration and bulk management
+      monitor-groups.references:
+        description: List references to monitor groups used by load balancer pools
+      monitors:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.previews:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.references:
+        description: Health check configurations that probe origin servers and determine pool availability
+      pools:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.health:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.references:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      previews:
+        description: Preview the result of a health check monitor configuration before applying it
+      regions:
+        description: Geographic regions used for regional pool steering and traffic policies
+      searches:
+        description: Search across all load balancer resources (pools, monitors, load balancers) by name or reference
+  logs:
+    description: Log control, retention, and raw log access — CMB config, ray ID lookups, and received fields
+    groups:
+      control:
+        description: Log control operations
+      received:
+        description: Received log operations
+  magic-network-monitoring:
+    description: Flow-based network traffic monitoring with configurable alerting rules and VPC flow ingestion
+    groups:
+      configs:
+        description: Account-level monitoring configuration — sampling rates, thresholds, and notification settings
+      rules:
+        description: Monitoring rules that define traffic thresholds and trigger alerts or prefix advertisements
+      vpc-flows:
+        description: Ingest VPC flow logs from cloud providers for network visibility and anomaly detection
+  magic-transit:
+    description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
+    groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
+      apps:
+        description: Application-aware traffic policies for Magic WAN that steer traffic by app type
+      bgp-filter-profiles:
+        description: BGP filter profiles for controlling which routes are allowed or denied on Magic Transit tunnels
+      bgp-settings:
+        description: BGP settings for controlling default ASN and route redistribution on Magic Transit tunnels
+      cf-interconnects:
+        description: Cloudflare Network Interconnect (CNI) links for direct physical or virtual peering
+      gre-tunnels:
+        description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
+      ipsec-tunnels:
+        description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
+      routes:
+        description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
+      sites:
+        description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
+  mcp:
+    description: Manage MCP portals and upstream MCP servers for Cloudflare Access AI controls
+    groups:
+      portals:
+        description: Manage MCP portals, attached servers, and Code Mode settings
+      servers:
+        description: Manage upstream MCP servers, credentials, capabilities, and sync state
+  network-interconnects:
+    description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
+    groups:
+      cnis:
+        description: Cloud Network Interconnect (CNI) connections — private links from cloud providers to Cloudflare
+      interconnects:
+        description: Physical cross-connect and partner interconnect sessions with LOA and status tracking
+      settings:
+        description: Account-level interconnect settings and default configurations
+      slots:
+        description: Available interconnect facility slots showing port capacity at Cloudflare data centers
+  organizations:
+    description: Multi-user organizations that group accounts, members, and shared settings under a single entity
+    groups:
+      account-organizations:
+        description: List organizations associated with a specific account
+      accounts:
+        description: Accounts operations
+      members:
+        description: Members operations
+      members-batch-create:
+        description: Members Batch Create operations
+      organization-profile:
+        description: View and update the public profile information for an organization
+      shares:
+        description: Shares operations
+  origin-post-quantum-encryption:
+    description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
+  pages:
+    description: Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains
+    groups:
+      projects:
+        description: Pages projects, deployments, build logs, and custom domain bindings
+  pipelines:
+    description: Ingest, transform, and route event streams into R2, analytics, or other destinations in real time
+    groups:
+      sinks:
+        description: Destinations where pipeline data is written — R2 buckets, HTTP endpoints, or other storage
+      streams:
+        description: Inbound data streams that feed events into a pipeline for processing
+  precursor:
+    description: Precursor settings for a zone
+  queues:
+    description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
+    groups:
+      consumers:
+        description: Workers that automatically receive and process messages from a queue
+      messages:
+        description: Push messages to a queue and pull or acknowledge them from consumers
+      purge:
+        description: Remove all pending messages from a queue
+      subscriptions:
+        description: Manage queue subscriptions for event-driven message routing
+  r2:
+    description: S3-compatible object storage with zero egress fees — buckets, lifecycle rules, event notifications, and data migration
+    groups:
+      buckets:
+        description: Create and configure R2 buckets including CORS, lifecycle, custom domains, event notifications, and object locks
+      buckets.jobs:
+        description: Create and inspect background jobs for an R2 bucket
+      buckets.local-uploads:
+        description: R2 bucket local upload configuration
+      super-slurper:
+        description: Migrate data from external S3-compatible storage into R2 buckets with resumable transfer jobs
+      temporary-credentials:
+        description: Generate short-lived S3-compatible credentials scoped to specific buckets and operations
+  r2-data-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  radar:
+    description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
+    groups:
+      agent-readiness:
+        description: Agent readiness summary statistics across the Cloudflare network
+      ai:
+        description: AI inference trends and model usage statistics across the Cloudflare network
+      annotations:
+        description: Radar annotations marking significant Internet events (outages, cable cuts, etc.)
+      as112:
+        description: AS112 DNS sinkhole statistics — reverse DNS query volumes for private address space
+      attacks:
+        description: DDoS and application-layer attack trends, vectors, and target analysis
+      bgp:
+        description: BGP routing data — prefix announcements, AS-level stats, route leaks, and hijack events
+      bots:
+        description: Internet-wide bot traffic trends, categories, and distribution statistics
+      ct:
+        description: Certificate Transparency log monitoring and newly-issued certificate discovery
+      datasets:
+        description: Downloadable Radar datasets for offline analysis and research
+      dns:
+        description: Global DNS query trends — top domains, resolver stats, and DNSSEC adoption
+      email:
+        description: Email security trends — DMARC/SPF/DKIM adoption, spam, and phishing statistics
+      entities:
+        description: Look up ASNs, IPs, domains, and locations with metadata and traffic summaries
+      geolocations:
+        description: Geographic location metadata used for regional traffic analysis
+      http:
+        description: HTTP protocol trends — TLS versions, HTTP versions, browser share, and OS distribution
+      leaked-credentials:
+        description: Leaked credential detection trends and exposure statistics
+      netflows:
+        description: Network-layer traffic flow data and volumetric trend analysis
+      origins:
+        description: Cloud and hosting origin providers (e.g. Amazon, by region) and their traffic metrics
+      post-quantum:
+        description: Post-quantum encryption adoption and deployment trends across the Internet
+      quality:
+        description: Internet connection quality metrics — speed, latency, and jitter by geography and ASN
+      ranking:
+        description: Top domain rankings based on DNS query popularity across the Cloudflare network
+      robots-txt:
+        description: Robots.txt adoption and crawler directive trends across the web
+      search:
+        description: Search Radar data across IPs, ASNs, domains, and locations
+      tcp-resets-timeouts:
+        description: TCP connection reset and timeout statistics indicating network health issues
+      tlds:
+        description: Top-level domain (TLD) metadata and performance trends
+      traffic-anomalies:
+        description: Detected traffic anomalies and unusual patterns in Internet traffic flows
+      verified-bots:
+        description: Catalog of known good bots (Googlebot, Bingbot, etc.) and their traffic patterns
+  rate-limits:
+    description: Legacy per-zone rate limiting rules — prefer Advanced Rate Limiting in Rulesets for new configurations
+  realtime:
+    description: Real-time audio, video, and data services on Cloudflare's global network
+    groups:
+      kit:
+        description: SDK-backed meetings, participants, recordings, livestreams, and webhooks
+      kit.analytics:
+        description: Usage and livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams:
+        description: Livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams.daily:
+        description: Daily livestream analytics for RealtimeKit applications
+      kit.analytics.usage:
+        description: Usage analytics for RealtimeKit applications
+      kit.apps:
+        description: RealtimeKit applications that group meetings, sessions, and configuration
+      kit.livestreams:
+        description: Independent and meeting-based livestreams and their sessions
+      kit.livestreams.sessions:
+        description: Sessions for RealtimeKit livestreams
+      kit.meetings:
+        description: Meetings, participants, access tokens, and meeting livestreams
+      kit.meetings.active:
+        description: Live meeting state and participant controls
+      kit.meetings.active.polls:
+        description: Polls for active meeting sessions
+      kit.meetings.livestream:
+        description: Livestream operations associated with RealtimeKit meetings
+      kit.meetings.participants:
+        description: Participants in RealtimeKit meetings
+      kit.meetings.participants.tokens:
+        description: Access tokens for RealtimeKit meeting participants
+      kit.presets:
+        description: Reusable meeting configuration for media, permissions, and interface behavior
+      kit.recordings:
+        description: Meeting and participant-track recordings and recording controls
+      kit.recordings.active:
+        description: Active recordings for RealtimeKit meetings
+      kit.recordings.tracks:
+        description: Participant-track recordings for RealtimeKit meetings
+      kit.sessions:
+        description: Historical session data, participants, chat, transcripts, and summaries
+      kit.sessions.chat:
+        description: Chat messages from historical RealtimeKit sessions
+      kit.sessions.livestreams:
+        description: Livestreams associated with historical RealtimeKit sessions
+      kit.sessions.participants:
+        description: Participants in historical RealtimeKit sessions
+      kit.sessions.peers:
+        description: Peer details from historical RealtimeKit sessions
+      kit.sessions.summaries:
+        description: Summaries of historical RealtimeKit sessions
+      kit.sessions.transcripts:
+        description: Transcripts from historical RealtimeKit sessions
+      kit.webhooks:
+        description: Webhook endpoints and supported events for RealtimeKit notifications
+      kit.webhooks.events:
+        description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
+  request-tracers:
+    description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
+    groups:
+      traces:
+        description: Simulate request processing to debug rule matches, transforms, and routing decisions
+  resource-sharing:
+    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    groups:
+      recipients:
+        description: Update share recipients
+      resources:
+        description: Individual resources (zones, configs) that have been shared with recipients
+  rules:
+    description: Resources used by Cloudflare rules and rulesets
+    groups:
+      lists:
+        description: Custom account-level lists of IPs, hostnames, ASNs, or redirects used in rule expressions
+  rum:
+    description: Real User Measurement (Web Analytics) — track page loads, Core Web Vitals, and visitor metrics
+    groups:
+      rules:
+        description: Rules that control which pages and paths are tracked by Web Analytics
+      site-info:
+        description: Web Analytics sites — register domains and get the JavaScript beacon snippet
+  scim:
+    description: SCIM 2.0 provisioning — manage users, groups, and identity provider sync for your account
+    groups:
+      groups:
+        description: Groups operations
+      resource-types:
+        description: Resource Types operations
+      schemas:
+        description: Schemas operations
+      service-provider-config:
+        description: Service Provider Config operations
+      users:
+        description: Users operations
+  secrets-store:
+    description: Centralized secret management — store API keys, tokens, and credentials for use across Workers and other products
+    groups:
+      quota:
+        description: Account quota limits for secrets stores, secrets count, and storage capacity
+      secrets:
+        description: Encrypted key-value secrets within a store. Pass --store-id to scope.
+      stores:
+        description: Secret stores that hold encrypted key-value secrets accessible by Workers and services
+  security-center:
+    description: Security posture dashboard — view and manage security insights, misconfigurations, and vulnerabilities
+    groups:
+      insights:
+        description: Security findings and recommendations across your account — DNS, SSL, WAF misconfigurations, etc.
+      zone-insights:
+        description: Zone-scoped security insights — counts by class, severity, type, and dismissal
+  security-txt:
+    description: Manage the /.well-known/security.txt file that tells security researchers how to report vulnerabilities
+  smart-shield:
+    description: Smart Shield settings, health checks, and cache reserve management
+    groups:
+      cache-reserve-clear:
+        description: Cache Reserve Clear operations
+      health-checks:
+        description: Health checks operations
+  spectrum:
+    description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
+    groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
+      apps:
+        description: Spectrum application configurations that map protocols and ports to origin servers
+  speed:
+    description: Observatory speed tests — run Lighthouse audits, track performance trends, and schedule recurring tests
+    groups:
+      availabilities:
+        description: Check which speed test regions and configurations are available for your zone
+      pages:
+        description: Tested pages with their performance history, trends, and individual test results
+      schedule:
+        description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
+  stream:
+    description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
+    groups:
+      audio-tracks:
+        description: Add, edit, or remove additional audio tracks on a video
+      captions:
+        description: Upload, generate, or retrieve captions and subtitles for videos in multiple languages
+      clip:
+        description: Create a new video clip from an existing video by specifying start and end times
+      copy:
+        description: Import a video from a URL into Stream for processing and delivery
+      direct-upload:
+        description: Generate a tokenized URL that lets end-users upload video directly to Stream
+      downloads:
+        description: Create downloadable MP4 renditions of a video for offline viewing
+      embed:
+        description: Retrieve the HTML embed code snippet for a video
+      keys:
+        description: Signing keys used to generate short-lived signed URLs for private video playback
+      live-inputs:
+        description: Enable and disable live input streams
+      token:
+        description: Generate short-lived signed URL tokens for secure private video playback
+      typed-downloads:
+        description: Type-specific stream download creation and deletion
+      videos:
+        description: Aggregate video storage usage statistics for the account
+      watermarks:
+        description: Watermark profiles that overlay an image on every video in the account
+      webhooks:
+        description: Webhook notifications for video lifecycle events (ready, error, etc.)
+  tenants:
+    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    groups:
+      account-types:
+        description: Account Types operations
+      accounts:
+        description: Accounts operations
+      entitlements:
+        description: Entitlements operations
+      memberships:
+        description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
+  url-scanner:
+    description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
+    groups:
+      response:
+        description: Response operations
+      responses:
+        description: Raw HTTP response data captured during URL scans
+      scan:
+        description: Scan operations
+      scans:
+        description: URL scan requests and results — submit URLs for analysis and retrieve threat verdicts
+  user:
+    description: Your Cloudflare user profile, invitations, organizations, billing, and personal API tokens
+    groups:
+      billing:
+        description: View billing history and payment profile for your user (deprecated — prefer account-level billing)
+      firewall:
+        description: Firewall operations
+      load-balancers.monitors:
+        description: Load Balancers operations
+      load-balancers.monitors.preview:
+        description: Load Balancers operations
+      load-balancers.monitors.references:
+        description: Load Balancers operations
+      load-balancers.pools:
+        description: Load Balancers operations
+      load-balancers.pools.edit.pools:
+        description: Load Balancers operations
+      load-balancers.pools.health:
+        description: Load Balancers operations
+      load-balancers.pools.preview:
+        description: Load Balancers operations
+      load-balancers.pools.references:
+        description: Load Balancers operations
+      load-balancers.preview:
+        description: Load Balancers operations
+      load-balancing-analytics.events:
+        description: Load Balancing Analytics operations
+      subscriptions:
+        description: View and manage zone-level plan subscriptions owned by your user
+      tenants:
+        description: Tenants operations
+      tokens:
+        description: Create and manage personal API tokens scoped to your user for programmatic API access
+  user.analytics:
+    description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
+  waiting-rooms:
+    description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
+    groups:
+      account-waiting-rooms:
+        description: Account-scoped waiting room listing
+      events:
+        description: Scheduled events that temporarily override waiting room settings for sales, launches, etc.
+      page:
+        description: Custom HTML waiting page templates and preview rendering
+      rules:
+        description: Rules that bypass or modify waiting room behavior for specific request patterns
+      settings:
+        description: Zone-level waiting room defaults and cookie configuration
+      statuses:
+        description: Real-time queue status showing active users, queued users, and estimated wait times
+  workflows:
+    description: Durable, multi-step workflows that run on Workers with automatic retries and state persistence
+    groups:
+      instances:
+        description: Workflow instance operations
+      versions:
+        description: Workflow version operations
+  zaraz:
+    description: Server-side tag manager — load third-party tools (analytics, pixels, etc.) from Cloudflare's edge without client-side JS
+    groups:
+      config:
+        description: Full Zaraz configuration including tools, triggers, and variables for the zone
+      default:
+        description: Default Zaraz configuration template used as a starting point for new zones
+      export:
+        description: Export the current Zaraz configuration as a portable JSON document
+      history:
+        description: Configuration version history — browse and restore previous Zaraz configurations
+      publish:
+        description: Publish pending Zaraz configuration changes to make them live on the zone
+      workflow:
+        description: Workflow state for Zaraz configuration changes (draft vs. published)
+  zero-trust:
+    description: Cloudflare's SASE platform — secure access, device posture, DLP, tunnels, gateway policies, and network segmentation
+    groups:
+      dex:
+        description: Digital Experience Monitoring — synthetic tests, fleet-wide device metrics, and network path diagnostics
+      dlp.custom-prompt-topics:
+        description: Data Loss Prevention - manage custom prompt topics for AI-based content detection
+      dlp.data-classes:
+        description: Data Loss Prevention - manage data classes used to classify sensitive information
+      dlp.data-tag-categories:
+        description: Data Loss Prevention - manage categories that organize data tags
+      dlp.data-tag-category-templates:
+        description: Data Loss Prevention - browse templates for creating data tag categories
+      dlp.data-tags:
+        description: Data Loss Prevention - manage tags used to classify and organize sensitive data
+      dlp.datasets:
+        description: Data Loss Prevention - manage datasets, versions, and uploads
+      dlp.document-fingerprints:
+        description: Data Loss Prevention - manage document fingerprints for detecting matching documents
+      dlp.email.account-mapping:
+        description: Data Loss Prevention - configure account mappings for outbound email scanning
+      dlp.email.rules:
+        description: Data Loss Prevention - manage outbound email scanning rules and their priorities
+      dlp.entries:
+        description: Data Loss Prevention - list and manage detection entries
+      dlp.limits:
+        description: Data Loss Prevention - view account limits and resource quotas
+      dlp.patterns:
+        description: Data Loss Prevention - validate regular expressions used for content detection
+      dlp.profiles:
+        description: Data Loss Prevention - list and retrieve profiles
+      dlp.profiles.custom:
+        description: Data Loss Prevention - manage custom profiles
+      dlp.profiles.predefined:
+        description: Data Loss Prevention - manage predefined profiles
+      dlp.sensitivity-group-templates:
+        description: Data Loss Prevention - browse templates for creating sensitivity groups
+      dlp.sensitivity-groups:
+        description: Data Loss Prevention - manage sensitivity groups and their level ordering
+      dlp.sensitivity-levels:
+        description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
+      dlp.settings:
+        description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.integrations:
+        description: User Risk Scoring - manage integrations that provide risk score signals
+      risk-scoring.integrations.references:
+        description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
+  zones:
+    description: Zones are domains on Cloudflare — list, create, and configure domain settings
+    groups:
+      aegis:
+        description: Aegis operations
+      fonts:
+        description: Fonts operations
+      origin-h2-max-streams:
+        description: Origin H2 Max Streams operations
+      origin-max-http-version:
+        description: Origin Max Http Version operations
+      origin-tls-compliance-modes:
+        description: Manage zone Origin TLS Compliance Modes setting
+      rum:
+        description: Rum operations
+      speed-brain:
+        description: Speed Brain operations

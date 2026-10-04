@@ -1,0 +1,4230 @@
+openapi: 3.2.0
+info:
+  description: Welcome to Cloudflare's API documentation site.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  title: Cloudflare Applications API
+  version: 4.0.0
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Applications
+paths:
+  /accounts/{account_id}/containers/applications:
+    parameters:
+    - $ref: '#/components/parameters/cc_AccountId'
+    get:
+      operationId: listApplications
+      summary: List Applications associated with your account
+      description: Lists all the applications that are associated with your account.
+      parameters:
+      - name: per_page
+        in: query
+        description: Maximum number of applications to return per page. Defaults to all, or 100 when `page_token` is set.
+        schema:
+          type: integer
+          maximum: 500
+          minimum: 1
+      - name: page_token
+        in: query
+        description: Opaque token from a previous response to retrieve the next page.
+        schema:
+          type: string
+      - name: name
+        in: query
+        description: Filter applications by name.
+        schema:
+          $ref: '#/components/schemas/cc_ApplicationName'
+      - name: image
+        in: query
+        description: Filter applications by image.
+        schema:
+          $ref: '#/components/schemas/cc_Image'
+      responses:
+        '200':
+          description: Get all application associated with your account.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/cc_V4BaseResponse'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/cc_ContainersListApplications'
+                    result_info:
+                      $ref: '#/components/schemas/cc_V4PaginatedResultInfo'
+                  required:
+                  - result
+                  - result_info
+                  type: object
+        '400':
+          description: Bad Request that contains a specific constant code and details object about the error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '500':
+          description: An internal error has occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-fern-availability: generally-available
+      x-fern-pagination:
+        cursor: $request.page_token
+        next_cursor: $response.result_info.next_page_token
+        results: $response.result
+      x-fern-sdk-group-name: containers.applications
+      x-fern-sdk-method-name: list
+    post:
+      operationId: createApplication
+      summary: Create a new application
+      description: 'Create a Containers application.
+
+
+        Use `scheduling_policy: "default"` for a scheduler-backed application. The
+
+        Containers scheduler maintains the requested instance count and manages
+
+        deployment configuration, placement, scaling, versions, and rollouts.
+
+
+        Use `scheduling_policy: "durable_object"` for a Durable Object-managed
+
+        application. Each Durable Object creates and manages the lifecycle of its
+
+        container instance. Supply `name`, `scheduling_policy`, and `durable_objects`,
+
+        with optional `configuration` and optional top-level `observability` settings.
+
+        Deployment configuration, scaling, constraints, versions, and rollouts do not apply.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/cc_ContainersCreateApplicationRequest'
+      responses:
+        '201':
+          description: A newly created application.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/cc_V4BaseResponse'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/cc_ContainersApplicationResponse'
+                  required:
+                  - result
+                  type: object
+        '400':
+          description: Could not create the application because of input/limits reasons, more details in the error code.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '403':
+          description: The account is deactivated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '500':
+          description: An internal error has occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: containers.applications
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/containers/applications/{application_id}:
+    parameters:
+    - $ref: '#/components/parameters/cc_AccountId'
+    delete:
+      operationId: deleteApplication
+      summary: Delete a single application by id
+      description: Deletes a single application by id.
+      parameters:
+      - name: application_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cc_ApplicationID'
+      responses:
+        '200':
+          description: Delete application response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/cc_V4BaseResponse'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/cc_ContainersDeleteApplicationResponseBody'
+                  required:
+                  - result
+                  type: object
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '404':
+          description: Response body when an Application is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '500':
+          description: An internal error has occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-api-token-group:
+      - Workers Containers Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: containers.applications
+      x-fern-sdk-method-name: delete
+      x-forge-require-confirmation: This operation permanently deletes the application and stops its containers.
+    get:
+      operationId: getApplication
+      summary: Get a single application by id
+      description: Returns a single application by id.
+      parameters:
+      - name: application_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cc_ApplicationID'
+      responses:
+        '200':
+          description: A single application.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/cc_V4BaseResponse'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/cc_ContainersApplicationResponse'
+                  required:
+                  - result
+                  type: object
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '404':
+          description: Response body when an Application is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '500':
+          description: An internal error has occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-api-token-group:
+      - Workers Containers Write
+      - Workers Containers Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: containers.applications
+      x-fern-sdk-method-name: get
+    patch:
+      operationId: modifyApplication
+      summary: Modify an application
+      description: 'Modifies a single application by id. Durable Object-managed application settings are
+
+        published to runtime metadata without creating deployments or rollouts. Top-level
+
+        `observability` for these applications supports only `logs.enabled`.
+
+        The supported fields depend on the existing
+
+        application''s scheduling policy. For scheduler-backed applications, changes that
+
+        replace instance deployment configuration, including the image, require a rollout.'
+      parameters:
+      - name: application_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cc_ApplicationID'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/cc_ContainersModifyApplicationRequestBody'
+      responses:
+        '200':
+          description: Modify application response.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/cc_V4BaseResponse'
+                - properties:
+                    result:
+                      $ref: '#/components/schemas/cc_ContainersApplicationResponse'
+                  required:
+                  - result
+                  type: object
+        '400':
+          description: Could not modify the application because of input/limits reasons, more details in the error code.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '403':
+          description: The account is deactivated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '404':
+          description: Response body when an Application is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '500':
+          description: An internal error has occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-api-token-group:
+      - Workers Containers Write
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: containers.applications
+      x-fern-sdk-method-name: edit
+  /accounts/{account_id}/containers/applications/{application_id}/versions:
+    parameters:
+    - $ref: '#/components/parameters/cc_AccountId'
+    get:
+      operationId: listApplicationVersions
+      summary: List all application versions
+      description: 'Returns all versions for a scheduler-backed application with
+
+        `scheduling_policy: "default"`. Versions and rollouts do not apply to
+
+        applications with `scheduling_policy: "durable_object"`.'
+      parameters:
+      - name: application_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/cc_ApplicationID'
+      responses:
+        '200':
+          description: List application versions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/cc_V4BaseResponse'
+                - properties:
+                    result:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/cc_ApplicationVersion'
+                  required:
+                  - result
+                  type: object
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '404':
+          description: Response body when an Application is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+        '500':
+          description: An internal error has occurred.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cc_V4BaseErrorResponse'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-api-token-group:
+      - Workers Containers Write
+      - Workers Containers Read
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: containers.applications.versions
+      x-fern-sdk-method-name: list
+  /accounts/{account_id}/one/applications:
+    get:
+      operationId: list_applications_v2
+      summary: List applications
+      description: Returns a list of available applications with use cases and permissions.
+      parameters:
+      - name: account_id
+        in: path
+        description: Cloudflare account identifier.
+        required: true
+        schema:
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+      - name: environment
+        in: query
+        description: Filter by supported environment (standard, fedramp).
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: List of applications.
+          content:
+            application/json:
+              examples:
+                SampleSuccessfulReturn:
+                  summary: Example application list response
+                  value:
+                    errors: []
+                    messages: []
+                    result:
+                    - auth_methods:
+                      - display_name: OAuth 2.0 Admin Consent
+                        id: oauth2_standard
+                      category: Productivity
+                      description: Monitor OneDrive, SharePoint, Teams, and Outlook.
+                      display_name: Microsoft
+                      dlp_enabled: true
+                      id: MICROSOFT_INTERNAL
+                      logo: https://dash.cloudflare.com/v2/static/microsoft_internal.svg
+                      permissions:
+                      - display_name: Read all users' full profiles
+                        scope: User.Read.All
+                        severity: high
+                      - display_name: Read all files
+                        scope: Files.Read.All
+                        severity: high
+                      - display_name: Read and write mail
+                        scope: Mail.ReadWrite
+                        severity: critical
+                      supported_environments:
+                      - standard
+                      - fedramp
+                      use_cases:
+                      - display_name: Cloud Access Security Broker
+                        id: casb
+                      - display_name: Cloud Email Security
+                        id: ces
+                    result_info:
+                      count: 1
+                      next: null
+                      page: 1
+                      per_page: 10
+                      previous: null
+                      total_count: 1
+                    success: true
+              schema:
+                $ref: '#/components/schemas/one_PaginatedApplicationListList'
+        '400':
+          description: Invalid request.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.applications
+      x-fern-sdk-method-name: list
+      x-stability: beta
+  /accounts/{account_id}/one/applications/{application_id}:
+    get:
+      operationId: get_application_v2
+      summary: Get application details
+      description: Returns full application details including auth methods, use cases, and permissions.
+      parameters:
+      - name: account_id
+        in: path
+        description: Cloudflare account identifier.
+        required: true
+        schema:
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+      - name: application_id
+        in: path
+        description: Application/vendor identifier.
+        required: true
+        schema:
+          type: string
+          enum:
+          - ANTHROPIC
+          - AWS
+          - BITBUCKET
+          - BOX
+          - CONFLUENCE
+          - DROPBOX
+          - GITHUB
+          - GOOGLE_CLOUD_PLATFORM
+          - GOOGLE_WORKSPACE
+          - JIRA
+          - MICROSOFT_INTERNAL
+          - OPENAI
+          - SALESFORCE
+          - SERVICENOW
+          - SLACK
+      responses:
+        '200':
+          description: Application details.
+          content:
+            application/json:
+              examples:
+                SampleSuccessfulReturn:
+                  summary: Example application detail response
+                  value:
+                    errors: []
+                    messages: []
+                    result:
+                      auth_methods:
+                      - display_name: OAuth 2.0 Admin Consent
+                        id: oauth2
+                        is_default: true
+                        supported_environments:
+                        - standard
+                        - fedramp
+                      category: Productivity
+                      description: Monitor OneDrive, SharePoint, Teams, and Outlook.
+                      display_name: Microsoft
+                      dlp_enabled: true
+                      id: MICROSOFT_INTERNAL
+                      instructions: You'll need a Microsoft 365 admin account with Global Admin or Application Admin role.
+                      logo: https://dash.cloudflare.com/v2/static/microsoft_internal.svg
+                      use_cases:
+                      - base_scopes:
+                        - display_name: Read all users' full profiles
+                          scope: User.Read.All
+                          severity: high
+                        - display_name: Read all files
+                          scope: Files.Read.All
+                          severity: high
+                        description: Discover and secure SaaS applications
+                        display_name: Cloud Access Security Broker
+                        features:
+                        - description: Automatically remediate security issues
+                          display_name: Auto Remediation
+                          id: auto_remediation
+                          scopes:
+                          - display_name: Read and write all files
+                            scope: Files.ReadWrite.All
+                            severity: critical
+                        id: casb
+                    success: true
+              schema:
+                $ref: '#/components/schemas/one_ApplicationDetailResponse'
+        '404':
+          description: Application not found.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.applications
+      x-fern-sdk-method-name: get
+      x-stability: beta
+  /accounts/{account_id}/one/applications/{application_id}/auth-methods:
+    get:
+      operationId: get_application_auth_methods_v2
+      summary: Get auth methods
+      description: Returns available auth methods for the specified vendor, including credential schema, instructions, and example payloads. Use this to understand what credentials are required before calling POST /v2/integrations.
+      parameters:
+      - name: account_id
+        in: path
+        description: Cloudflare account identifier.
+        required: true
+        schema:
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+      - name: application_id
+        in: path
+        description: Application/vendor identifier.
+        required: true
+        schema:
+          type: string
+          enum:
+          - ANTHROPIC
+          - AWS
+          - BITBUCKET
+          - BOX
+          - CONFLUENCE
+          - DROPBOX
+          - GITHUB
+          - GOOGLE_CLOUD_PLATFORM
+          - GOOGLE_WORKSPACE
+          - JIRA
+          - MICROSOFT_INTERNAL
+          - OPENAI
+          - SALESFORCE
+          - SERVICENOW
+          - SLACK
+      - name: page
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Auth methods available for this application.
+          content:
+            application/json:
+              examples:
+                SampleSuccessfulReturn:
+                  summary: Example auth methods response
+                  value:
+                    errors: []
+                    messages: []
+                    result:
+                    - display_name: API Key
+                      human_interaction_required: false
+                      id: api_key
+                      instructions:
+                        markdown: '## Getting your API Key
+
+
+                          1. Log in to your admin console
+
+                          2. Navigate to Settings > API
+
+                          3. Generate a new API key'
+                      payload_example:
+                        api_key: sk-xxxxxxxxxxxxxxxxxxxx
+                      payload_schema:
+                        properties:
+                          api_key:
+                            description: Your API key
+                            type: string
+                        required:
+                        - api_key
+                        type: object
+                      redirect_url: null
+                    result_info:
+                      count: 1
+                      next: null
+                      page: 1
+                      per_page: 10
+                      previous: null
+                      total_count: 1
+                    success: true
+              schema:
+                $ref: '#/components/schemas/one_PaginatedAuthMethodDetailList'
+        '404':
+          description: Application not found.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.casb.applications.auth-methods
+      x-fern-sdk-method-name: list
+      x-stability: beta
+  /accounts/{account_id}/one/applications/{application_id}/setup-flows:
+    get:
+      operationId: get_application_setup_flows_v2
+      summary: Get application setup flows
+      description: Returns all available setup flows for the application, one per auth method.
+      parameters:
+      - name: account_id
+        in: path
+        description: Cloudflare account identifier.
+        required: true
+        schema:
+          type: string
+          example: 023e105f4ecef8ad9ca31a8372d0c353
+      - name: application_id
+        in: path
+        description: Application/vendor identifier.
+        required: true
+        schema:
+          type: string
+          enum:
+          - ANTHROPIC
+          - AWS
+          - BITBUCKET
+          - BOX
+          - CONFLUENCE
+          - DROPBOX
+          - GITHUB
+          - GOOGLE_CLOUD_PLATFORM
+          - GOOGLE_WORKSPACE
+          - JIRA
+          - MICROSOFT_INTERNAL
+          - OPENAI
+          - SALESFORCE
+          - SERVICENOW
+          - SLACK
+      - name: auth_method
+        in: query
+        description: Filter by auth method id. Get available ids from GET /v2/applications.
+        schema:
+          type: string
+      - name: environment
+        in: query
+        description: Filter by environment.
+        schema:
+          type: string
+          enum:
+          - fedramp
+          - standard
+      - name: page
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: List of setup flows.
+          content:
+            application/json:
+              examples:
+                SampleSuccessfulReturn:
+                  summary: Example setup flow response
+                  value:
+                    errors: []
+                    messages: []
+                    result:
+                    - auth_config:
+                        authorization_url: https://login.microsoftonline.com/common/adminconsent
+                        client_id: abc123-def456
+                        requires_pkce: false
+                        scopes:
+                        - https://graph.microsoft.com/.default
+                        url_placeholders: []
+                      default: true
+                      description: Connect to Microsoft using OAuth 2.0 Admin Consent.
+                      id: microsoft_internal_oauth2
+                      name: Microsoft (OAuth 2.0 Admin Consent)
+                      steps:
+                      - component_id: common/name_integration
+                        parameters: null
+                        type: component
+                      - description: Click the button to be redirected to the vendor and grant access.
+                        dynamic_content: null
+                        title: Authorize Application
+                        type: oauth_redirect
+                      supported_environments:
+                      - standard
+                      - fedramp
+                    result_info:
+                      count: 1
+                      next: null
+                      page: 1
+                      per_page: 10
+                      previous: null
+                      total_count: 1
+                    success: true
+              schema:
+                $ref: '#/components/schemas/one_PaginatedSetupFlowList'
+        '404':
+          description: Application not found or no flows available.
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-fern-availability: generally-available
+      x-fern-ignore: true
+      x-fern-sdk-group-name: zero-trust.casb.applications.setup-flows
+      x-fern-sdk-method-name: list
+      x-stability: beta
+  /accounts/{account_id}/resource-library/applications:
+    get:
+      operationId: getResourceLibraryApplications
+      summary: List applications
+      description: 'List the applications available to an account, both the applications Cloudflare
+
+        curates and the custom applications the account has defined.
+
+
+        Results are paginated. Use `filter` and `search` to narrow the list, `order_by` to
+
+        sort it, and `fields` to reduce each result to only the properties you need.
+
+
+        The authenticated principal must have access to the account identified by
+
+        `account_id`.'
+      parameters:
+      - name: account_id
+        in: path
+        description: Account ID.
+        required: true
+        schema:
+          type: string
+        example: 023e105f4ecef8ad9ca31a8372d0c353
+      - name: filter
+        in: query
+        description: 'Filter applications using key:value format. Supported filter keys:
+
+          - name: Filter by application name (e.g., name:HR)
+
+          - id: Filter by application ID (e.g., id:498)
+
+          - human_id: Filter by human-readable ID (e.g., human_id:HR)
+
+          - hostname: Filter by hostname or support domain (e.g., hostname:portal.example.com)
+
+          - source: Filter by application source name (e.g., source:cloudflare)
+
+          - ip_subnet: Filter by IP subnet using CIDR containment — returns applications where any stored subnet contains the search value (e.g., ip_subnet:10.0.1.5/32 matches apps with 10.0.0.0/16)
+
+          - category_id: Filter by category ID (e.g., category_id:12).
+
+          - category_name: Filter by category name (e.g., category_name:HR).
+
+          - supported: Filter by supported Cloudflare product (e.g., supported:ACCESS). Values: GATEWAY, ACCESS, CASB.
+
+          - review_status: Filter by the account''s Gateway review status. Values: approved, unapproved, in_review, unreviewed.
+
+          .
+
+          '
+        schema:
+          type: string
+        example: filter=name:HR&filter=source:cloudflare&filter=id:498
+      - name: limit
+        in: query
+        description: Limit of number of results to return (max 250).
+        schema:
+          type: integer
+          default: 25
+      - name: offset
+        in: query
+        description: Offset of results to return.
+        schema:
+          type: integer
+          default: 0
+      - name: order_by
+        in: query
+        description: 'Order results using field:direction format. Supported fields are name, id, human_id,
+
+          category_id, application_type, application_confidence_score, and gen_ai_score.
+
+          Supported directions are asc and desc. Ignored when search is provided; results are
+
+          ranked by relevance instead.
+
+          '
+        schema:
+          type: string
+        example: name:asc
+      - name: search
+        in: query
+        description: Fuzzy search across application name and hostnames. Results are ranked by relevance. Must be between 2 and 200 characters. Can be combined with filter parameters.
+        schema:
+          type: string
+          maxLength: 200
+          minLength: 2
+        example: MyNewApp
+      - name: fields
+        in: query
+        description: 'Return only the listed properties on each application, as a comma-separated list.
+
+          Use this to keep responses small when you only need part of each application — for
+
+          example populating a picker with `fields=id,name` instead of downloading every
+
+          hostname and IP subnet.
+
+
+          Omit this parameter to receive the full application object.
+
+
+          `id` is always returned.
+
+
+          Selectable properties: `id`, `name`, `human_id`, `version`, `hostnames`,
+
+          `support_domains`, `ip_subnets`, `port_protocols`, `supported`, `gen_ai_score`,
+
+          `application_confidence_score`, `created_at`, `updated_at`, `review_status`.
+
+
+          Unknown or empty property names return `400`.
+
+          '
+        schema:
+          type: string
+        example: id,name
+      responses:
+        '200':
+          description: Get the application response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_get_applications_response'
+        '403':
+          description: The authenticated principal does not have access to the requested account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+        '502':
+          description: Application review statuses could not be retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+        '503':
+          description: Application review statuses were requested but are not available.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+        4XX:
+          description: Get application response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: accounts.applications.get
+      x-fern-sdk-method-name: applications
+    post:
+      operationId: createResourceLibraryApplication
+      summary: Create application
+      description: Create a custom application for an account.
+      parameters:
+      - name: account_id
+        in: path
+        description: Account ID.
+        required: true
+        schema:
+          type: string
+        example: 023e105f4ecef8ad9ca31a8372d0c353
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/alexandria_create_application_request'
+      responses:
+        '201':
+          description: Create application response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_get_application_response'
+        4XX:
+          description: Create application response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: accounts.applications
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/resource-library/applications/{id}:
+    delete:
+      operationId: deleteResourceLibraryApplication
+      summary: Delete application
+      description: Delete a custom application and all of its versions. Deletion is rejected when other resources reference the application.
+      parameters:
+      - name: account_id
+        in: path
+        description: Account ID.
+        required: true
+        schema:
+          type: string
+        example: 023e105f4ecef8ad9ca31a8372d0c353
+      - name: id
+        in: path
+        description: Application ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/alexandria_application_id'
+      responses:
+        '200':
+          description: Delete application response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_delete_application_response'
+        '409':
+          description: The application is referenced by other resources and cannot be deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_delete_application_conflict_response'
+        '502':
+          description: Application deletion could not be safely completed because a required validation was unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+        4XX:
+          description: Delete application response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: accounts.applications
+      x-fern-sdk-method-name: delete
+    get:
+      operationId: getResourceLibraryApplicationById
+      summary: Get application
+      description: Get application by ID.
+      parameters:
+      - name: account_id
+        in: path
+        description: Account ID.
+        required: true
+        schema:
+          type: string
+        example: 023e105f4ecef8ad9ca31a8372d0c353
+      - name: id
+        in: path
+        description: Application ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/alexandria_application_id'
+      responses:
+        '200':
+          description: Get the application response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_get_application_response'
+        4XX:
+          description: Get application by id response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: accounts.applications.get.by
+      x-fern-sdk-method-name: id
+    patch:
+      operationId: updateResourceLibraryApplication
+      summary: Update application
+      description: Replace the network matchers for a custom application and create a new version.
+      parameters:
+      - name: account_id
+        in: path
+        description: Account ID.
+        required: true
+        schema:
+          type: string
+        example: 023e105f4ecef8ad9ca31a8372d0c353
+      - name: id
+        in: path
+        description: Application ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/alexandria_application_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/alexandria_update_application_request'
+      responses:
+        '200':
+          description: Update application response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_get_application_response'
+        4XX:
+          description: Update application response failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alexandria_api_response_common_failure'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Applications
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: accounts.applications
+      x-fern-sdk-method-name: update
+components:
+  schemas:
+    cc_ContainersCreateScheduledApplicationRequest:
+      description: 'Create a scheduler-backed Containers application. The Containers scheduler
+
+        maintains the requested instance count and applies deployment configuration,
+
+        placement, scaling, versions, and rollouts.
+
+        '
+      type: object
+      properties:
+        configuration:
+          description: 'Defines the deployment configuration for every deployment in this application.
+
+            '
+          allOf:
+          - $ref: '#/components/schemas/cc_UserDeploymentConfiguration'
+        constraints:
+          $ref: '#/components/schemas/cc_ApplicationConstraints'
+        durable_objects:
+          description: Optionally associates this scheduler-backed application with a Durable Object namespace.
+          allOf:
+          - $ref: '#/components/schemas/cc_DurableObjectsConfiguration'
+        instances:
+          description: The initial number of deployments to create.
+          type: integer
+          minimum: 0
+        max_instances:
+          description: Sets the maximum number of instances that the application can run.
+          type: integer
+          minimum: 0
+        name:
+          description: The name for this application.
+          type: string
+        observability:
+          description: 'Top-level observability settings for the application.
+
+            This field is mutually exclusive with configuration.observability.
+
+            '
+          allOf:
+          - $ref: '#/components/schemas/cc_ApplicationObservability'
+        rollout_active_grace_period:
+          $ref: '#/components/schemas/cc_ApplicationRolloutActiveGracePeriod'
+        scheduling_policy:
+          $ref: '#/components/schemas/cc_ScheduledApplicationSchedulingPolicy'
+      additionalProperties: false
+      required:
+      - name
+      - scheduling_policy
+      - instances
+      - max_instances
+      - configuration
+    one_AuthMethodDetail:
+      description: Detailed auth method info including credentials schema and instructions.
+      type: object
+      properties:
+        display_name:
+          description: Human-readable auth method name.
+          type: string
+        human_interaction_required:
+          description: Whether setup requires human interaction or integration can be created purely using API (e.g., For OAuth can not be created without user interaction).
+          type: boolean
+        id:
+          description: Auth method identifier.
+          type: string
+        instructions:
+          description: Step-by-step instructions for obtaining credentials.
+          allOf:
+          - $ref: '#/components/schemas/one_Instructions'
+        payload_example:
+          description: Example credentials payload with placeholder values.
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+        payload_schema:
+          description: JSON Schema for the credentials object in POST /v2/integrations request.
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+        redirect_url:
+          description: OAuth redirect URL for vendors requiring human interaction.
+          type:
+          - string
+          - 'null'
+      required:
+      - display_name
+      - human_interaction_required
+      - id
+      - instructions
+      - payload_example
+      - payload_schema
+      - redirect_url
+    alexandria_application_updated_at:
+      description: Returns the application update time.
+      type: string
+      example: '2025-01-01T00:00:00Z'
+    alexandria_application_gen_ai_score:
+      description: GenAI score for the application. Returns -1 when no score is available.
+      type: number
+      format: float
+      example: 1.5
+    alexandria_application_ip_subnets:
+      description: IP subnets for this application. Custom application create and update requests accept IPv4 prefix lengths /8 through /32 and IPv6 prefix lengths /32 through /128.
+      type: array
+      items:
+        type: string
+      example:
+      - 192.168.1.0/24
+      - 2001:db8::/48
+      x-stainless-collection-type: set
+    cc_ApplicationConstraints:
+      type: object
+      properties:
+        jurisdiction:
+          $ref: '#/components/schemas/cc_ApplicationJurisdiction'
+        regions:
+          type: array
+          items:
+            $ref: '#/components/schemas/cc_Region'
+    cc_DurableObjectsConfiguration:
+      description: Set of properties to configure a Durable Object-backed application.
+      oneOf:
+      - $ref: '#/components/schemas/cc_DurableObjectsConfigurationNamespaceId'
+      - $ref: '#/components/schemas/cc_DurableObjectsConfigurationScriptAndClass'
+    cc_V4BaseErrorResponse:
+      type: object
+      properties:
+        errors:
+          example:
+          - code: 7003
+            message: No route for the URI
+          allOf:
+          - $ref: '#/components/schemas/cc_Messages'
+          minLength: 1
+        messages:
+          example: []
+          allOf:
+          - $ref: '#/components/schemas/cc_Messages'
+        result:
+          type:
+          - object
+          - 'null'
+          enum:
+          - null
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    one_Permission:
+      description: Permission/scope with severity for display.
+      type: object
+      properties:
+        display_name:
+          description: Human-readable permission name.
+          type: string
+        scope:
+          description: Vendor-native scope identifier.
+          type: string
+        severity:
+          description: 'Permission sensitivity level.
+
+
+            * `low` - low
+
+            * `medium` - medium
+
+            * `high` - high
+
+            * `critical` - critical'
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+          - critical
+      required:
+      - display_name
+      - scope
+      - severity
+    alexandria_application_id:
+      description: Returns the application ID.
+      type: integer
+      format: int64
+      example: 498
+      maximum: 4294967295
+      minimum: 0
+    alexandria_application_confidence_score:
+      description: Confidence score for the application. Returns -1 when no score is available.
+      type: number
+      format: float
+      example: 0.92
+    alexandria_get_application_response:
+      allOf:
+      - $ref: '#/components/schemas/alexandria_api-response-common'
+      - properties:
+          result:
+            $ref: '#/components/schemas/alexandria_application'
+        type: object
+    cc_UserSSHPublicKey:
+      description: User-provided SSH public key.
+      type: object
+      properties:
+        name:
+          description: Optional human readable name for this key.
+          type: string
+        public_key:
+          $ref: '#/components/schemas/cc_SSHPublicKey'
+      required:
+      - public_key
+    cc_DurableObjectApplicationSchedulingPolicy:
+      description: 'Selects a Durable Object-managed application. Each Durable Object creates and
+
+        manages the lifecycle of its container instance. Configure application-wide
+
+        observability settings here. Deployment configuration, scaling, placement
+
+        constraints, versions, and rollouts do not apply.
+
+        '
+      type: string
+      enum:
+      - durable_object
+    cc_Entrypoint:
+      description: 'The entry point for the container, specifying the executable to run when the container starts.
+
+        You can override this at run-time. If you do, the default command from the image is ignored.
+
+        Specify both entrypoint and command at run-time to completely replace the image defaults.
+
+        '
+      type: array
+      items:
+        $ref: '#/components/schemas/cc_ExecFormParam'
+      example:
+      - /bin/bash
+    alexandria_delete_application_conflict_response:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            properties:
+              code:
+                type: integer
+                minimum: 1000
+              message:
+                type: string
+                example: Application is referenced by other resources
+              meta:
+                type: object
+                properties:
+                  references:
+                    description: The complete list of resources in the account that reference the application.
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/alexandria_application_reference'
+                    minItems: 1
+                required:
+                - references
+            required:
+            - code
+            - message
+            - meta
+            type: object
+          maxItems: 1
+          minItems: 1
+        messages:
+          $ref: '#/components/schemas/alexandria_messages'
+        result:
+          type:
+          - object
+          - 'null'
+          enum:
+          - null
+        success:
+          type: boolean
+          enum:
+          - false
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    cc_Region:
+      description: 'Represents a group of datacenters. Choose one of "AFR", "APAC", "EEUR", "ENAM", "WNAM", "ME", "OC", "SAM", or "WEUR".
+
+        '
+      type: string
+      example: WNAM
+    cc_ApplicationName:
+      description: The application name.
+      type: string
+    cc_Application:
+      description: Describes an application and the parameters that govern how it places its instances.
+      type: object
+      properties:
+        account_id:
+          $ref: '#/components/schemas/cc_AccountID'
+        active_rollout_id:
+          $ref: '#/components/schemas/cc_RolloutID'
+        configuration:
+          $ref: '#/components/schemas/cc_UserDeploymentConfiguration'
+        constraints:
+          $ref: '#/components/schemas/cc_ApplicationConstraints'
+        created_at:
+          $ref: '#/components/schemas/cc_ISO8601Timestamp'
+        durable_objects:
+          $ref: '#/components/schemas/cc_ApplicationDurableObjectsConfiguration'
+        health:
+          $ref: '#/components/schemas/cc_ApplicationHealth'
+        id:
+          $ref: '#/components/schemas/cc_ApplicationID'
+        instances:
+          description: Number of deployments to create.
+          type: integer
+        max_instances:
+          description: Maximum number of instances the application allows. This is relevant for applications that auto-scale.
+          type: integer
+        name:
+          $ref: '#/components/schemas/cc_ApplicationName'
+        observability:
+          description: 'Top-level observability settings for the application.
+
+            This field is mutually exclusive with configuration.observability.
+
+            '
+          allOf:
+          - $ref: '#/components/schemas/cc_ApplicationObservability'
+        rollout_active_grace_period:
+          $ref: '#/components/schemas/cc_ApplicationRolloutActiveGracePeriod'
+        scheduling_policy:
+          $ref: '#/components/schemas/cc_SchedulingPolicy'
+        updated_at:
+          $ref: '#/components/schemas/cc_ISO8601Timestamp'
+        version:
+          type: integer
+      required:
+      - id
+      - created_at
+      - updated_at
+      - account_id
+      - name
+      - version
+      - scheduling_policy
+      - instances
+      - configuration
+    alexandria_messages:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          documentation_url:
+            type: string
+          message:
+            type: string
+          source:
+            type: object
+            properties:
+              pointer:
+                type: string
+        required:
+        - code
+        - message
+        type: object
+        uniqueItems: true
+      example: []
+    cc_ContainersListApplications:
+      description: The public Containers API returns a list of applications.
+      type: array
+      items:
+        $ref: '#/components/schemas/cc_ContainersApplicationResponse'
+    alexandria_application_type_description:
+      description: Returns the application type description.
+      type: string
+      example: Applications used to manage employees and workforce tools.
+    alexandria_application_reference:
+      type: object
+      properties:
+        id:
+          description: The public identifier of the referencing resource.
+          type: string
+          example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+        name:
+          description: The name of the referencing resource.
+          type: string
+          example: Allow Spotify
+        type:
+          description: The resource type, such as Rule or Profile. Additional types may be returned.
+          type: string
+          example: Rule
+      required:
+      - id
+      - name
+      - type
+    cc_ContainersCreateApplicationRequest:
+      description: 'Create a Containers application.
+
+        Set `scheduling_policy` to `default` for a
+
+        scheduler-backed application with deployment configuration, instance counts,
+
+        constraints, versions, and rollouts. Set it to `durable_object` for a
+
+        Durable Object-managed application where each Durable Object creates and manages
+
+        the lifecycle of its container instance. For `durable_object` requests, supply
+
+        `name`, `scheduling_policy`, and `durable_objects`, with optional `configuration`
+
+        and top-level `observability` settings.
+
+        '
+      oneOf:
+      - $ref: '#/components/schemas/cc_ContainersCreateScheduledApplicationRequest'
+      - $ref: '#/components/schemas/cc_ContainersCreateDurableObjectApplicationRequest'
+    cc_DurableObjectApplicationConfiguration:
+      description: Application-wide settings for a Durable Object-managed application.
+      type: object
+      properties:
+        authorized_keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/cc_UserSSHPublicKey'
+        wrangler_ssh:
+          $ref: '#/components/schemas/cc_WranglerSSHConfig'
+      additionalProperties: false
+    alexandria_application_type:
+      description: Returns the application type.
+      type: string
+      example: Human Resources
+    cc_EventType:
+      type: string
+      enum:
+      - Info
+      - Error
+      - Warn
+      - UserError
+      - SystemError
+    one_FormField:
+      description: A form field within a form_input step.
+      type: object
+      properties:
+        label:
+          description: Human-readable field label.
+          type: string
+        name:
+          description: Field identifier (maps to credentials key).
+          type: string
+        placeholder:
+          description: Placeholder text.
+          type:
+          - string
+          - 'null'
+        required:
+          description: Whether field is required.
+          type: boolean
+        supported_file_types:
+          description: Allowed file extensions for file_upload type.
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        type:
+          description: 'Field input type.
+
+
+            * `text` - text
+
+            * `password` - password
+
+            * `email` - email
+
+            * `file_upload` - file_upload'
+          type: string
+          enum:
+          - text
+          - password
+          - email
+          - file_upload
+      required:
+      - label
+      - name
+      - placeholder
+      - required
+      - supported_file_types
+      - type
+    cc_AccountID:
+      description: A unique identifier for the user's account.
+      type: string
+    alexandria_application_version:
+      description: Returns the application version.
+      type: string
+      example: '2025-01-01T00:00:00Z'
+    cc_InstanceID:
+      description: An instance ID represents an identifier of an instance configuration that maintains an underlying placement.
+      type: string
+    cc_ObservabilityLogs:
+      description: Observability logging settings.
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          default: false
+    cc_ApplicationObservability:
+      description: 'Settings for application observability such as logging. Supported fields depend
+
+        on the application''s scheduling policy. Durable Object-managed applications
+
+        accept only `logs.enabled`.
+
+        '
+      type: object
+      properties:
+        logs:
+          $ref: '#/components/schemas/cc_ObservabilityLogs'
+    cc_WranglerSSHConfig:
+      description: Configuration properties for connecting with SSH to a container using Wrangler.
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          default: true
+        port:
+          type: integer
+          default: 22
+          maximum: 65535
+          minimum: 1
+    cc_ContainersDeleteApplicationResponseBody:
+      description: Result of starting asynchronous deletion for a Containers application.
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    cc_V4BaseResponse:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/cc_Messages'
+        messages:
+          $ref: '#/components/schemas/cc_Messages'
+        success:
+          description: Whether the API call was successful.
+          type: boolean
+          example: true
+      required:
+      - success
+      - errors
+      - messages
+    alexandria_category_id:
+      description: Returns the category ID.
+      type: integer
+      format: int64
+      example: 12
+      maximum: 4294967295
+      minimum: 1
+    cc_DurableObjectApplication:
+      description: Each Durable Object creates and manages the lifecycle of its container instance.
+      type: object
+      properties:
+        account_id:
+          $ref: '#/components/schemas/cc_AccountID'
+        configuration:
+          $ref: '#/components/schemas/cc_DurableObjectApplicationConfiguration'
+        created_at:
+          $ref: '#/components/schemas/cc_ISO8601Timestamp'
+        durable_objects:
+          $ref: '#/components/schemas/cc_DurableObjectsConfigurationNamespaceId'
+        health:
+          $ref: '#/components/schemas/cc_DurableObjectApplicationHealth'
+        id:
+          $ref: '#/components/schemas/cc_ApplicationID'
+        name:
+          $ref: '#/components/schemas/cc_ApplicationName'
+        observability:
+          $ref: '#/components/schemas/cc_DurableObjectApplicationObservability'
+        scheduling_policy:
+          $ref: '#/components/schemas/cc_DurableObjectApplicationSchedulingPolicy'
+        updated_at:
+          $ref: '#/components/schemas/cc_ISO8601Timestamp'
+      required:
+      - id
+      - created_at
+      - updated_at
+      - account_id
+      - name
+      - scheduling_policy
+      - durable_objects
+    one_AuthMethod:
+      description: Authentication method available for a vendor.
+      type: object
+      properties:
+        display_name:
+          description: Human-readable auth method name.
+          type: string
+        id:
+          description: Auth method identifier.
+          type: string
+        is_default:
+          description: Whether this is the default auth method.
+          type: boolean
+        supported_environments:
+          description: Environments this auth method supports.
+          type: array
+          items:
+            type: string
+      required:
+      - display_name
+      - id
+      - is_default
+      - supported_environments
+    alexandria_application_source:
+      description: Returns the application source.
+      type: string
+      example: cloudflare
+    cc_DeploymentObservability:
+      description: Settings for deployment observability such as logging.
+      type: object
+      properties:
+        logs:
+          $ref: '#/components/schemas/cc_ObservabilityLogs'
+    cc_ApplicationRolloutActiveGracePeriod:
+      description: 'Grace period for active instances to stay alive before becoming eligible for shutdown signal due to a rollout, in seconds.
+
+        Defaults to 0.
+
+        '
+      type: integer
+      default: 0
+      maximum: 604800
+      minimum: 0
+    one_PaginatedSetupFlowList:
+      type: object
+      properties:
+        errors:
+          description: List of errors.
+          type: array
+          items:
+            type: object
+          default: []
+        messages:
+          description: List of messages.
+          type: array
+          items:
+            type: string
+          default: []
+        result:
+          description: List of items.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_SetupFlow'
+        result_info:
+          description: Pagination metadata.
+          type: object
+          properties:
+            count:
+              description: Number of items in current page.
+              type: integer
+            next:
+              description: URL for next page.
+              type:
+              - string
+              - 'null'
+              format: uri
+            page:
+              description: Current page number.
+              type: integer
+            per_page:
+              description: Number of items per page.
+              type: integer
+            previous:
+              description: URL for previous page.
+              type:
+              - string
+              - 'null'
+              format: uri
+            total_count:
+              description: Total number of items.
+              type: integer
+        success:
+          description: Whether the request succeeded.
+          type: boolean
+      required:
+      - result
+      - success
+      - errors
+      - messages
+      - result_info
+    cc_EnvironmentVariable:
+      description: An environment variable with a value set.
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/cc_EnvironmentVariableName'
+        value:
+          $ref: '#/components/schemas/cc_EnvironmentVariableValue'
+      required:
+      - name
+      - value
+    cc_EventName:
+      description: "Name of the event that describes the kind event that happened.\n  - SchedulerPlaced: It's the first event that creates a container placement. It happens when the Containers runtime was able to retrieve deployment resources and start verifying everything is correct.\n  - NetworkingIPAssigned: It's sent when the Containers runtime maps the IP to the container.\n  - VMStarted: It's sent when the Containers runtime starts the VM. The container might remain unhealthy at this point.\n  - ImagePulled: It's sent when the Containers runtime pulls the image successfully.\n  - ImagePullError: It's sent when the Containers runtime is having issues pulling the image. The message and details have more information on what happened for debugging.\n  - VMFailedToStart: It's sent when the Containers runtime was unable to boot the VM.\n  - VMStopping: It's sent when the scheduler is stopping the VM.\n  - VMStopped: It's sent when the VM finally exits.\n  - VMFailed: It's sent when the scheduling of the VM failed in the current location.\n  - RuntimeStartFailed: It's sent when the runtime hits an internal error.\n  - SSHStarted: It's sent when the container gains network connectivity and opens the SSH port. Containers only send this event when SSH keys exist.\n  - CheckUpdate: Sent when the status of a health or readiness check changes. This may also affect the health status of the placement.\n  - DurableObjectConnected: Sent when a durable object instance connects and gains control of the deployment.\n    This event is only sent for durable object deployments. It is sent after VMStarted.\n  - ContainerStarted: It's sent when the container starts running.\n"
+      type: string
+      enum:
+      - SchedulerPlaced
+      - NetworkingIPAssigned
+      - VMStarted
+      - ImagePulled
+      - ImagePullError
+      - VMFailedToStart
+      - NetworkingIPAssignmentFailed
+      - VMRunning
+      - VMStopping
+      - VMStopped
+      - VMFailed
+      - RuntimeStartFailed
+      - SSHStarted
+      - ServiceHealthUpdates
+      - CheckUpdate
+      - DurableObjectConnected
+      - ContainerStarted
+    cc_DurableObjectsConfigurationNamespaceId:
+      description: Durable object configuration using a namespace ID.
+      type: object
+      properties:
+        namespace_id:
+          description: The namespace ID of the durable object namespace to use for this application.
+          type: string
+          example: 14758f1afd44c09b7992073ccf00b43d
+      required:
+      - namespace_id
+    alexandria_application_list_item:
+      description: Describes one application in a list response. This endpoint returns every property below unless the `fields` query parameter narrows the response, so treat all of them except `id` as optional.
+      type: object
+      properties:
+        application_confidence_score:
+          $ref: '#/components/schemas/alexandria_application_confidence_score'
+        application_score_composition:
+          $ref: '#/components/schemas/alexandria_application_score_composition'
+        application_source:
+          $ref: '#/components/schemas/alexandria_application_source'
+        application_type:
+          $ref: '#/components/schemas/alexandria_application_type'
+        application_type_description:
+          $ref: '#/components/schemas/alexandria_application_type_description'
+        category_id:
+          $ref: '#/components/schemas/alexandria_category_id'
+        created_at:
+          $ref: '#/components/schemas/alexandria_application_created_at'
+        gen_ai_score:
+          $ref: '#/components/schemas/alexandria_application_gen_ai_score'
+        hostnames:
+          $ref: '#/components/schemas/alexandria_application_hostnames'
+        human_id:
+          $ref: '#/components/schemas/alexandria_application_human_id'
+        id:
+          $ref: '#/components/schemas/alexandria_application_id'
+        ip_subnets:
+          $ref: '#/components/schemas/alexandria_application_ip_subnets'
+        name:
+          $ref: '#/components/schemas/alexandria_application_name'
+        port_protocols:
+          $ref: '#/components/schemas/alexandria_application_port_protocols'
+        review_status:
+          description: The account-specific Gateway review status. Applications with no assigned review status are returned as `unreviewed`.
+          type: string
+          enum:
+          - approved
+          - unapproved
+          - in_review
+          - unreviewed
+        support_domains:
+          $ref: '#/components/schemas/alexandria_application_support_domains'
+        supported:
+          $ref: '#/components/schemas/alexandria_application_supported'
+        updated_at:
+          $ref: '#/components/schemas/alexandria_application_updated_at'
+        version:
+          $ref: '#/components/schemas/alexandria_application_version'
+      required:
+      - id
+    one_AuthConfig:
+      description: OAuth configuration for setup flows that use OAuth.
+      type: object
+      properties:
+        authorization_url:
+          description: Full OAuth authorization URL with query parameters.
+          type:
+          - string
+          - 'null'
+        client_id:
+          description: OAuth client ID.
+          type:
+          - string
+          - 'null'
+        requires_pkce:
+          description: Whether PKCE is required.
+          type: boolean
+        scopes:
+          description: OAuth scopes to request.
+          type: array
+          items:
+            type: string
+        url_placeholders:
+          description: Placeholders in authorization URL that frontend must fill.
+          type: array
+          items:
+            type: string
+      required:
+      - authorization_url
+      - client_id
+      - requires_pkce
+      - scopes
+      - url_placeholders
+    cc_ContainersCreateDurableObjectApplicationRequest:
+      description: 'Create a Durable Object-managed Containers application. Each Durable Object
+
+        creates and manages the lifecycle of its container instance. Supply `name`,
+
+        `scheduling_policy`, and `durable_objects`, with optional `configuration` and
+
+        top-level `observability` settings. Deployment configuration, instance counts,
+
+        scaling, constraints, versions, and rollouts do not apply.
+
+        '
+      type: object
+      properties:
+        configuration:
+          description: Configuration for a Durable Object-managed application.
+          allOf:
+          - $ref: '#/components/schemas/cc_DurableObjectApplicationConfiguration'
+        durable_objects:
+          description: The customer-owned Durable Object namespace that owns this application and its instances.
+          allOf:
+          - $ref: '#/components/schemas/cc_DurableObjectsConfiguration'
+        name:
+          description: The name for this application.
+          type: string
+        observability:
+          $ref: '#/components/schemas/cc_DurableObjectApplicationObservability'
+        scheduling_policy:
+          $ref: '#/components/schemas/cc_DurableObjectApplicationSchedulingPolicy'
+      additionalProperties: false
+      required:
+      - name
+      - scheduling_policy
+      - durable_objects
+    cc_EnvironmentVariableValue:
+      description: An environment variable value.
+      type: string
+    alexandria_api-response-common:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/alexandria_messages'
+        messages:
+          $ref: '#/components/schemas/alexandria_messages'
+        success:
+          description: Indicates whether the API call was successful.
+          type: boolean
+          example: true
+          enum:
+          - true
+      required:
+      - success
+      - errors
+      - messages
+    cc_ModifyUserDeploymentConfiguration:
+      description: User-specified container configuration changes.
+      type: object
+      properties:
+        authorized_keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/cc_UserSSHPublicKey'
+        command:
+          $ref: '#/components/schemas/cc_Command'
+        entrypoint:
+          $ref: '#/components/schemas/cc_Entrypoint'
+        environment_variables:
+          description: Container environment variables.
+          type: array
+          items:
+            $ref: '#/components/schemas/cc_EnvironmentVariable'
+        image:
+          $ref: '#/components/schemas/cc_Image'
+        instance_type:
+          $ref: '#/components/schemas/cc_InstanceType'
+        observability:
+          $ref: '#/components/schemas/cc_DeploymentObservability'
+    cc_PlacementEvent:
+      description: An event within a Placement or a Job.
+      type: object
+      properties:
+        details:
+          type: object
+          additionalProperties: true
+        id:
+          type: string
+        message:
+          type: string
+        name:
+          $ref: '#/components/schemas/cc_EventName'
+        statusChange:
+          type: object
+          additionalProperties: true
+        time:
+          $ref: '#/components/schemas/cc_ISO8601Timestamp'
+        type:
+          $ref: '#/components/schemas/cc_EventType'
+      required:
+      - id
+      - time
+      - type
+      - name
+      - message
+      - details
+      - statusChange
+    alexandria_application_supported:
+      description: Cloudflare products that support this application.
+      type: array
+      items:
+        enum:
+        - GATEWAY
+        - ACCESS
+        - CASB
+        type: string
+      example:
+      - GATEWAY
+      - ACCESS
+      x-stainless-collection-type: set
+    cc_ApplicationVersion:
+      description: An application with the configuration of its version.
+      type: object
+      properties:
+        configuration:
+          $ref: '#/components/schemas/cc_ModifyUserDeploymentConfiguration'
+        percentage:
+          type: integer
+        version:
+          type: integer
+      required:
+      - configuration
+      - percentage
+      - version
+    alexandria_api_response_common_failure:
+      type: object
+      properties:
+        errors:
+          example:
+          - code: 7003
+            message: No route for the URI
+          allOf:
+          - $ref: '#/components/schemas/alexandria_messages'
+          minLength: 1
+        messages:
+          example: []
+          allOf:
+          - $ref: '#/components/schemas/alexandria_messages'
+        result:
+          type:
+          - object
+          - 'null'
+          enum:
+          - null
+        success:
+          description: Indicates whether the API call was successful.
+          type: boolean
+          example: false
+          enum:
+          - false
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    cc_Messages:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          documentation_url:
+            type: string
+          message:
+            type: string
+          source:
+            type: object
+            properties:
+              pointer:
+                type: string
+        required:
+        - code
+        - message
+        type: object
+        uniqueItems: true
+      example: []
+    cc_ApplicationHealth:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/cc_ApplicationHealthErrors'
+        instances:
+          $ref: '#/components/schemas/cc_ApplicationHealthInstances'
+        summary:
+          description: 'High-level health assessment. Only populated for "new_instances" strategy.
+
+            Based on a sample of target-version instances rather than a full count.
+
+            - "pending": Zero target-version instances exist yet.
+
+            - "healthy": Every sampled target-version instance reports running or active.
+
+            - "degraded": Some sampled instances remain starting or scheduling.
+
+            - "unhealthy": One or more sampled instances have failed.
+
+            '
+          type: string
+          enum:
+          - healthy
+          - degraded
+          - unhealthy
+          - pending
+      required:
+      - instances
+      - errors
+    alexandria_create_application_request:
+      description: 'Defines a custom application. At least one hostname or IP subnet is required.
+
+        Support domains and port/protocol pairs do not satisfy this requirement.
+
+        '
+      type: object
+      properties:
+        category_id:
+          $ref: '#/components/schemas/alexandria_category_id'
+        hostnames:
+          $ref: '#/components/schemas/alexandria_application_hostnames'
+        human_id:
+          $ref: '#/components/schemas/alexandria_application_human_id'
+        ip_subnets:
+          $ref: '#/components/schemas/alexandria_application_ip_subnets'
+        name:
+          $ref: '#/components/schemas/alexandria_application_name'
+        port_protocols:
+          $ref: '#/components/schemas/alexandria_application_port_protocols'
+        support_domains:
+          $ref: '#/components/schemas/alexandria_application_support_domains'
+      anyOf:
+      - properties:
+          hostnames:
+            allOf:
+            - $ref: '#/components/schemas/alexandria_application_hostnames'
+            - items:
+                minLength: 1
+                pattern: .*\S.*
+                type: string
+              minItems: 1
+              type: array
+        required:
+        - hostnames
+        type: object
+      - properties:
+          ip_subnets:
+            allOf:
+            - $ref: '#/components/schemas/alexandria_application_ip_subnets'
+            - items:
+                type: string
+              minItems: 1
+              type: array
+        required:
+        - ip_subnets
+        type: object
+      required:
+      - name
+      - human_id
+      - category_id
+    cc_ScheduledApplication:
+      description: The Containers scheduler manages this application's instances, configuration, versions, and rollouts.
+      allOf:
+      - $ref: '#/components/schemas/cc_Application'
+      - properties:
+          scheduling_policy:
+            $ref: '#/components/schemas/cc_ScheduledApplicationSchedulingPolicy'
+        required:
+        - scheduling_policy
+        type: object
+    cc_RolloutID:
+      description: An identifier for a specific rollout within an application.
+      type: string
+    cc_DurableObjectApplicationHealth:
+      description: 'Aggregate current activity for the latest observed placement of each instance.
+
+        Runtime snapshots feed periodic background sweeps. Counts refresh after each
+
+        complete sweep. Instance listings retain their separate three-month history
+
+        for failure discovery.
+
+        '
+      type: object
+      properties:
+        instances:
+          description: Counts of observed non-terminal instances.
+          type: object
+          properties:
+            active:
+              description: Number of instances whose runtime reports running or stopping.
+              type: integer
+              minimum: 0
+            starting:
+              description: Number of instances whose runtime reports starting.
+              type: integer
+              minimum: 0
+          required:
+          - active
+          - starting
+        summary:
+          description: Present as pending until the first activity sweep completes; omitted afterward.
+          type: string
+          enum:
+          - pending
+      required:
+      - instances
+    cc_Image:
+      description: Image url.
+      type: string
+    alexandria_application_name:
+      description: Returns the application name.
+      type: string
+      example: HR
+    one_UseCaseSummary:
+      description: Lightweight use case for list endpoint.
+      type: object
+      properties:
+        display_name:
+          description: Human-readable use case name.
+          type: string
+        id:
+          description: Use case identifier (e.g. casb, ces).
+          type: string
+      required:
+      - display_name
+      - id
+    cc_ContainersModifyApplicationRequestBody:
+      description: 'Request body for modifying a Containers application without replacing its instances.
+
+        Durable Object-managed applications support only top-level observability.logs.enabled.
+
+        The other fields apply to scheduler-backed applications, where deployment configuration
+
+        changes such as image, resource allocation, command, and environment variables require
+
+        an application rollout.
+
+        '
+      type: object
+      properties:
+        configuration:
+          $ref: '#/components/schemas/cc_ContainersModifyApplicationConfiguration'
+        constraints:
+          $ref: '#/components/schemas/cc_ApplicationConstraints'
+        max_instances:
+          description: Maximum number of instances that an autoscaling application can run.
+          type: integer
+          minimum: 0
+        observability:
+          description: 'Top-level application observability settings. Scheduler-backed applications
+
+            hot-reload these settings across existing instances. An existing Durable
+
+            Object-managed application accepts only `logs.enabled` and publishes these settings
+
+            to runtime metadata without creating deployments or rollouts.
+
+            '
+          allOf:
+          - $ref: '#/components/schemas/cc_ApplicationObservability'
+        rollout_active_grace_period:
+          $ref: '#/components/schemas/cc_ApplicationRolloutActiveGracePeriod'
+    one_PaginatedAuthMethodDetailList:
+      type: object
+      properties:
+        errors:
+          description: List of errors.
+          type: array
+          items:
+            type: object
+          default: []
+        messages:
+          description: List of messages.
+          type: array
+          items:
+            type: string
+          default: []
+        result:
+          description: List of items.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_AuthMethodDetail'
+        result_info:
+          description: Pagination metadata.
+          type: object
+          properties:
+            count:
+              description: Number of items in current page.
+              type: integer
+            next:
+              description: URL for next page.
+              type:
+              - string
+              - 'null'
+              format: uri
+            page:
+              description: Current page number.
+              type: integer
+            per_page:
+              description: Number of items per page.
+              type: integer
+            previous:
+              description: URL for previous page.
+              type:
+              - string
+              - 'null'
+              format: uri
+            total_count:
+              description: Total number of items.
+              type: integer
+        success:
+          description: Whether the request succeeded.
+          type: boolean
+      required:
+      - result
+      - success
+      - errors
+      - messages
+      - result_info
+    one_Instructions:
+      description: Instructions for obtaining credentials.
+      type: object
+      properties:
+        markdown:
+          description: Detailed instructions in markdown format.
+          type: string
+      required:
+      - markdown
+    alexandria_application_port_protocols:
+      description: Port and protocol pairs matched by the application.
+      type: array
+      items:
+        type: string
+      example:
+      - tcp/80
+      - tcp/443
+      x-stainless-collection-type: set
+    one_DynamicContent:
+      description: Dynamic content for instruction/form_input steps.
+      type: object
+      properties:
+        label:
+          description: Display label.
+          type: string
+        type:
+          description: 'Content type.
+
+
+            * `copy_block` - copy_block
+
+            * `external_link` - external_link'
+          type: string
+          enum:
+          - copy_block
+          - external_link
+        url_template:
+          description: URL template with {{ variable }} interpolation (for external_link).
+          type:
+          - string
+          - 'null'
+        value_from:
+          description: Field path to get value from (for copy_block).
+          type:
+          - string
+          - 'null'
+      required:
+      - label
+      - type
+    alexandria_application_hostnames:
+      description: Hostnames matched by the application.
+      type: array
+      items:
+        type: string
+      example:
+      - example.com
+      - foo.com
+      x-stainless-collection-type: set
+    cc_UserDeploymentConfiguration:
+      description: User-specified container configuration.
+      type: object
+      properties:
+        authorized_keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/cc_UserSSHPublicKey'
+        command:
+          $ref: '#/components/schemas/cc_Command'
+        entrypoint:
+          $ref: '#/components/schemas/cc_Entrypoint'
+        environment_variables:
+          description: Container environment variables.
+          type: array
+          items:
+            $ref: '#/components/schemas/cc_EnvironmentVariable'
+        image:
+          $ref: '#/components/schemas/cc_Image'
+        instance_type:
+          $ref: '#/components/schemas/cc_InstanceType'
+        observability:
+          $ref: '#/components/schemas/cc_DeploymentObservability'
+      required:
+      - image
+    cc_ContainersModifyApplicationConfiguration:
+      description: Application configuration fields you can change without creating a rollout.
+      type: object
+      properties:
+        authorized_keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/cc_UserSSHPublicKey'
+        wrangler_ssh:
+          $ref: '#/components/schemas/cc_WranglerSSHConfig'
+    alexandria_application_score_composition:
+      description: Returns the score composition breakdown for the application.
+      type:
+      - object
+      - 'null'
+      example:
+        categories:
+        - confidence: 0.95
+          name: Security
+        plan: free
+    one_UseCaseDetail:
+      description: Full use case with scopes and features for detail endpoint.
+      type: object
+      properties:
+        base_scopes:
+          description: Scopes always required for this use case.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_Permission'
+        description:
+          description: Use case description.
+          type: string
+        display_name:
+          description: Human-readable use case name.
+          type: string
+        features:
+          description: Optional features with extra scopes.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_FeatureScope'
+        id:
+          description: Use case identifier.
+          type: string
+      required:
+      - base_scopes
+      - description
+      - display_name
+      - features
+      - id
+    one_ApplicationList:
+      description: Application item in list response.
+      type: object
+      properties:
+        auth_methods:
+          description: Available auth methods.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_AuthMethodSummary'
+        category:
+          description: Vendor category (e.g. Productivity, AI).
+          type: string
+        description:
+          description: Brief description of the integration.
+          type: string
+        display_name:
+          description: Human-readable vendor name.
+          type: string
+        dlp_enabled:
+          description: Whether DLP scanning is supported.
+          type: boolean
+        id:
+          description: 'Vendor identifier (e.g. microsoft_internal, google_workspace).
+
+
+            * `ANTHROPIC` - ANTHROPIC
+
+            * `AWS` - AWS
+
+            * `BITBUCKET` - BITBUCKET
+
+            * `BOX` - BOX
+
+            * `CONFLUENCE` - CONFLUENCE
+
+            * `DROPBOX` - DROPBOX
+
+            * `GITHUB` - GITHUB
+
+            * `GOOGLE_CLOUD_PLATFORM` - GOOGLE_CLOUD_PLATFORM
+
+            * `GOOGLE_WORKSPACE` - GOOGLE_WORKSPACE
+
+            * `JIRA` - JIRA
+
+            * `MICROSOFT_INTERNAL` - MICROSOFT_INTERNAL
+
+            * `OPENAI` - OPENAI
+
+            * `SALESFORCE` - SALESFORCE
+
+            * `SERVICENOW` - SERVICENOW
+
+            * `SLACK` - SLACK'
+          type: string
+          enum:
+          - ANTHROPIC
+          - AWS
+          - BITBUCKET
+          - BOX
+          - CONFLUENCE
+          - DROPBOX
+          - GITHUB
+          - GOOGLE_CLOUD_PLATFORM
+          - GOOGLE_WORKSPACE
+          - JIRA
+          - MICROSOFT_INTERNAL
+          - OPENAI
+          - SALESFORCE
+          - SERVICENOW
+          - SLACK
+        logo:
+          description: Logo path.
+          type:
+          - string
+          - 'null'
+        permissions:
+          description: All permissions with severity.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_Permission'
+        supported_environments:
+          description: Environments this vendor supports (standard, fedramp).
+          type: array
+          items:
+            type: string
+        use_cases:
+          description: Supported use cases.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_UseCaseSummary'
+      required:
+      - auth_methods
+      - category
+      - description
+      - display_name
+      - dlp_enabled
+      - id
+      - logo
+      - permissions
+      - supported_environments
+      - use_cases
+    one_PaginatedApplicationListList:
+      type: object
+      properties:
+        errors:
+          description: List of errors.
+          type: array
+          items:
+            type: object
+          default: []
+        messages:
+          description: List of messages.
+          type: array
+          items:
+            type: string
+          default: []
+        result:
+          description: List of items.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_ApplicationList'
+        result_info:
+          description: Pagination metadata.
+          type: object
+          properties:
+            count:
+              description: Number of items in current page.
+              type: integer
+            next:
+              description: URL for next page.
+              type:
+              - string
+              - 'null'
+              format: uri
+            page:
+              description: Current page number.
+              type: integer
+            per_page:
+              description: Number of items per page.
+              type: integer
+            previous:
+              description: URL for previous page.
+              type:
+              - string
+              - 'null'
+              format: uri
+            total_count:
+              description: Total number of items.
+              type: integer
+        success:
+          description: Whether the request succeeded.
+          type: boolean
+      required:
+      - result
+      - success
+      - errors
+      - messages
+      - result_info
+    one_ApplicationDetail:
+      description: Full application detail for onboarding UI.
+      type: object
+      properties:
+        auth_methods:
+          description: Available authentication methods.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_AuthMethod'
+        category:
+          description: Vendor category.
+          type: string
+        description:
+          description: Brief description.
+          type: string
+        display_name:
+          description: Human-readable vendor name.
+          type: string
+        dlp_enabled:
+          description: Whether DLP scanning is supported.
+          type: boolean
+        id:
+          description: 'Vendor identifier.
+
+
+            * `ANTHROPIC` - ANTHROPIC
+
+            * `AWS` - AWS
+
+            * `BITBUCKET` - BITBUCKET
+
+            * `BOX` - BOX
+
+            * `CONFLUENCE` - CONFLUENCE
+
+            * `DROPBOX` - DROPBOX
+
+            * `GITHUB` - GITHUB
+
+            * `GOOGLE_CLOUD_PLATFORM` - GOOGLE_CLOUD_PLATFORM
+
+            * `GOOGLE_WORKSPACE` - GOOGLE_WORKSPACE
+
+            * `JIRA` - JIRA
+
+            * `MICROSOFT_INTERNAL` - MICROSOFT_INTERNAL
+
+            * `OPENAI` - OPENAI
+
+            * `SALESFORCE` - SALESFORCE
+
+            * `SERVICENOW` - SERVICENOW
+
+            * `SLACK` - SLACK'
+          type: string
+          enum:
+          - ANTHROPIC
+          - AWS
+          - BITBUCKET
+          - BOX
+          - CONFLUENCE
+          - DROPBOX
+          - GITHUB
+          - GOOGLE_CLOUD_PLATFORM
+          - GOOGLE_WORKSPACE
+          - JIRA
+          - MICROSOFT_INTERNAL
+          - OPENAI
+          - SALESFORCE
+          - SERVICENOW
+          - SLACK
+        instructions:
+          description: Setup instructions for the user.
+          type:
+          - string
+          - 'null'
+        logo:
+          description: Logo path.
+          type:
+          - string
+          - 'null'
+        use_cases:
+          description: Use cases with full scope details.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_UseCaseDetail'
+      required:
+      - auth_methods
+      - category
+      - description
+      - display_name
+      - dlp_enabled
+      - id
+      - instructions
+      - logo
+      - use_cases
+    cc_DurableObjectApplicationObservability:
+      description: 'Application-wide logging settings for a Durable Object-managed application.
+
+        The application publishes these settings to its runtime metadata. Updating
+
+        them does not create a deployment or rollout.
+
+        '
+      type: object
+      properties:
+        logs:
+          description: Application-wide logging settings.
+          type: object
+          additionalProperties: false
+          properties:
+            enabled:
+              type: boolean
+              default: false
+      additionalProperties: false
+    cc_ApplicationJurisdiction:
+      description: Restricts placement to datacenters in the selected jurisdiction. Choose "eu", "fedramp", or "us". When combined with regions, EU supports EEUR and WEUR while FedRAMP and US support ENAM and WNAM.
+      type: string
+    cc_ApplicationHealthInstances:
+      description: Shows a count of application instance states.
+      type: object
+      properties:
+        active:
+          description: 'Number of instances whose runtime reports the container as running (container_status = "running"). This is a subset of the placements that remain up: an instance that is already bound to a Durable Object and serving traffic is counted under "assigned" until its container_status catches up to "running", so container_status can briefly lag Durable Object attachment under churn. To estimate running, Durable-Object-bound instances, sum "active" + "assigned" rather than reading "active" alone.
+
+            '
+          type: integer
+        assigned:
+          description: 'Number of instances bound to a Durable Object with a running placement whose container_status remains behind "running". These count as live, serving instances; "active" + "assigned" approximates the running, Durable-Object-bound count.
+
+            '
+          type: integer
+      required:
+      - active
+      - assigned
+    one_ApplicationDetailResponse:
+      type: object
+      properties:
+        errors:
+          description: List of errors.
+          type: array
+          items:
+            additionalProperties: true
+            type: object
+          default: []
+        messages:
+          description: List of messages.
+          type: array
+          items:
+            type: string
+          default: []
+        result:
+          description: The requested item.
+          allOf:
+          - $ref: '#/components/schemas/one_ApplicationDetail'
+        success:
+          description: Whether the request succeeded.
+          type: boolean
+      required:
+      - result
+      - success
+    one_FeatureScope:
+      description: A feature with its additional scopes.
+      type: object
+      properties:
+        description:
+          description: Feature description.
+          type: string
+        display_name:
+          description: Human-readable feature name.
+          type: string
+        id:
+          description: Feature identifier.
+          type: string
+        scopes:
+          description: Additional scopes when feature is enabled.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_Permission'
+      required:
+      - description
+      - display_name
+      - id
+      - scopes
+    cc_SchedulingPolicy:
+      description: The scheduling policy to use for an application.
+      type: string
+      enum:
+      - default
+      - durable_object
+    cc_ApplicationHealthErrors:
+      type: array
+      items:
+        $ref: '#/components/schemas/cc_ApplicationHealthError'
+    one_SetupFlow:
+      description: Setup flow for an application auth method.
+      type: object
+      properties:
+        auth_config:
+          description: OAuth configuration (present for OAuth-based flows).
+          allOf:
+          - $ref: '#/components/schemas/one_AuthConfig'
+        default:
+          description: Whether this is the default auth method.
+          type: boolean
+        description:
+          description: Flow description.
+          type: string
+        id:
+          description: Setup flow identifier.
+          type: string
+        name:
+          description: Human-readable flow name.
+          type: string
+        steps:
+          description: Ordered list of setup steps.
+          type: array
+          items:
+            $ref: '#/components/schemas/one_SetupFlowStep'
+        supported_environments:
+          description: Environments this auth method supports (standard, fedramp).
+          type: array
+          items:
+            type: string
+      required:
+      - default
+      - description
+      - id
+      - name
+      - steps
+      - supported_environments
+    cc_InstanceType:
+      description: 'The instance type configures vCPU, memory, and disk.
+
+
+        - "lite": 1/16 vCPU, 256 MiB memory, 2 GB disk
+
+        - "basic": 1/4 vCPU, 1 GiB memory, 4 GB disk
+
+        - "standard-1": 1/2 vCPU, 4 GiB memory, 8 GB disk
+
+        - "standard-2": 1 vCPU, 6 GiB memory, 12 GB disk
+
+        - "standard-3": 2 vCPU, 8 GiB memory, 16 GB disk
+
+        - "standard-4": 4 vCPU, 12 GiB memory, 20 GB disk
+
+        '
+      type: string
+      example: lite
+      default: lite
+      anyOf:
+      - enum:
+        - lite
+        - basic
+        - standard-1
+        - standard-2
+        - standard-3
+        - standard-4
+        type: string
+    cc_DurableObjectsConfigurationScriptAndClass:
+      description: Durable object configuration using script and class names.
+      type: object
+      properties:
+        class_name:
+          description: The class name of the durable object.
+          type: string
+        script_name:
+          description: The script name where the durable object class is defined.
+          type: string
+      required:
+      - script_name
+      - class_name
+    alexandria_update_application_request:
+      description: 'Update the network matchers for the application. The service preserves omitted
+
+        matcher lists; send an empty array to clear a list. The resulting application must
+
+        contain at least one hostname or IP subnet. Support domains and port/protocol pairs
+
+        do not satisfy this requirement.
+
+        '
+      type: object
+      properties:
+        hostnames:
+          $ref: '#/components/schemas/alexandria_application_hostnames'
+        ip_subnets:
+          $ref: '#/components/schemas/alexandria_application_ip_subnets'
+        port_protocols:
+          $ref: '#/components/schemas/alexandria_application_port_protocols'
+        support_domains:
+          $ref: '#/components/schemas/alexandria_application_support_domains'
+    cc_SSHPublicKey:
+      description: An SSH public key.
+      type: string
+    cc_ISO8601Timestamp:
+      description: UTC timestamp string in ISO 8601 format.
+      type: string
+      example: '2021-04-01T12:32:41.488Z'
+    cc_ExecFormParam:
+      type: string
+    cc_Command:
+      description: 'The command that runs when the container starts, passed to the entrypoint.
+
+        You can override this at run-time. If you override only the command,
+
+        it gets passed to the default entrypoint specified in the image.
+
+        '
+      type: array
+      items:
+        $ref: '#/components/schemas/cc_ExecFormParam'
+      example:
+      - myapp
+      - --default-option
+    one_SetupFlowStep:
+      description: A single step in the setup flow. Polymorphic based on type.
+      type: object
+      properties:
+        component_id:
+          description: Component identifier (for component type).
+          type:
+          - string
+          - 'null'
+        description:
+          description: Step description with markdown support.
+          type:
+          - string
+          - 'null'
+        dynamic_content:
+          description: Dynamic content blocks (for instruction/form_input).
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/one_DynamicContent'
+        form_fields:
+          description: Form fields (for form_input).
+          type: array
+          items:
+            $ref: '#/components/schemas/one_FormField'
+        is_required:
+          description: Whether step is required (for form_input).
+          type: boolean
+        parameters:
+          description: Component parameters (for component type).
+          additionalProperties:
+            type: string
+          type:
+          - object
+          - 'null'
+        title:
+          description: Step title (for instruction/form_input/oauth_redirect).
+          type: string
+        type:
+          description: 'Step type.
+
+
+            * `component` - component
+
+            * `instruction` - instruction
+
+            * `form_input` - form_input
+
+            * `oauth_redirect` - oauth_redirect'
+          type: string
+          enum:
+          - component
+          - instruction
+          - form_input
+          - oauth_redirect
+      required:
+      - type
+    cc_EnvironmentVariableName:
+      description: An environment variable name.
+      type: string
+    cc_ApplicationID:
+      description: An Application ID represents an identifier of an application.
+      type: string
+    alexandria_delete_application_response:
+      allOf:
+      - $ref: '#/components/schemas/alexandria_api-response-common'
+      - properties:
+          result:
+            type:
+            - object
+            - 'null'
+            enum:
+            - null
+        required:
+        - result
+        type: object
+    alexandria_api-response-collection:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/alexandria_api-response-common'
+      - properties:
+          result_info:
+            type: object
+            properties:
+              count:
+                description: Returns the total number of results for the requested service.
+                type: number
+                example: 1
+              page:
+                description: Returns the current page within paginated list of results.
+                type: number
+                example: 1
+              per_page:
+                description: Returns the number of results per page of results.
+                type: number
+                example: 20
+              total_count:
+                description: Returns the total results available without any search parameters.
+                type: number
+                example: 2000
+        type: object
+    alexandria_application:
+      type: object
+      properties:
+        application_confidence_score:
+          $ref: '#/components/schemas/alexandria_application_confidence_score'
+        application_score_composition:
+          $ref: '#/components/schemas/alexandria_application_score_composition'
+        application_source:
+          $ref: '#/components/schemas/alexandria_application_source'
+        application_type:
+          $ref: '#/components/schemas/alexandria_application_type'
+        application_type_description:
+          $ref: '#/components/schemas/alexandria_application_type_description'
+        category_id:
+          $ref: '#/components/schemas/alexandria_category_id'
+        created_at:
+          $ref: '#/components/schemas/alexandria_application_created_at'
+        gen_ai_score:
+          $ref: '#/components/schemas/alexandria_application_gen_ai_score'
+        hostnames:
+          $ref: '#/components/schemas/alexandria_application_hostnames'
+        human_id:
+          $ref: '#/components/schemas/alexandria_application_human_id'
+        id:
+          $ref: '#/components/schemas/alexandria_application_id'
+        ip_subnets:
+          $ref: '#/components/schemas/alexandria_application_ip_subnets'
+        name:
+          $ref: '#/components/schemas/alexandria_application_name'
+        port_protocols:
+          $ref: '#/components/schemas/alexandria_application_port_protocols'
+        support_domains:
+          $ref: '#/components/schemas/alexandria_application_support_domains'
+        supported:
+          $ref: '#/components/schemas/alexandria_application_supported'
+        updated_at:
+          $ref: '#/components/schemas/alexandria_application_updated_at'
+        version:
+          $ref: '#/components/schemas/alexandria_application_version'
+      required:
+      - application_source
+      - application_type
+      - category_id
+      - application_type_description
+      - gen_ai_score
+      - application_confidence_score
+      - created_at
+      - supported
+      - hostnames
+      - human_id
+      - id
+      - ip_subnets
+      - name
+      - port_protocols
+      - support_domains
+      - updated_at
+      - version
+    cc_ApplicationHealthError:
+      type: object
+      properties:
+        event:
+          $ref: '#/components/schemas/cc_PlacementEvent'
+        instance_id:
+          $ref: '#/components/schemas/cc_InstanceID'
+      required:
+      - instance_id
+      - event
+    cc_V4PaginatedResultInfo:
+      description: Cursor pagination details for a v4 API list response.
+      type: object
+      properties:
+        next_page_token:
+          description: The token to use to retrieve the next page of results.
+          type: string
+        page_token:
+          description: The page token sent in the request.
+          type: string
+        per_page:
+          description: The number of items per page requested.
+          type: integer
+    cc_ApplicationDurableObjectsConfiguration:
+      description: Durable object configuration stored on and returned from a Cloudchamber application.
+      oneOf:
+      - $ref: '#/components/schemas/cc_DurableObjectsConfigurationNamespaceId'
+    alexandria_application_human_id:
+      description: Returns the human readable ID.
+      type: string
+      example: HR
+    cc_ScheduledApplicationSchedulingPolicy:
+      description: 'Selects a scheduler-backed application. Use `default` when the Containers
+
+        scheduler should maintain the requested number of instances and manage deployment
+
+        configuration, placement, scaling, versions, and rollouts.
+
+        '
+      type: string
+      enum:
+      - default
+    one_AuthMethodSummary:
+      description: Auth method summary for list endpoint.
+      type: object
+      properties:
+        display_name:
+          description: Human-readable auth method name.
+          type: string
+        id:
+          description: Auth method identifier.
+          type: string
+      required:
+      - display_name
+      - id
+    alexandria_applications:
+      description: Returns the list of applications.
+      type: array
+      items:
+        $ref: '#/components/schemas/alexandria_application_list_item'
+    cc_ContainersApplicationResponse:
+      description: The public Containers API returns an application.
+      oneOf:
+      - $ref: '#/components/schemas/cc_ScheduledApplication'
+      - $ref: '#/components/schemas/cc_DurableObjectApplication'
+    alexandria_application_created_at:
+      description: Returns the application creation time.
+      type: string
+      example: '2025-01-01T00:00:00Z'
+    alexandria_application_support_domains:
+      description: Support domains matched by the application.
+      type: array
+      items:
+        type: string
+      example:
+      - example.com
+      - foo.com
+      x-stainless-collection-type: set
+    alexandria_get_applications_response:
+      allOf:
+      - $ref: '#/components/schemas/alexandria_api-response-collection'
+      - properties:
+          result:
+            $ref: '#/components/schemas/alexandria_applications'
+        type: object
+  parameters:
+    cc_AccountId:
+      description: Account identifier.
+      in: path
+      name: account_id
+      required: true
+      schema:
+        type: string
+        example: account-123
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-forge-commands:
+  abuse-reports:
+    description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
+    groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
+      emails:
+        description: Emails sent for abuse reports
+      mitigations:
+        description: Mitigation actions taken in response to abuse reports
+  accounts:
+    description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
+    groups:
+      applications:
+        description: Applications operations
+      categories:
+        description: Categories operations
+      organizations:
+        description: Move accounts between organizations
+      profile:
+        description: View and manage the profile for a Cloudflare account
+      roles:
+        description: View the roles available for assigning to account members, each defining a set of permissions
+      subscriptions:
+        description: View and manage plan subscriptions attached to this account
+      tokens:
+        description: Create and manage scoped API tokens for programmatic access to the Cloudflare API
+  ai-gateway:
+    description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
+    groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
+      datasets:
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
+      dynamic-routing:
+        description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
+      evaluation-types:
+        description: 'Deprecated: list the evaluator types that evaluations can use'
+      evaluations:
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
+      logs:
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
+  ai-search:
+    description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
+    groups:
+      items:
+        description: Content indexed by AI Search instances
+      jobs:
+        description: Indexing job lifecycle for AI Search instances
+      namespace:
+        description: Logical groupings for organizing AI Search instances
+      tokens:
+        description: Credentials used by AI Search instances
+  ai-security:
+    description: Detect prompt injection, PII, and unsafe topics in traffic to your AI applications
+    groups:
+      custom-topics:
+        description: Organization-specific topic categories used by AI Security for Apps content detection
+  analytics:
+    description: Zone-level traffic analytics — dashboard summaries, per-colo breakdowns, and Argo latency metrics
+    groups:
+      colo:
+        description: Per-data-center (colo) traffic analytics breakdown for the zone
+      dashboard:
+        description: Aggregated zone dashboard analytics — requests, bandwidth, threats, and page views
+      latency:
+        description: Argo Smart Routing latency analytics showing time-to-first-byte improvements
+  argo:
+    description: Network optimization features that speed up and improve reliability of traffic to your origins
+    groups:
+      smart-routing:
+        description: Route traffic through the fastest network paths to your origin using real-time latency data
+      tiered-caching:
+        description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  billing:
+    description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
+    groups:
+      profiles:
+        description: Billing profile with payment method, address, and invoice preferences
+      usage:
+        description: Metered usage data for billed services — requests, bandwidth, and feature consumption
+  botnet-feed:
+    description: Botnet threat intelligence feeds — IP and ASN-level data on known command-and-control infrastructure
+    groups:
+      asn:
+        description: ASN-level botnet activity data showing networks with known C2 infrastructure
+      configs:
+        description: Botnet feed subscription configuration and notification preferences
+  builds:
+    description: Build and deploy Workers from connected repositories, then inspect build status and logs.
+    groups:
+      deploy-hooks:
+        description: Manage branch-specific HTTP hooks that start builds.
+      limits:
+        description: View build-minute availability and refresh information.
+      logs:
+        description: Retrieve build logs.
+      repos:
+        description: Manage source repository connections for Workers Builds.
+      tokens:
+        description: Manage credentials used by Workers Builds to deploy Workers.
+      triggers:
+        description: Configure how repository changes build and deploy Workers.
+      versions:
+        description: Find builds associated with Worker versions.
+      workers:
+        description: Manage repository-backed build configuration for Workers.
+  cache:
+    description: Purge cached content and configure Cache Reserve, tiered caching, and variant serving
+    groups:
+      origin-cloud-regions:
+        description: Manage Origin Cloud Regions routing and failover configurations
+      settings:
+        description: Configure Cache Reserve, tiered caching, and variant serving
+      settings.regional-tiered-cache:
+        description: Restrict tiered cache topology to data centers within a specific geographic region
+      settings.reserve:
+        description: Persistent storage tier that keeps cached assets even after eviction from edge caches
+      settings.smart-tiered-cache:
+        description: Automatically determine the best upper-tier data centers for tiered cache topology
+      settings.variants:
+        description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
+  client-side-security:
+    description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
+    groups:
+      connections:
+        description: Third-party connections made by scripts on your pages — track data exfiltration risks
+      cookies:
+        description: Cookies set by your pages with classification and same-site attribute tracking
+      policies:
+        description: Content Security Policies that control which scripts and connections are allowed on your pages
+      scripts:
+        description: JavaScript files detected on your pages with change tracking and malicious code detection
+      settings:
+        description: Fine tune Client-Side Security behaviors
+  cloud-connector:
+    description: Route traffic from Cloudflare directly to cloud provider services (AWS, Azure, GCP) without origin servers
+    groups:
+      rules:
+        description: Routing rules that map request patterns to cloud provider endpoints
+  cloudforce-one:
+    description: Detection rule management APIs
+    groups:
+      binary-storage:
+        description: Upload and retrieve malware samples and suspicious binaries for analysis
+      requests:
+        description: Additional request operations — priority listing and asset creation
+      rules:
+        description: Rule management operations
+        groups:
+          approvals:
+            description: Approval workflow operations
+          email:
+            description: Email rule operations
+          exemptions:
+            description: Exemption rule operations
+          managed:
+            description: Managed rule operations
+          stats:
+            description: Rule statistics operations
+          tree:
+            description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
+  containers:
+    description: Deploy and manage Containers applications on Cloudflare's global network
+    groups:
+      applications:
+        description: Manage Containers applications
+      applications.instances:
+        description: Inspect Containers instances belonging to applications
+      applications.rollouts:
+        description: Manage rollouts for scheduler-backed applications
+      applications.versions:
+        description: Inspect versions of scheduler-backed applications
+      registries:
+        description: Manage Containers image registries
+      registries.credentials:
+        description: Generate image registry credentials
+  content-scan:
+    description: Malicious uploads detection, scan uploaded content in HTTP requests for malware and malicious payloads
+    groups:
+      expressions:
+        description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
+  custom-pages:
+    description: Manage custom error and challenge pages and their assets for accounts and zones
+    groups:
+      account-custom-pages:
+        description: Manage account-level custom pages
+      account-custom-pages.preview-tokens:
+        description: Preview tokens for account-level custom pages
+      assets:
+        description: Manage account- and zone-level custom assets
+      zone-custom-pages:
+        description: Manage zone-level custom pages
+      zone-custom-pages.preview-tokens:
+        description: Preview tokens for zone-level custom pages
+  d1:
+    description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
+    groups:
+      time-travel:
+        description: use specific point-in-time backups of your D1 database
+        x-forge-epilogue: For more information about Time Travel, see https://developers.cloudflare.com/d1/reference/time-travel
+  diagnostics:
+    description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
+    groups:
+      endpoint-healthchecks:
+        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+      traceroutes:
+        description: Run traceroutes from Cloudflare data centers to diagnose network path issues
+  email-routing:
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
+    groups:
+      addresses:
+        description: Verified destination email addresses that can receive forwarded mail
+      dns:
+        description: Inspect or unlock the DNS records required by Email Routing
+      rules:
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
+  email-security:
+    description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
+    groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
+      investigate:
+        description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
+      phishguard:
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
+      settings:
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
+      submissions:
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
+  email-sending:
+    description: Send transactional email and manage sending subdomains and their DNS configuration
+    groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
+      subdomains:
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
+  filters:
+    description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
+  firewall:
+    description: Legacy firewall rules, zone lockdowns, access rules, user-agent blocking, and WAF packages
+    groups:
+      access-rules:
+        description: IP-based access rules that allow, block, challenge, or whitelist traffic globally or per-zone
+      lockdowns:
+        description: Zone lockdown rules that restrict access to URLs by IP address or range
+      rules:
+        description: Legacy firewall rules with filter expressions — prefer Rulesets for new configurations
+      ua-rules:
+        description: Block or challenge requests based on the User-Agent header string
+      waf:
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
+      zone-access-rules:
+        description: Zone-scoped IP access rules for blocking or allowing traffic
+  google-tag-gateway:
+    description: Google Tag Gateway operations
+    groups:
+      config:
+        description: Google Tag Gateway config operations
+  healthchecks:
+    description: Standalone health checks that monitor origin server availability from Cloudflare's edge
+    groups:
+      previews:
+        description: Test a health check configuration before deploying it to production
+  hyperdrive:
+    description: Accelerate access to existing databases by caching queries and pooling connections at the edge
+  iam:
+    description: Identity and access management — permission groups, resource groups, user groups, and SSO connectors
+    groups:
+      permission-groups:
+        description: View the permission groups that can be assigned to API tokens and policies
+      resource-groups:
+        description: Define scopes that limit which account resources a policy or token can access
+      sso:
+        description: Configure single sign-on connectors to authenticate account members through an external identity provider
+      user-groups:
+        description: Organize account members into groups for easier permission assignment
+  images:
+    description: Store, resize, and deliver optimized images globally — variants, signing keys, and direct uploads
+    groups:
+      flows:
+        description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
+      keys:
+        description: Manage signing keys for generating private image URLs
+      variants:
+        description: Manage named resize variants for transforming images on delivery
+  intel:
+    description: Threat intelligence lookups — IP reputation, domain info, ASN details, WHOIS, and indicator feeds
+    groups:
+      asn:
+        description: ASN intelligence — ownership, geolocation, and subnet details for autonomous systems
+      attack-surface-report:
+        description: Attack surface intelligence — exposed assets, vulnerabilities, and infrastructure mapping
+      dns:
+        description: Passive DNS data showing historical DNS resolution records for domains
+      domain-history:
+        description: Historical domain registration and categorization changes over time
+      domains:
+        description: Domain intelligence — risk scores, categories, and associated infrastructure
+      indicator-feeds:
+        description: Threat indicator feeds — subscribe to and manage curated lists of malicious IPs, domains, and URLs
+      ip-lists:
+        description: Curated IP lists used for threat detection and policy enforcement
+      ips:
+        description: IP address intelligence — geolocation, risk assessment, and hosting provider details
+      miscategorizations:
+        description: Report and track domain miscategorization corrections
+      whois:
+        description: WHOIS registration data for domains including registrant, registrar, and nameservers
+  k2:
+    description: Durable, ordered event streams that you produce records to and consume from with subscriptions
+    groups:
+      streams:
+        description: K2 streams, their retention, and the HTTP and Workers binding inputs used to produce records
+      streams.subscriptions:
+        description: Subscriptions that consume a K2 stream, with committed-position lag
+  leaked-credential-checks:
+    description: Detect compromised credentials in login requests by checking against known breach databases
+    groups:
+      detections:
+        description: Custom detection locations that tell the WAF where to find usernames and passwords in requests
+  load-balancers:
+    description: Distribute traffic across origin pools with health monitoring, geo-steering, and failover
+    groups:
+      monitor-groups:
+        description: Group monitors together for shared configuration and bulk management
+      monitor-groups.references:
+        description: List references to monitor groups used by load balancer pools
+      monitors:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.previews:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.references:
+        description: Health check configurations that probe origin servers and determine pool availability
+      pools:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.health:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.references:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      previews:
+        description: Preview the result of a health check monitor configuration before applying it
+      regions:
+        description: Geographic regions used for regional pool steering and traffic policies
+      searches:
+        description: Search across all load balancer resources (pools, monitors, load balancers) by name or reference
+  logs:
+    description: Log control, retention, and raw log access — CMB config, ray ID lookups, and received fields
+    groups:
+      control:
+        description: Log control operations
+      received:
+        description: Received log operations
+  magic-network-monitoring:
+    description: Flow-based network traffic monitoring with configurable alerting rules and VPC flow ingestion
+    groups:
+      configs:
+        description: Account-level monitoring configuration — sampling rates, thresholds, and notification settings
+      rules:
+        description: Monitoring rules that define traffic thresholds and trigger alerts or prefix advertisements
+      vpc-flows:
+        description: Ingest VPC flow logs from cloud providers for network visibility and anomaly detection
+  magic-transit:
+    description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
+    groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
+      apps:
+        description: Application-aware traffic policies for Magic WAN that steer traffic by app type
+      bgp-filter-profiles:
+        description: BGP filter profiles for controlling which routes are allowed or denied on Magic Transit tunnels
+      bgp-settings:
+        description: BGP settings for controlling default ASN and route redistribution on Magic Transit tunnels
+      cf-interconnects:
+        description: Cloudflare Network Interconnect (CNI) links for direct physical or virtual peering
+      gre-tunnels:
+        description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
+      ipsec-tunnels:
+        description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
+      routes:
+        description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
+      sites:
+        description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
+  mcp:
+    description: Manage MCP portals and upstream MCP servers for Cloudflare Access AI controls
+    groups:
+      portals:
+        description: Manage MCP portals, attached servers, and Code Mode settings
+      servers:
+        description: Manage upstream MCP servers, credentials, capabilities, and sync state
+  network-interconnects:
+    description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
+    groups:
+      cnis:
+        description: Cloud Network Interconnect (CNI) connections — private links from cloud providers to Cloudflare
+      interconnects:
+        description: Physical cross-connect and partner interconnect sessions with LOA and status tracking
+      settings:
+        description: Account-level interconnect settings and default configurations
+      slots:
+        description: Available interconnect facility slots showing port capacity at Cloudflare data centers
+  organizations:
+    description: Multi-user organizations that group accounts, members, and shared settings under a single entity
+    groups:
+      account-organizations:
+        description: List organizations associated with a specific account
+      accounts:
+        description: Accounts operations
+      members:
+        description: Members operations
+      members-batch-create:
+        description: Members Batch Create operations
+      organization-profile:
+        description: View and update the public profile information for an organization
+      shares:
+        description: Shares operations
+  origin-post-quantum-encryption:
+    description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
+  pages:
+    description: Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains
+    groups:
+      projects:
+        description: Pages projects, deployments, build logs, and custom domain bindings
+  pipelines:
+    description: Ingest, transform, and route event streams into R2, analytics, or other destinations in real time
+    groups:
+      sinks:
+        description: Destinations where pipeline data is written — R2 buckets, HTTP endpoints, or other storage
+      streams:
+        description: Inbound data streams that feed events into a pipeline for processing
+  precursor:
+    description: Precursor settings for a zone
+  queues:
+    description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
+    groups:
+      consumers:
+        description: Workers that automatically receive and process messages from a queue
+      messages:
+        description: Push messages to a queue and pull or acknowledge them from consumers
+      purge:
+        description: Remove all pending messages from a queue
+      subscriptions:
+        description: Manage queue subscriptions for event-driven message routing
+  r2:
+    description: S3-compatible object storage with zero egress fees — buckets, lifecycle rules, event notifications, and data migration
+    groups:
+      buckets:
+        description: Create and configure R2 buckets including CORS, lifecycle, custom domains, event notifications, and object locks
+      buckets.jobs:
+        description: Create and inspect background jobs for an R2 bucket
+      buckets.local-uploads:
+        description: R2 bucket local upload configuration
+      super-slurper:
+        description: Migrate data from external S3-compatible storage into R2 buckets with resumable transfer jobs
+      temporary-credentials:
+        description: Generate short-lived S3-compatible credentials scoped to specific buckets and operations
+  r2-data-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  radar:
+    description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
+    groups:
+      agent-readiness:
+        description: Agent readiness summary statistics across the Cloudflare network
+      ai:
+        description: AI inference trends and model usage statistics across the Cloudflare network
+      annotations:
+        description: Radar annotations marking significant Internet events (outages, cable cuts, etc.)
+      as112:
+        description: AS112 DNS sinkhole statistics — reverse DNS query volumes for private address space
+      attacks:
+        description: DDoS and application-layer attack trends, vectors, and target analysis
+      bgp:
+        description: BGP routing data — prefix announcements, AS-level stats, route leaks, and hijack events
+      bots:
+        description: Internet-wide bot traffic trends, categories, and distribution statistics
+      ct:
+        description: Certificate Transparency log monitoring and newly-issued certificate discovery
+      datasets:
+        description: Downloadable Radar datasets for offline analysis and research
+      dns:
+        description: Global DNS query trends — top domains, resolver stats, and DNSSEC adoption
+      email:
+        description: Email security trends — DMARC/SPF/DKIM adoption, spam, and phishing statistics
+      entities:
+        description: Look up ASNs, IPs, domains, and locations with metadata and traffic summaries
+      geolocations:
+        description: Geographic location metadata used for regional traffic analysis
+      http:
+        description: HTTP protocol trends — TLS versions, HTTP versions, browser share, and OS distribution
+      leaked-credentials:
+        description: Leaked credential detection trends and exposure statistics
+      netflows:
+        description: Network-layer traffic flow data and volumetric trend analysis
+      origins:
+        description: Cloud and hosting origin providers (e.g. Amazon, by region) and their traffic metrics
+      post-quantum:
+        description: Post-quantum encryption adoption and deployment trends across the Internet
+      quality:
+        description: Internet connection quality metrics — speed, latency, and jitter by geography and ASN
+      ranking:
+        description: Top domain rankings based on DNS query popularity across the Cloudflare network
+      robots-txt:
+        description: Robots.txt adoption and crawler directive trends across the web
+      search:
+        description: Search Radar data across IPs, ASNs, domains, and locations
+      tcp-resets-timeouts:
+        description: TCP connection reset and timeout statistics indicating network health issues
+      tlds:
+        description: Top-level domain (TLD) metadata and performance trends
+      traffic-anomalies:
+        description: Detected traffic anomalies and unusual patterns in Internet traffic flows
+      verified-bots:
+        description: Catalog of known good bots (Googlebot, Bingbot, etc.) and their traffic patterns
+  rate-limits:
+    description: Legacy per-zone rate limiting rules — prefer Advanced Rate Limiting in Rulesets for new configurations
+  realtime:
+    description: Real-time audio, video, and data services on Cloudflare's global network
+    groups:
+      kit:
+        description: SDK-backed meetings, participants, recordings, livestreams, and webhooks
+      kit.analytics:
+        description: Usage and livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams:
+        description: Livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams.daily:
+        description: Daily livestream analytics for RealtimeKit applications
+      kit.analytics.usage:
+        description: Usage analytics for RealtimeKit applications
+      kit.apps:
+        description: RealtimeKit applications that group meetings, sessions, and configuration
+      kit.livestreams:
+        description: Independent and meeting-based livestreams and their sessions
+      kit.livestreams.sessions:
+        description: Sessions for RealtimeKit livestreams
+      kit.meetings:
+        description: Meetings, participants, access tokens, and meeting livestreams
+      kit.meetings.active:
+        description: Live meeting state and participant controls
+      kit.meetings.active.polls:
+        description: Polls for active meeting sessions
+      kit.meetings.livestream:
+        description: Livestream operations associated with RealtimeKit meetings
+      kit.meetings.participants:
+        description: Participants in RealtimeKit meetings
+      kit.meetings.participants.tokens:
+        description: Access tokens for RealtimeKit meeting participants
+      kit.presets:
+        description: Reusable meeting configuration for media, permissions, and interface behavior
+      kit.recordings:
+        description: Meeting and participant-track recordings and recording controls
+      kit.recordings.active:
+        description: Active recordings for RealtimeKit meetings
+      kit.recordings.tracks:
+        description: Participant-track recordings for RealtimeKit meetings
+      kit.sessions:
+        description: Historical session data, participants, chat, transcripts, and summaries
+      kit.sessions.chat:
+        description: Chat messages from historical RealtimeKit sessions
+      kit.sessions.livestreams:
+        description: Livestreams associated with historical RealtimeKit sessions
+      kit.sessions.participants:
+        description: Participants in historical RealtimeKit sessions
+      kit.sessions.peers:
+        description: Peer details from historical RealtimeKit sessions
+      kit.sessions.summaries:
+        description: Summaries of historical RealtimeKit sessions
+      kit.sessions.transcripts:
+        description: Transcripts from historical RealtimeKit sessions
+      kit.webhooks:
+        description: Webhook endpoints and supported events for RealtimeKit notifications
+      kit.webhooks.events:
+        description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
+  request-tracers:
+    description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
+    groups:
+      traces:
+        description: Simulate request processing to debug rule matches, transforms, and routing decisions
+  resource-sharing:
+    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    groups:
+      recipients:
+        description: Update share recipients
+      resources:
+        description: Individual resources (zones, configs) that have been shared with recipients
+  rules:
+    description: Resources used by Cloudflare rules and rulesets
+    groups:
+      lists:
+        description: Custom account-level lists of IPs, hostnames, ASNs, or redirects used in rule expressions
+  rum:
+    description: Real User Measurement (Web Analytics) — track page loads, Core Web Vitals, and visitor metrics
+    groups:
+      rules:
+        description: Rules that control which pages and paths are tracked by Web Analytics
+      site-info:
+        description: Web Analytics sites — register domains and get the JavaScript beacon snippet
+  scim:
+    description: SCIM 2.0 provisioning — manage users, groups, and identity provider sync for your account
+    groups:
+      groups:
+        description: Groups operations
+      resource-types:
+        description: Resource Types operations
+      schemas:
+        description: Schemas operations
+      service-provider-config:
+        description: Service Provider Config operations
+      users:
+        description: Users operations
+  secrets-store:
+    description: Centralized secret management — store API keys, tokens, and credentials for use across Workers and other products
+    groups:
+      quota:
+        description: Account quota limits for secrets stores, secrets count, and storage capacity
+      secrets:
+        description: Encrypted key-value secrets within a store. Pass --store-id to scope.
+      stores:
+        description: Secret stores that hold encrypted key-value secrets accessible by Workers and services
+  security-center:
+    description: Security posture dashboard — view and manage security insights, misconfigurations, and vulnerabilities
+    groups:
+      insights:
+        description: Security findings and recommendations across your account — DNS, SSL, WAF misconfigurations, etc.
+      zone-insights:
+        description: Zone-scoped security insights — counts by class, severity, type, and dismissal
+  security-txt:
+    description: Manage the /.well-known/security.txt file that tells security researchers how to report vulnerabilities
+  smart-shield:
+    description: Smart Shield settings, health checks, and cache reserve management
+    groups:
+      cache-reserve-clear:
+        description: Cache Reserve Clear operations
+      health-checks:
+        description: Health checks operations
+  spectrum:
+    description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
+    groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
+      apps:
+        description: Spectrum application configurations that map protocols and ports to origin servers
+  speed:
+    description: Observatory speed tests — run Lighthouse audits, track performance trends, and schedule recurring tests
+    groups:
+      availabilities:
+        description: Check which speed test regions and configurations are available for your zone
+      pages:
+        description: Tested pages with their performance history, trends, and individual test results
+      schedule:
+        description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
+  stream:
+    description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
+    groups:
+      audio-tracks:
+        description: Add, edit, or remove additional audio tracks on a video
+      captions:
+        description: Upload, generate, or retrieve captions and subtitles for videos in multiple languages
+      clip:
+        description: Create a new video clip from an existing video by specifying start and end times
+      copy:
+        description: Import a video from a URL into Stream for processing and delivery
+      direct-upload:
+        description: Generate a tokenized URL that lets end-users upload video directly to Stream
+      downloads:
+        description: Create downloadable MP4 renditions of a video for offline viewing
+      embed:
+        description: Retrieve the HTML embed code snippet for a video
+      keys:
+        description: Signing keys used to generate short-lived signed URLs for private video playback
+      live-inputs:
+        description: Enable and disable live input streams
+      token:
+        description: Generate short-lived signed URL tokens for secure private video playback
+      typed-downloads:
+        description: Type-specific stream download creation and deletion
+      videos:
+        description: Aggregate video storage usage statistics for the account
+      watermarks:
+        description: Watermark profiles that overlay an image on every video in the account
+      webhooks:
+        description: Webhook notifications for video lifecycle events (ready, error, etc.)
+  tenants:
+    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    groups:
+      account-types:
+        description: Account Types operations
+      accounts:
+        description: Accounts operations
+      entitlements:
+        description: Entitlements operations
+      memberships:
+        description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
+  url-scanner:
+    description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
+    groups:
+      response:
+        description: Response operations
+      responses:
+        description: Raw HTTP response data captured during URL scans
+      scan:
+        description: Scan operations
+      scans:
+        description: URL scan requests and results — submit URLs for analysis and retrieve threat verdicts
+  user:
+    description: Your Cloudflare user profile, invitations, organizations, billing, and personal API tokens
+    groups:
+      billing:
+        description: View billing history and payment profile for your user (deprecated — prefer account-level billing)
+      firewall:
+        description: Firewall operations
+      load-balancers.monitors:
+        description: Load Balancers operations
+      load-balancers.monitors.preview:
+        description: Load Balancers operations
+      load-balancers.monitors.references:
+        description: Load Balancers operations
+      load-balancers.pools:
+        description: Load Balancers operations
+      load-balancers.pools.edit.pools:
+        description: Load Balancers operations
+      load-balancers.pools.health:
+        description: Load Balancers operations
+      load-balancers.pools.preview:
+        description: Load Balancers operations
+      load-balancers.pools.references:
+        description: Load Balancers operations
+      load-balancers.preview:
+        description: Load Balancers operations
+      load-balancing-analytics.events:
+        description: Load Balancing Analytics operations
+      subscriptions:
+        description: View and manage zone-level plan subscriptions owned by your user
+      tenants:
+        description: Tenants operations
+      tokens:
+        description: Create and manage personal API tokens scoped to your user for programmatic API access
+  user.analytics:
+    description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
+  waiting-rooms:
+    description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
+    groups:
+      account-waiting-rooms:
+        description: Account-scoped waiting room listing
+      events:
+        description: Scheduled events that temporarily override waiting room settings for sales, launches, etc.
+      page:
+        description: Custom HTML waiting page templates and preview rendering
+      rules:
+        description: Rules that bypass or modify waiting room behavior for specific request patterns
+      settings:
+        description: Zone-level waiting room defaults and cookie configuration
+      statuses:
+        description: Real-time queue status showing active users, queued users, and estimated wait times
+  workflows:
+    description: Durable, multi-step workflows that run on Workers with automatic retries and state persistence
+    groups:
+      instances:
+        description: Workflow instance operations
+      versions:
+        description: Workflow version operations
+  zaraz:
+    description: Server-side tag manager — load third-party tools (analytics, pixels, etc.) from Cloudflare's edge without client-side JS
+    groups:
+      config:
+        description: Full Zaraz configuration including tools, triggers, and variables for the zone
+      default:
+        description: Default Zaraz configuration template used as a starting point for new zones
+      export:
+        description: Export the current Zaraz configuration as a portable JSON document
+      history:
+        description: Configuration version history — browse and restore previous Zaraz configurations
+      publish:
+        description: Publish pending Zaraz configuration changes to make them live on the zone
+      workflow:
+        description: Workflow state for Zaraz configuration changes (draft vs. published)
+  zero-trust:
+    description: Cloudflare's SASE platform — secure access, device posture, DLP, tunnels, gateway policies, and network segmentation
+    groups:
+      dex:
+        description: Digital Experience Monitoring — synthetic tests, fleet-wide device metrics, and network path diagnostics
+      dlp.custom-prompt-topics:
+        description: Data Loss Prevention - manage custom prompt topics for AI-based content detection
+      dlp.data-classes:
+        description: Data Loss Prevention - manage data classes used to classify sensitive information
+      dlp.data-tag-categories:
+        description: Data Loss Prevention - manage categories that organize data tags
+      dlp.data-tag-category-templates:
+        description: Data Loss Prevention - browse templates for creating data tag categories
+      dlp.data-tags:
+        description: Data Loss Prevention - manage tags used to classify and organize sensitive data
+      dlp.datasets:
+        description: Data Loss Prevention - manage datasets, versions, and uploads
+      dlp.document-fingerprints:
+        description: Data Loss Prevention - manage document fingerprints for detecting matching documents
+      dlp.email.account-mapping:
+        description: Data Loss Prevention - configure account mappings for outbound email scanning
+      dlp.email.rules:
+        description: Data Loss Prevention - manage outbound email scanning rules and their priorities
+      dlp.entries:
+        description: Data Loss Prevention - list and manage detection entries
+      dlp.limits:
+        description: Data Loss Prevention - view account limits and resource quotas
+      dlp.patterns:
+        description: Data Loss Prevention - validate regular expressions used for content detection
+      dlp.profiles:
+        description: Data Loss Prevention - list and retrieve profiles
+      dlp.profiles.custom:
+        description: Data Loss Prevention - manage custom profiles
+      dlp.profiles.predefined:
+        description: Data Loss Prevention - manage predefined profiles
+      dlp.sensitivity-group-templates:
+        description: Data Loss Prevention - browse templates for creating sensitivity groups
+      dlp.sensitivity-groups:
+        description: Data Loss Prevention - manage sensitivity groups and their level ordering
+      dlp.sensitivity-levels:
+        description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
+      dlp.settings:
+        description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.integrations:
+        description: User Risk Scoring - manage integrations that provide risk score signals
+      risk-scoring.integrations.references:
+        description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
+  zones:
+    description: Zones are domains on Cloudflare — list, create, and configure domain settings
+    groups:
+      aegis:
+        description: Aegis operations
+      fonts:
+        description: Fonts operations
+      origin-h2-max-streams:
+        description: Origin H2 Max Streams operations
+      origin-max-http-version:
+        description: Origin Max Http Version operations
+      origin-tls-compliance-modes:
+        description: Manage zone Origin TLS Compliance Modes setting
+      rum:
+        description: Rum operations
+      speed-brain:
+        description: Speed Brain operations

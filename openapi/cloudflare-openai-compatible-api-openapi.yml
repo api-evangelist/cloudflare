@@ -241,15 +241,54 @@ paths:
         delay: 0
         dispatcher: FALLBACK
 components:
-  parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: The unique identifier of the Cloudflare account.
-      schema:
-        type: string
   schemas:
+    ChatCompletionRequest:
+      type: object
+      required:
+      - model
+      - messages
+      properties:
+        model:
+          type: string
+          description: The model identifier, e.g. @cf/meta/llama-3.1-8b-instruct.
+          example: example_value
+        messages:
+          type: array
+          items:
+            type: object
+            required:
+            - role
+            - content
+            properties:
+              role:
+                type: string
+                enum:
+                - system
+                - user
+                - assistant
+              content:
+                type: string
+          example: []
+        max_tokens:
+          type: integer
+          description: Maximum number of tokens to generate.
+          example: 10
+        temperature:
+          type: number
+          description: Sampling temperature between 0 and 2.
+          minimum: 0
+          maximum: 2
+          example: 42.5
+        top_p:
+          type: number
+          description: Nucleus sampling parameter.
+          minimum: 0
+          maximum: 1
+          example: 42.5
+        stream:
+          type: boolean
+          description: Whether to stream the response via server-sent events.
+          example: true
     ChatCompletionResponse:
       type: object
       properties:
@@ -332,53 +371,14 @@ components:
             total_tokens:
               type: integer
           example: example_value
-    ChatCompletionRequest:
-      type: object
-      required:
-      - model
-      - messages
-      properties:
-        model:
-          type: string
-          description: The model identifier, e.g. @cf/meta/llama-3.1-8b-instruct.
-          example: example_value
-        messages:
-          type: array
-          items:
-            type: object
-            required:
-            - role
-            - content
-            properties:
-              role:
-                type: string
-                enum:
-                - system
-                - user
-                - assistant
-              content:
-                type: string
-          example: []
-        max_tokens:
-          type: integer
-          description: Maximum number of tokens to generate.
-          example: 10
-        temperature:
-          type: number
-          description: Sampling temperature between 0 and 2.
-          minimum: 0
-          maximum: 2
-          example: 42.5
-        top_p:
-          type: number
-          description: Nucleus sampling parameter.
-          minimum: 0
-          maximum: 1
-          example: 42.5
-        stream:
-          type: boolean
-          description: Whether to stream the response via server-sent events.
-          example: true
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: The unique identifier of the Cloudflare account.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http

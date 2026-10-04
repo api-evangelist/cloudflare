@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-index-response-schema.json",
+  "title": "IndexResponse",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-indexes-api-openapi.yml#/components/schemas/IndexResponse",
+  "type": "object",
+  "properties": {
+    "result": {
+      "$ref": "#/$defs/VectorizeIndex"
+    },
+    "success": {
+      "type": "boolean"
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "$defs": {
+    "VectorizeIndex": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the index."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the index."
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "dimensions": {
+              "type": "integer",
+              "description": "Number of dimensions for each vector."
+            },
+            "metric": {
+              "type": "string",
+              "enum": [
+                "cosine",
+                "euclidean",
+                "dot-product"
+              ],
+              "description": "Distance metric used for similarity."
+            }
+          }
+        },
+        "created_on": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "modified_on": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

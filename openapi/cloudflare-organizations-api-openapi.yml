@@ -1,11 +1,11 @@
 openapi: 3.2.0
 info:
   title: Cloudflare Organizations API
-  description: Interact with Cloudflare's products and services via the Cloudflare API.
+  version: 4.0.0
   license:
     name: BSD-3-Clause
     url: https://opensource.org/licenses/BSD-3-Clause
-  version: 4.0.0
+  description: 'Operations tagged Organizations across 2 of this provider''s published API definitions: cloudflare-openapi-original.yml, cloudflare-openapi.json. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.cloudflare.com/client/v4
   description: Client API
@@ -134,32 +134,734 @@ paths:
       - api_token: []
       - api_email: []
         api_key: []
+    servers:
+    - url: https://api.cloudflare.com/client/v4
+      description: Client API
+  /accounts/{account_id}/realtime/kit/{app_id}/analytics/daywise:
+    get:
+      operationId: get-org-analytics
+      summary: Fetch day-wise session and recording analytics data for an App
+      description: Returns day-wise session and recording analytics data of an App for the specified time range start_date to end_date. If start_date and end_date are not provided, the default time range is set from 30 days ago to the current date.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_account_identifier'
+      - name: app_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/realtimekit_app_id'
+      - $ref: '#/components/parameters/realtimekit_startDate'
+      - $ref: '#/components/parameters/realtimekit_endDate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      recording_stats:
+                        description: Recording statistics of an App during the range specified
+                        type: object
+                        properties:
+                          day_stats:
+                            description: Day wise recording stats
+                            type: array
+                            items:
+                              properties:
+                                day:
+                                  type: string
+                                total_recording_minutes:
+                                  description: Total recording minutes for a specific day
+                                  type: integer
+                                total_recordings:
+                                  description: Total number of recordings for a specific day
+                                  type: integer
+                              type: object
+                          recording_count:
+                            description: Total number of recordings during the range specified
+                            type: integer
+                          recording_minutes_consumed:
+                            description: Total recording minutes during the range specified
+                            type: number
+                      session_stats:
+                        description: Session statistics of an App during the range specified
+                        type: object
+                        properties:
+                          day_stats:
+                            description: Day wise session stats
+                            type: array
+                            items:
+                              properties:
+                                day:
+                                  type: string
+                                total_session_minutes:
+                                  description: Total session minutes for a specific day
+                                  type: number
+                                total_sessions:
+                                  description: Total number of sessions for a specific day
+                                  type: integer
+                              type: object
+                          sessions_count:
+                            description: Total number of sessions during the range specified
+                            type: integer
+                          sessions_minutes_consumed:
+                            description: Total session minutes during the range specified
+                            type: number
+                  success:
+                    type: boolean
+      security:
+      - api_token: []
+      tags:
+      - Organizations
+      x-api-token-group:
+      - Realtime Admin
+      - Realtime
+      x-fern-availability: beta
+      x-fern-sdk-group-name: realtime.kit.analytics.usage
+      x-fern-sdk-method-name: get
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /organizations:
+    get:
+      operationId: Organization_listOrganizations
+      summary: List organizations the user has access to
+      description: Retrieve a list of organizations a particular user has access to. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      parameters:
+      - $ref: '#/components/parameters/organizations-api_OrganizationListFiltersId'
+      - $ref: '#/components/parameters/organizations-api_OrganizationListFiltersName'
+      - $ref: '#/components/parameters/organizations-api_OrganizationListFiltersNameStartsWith'
+      - $ref: '#/components/parameters/organizations-api_OrganizationListFiltersNameEndsWith'
+      - $ref: '#/components/parameters/organizations-api_OrganizationListFiltersNameContains'
+      - $ref: '#/components/parameters/organizations-api_OrganizationListFiltersContainingAccount'
+      - $ref: '#/components/parameters/organizations-api_OrganizationListFiltersContainingUser'
+      - $ref: '#/components/parameters/organizations-api_OrganizationListFiltersContainingOrganization'
+      - $ref: '#/components/parameters/organizations-api_OrganizationListFiltersParentId'
+      - $ref: '#/components/parameters/organizations-api_PageTokenParamsPageToken'
+      - $ref: '#/components/parameters/organizations-api_PageTokenParamsPageSize'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                    maxItems: 0
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/organizations-api_V4Message'
+                  result:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/organizations-api_Organization'
+                  result_info:
+                    $ref: '#/components/schemas/organizations-api_PageTokenResultInfo'
+                  success:
+                    type: boolean
+                    enum:
+                    - true
+                required:
+                - success
+                - errors
+                - messages
+                - result
+                - result_info
+        4XX:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
+      security:
+      - api_token: []
+      - api_email: []
+        api_key: []
+      tags:
+      - Organizations
+      x-api-token-group:
+      - User Details Write
+      - User Details Read
+      x-fern-availability: beta
+      x-fern-sdk-group-name: organization
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+    post:
+      operationId: Organizations_createUserOrganization
+      summary: Create organization
+      description: Create a new organization for a user. Sub-organization creation availability depends on the organization's capabilities. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/organizations-api_Organization'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                    maxItems: 0
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/organizations-api_V4Message'
+                  result:
+                    $ref: '#/components/schemas/organizations-api_Organization'
+                  success:
+                    type: boolean
+                    enum:
+                    - true
+                required:
+                - success
+                - errors
+                - messages
+                - result
+        4XX:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Organizations
+      x-api-token-group:
+      - User Details Write
+      x-fern-availability: beta
+      x-fern-sdk-group-name: organization
+      x-fern-sdk-method-name: create
+      x-forge-hidden: true
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /organizations/{organization_id}:
+    delete:
+      operationId: Organizations_delete
+      summary: Delete organization
+      description: 'Delete an organization. The organization MUST be empty before deleting.
+
+        It must not contain any sub-organizations, accounts, members or users. Sub-organization
+
+        deletion availability depends on the organization''s capabilities. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+
+
+        **Access Control:** Restricted to enterprise organizations.'
+      parameters:
+      - name: organization_id
+        in: path
+        description: The ID of the organization to delete.
+        required: true
+        schema:
+          $ref: '#/components/schemas/organizations-api_OrganizationID'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                    maxItems: 0
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/organizations-api_V4Message'
+                  result:
+                    $ref: '#/components/schemas/organizations-api_DeleteOrganizationResult'
+                  success:
+                    type: boolean
+                    enum:
+                    - true
+                required:
+                - success
+                - errors
+                - messages
+                - result
+        4XX:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Organizations
+      x-fern-availability: beta
+      x-fern-sdk-group-name: organization
+      x-fern-sdk-method-name: delete
+      x-forge-hidden: true
+      x-forge-require-confirmation: Delete this empty organization? This action cannot be undone.
+    get:
+      operationId: Organizations_retrieve
+      summary: Get organization
+      description: Retrieve the details of a certain organization. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      parameters:
+      - name: organization_id
+        in: path
+        description: The ID of the organization to retrieve.
+        required: true
+        schema:
+          $ref: '#/components/schemas/organizations-api_OrganizationID'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                    maxItems: 0
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/organizations-api_V4Message'
+                  result:
+                    $ref: '#/components/schemas/organizations-api_Organization'
+                  success:
+                    type: boolean
+                    enum:
+                    - true
+                required:
+                - success
+                - errors
+                - messages
+                - result
+        4XX:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Organizations
+      x-fern-availability: beta
+      x-fern-sdk-group-name: organization
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    put:
+      operationId: Organizations_modify
+      summary: Update organization
+      description: Update an organization's name. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      parameters:
+      - name: organization_id
+        in: path
+        description: The ID of the organization to modify.
+        required: true
+        schema:
+          $ref: '#/components/schemas/organizations-api_OrganizationID'
+      requestBody:
+        description: 'The new details of the organization. Only accepts updates
+
+          to "name" currently.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/organizations-api_Organization'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                    maxItems: 0
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/organizations-api_V4Message'
+                  result:
+                    $ref: '#/components/schemas/organizations-api_Organization'
+                  success:
+                    type: boolean
+                    enum:
+                    - true
+                required:
+                - success
+                - errors
+                - messages
+                - result
+        4XX:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Organizations
+      x-fern-availability: beta
+      x-fern-sdk-group-name: organization
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /organizations/{organization_id}/accounts:
+    get:
+      operationId: Organizations_getAccounts
+      summary: List organization accounts
+      description: 'Retrieve the accounts immediately attached to a specific organization. Accounts
+
+        attached to sub-organizations are not included. (Currently in Public Beta - see
+
+        https://developers.cloudflare.com/fundamentals/organizations/)'
+      parameters:
+      - name: organization_id
+        in: path
+        description: The ID of the organization to retrieve a list of accounts for.
+        required: true
+        schema:
+          $ref: '#/components/schemas/organizations-api_OrganizationID'
+      - name: account_pubname
+        in: query
+        description: '(case-insensitive) Filter the list of accounts to where the account_pubname is equal to
+
+          a particular string.'
+        schema:
+          type: string
+        deprecated: true
+        explode: false
+      - name: account_pubname.startsWith
+        in: query
+        description: '(case-insensitive) Filter the list of accounts to where the account_pubname starts with
+
+          a particular string.'
+        schema:
+          type: string
+        deprecated: true
+        explode: false
+      - name: account_pubname.endsWith
+        in: query
+        description: '(case-insensitive) Filter the list of accounts to where the account_pubname ends with
+
+          a particular string.'
+        schema:
+          type: string
+        deprecated: true
+        explode: false
+      - name: account_pubname.contains
+        in: query
+        description: '(case-insensitive) Filter the list of accounts to where the account_pubname contains
+
+          a particular string.'
+        schema:
+          type: string
+        deprecated: true
+        explode: false
+      - name: name
+        in: query
+        description: '(case-insensitive) Filter the list of accounts to where the name is equal to a
+
+          particular string.'
+        schema:
+          type: string
+        explode: false
+      - name: name.startsWith
+        in: query
+        description: '(case-insensitive) Filter the list of accounts to where the name starts with a
+
+          particular string.'
+        schema:
+          type: string
+        explode: false
+      - name: name.endsWith
+        in: query
+        description: '(case-insensitive) Filter the list of accounts to where the name ends with a particular
+
+          string.'
+        schema:
+          type: string
+        explode: false
+      - name: name.contains
+        in: query
+        description: '(case-insensitive) Filter the list of accounts to where the name contains a particular
+
+          string.'
+        schema:
+          type: string
+        explode: false
+      - name: order_by
+        in: query
+        description: 'Field to order results by. Currently supported values: `account_name`.
+
+          When not specified, results are ordered by internal account ID.'
+        schema:
+          type: string
+          enum:
+          - account_name
+        explode: false
+      - name: direction
+        in: query
+        description: 'Sort direction for the order_by field. Valid values: `asc`, `desc`.
+
+          Defaults to `asc` when order_by is specified.'
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+        explode: false
+      - name: include_tags
+        in: query
+        description: Include Account tags from the resource tag mirror. Omit this parameter to preserve the existing Account response shape.
+        schema:
+          type: boolean
+        explode: false
+      - name: include_total
+        in: query
+        description: 'Whether to calculate and return the exact result_info.total_size for cursor
+
+          pagination. Defaults to true. When false, total_size is omitted. page_size and
+
+          include_total may change between pages; next_page_token remains the authoritative
+
+          continuation signal.
+
+          Legacy page/per_page requests always calculate total_count.'
+        schema:
+          type: boolean
+          default: true
+        explode: false
+      - $ref: '#/components/parameters/organizations-api_PageTokenParamsPageToken'
+      - $ref: '#/components/parameters/organizations-api_PageTokenParamsPageSize'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                    maxItems: 0
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/organizations-api_V4Message'
+                  result:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/organizations-api_Account'
+                  result_info:
+                    $ref: '#/components/schemas/organizations-api_PageTokenResultInfo'
+                  success:
+                    type: boolean
+                    enum:
+                    - true
+                required:
+                - success
+                - errors
+                - messages
+                - result
+                - result_info
+        4XX:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Organizations
+      x-fern-availability: beta
+      x-fern-sdk-group-name: organization.account
+      x-fern-sdk-method-name: list
+      x-forge-hidden: true
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /organizations/{organization_id}/invites/{member_code}:
+    put:
+      operationId: Organizations_handleOrganizationInvite
+      summary: Handle organization invite
+      description: Accept or reject an invitation to a specific organization. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      parameters:
+      - name: organization_id
+        in: path
+        description: The ID of the organization associated with the invitation.
+        required: true
+        schema:
+          $ref: '#/components/schemas/organizations-api_OrganizationID'
+      - name: member_code
+        in: path
+        description: The invitation code to accept or reject.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The invitation action. Use `accept` to join the organization or `reject` to decline the invitation.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/organizations-api_HandleOrganizationInviteRequest'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                    maxItems: 0
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/organizations-api_V4Message'
+                  result:
+                    $ref: '#/components/schemas/organizations-api_Member'
+                  success:
+                    type: boolean
+                    enum:
+                    - true
+                required:
+                - success
+                - errors
+                - messages
+                - result
+        4XX:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Organizations
+      x-fern-availability: beta
+      x-fern-sdk-group-name: organization.invite
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
+  /organizations/{organization_id}/profile:
+    get:
+      operationId: Organizations_getProfile
+      summary: Get organization profile
+      description: Get an organizations profile if it exists. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      parameters:
+      - name: organization_id
+        in: path
+        description: The ID of the organization to retrieve a profile for.
+        required: true
+        schema:
+          $ref: '#/components/schemas/organizations-api_OrganizationID'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organizations-api_ProfileResponse'
+        4XX:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Organizations
+      x-fern-availability: beta
+      x-fern-sdk-group-name: organization.profile
+      x-fern-sdk-method-name: get
+      x-forge-hidden: true
+    put:
+      operationId: Organizations_modifyProfile
+      summary: Modify organization profile
+      description: Modify organization profile. (Currently in Public Beta - see https://developers.cloudflare.com/fundamentals/organizations/)
+      parameters:
+      - name: organization_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/organizations-api_OrganizationID'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/organizations-api_ModifyOrganizationProfileRequest'
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        4XX:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organizations-api_V4ErrorResponse'
+      security:
+      - api_email: []
+        api_key: []
+      tags:
+      - Organizations
+      x-fern-availability: beta
+      x-fern-sdk-group-name: organization.profile
+      x-fern-sdk-method-name: update
+      x-forge-hidden: true
+    servers:
+    - description: Client API
+      url: https://api.cloudflare.com/client/v4
 components:
   schemas:
-    aaa_api-response-common:
-      type: object
-      required:
-      - success
-      - errors
-      - messages
-      - result
-      properties:
-        errors:
-          $ref: '#/components/schemas/aaa_messages'
-        messages:
-          $ref: '#/components/schemas/aaa_messages'
-        result:
-          anyOf:
-          - type: object
-          - type: array
-            items: {}
-          - type: string
-        success:
-          type: boolean
-          description: Whether the API call was successful
-          enum:
-          - true
-          example: true
     aaa_api-response-common-failure:
       type: object
       required:
@@ -191,46 +893,6 @@ components:
           enum:
           - false
           example: false
-    aaa_audit_logs_response_collection:
-      oneOf:
-      - properties:
-          errors:
-            type:
-            - object
-            - 'null'
-          messages:
-            type: array
-            example: []
-            items: {}
-          result:
-            type: array
-            items:
-              $ref: '#/components/schemas/aaa_audit-logs'
-          success:
-            type: boolean
-            example: true
-      - $ref: '#/components/schemas/aaa_api-response-common'
-    aaa_messages:
-      type: array
-      example: []
-      items:
-        type: object
-        uniqueItems: true
-        required:
-        - code
-        - message
-        properties:
-          code:
-            type: integer
-            minimum: 1000
-          message:
-            type: string
-    aaa_identifier:
-      type: string
-      description: Identifier
-      example: 023e105f4ecef8ad9ca31a8372d0c353
-      readOnly: true
-      maxLength: 32
     aaa_audit-logs:
       type: object
       properties:
@@ -314,6 +976,576 @@ components:
           format: date-time
           description: A UTC RFC3339 timestamp that specifies when the action being logged occured.
           example: '2017-04-26T17:31:07Z'
+    aaa_audit_logs_response_collection:
+      oneOf:
+      - properties:
+          errors:
+            type:
+            - object
+            - 'null'
+          messages:
+            type: array
+            example: []
+            items: {}
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/aaa_audit-logs'
+          success:
+            type: boolean
+            example: true
+      - $ref: '#/components/schemas/aaa_api-response-common'
+    aaa_messages:
+      type: array
+      example: []
+      items:
+        type: object
+        uniqueItems: true
+        required:
+        - code
+        - message
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          message:
+            type: string
+    aaa_identifier:
+      type: string
+      description: Identifier
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      readOnly: true
+      maxLength: 32
+    aaa_api-response-common:
+      type: object
+      required:
+      - success
+      - errors
+      - messages
+      - result
+      properties:
+        errors:
+          $ref: '#/components/schemas/aaa_messages'
+        messages:
+          $ref: '#/components/schemas/aaa_messages'
+        result:
+          anyOf:
+          - type: object
+          - type: array
+            items: {}
+          - type: string
+        success:
+          type: boolean
+          description: Whether the API call was successful
+          enum:
+          - true
+          example: true
+    organizations-api_OrganizationFlags:
+      description: Enable features for Organizations.
+      type: object
+      properties:
+        account_creation:
+          type: string
+        account_creation_applies_tenant_defaults:
+          type: string
+        account_deletion:
+          type: string
+        account_migration:
+          type: string
+        account_mobility:
+          type: string
+        enterprise_capability:
+          type: string
+        member_management:
+          type: string
+        sub_org_creation:
+          type: string
+      required:
+      - account_creation
+      - account_creation_applies_tenant_defaults
+      - account_deletion
+      - account_migration
+      - account_mobility
+      - enterprise_capability
+      - member_management
+      - sub_org_creation
+    organizations-api_OrganizationID:
+      type: string
+      example: a7b9c3d2e8f4a1b5c6d0e9f2a3b7c4d8
+      pattern: ^[a-f0-9]{32}$
+      title: Organization ID
+      x-auditable: true
+    organizations-api_ProfileResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+          maxItems: 0
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/organizations-api_V4Message'
+        result:
+          $ref: '#/components/schemas/organizations-api_Profile'
+        success:
+          type: boolean
+          enum:
+          - true
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    organizations-api_Member:
+      type: object
+      properties:
+        create_time:
+          type: string
+          format: date-time
+        id:
+          $ref: '#/components/schemas/organizations-api_MemberID'
+        meta:
+          type: object
+          additionalProperties:
+            type: object
+        status:
+          type: string
+          enum:
+          - active
+          - pending
+          - rejected
+          - canceled
+          x-auditable: true
+        update_time:
+          type: string
+          format: date-time
+        user:
+          $ref: '#/components/schemas/organizations-api_MemberSubjectUser'
+      required:
+      - id
+      - status
+      - user
+      - meta
+      - create_time
+      - update_time
+    organizations-api_PageTokenResultInfo:
+      type: object
+      properties:
+        next_page_token:
+          description: 'Use this opaque token in the next request to retrieve the
+
+            next page.
+
+
+            Parameters used to filter the retrieved list must remain in subsequent
+
+            requests with a page token.'
+          type: string
+        total_size:
+          description: Counts the total amount of items in a list with the applied filters. The API omits next_page_token to indicate no more items in a particular list.
+          type: integer
+    organizations-api_V4Message:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+      required:
+      - code
+      - message
+    organizations-api_HandleOrganizationInviteRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - accept
+          - reject
+          x-auditable: true
+      required:
+      - status
+    organizations-api_MemberID:
+      description: Organization Member ID
+      type: string
+      example: a7b9c3d2e8f4a1b5c6d0e9f2a3b7c4d8
+      pattern: ^[a-f0-9]{32}$
+      x-auditable: true
+    realtimekit_account_identifier:
+      description: The account identifier tag.
+      type: string
+      example: 023e105f4ecef8ad9ca31a8372d0c353
+      maxLength: 32
+      x-auditable: true
+    organizations-api_MemberSubjectUser:
+      type: object
+      properties:
+        email:
+          type: string
+          x-auditable: true
+        id:
+          type: string
+          x-auditable: true
+        name:
+          type: string
+          x-auditable: true
+        two_factor_authentication_enabled:
+          type: boolean
+          x-auditable: true
+      required:
+      - id
+      - email
+      - name
+      - two_factor_authentication_enabled
+    organizations-api_ModifyOrganizationProfileRequest:
+      type: object
+      properties:
+        business_address:
+          type: string
+          x-auditable: true
+        business_email:
+          type: string
+          x-auditable: true
+        business_name:
+          type: string
+          x-auditable: true
+        business_phone:
+          type: string
+          x-auditable: true
+        external_metadata:
+          type: string
+      required:
+      - business_name
+      - business_email
+      - business_phone
+      - business_address
+      - external_metadata
+    organizations-api_Profile:
+      type: object
+      properties:
+        business_address:
+          type: string
+        business_email:
+          type: string
+        business_name:
+          type: string
+        business_phone:
+          type: string
+        external_metadata:
+          type: string
+      required:
+      - business_name
+      - business_email
+      - business_phone
+      - business_address
+      - external_metadata
+    organizations-api_Organization:
+      description: References an Organization in the Cloudflare data model.
+      type: object
+      properties:
+        create_time:
+          type: string
+          format: date-time
+          readOnly: true
+        id:
+          allOf:
+          - $ref: '#/components/schemas/organizations-api_OrganizationID'
+          readOnly: true
+        meta:
+          type: object
+          additionalProperties:
+            type: object
+          properties:
+            hierarchy_tags:
+              description: 'Ordered chain of organization tags from the root organization down to
+
+                (and including) this organization itself. Root organizations return a
+
+                single-element array containing their own tag; sub-organizations return
+
+                `[rootTag, ...intermediateTags, parentTag, selfTag]`. Useful for
+
+                constructing authorization scopes that need to cover every ancestor
+
+                in the hierarchy.'
+              type: array
+              items:
+                type: string
+            managed_by:
+              type: string
+            tenant_flags:
+              allOf:
+              - $ref: '#/components/schemas/organizations-api_OrganizationFlags'
+          readOnly: true
+        name:
+          type: string
+          x-auditable: true
+        parent:
+          type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/organizations-api_OrganizationID'
+            name:
+              type: string
+              readOnly: true
+              x-auditable: true
+          required:
+          - id
+          - name
+        profile:
+          $ref: '#/components/schemas/organizations-api_Profile'
+      required:
+      - id
+      - name
+      - create_time
+      - meta
+    organizations-api_DeleteOrganizationResult:
+      type: object
+      properties:
+        id:
+          type: string
+          x-auditable: true
+      required:
+      - id
+    organizations-api_Account:
+      type: object
+      properties:
+        created_on:
+          type: string
+          format: date-time
+        id:
+          type: string
+        name:
+          type:
+          - string
+          - 'null'
+        settings:
+          type: object
+          properties:
+            abuse_contact_email:
+              type:
+              - string
+              - 'null'
+            access_approval_expiry:
+              type:
+              - string
+              - 'null'
+              format: date-time
+            api_access_enabled:
+              type:
+              - boolean
+              - 'null'
+            default_nameservers:
+              description: Use [DNS Settings](https://developers.cloudflare.com/api/operations/dns-settings-for-an-account-list-dns-settings) instead. Deprecated.
+              type:
+              - string
+              - 'null'
+              deprecated: true
+            enforce_twofactor:
+              type:
+              - boolean
+              - 'null'
+            use_account_custom_ns_by_default:
+              description: Use [DNS Settings](https://developers.cloudflare.com/api/operations/dns-settings-for-an-account-list-dns-settings) instead. Deprecated.
+              type:
+              - boolean
+              - 'null'
+              deprecated: true
+          required:
+          - enforce_twofactor
+          - api_access_enabled
+          - access_approval_expiry
+          - abuse_contact_email
+          - use_account_custom_ns_by_default
+          - default_nameservers
+        tags:
+          description: Account tags, present only when `include_tags=true` is requested.
+          type: object
+          additionalProperties:
+            type: string
+        type:
+          type: string
+          enum:
+          - standard
+          - enterprise
+      required:
+      - id
+      - name
+      - type
+      - settings
+      - created_on
+    organizations-api_V4ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/organizations-api_V4Message'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/organizations-api_V4Message'
+        result:
+          type: object
+        success:
+          type: boolean
+          enum:
+          - false
+      required:
+      - success
+      - errors
+      - messages
+    realtimekit_app_id:
+      description: The app identifier tag.
+      type: string
+      example: 14a396e7-ca44-4937-bf1f-050a69118543
+  parameters:
+    organizations-api_OrganizationListFiltersContainingOrganization:
+      description: 'Filter the list of organizations to the ones that contain this particular
+
+        organization.'
+      explode: false
+      in: query
+      name: containing.organization
+      schema:
+        type: string
+    organizations-api_OrganizationListFiltersNameContains:
+      description: '(case-insensitive) Filter the list of organizations to where the name contains a particular
+
+        string.'
+      explode: false
+      in: query
+      name: name.contains
+      schema:
+        type: string
+    realtimekit_startDate:
+      description: start date in YYYY-MM-DD format
+      examples:
+        default:
+          value: '2022-09-01T00:00:00Z'
+      in: query
+      name: start_date
+      schema:
+        type: string
+        example: '2022-09-01T00:00:00Z'
+    organizations-api_PageTokenParamsPageSize:
+      description: The amount of items to return. Defaults to 10.
+      explode: false
+      in: query
+      name: page_size
+      schema:
+        type: integer
+        maximum: 1000
+        minimum: 0
+    organizations-api_OrganizationListFiltersName:
+      description: '(case-sensitive) Filter the list of organizations to where the name is equal to a
+
+        particular string.'
+      explode: false
+      in: query
+      name: name
+      schema:
+        type: string
+    organizations-api_OrganizationListFiltersNameStartsWith:
+      description: '(case-insensitive) Filter the list of organizations to where the name starts with a
+
+        particular string.'
+      explode: false
+      in: query
+      name: name.startsWith
+      schema:
+        type: string
+    organizations-api_OrganizationListFiltersContainingUser:
+      description: 'Filter the list of organizations to the ones that contain this particular
+
+        user.
+
+
+        IMPORTANT: Just because an organization "contains" a user is not a
+
+        representation of any authorization or privilege to manage any resources
+
+        therein. An organization "containing" a user simply means the user is managed by
+
+        that organization.'
+      explode: false
+      in: query
+      name: containing.user
+      schema:
+        type: string
+    organizations-api_OrganizationListFiltersContainingAccount:
+      description: 'Filter the list of organizations to the ones that contain this particular
+
+        account.'
+      explode: false
+      in: query
+      name: containing.account
+      schema:
+        type: string
+    realtimekit_endDate:
+      description: end date in YYYY-MM-DD format
+      examples:
+        default:
+          value: '2022-09-22T00:00:00Z'
+      in: query
+      name: end_date
+      schema:
+        type: string
+        example: '2022-09-22T00:00:00Z'
+    organizations-api_OrganizationListFiltersParentId:
+      description: 'Filter the list of organizations to the ones that are a sub-organization
+
+        of the specified organization.
+
+
+        "null" is a valid value to provide for this parameter. It means "where
+
+        an organization has no parent (i.e. it is a ''root'' organization)."'
+      explode: false
+      in: query
+      name: parent.id
+      schema:
+        anyOf:
+        - $ref: '#/components/schemas/organizations-api_OrganizationID'
+        - enum:
+          - 'null'
+          type: string
+    organizations-api_OrganizationListFiltersId:
+      description: 'Only return organizations with the specified IDs (ex. id=foo&id=bar). Send multiple elements
+
+        by repeating the query value.'
+      explode: false
+      in: query
+      name: id
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/organizations-api_OrganizationID'
+    organizations-api_PageTokenParamsPageToken:
+      description: 'An opaque token returned from the last list response that when
+
+        provided will retrieve the next page.
+
+
+        Parameters used to filter the retrieved list must remain in subsequent
+
+        requests with a page token.'
+      explode: false
+      in: query
+      name: page_token
+      schema:
+        type: string
+    organizations-api_OrganizationListFiltersNameEndsWith:
+      description: '(case-insensitive) Filter the list of organizations to where the name ends with a particular
+
+        string.'
+      explode: false
+      in: query
+      name: name.endsWith
+      schema:
+        type: string
   securitySchemes:
     api_email:
       type: apiKey
@@ -330,3 +1562,9 @@ components:
       type: apiKey
       name: X-Auth-User-Service-Key
       in: header
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-refined-from:
+- cloudflare-openapi-original.yml
+- cloudflare-openapi.json

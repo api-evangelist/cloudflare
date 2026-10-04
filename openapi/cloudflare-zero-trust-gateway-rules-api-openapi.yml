@@ -1,0 +1,2394 @@
+openapi: 3.2.0
+info:
+  description: Welcome to Cloudflare's API documentation site.
+  license:
+    name: BSD-3-Clause
+    url: https://opensource.org/licenses/BSD-3-Clause
+  title: Cloudflare Zero Trust Gateway rules API
+  version: 4.0.0
+servers:
+- description: Client API
+  url: https://api.cloudflare.com/client/v4
+security:
+- api_email: []
+  api_key: []
+- api_token: []
+- user_service_key: []
+tags:
+- name: Zero Trust Gateway rules
+paths:
+  /accounts/{account_id}/gateway/rules:
+    get:
+      operationId: zero-trust-gateway-rules-list-zero-trust-gateway-rules
+      summary: List Zero Trust Gateway rules
+      description: List Zero Trust Gateway rules for an account.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
+      - name: filter
+        in: query
+        description: 'Filter the returned rules by one or more `field:value` pairs. Repeat the
+
+          parameter to combine filters with logical AND.
+
+
+          Supported fields are `name`, `id`, `action`, `enabled`, `source_account`,
+
+          `is_shared`, `filters`, and `expression` (max 1024 bytes). The `source_account`
+
+          value is matched as a normalized UUID substring. The `filters` value must
+
+          be one of the rule filter names and matches a member of the rule''s `filters`
+
+          array. The `expression` filter performs a case-insensitive literal
+
+          substring match across traffic, identity, and device posture expressions.'
+        schema:
+          type: array
+          items:
+            anyOf:
+            - pattern: ^name:.*$
+              type: string
+            - pattern: ^id:.*$
+              type: string
+            - pattern: ^action:(on|off|allow|block|scan|noscan|safesearch|ytrestricted|isolate|noisolate|override|l4_override|audit_ssh|egress|resolve|quarantine|redirect|custom)$
+              type: string
+            - pattern: ^enabled:(true|false)$
+              type: string
+            - pattern: ^source_account:.*$
+              type: string
+            - pattern: ^is_shared:(true|false)$
+              type: string
+            - pattern: ^filters:(http|dns|dns_resolver|l4|egress)$
+              type: string
+            - pattern: ^expression:.*$
+              type: string
+            type: string
+        explode: true
+        style: form
+      - name: search
+        in: query
+        description: Case-insensitive substring search across rule name and description.
+        schema:
+          type: string
+      - name: order_by
+        in: query
+        description: 'Field to sort the returned rules by. Supported values are `name`,
+
+          `created_at`, `updated_at`, and `precedence`.'
+        schema:
+          type: string
+          enum:
+          - name
+          - created_at
+          - updated_at
+          - precedence
+      - name: direction
+        in: query
+        description: 'Sort direction. When `order_by` is omitted, this controls the direction
+
+          of the existing precedence ordering. Shared rules remain first in either
+
+          direction. Accepted values are `asc` and `desc`.'
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      responses:
+        '200':
+          description: List Zero Trust Gateway rules response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/zero-trust-gateway_response_collection-6'
+        4XX:
+          description: List Zero Trust Gateway rules response failure.
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                - type: object
+                - $ref: '#/components/schemas/zero-trust-gateway_response_collection-6'
+                - $ref: '#/components/schemas/zero-trust-gateway_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Zero Trust Gateway rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.rules
+      x-fern-sdk-method-name: list
+    patch:
+      operationId: zero-trust-gateway-rules-patch-multiple-zero-trust-gateway-rules
+      summary: Patch multiple Zero Trust Gateway rules
+      description: Update select fields of multiple Zero Trust Gateway rules in a single request. This is commonly used to reorder rules by updating their precedence values. Only the fields provided for each rule are updated.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                properties:
+                  description:
+                    $ref: '#/components/schemas/zero-trust-gateway_description-2'
+                  enabled:
+                    $ref: '#/components/schemas/zero-trust-gateway_enabled'
+                  id:
+                    $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
+                  name:
+                    $ref: '#/components/schemas/zero-trust-gateway_name-3'
+                  precedence:
+                    $ref: '#/components/schemas/zero-trust-gateway_precedence'
+                required:
+                - id
+                type: object
+      responses:
+        '200':
+          description: Patch multiple Zero Trust Gateway rules response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/zero-trust-gateway_response_collection-6'
+        4XX:
+          description: Patch multiple Zero Trust Gateway rules response failure.
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                - $ref: '#/components/schemas/zero-trust-gateway_response_collection-6'
+                - $ref: '#/components/schemas/zero-trust-gateway_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Zero Trust Gateway rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.rules
+      x-fern-sdk-method-name: bulk-edit
+      x-forge-hidden: true
+    post:
+      operationId: zero-trust-gateway-rules-create-zero-trust-gateway-rule
+      summary: Create a Zero Trust Gateway rule
+      description: Create a new Zero Trust Gateway rule.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  $ref: '#/components/schemas/zero-trust-gateway_action'
+                description:
+                  $ref: '#/components/schemas/zero-trust-gateway_description-2'
+                device_posture:
+                  $ref: '#/components/schemas/zero-trust-gateway_device_posture'
+                enabled:
+                  $ref: '#/components/schemas/zero-trust-gateway_enabled'
+                expiration:
+                  $ref: '#/components/schemas/zero-trust-gateway_expiration'
+                filters:
+                  $ref: '#/components/schemas/zero-trust-gateway_filters'
+                identity:
+                  $ref: '#/components/schemas/zero-trust-gateway_identity'
+                name:
+                  $ref: '#/components/schemas/zero-trust-gateway_name-3'
+                precedence:
+                  $ref: '#/components/schemas/zero-trust-gateway_precedence'
+                rule_settings:
+                  $ref: '#/components/schemas/zero-trust-gateway_rule-settings'
+                schedule:
+                  $ref: '#/components/schemas/zero-trust-gateway_schedule'
+                traffic:
+                  $ref: '#/components/schemas/zero-trust-gateway_traffic'
+              required:
+              - name
+              - action
+      responses:
+        '200':
+          description: Create a Zero Trust Gateway rule response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/zero-trust-gateway_single_response-4'
+        4XX:
+          description: Create a Zero Trust Gateway rule response failure.
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                - type: object
+                - $ref: '#/components/schemas/zero-trust-gateway_single_response-4'
+                - $ref: '#/components/schemas/zero-trust-gateway_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Zero Trust Gateway rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.rules
+      x-fern-sdk-method-name: create
+  /accounts/{account_id}/gateway/rules/tenant:
+    get:
+      operationId: zero-trust-gateway-rules-list-zero-trust-gateway-rules-tenant
+      summary: List Zero Trust Gateway rules inherited from the parent account
+      description: List Zero Trust Gateway rules for the parent account of an account in the MSP configuration.
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
+      responses:
+        '200':
+          description: List Zero Trust Gateway rules response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/zero-trust-gateway_response_collection-6'
+        4XX:
+          description: List Zero Trust Gateway rules response failure.
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                - type: object
+                - $ref: '#/components/schemas/zero-trust-gateway_response_collection-6'
+                - $ref: '#/components/schemas/zero-trust-gateway_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Zero Trust Gateway rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.rules
+      x-fern-sdk-method-name: list-tenant
+  /accounts/{account_id}/gateway/rules/{rule_id}:
+    delete:
+      operationId: zero-trust-gateway-rules-delete-zero-trust-gateway-rule
+      summary: Delete a Zero Trust Gateway rule
+      description: Delete a Zero Trust Gateway rule.
+      parameters:
+      - name: rule_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
+      responses:
+        '200':
+          description: Delete a Zero Trust Gateway rule response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/zero-trust-gateway_empty_response'
+        4XX:
+          description: Delete a Zero Trust Gateway rule response failure.
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                - $ref: '#/components/schemas/zero-trust-gateway_empty_response'
+                - $ref: '#/components/schemas/zero-trust-gateway_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Zero Trust Gateway rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.rules
+      x-fern-sdk-method-name: delete
+    get:
+      operationId: zero-trust-gateway-rules-zero-trust-gateway-rule-details
+      summary: Get Zero Trust Gateway rule details
+      description: Get a single Zero Trust Gateway rule.
+      parameters:
+      - name: rule_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
+      responses:
+        '200':
+          description: Get Zero Trust Gateway rule details response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/zero-trust-gateway_single_response-4'
+        4XX:
+          description: Get Zero Trust Gateway rule details response failure.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                - $ref: '#/components/schemas/zero-trust-gateway_single_response-4'
+                - $ref: '#/components/schemas/zero-trust-gateway_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Zero Trust Gateway rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.rules
+      x-fern-sdk-method-name: get
+    patch:
+      operationId: zero-trust-gateway-rules-patch-zero-trust-gateway-rule
+      summary: Patch a Zero Trust Gateway rule
+      description: Update select fields of an existing Zero Trust Gateway rule. Only the fields provided in the request body are updated. This endpoint supports a limited subset of fields (`name`, `description`, `precedence`, `enabled`). To update other fields such as `action`, `traffic`, `identity`, `device_posture`, `rule_settings`, `schedule`, or `expiration`, use the PUT endpoint for a full rule replacement.
+      parameters:
+      - name: rule_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  $ref: '#/components/schemas/zero-trust-gateway_description-2'
+                enabled:
+                  $ref: '#/components/schemas/zero-trust-gateway_enabled'
+                name:
+                  $ref: '#/components/schemas/zero-trust-gateway_name-3'
+                precedence:
+                  $ref: '#/components/schemas/zero-trust-gateway_precedence'
+      responses:
+        '200':
+          description: Patch a Zero Trust Gateway rule response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/zero-trust-gateway_single_response-4'
+        4XX:
+          description: Patch a Zero Trust Gateway rule response failure.
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                - $ref: '#/components/schemas/zero-trust-gateway_single_response-4'
+                - $ref: '#/components/schemas/zero-trust-gateway_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Zero Trust Gateway rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.rules
+      x-fern-sdk-method-name: edit
+      x-forge-hidden: true
+    put:
+      operationId: zero-trust-gateway-rules-update-zero-trust-gateway-rule
+      summary: Update a Zero Trust Gateway rule
+      description: Update a configured Zero Trust Gateway rule.
+      parameters:
+      - name: rule_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  $ref: '#/components/schemas/zero-trust-gateway_action'
+                description:
+                  $ref: '#/components/schemas/zero-trust-gateway_description-2'
+                device_posture:
+                  $ref: '#/components/schemas/zero-trust-gateway_device_posture'
+                enabled:
+                  $ref: '#/components/schemas/zero-trust-gateway_enabled'
+                expiration:
+                  $ref: '#/components/schemas/zero-trust-gateway_expiration'
+                filters:
+                  $ref: '#/components/schemas/zero-trust-gateway_filters'
+                identity:
+                  $ref: '#/components/schemas/zero-trust-gateway_identity'
+                name:
+                  $ref: '#/components/schemas/zero-trust-gateway_name-3'
+                precedence:
+                  $ref: '#/components/schemas/zero-trust-gateway_precedence'
+                rule_settings:
+                  $ref: '#/components/schemas/zero-trust-gateway_rule-settings'
+                schedule:
+                  $ref: '#/components/schemas/zero-trust-gateway_schedule'
+                traffic:
+                  $ref: '#/components/schemas/zero-trust-gateway_traffic'
+              required:
+              - name
+              - action
+      responses:
+        '200':
+          description: Update a Zero Trust Gateway rule response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/zero-trust-gateway_single_response-4'
+        4XX:
+          description: Update a Zero Trust Gateway rule response failure.
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                - $ref: '#/components/schemas/zero-trust-gateway_single_response-4'
+                - $ref: '#/components/schemas/zero-trust-gateway_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Zero Trust Gateway rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.rules
+      x-fern-sdk-method-name: update
+  /accounts/{account_id}/gateway/rules/{rule_id}/reset_expiration:
+    post:
+      operationId: zero-trust-gateway-rules-reset-expiration-zero-trust-gateway-rule
+      summary: Reset the expiration of a Zero Trust Gateway Rule
+      description: Resets the expiration of a Zero Trust Gateway Rule if its duration elapsed and it has a default duration. The Zero Trust Gateway Rule must have values for both `expiration.expires_at` and `expiration.duration`.
+      parameters:
+      - name: rule_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/zero-trust-gateway_identifier-2'
+      responses:
+        '200':
+          description: Reset the expiration of a Zero Trust Gateway rule response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/zero-trust-gateway_single_response-4'
+        4XX:
+          description: Reset the expiration of a Zero Trust Gateway rule response failure.
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                - $ref: '#/components/schemas/zero-trust-gateway_single_response-4'
+                - $ref: '#/components/schemas/zero-trust-gateway_api-response-common-failure'
+      security:
+      - api_email: []
+        api_key: []
+        api_token: []
+      tags:
+      - Zero Trust Gateway rules
+      x-fern-availability: generally-available
+      x-fern-sdk-group-name: zero-trust.gateway.rules
+      x-fern-sdk-method-name: reset-expiration
+components:
+  schemas:
+    zero-trust-gateway_response_collection-6:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/zero-trust-gateway_api-response-collection'
+      - properties:
+          result:
+            type: array
+            items:
+              $ref: '#/components/schemas/zero-trust-gateway_rules'
+        type: object
+    zero-trust-gateway_warning_status:
+      description: Indicate a warning for a misconfigured rule, if any.
+      type:
+      - string
+      - 'null'
+      readOnly: true
+      x-stainless-terraform-configurability: computed
+    zero-trust-gateway_schedule:
+      description: Defines the schedule for activating DNS policies. Settable only for `dns` and `dns_resolver` rules.
+      type:
+      - object
+      - 'null'
+      properties:
+        fri:
+          description: Specify the time intervals when the rule is active on Fridays, in the increasing order from 00:00-24:00.  If this parameter omitted, the rule is deactivated on Fridays. API returns a formatted version of this string, which may cause Terraform drift if a unformatted value is used.
+          type: string
+          example: 08:00-12:30,13:30-17:00
+          x-auditable: true
+        mon:
+          description: Specify the time intervals when the rule is active on Mondays, in the increasing order from 00:00-24:00(capped at maximum of 6 time splits). If this parameter omitted, the rule is deactivated on Mondays. API returns a formatted version of this string, which may cause Terraform drift if a unformatted value is used.
+          type: string
+          example: 08:00-12:30,13:30-17:00
+          x-auditable: true
+        sat:
+          description: Specify the time intervals when the rule is active on Saturdays, in the increasing order from 00:00-24:00.  If this parameter omitted, the rule is deactivated on Saturdays. API returns a formatted version of this string, which may cause Terraform drift if a unformatted value is used.
+          type: string
+          example: 08:00-12:30,13:30-17:00
+          x-auditable: true
+        sun:
+          description: Specify the time intervals when the rule is active on Sundays, in the increasing order from 00:00-24:00. If this parameter omitted, the rule is deactivated on Sundays. API returns a formatted version of this string, which may cause Terraform drift if a unformatted value is used.
+          type: string
+          example: 08:00-12:30,13:30-17:00
+          x-auditable: true
+        thu:
+          description: Specify the time intervals when the rule is active on Thursdays, in the increasing order from 00:00-24:00. If this parameter omitted, the rule is deactivated on Thursdays. API returns a formatted version of this string, which may cause Terraform drift if a unformatted value is used.
+          type: string
+          example: 08:00-12:30,13:30-17:00
+          x-auditable: true
+        time_zone:
+          description: Specify the time zone for rule evaluation. When a [valid time zone city name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) is provided, Gateway always uses the current time for that time zone. When this parameter is omitted, Gateway uses the time zone determined from the user's IP address. Colo time zone is used when the user's IP address does not resolve to a location.
+          type: string
+          example: America/New York
+          x-auditable: true
+        tue:
+          description: Specify the time intervals when the rule is active on Tuesdays, in the increasing order from 00:00-24:00. If this parameter omitted, the rule is deactivated on Tuesdays. API returns a formatted version of this string, which may cause Terraform drift if a unformatted value is used.
+          type: string
+          example: 08:00-12:30,13:30-17:00
+          x-auditable: true
+        wed:
+          description: Specify the time intervals when the rule is active on Wednesdays, in the increasing order from 00:00-24:00. If this parameter omitted, the rule is deactivated on Wednesdays. API returns a formatted version of this string, which may cause Terraform drift if a unformatted value is used.
+          type: string
+          example: 08:00-12:30,13:30-17:00
+          x-auditable: true
+      x-stainless-terraform-configurability: computed_optional
+    zero-trust-gateway_result_info:
+      type: object
+      properties:
+        count:
+          description: Indicate the total number of results for the requested service.
+          type: number
+          example: 1
+        page:
+          description: Indicate the current page within a paginated list of results.
+          type: number
+          example: 1
+        per_page:
+          description: Indicate the number of results per page.
+          type: number
+          example: 20
+        total_count:
+          description: Indicate the total results available without any search parameters.
+          type: number
+          example: 2000
+    zero-trust-gateway_identifier-2:
+      description: Specify the Cloudflare account identifier.
+      type: string
+      example: 699d98642c564d2e855e9661899b7252
+      x-auditable: true
+    zero-trust-gateway_version:
+      description: Indicate the version number of the rule(read-only).
+      type: integer
+      example: 1
+      readOnly: true
+      x-auditable: true
+      x-stainless-terraform-configurability: computed
+    zero-trust-gateway_empty_response:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/zero-trust-gateway_api-response-single'
+      - properties:
+          result:
+            type: object
+        type: object
+    zero-trust-gateway_description-2:
+      description: Specify the rule description.
+      type: string
+      example: Block bad websites based on their host name.
+      x-auditable: true
+    zero-trust-gateway_filters:
+      description: Specify the protocol or layer to evaluate the traffic, identity, and device posture expressions. Can only contain a single value.
+      type: array
+      items:
+        description: Specify the protocol or layer to use.
+        enum:
+        - http
+        - dns
+        - l4
+        - egress
+        - dns_resolver
+        example: http
+        type: string
+        x-auditable: true
+      example:
+      - http
+      maxItems: 1
+      minItems: 1
+    zero-trust-gateway_dns_resolver_settings_v4:
+      type: object
+      properties:
+        ip:
+          description: Specify the IPv4 address of the upstream resolver.
+          type: string
+          example: 2.2.2.2
+          x-auditable: true
+        port:
+          description: Specify a port number to use for the upstream resolver. Defaults to 53 if unspecified.
+          type: integer
+          example: 5053
+          x-auditable: true
+        route_through_private_network:
+          description: Indicate whether to connect to this resolver over a private network. Must set when vnet_id set.
+          type: boolean
+          example: true
+          x-auditable: true
+        vnet_id:
+          description: Specify an optional virtual network for this resolver. Uses default virtual network id if omitted.
+          type: string
+          example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+          x-auditable: true
+      required:
+      - ip
+      x-stainless-terraform-configurability: computed_optional
+    zero-trust-gateway_api-response-common-failure:
+      type: object
+      properties:
+        errors:
+          type: object
+          example:
+          - code: 7003
+            message: No route for the URI
+          allOf:
+          - $ref: '#/components/schemas/zero-trust-gateway_messages'
+          minLength: 1
+        messages:
+          type: object
+          example: []
+          allOf:
+          - $ref: '#/components/schemas/zero-trust-gateway_messages'
+        result:
+          type:
+          - object
+          - 'null'
+          enum:
+          - null
+        success:
+          description: Indicate whether the API call was successful.
+          type: boolean
+          example: false
+          enum:
+          - false
+      required:
+      - success
+      - errors
+      - messages
+      - result
+    zero-trust-gateway_enabled:
+      description: Specify whether the rule is enabled.
+      type: boolean
+      example: true
+      default: false
+      x-auditable: true
+    zero-trust-gateway_api-response-single:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/zero-trust-gateway_api-response-common'
+    zero-trust-gateway_timestamp:
+      type: string
+      format: date-time
+      example: '2014-01-01T05:20:00.12345Z'
+    zero-trust-gateway_messages:
+      type: array
+      items:
+        properties:
+          code:
+            type: integer
+            minimum: 1000
+          message:
+            type: string
+        required:
+        - code
+        - message
+        type: object
+        uniqueItems: true
+      example: []
+    zero-trust-gateway_name-3:
+      description: Specify the rule name.
+      type: string
+      example: block bad websites
+      x-auditable: true
+    zero-trust-gateway_single_response-4:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/zero-trust-gateway_api-response-single'
+      - properties:
+          result:
+            $ref: '#/components/schemas/zero-trust-gateway_rules'
+        type: object
+    zero-trust-gateway_dns_resolver_settings_v6:
+      type: object
+      properties:
+        ip:
+          description: Specify the IPv6 address of the upstream resolver.
+          type: string
+          example: '2001:DB8::'
+          x-auditable: true
+        port:
+          description: Specify a port number to use for the upstream resolver. Defaults to 53 if unspecified.
+          type: integer
+          example: 5053
+          x-auditable: true
+        route_through_private_network:
+          description: Indicate whether to connect to this resolver over a private network. Must set when vnet_id set.
+          type: boolean
+          example: true
+          x-auditable: true
+        vnet_id:
+          description: Specify an optional virtual network for this resolver. Uses default virtual network id if omitted.
+          type: string
+          example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+          x-auditable: true
+      required:
+      - ip
+      x-stainless-terraform-configurability: computed_optional
+    zero-trust-gateway_expiration:
+      description: Defines the expiration time stamp and default duration of a DNS policy. Takes precedence over the policy's `schedule` configuration, if any. This  does not apply to HTTP or network policies. Settable only for `dns` rules.
+      type:
+      - object
+      - 'null'
+      properties:
+        duration:
+          description: Defines the default duration a policy active in minutes. Must set in order to use the `reset_expiration` endpoint on this rule.
+          type: integer
+          example: 10
+          minimum: 5
+          x-auditable: true
+        expired:
+          description: Indicates whether the policy is expired.
+          type: boolean
+          example: false
+          readOnly: true
+          x-auditable: true
+          x-stainless-terraform-configurability: computed
+        expires_at:
+          allOf:
+          - $ref: '#/components/schemas/zero-trust-gateway_timestamp'
+          - description: Show the timestamp when the policy expires and stops applying.  The value must follow RFC 3339 and include a UTC offset.  The system accepts non-zero offsets but converts them to the equivalent UTC+00:00  value and returns timestamps with a trailing Z. Expiration policies ignore client  timezones and expire globally at the specified expires_at time.
+            example: '2014-01-01T05:20:20Z'
+            type: string
+            x-auditable: true
+      required:
+      - expires_at
+      x-stainless-terraform-configurability: computed_optional
+    zero-trust-gateway_rules:
+      type: object
+      properties:
+        action:
+          $ref: '#/components/schemas/zero-trust-gateway_action'
+        created_at:
+          $ref: '#/components/schemas/zero-trust-gateway_read_only_timestamp'
+        deleted_at:
+          $ref: '#/components/schemas/zero-trust-gateway_deleted_at'
+        description:
+          $ref: '#/components/schemas/zero-trust-gateway_description-2'
+        device_posture:
+          $ref: '#/components/schemas/zero-trust-gateway_device_posture'
+        enabled:
+          $ref: '#/components/schemas/zero-trust-gateway_enabled'
+        expiration:
+          $ref: '#/components/schemas/zero-trust-gateway_expiration'
+        filters:
+          $ref: '#/components/schemas/zero-trust-gateway_filters'
+        id:
+          $ref: '#/components/schemas/zero-trust-gateway_uuid-4'
+        identity:
+          $ref: '#/components/schemas/zero-trust-gateway_identity'
+        name:
+          $ref: '#/components/schemas/zero-trust-gateway_name-3'
+        precedence:
+          $ref: '#/components/schemas/zero-trust-gateway_precedence'
+        read_only:
+          $ref: '#/components/schemas/zero-trust-gateway_read_only'
+        rule_settings:
+          $ref: '#/components/schemas/zero-trust-gateway_rule-settings'
+        schedule:
+          $ref: '#/components/schemas/zero-trust-gateway_schedule'
+        sharable:
+          $ref: '#/components/schemas/zero-trust-gateway_sharable'
+        source_account:
+          $ref: '#/components/schemas/zero-trust-gateway_source_account'
+        traffic:
+          $ref: '#/components/schemas/zero-trust-gateway_traffic'
+        updated_at:
+          $ref: '#/components/schemas/zero-trust-gateway_read_only_timestamp'
+        version:
+          $ref: '#/components/schemas/zero-trust-gateway_version'
+        warning_status:
+          $ref: '#/components/schemas/zero-trust-gateway_warning_status'
+      required:
+      - name
+      - precedence
+      - enabled
+      - action
+      - traffic
+      - filters
+    zero-trust-gateway_api-response-common:
+      type: object
+      properties:
+        errors:
+          $ref: '#/components/schemas/zero-trust-gateway_messages'
+        messages:
+          $ref: '#/components/schemas/zero-trust-gateway_messages'
+        success:
+          description: Indicate whether the API call was successful.
+          type: boolean
+          example: true
+          enum:
+          - true
+      required:
+      - success
+      - errors
+      - messages
+    zero-trust-gateway_rule-settings:
+      description: Defines settings for this rule. Settings apply only to specific rule types and must use compatible selectors. If Terraform detects drift, confirm the setting supports your rule type and check whether the API modifies the value. Use API-returned values in your configuration to prevent drift.
+      type: object
+      properties:
+        add_headers:
+          description: Add custom headers to allowed requests as key-value pairs. Use header names as keys that map to arrays of header values. Header values may contain `@{selector.name}` variable references that are interpolated at the edge. Use `@@{` to escape a literal `@{`. A maximum of 20 header operations (add + set + delete) is allowed per policy. Each header name may not exceed 256 bytes and each header value may not exceed 4 KB. Settable only for `http` rules with the action set to `allow`.
+          type:
+          - object
+          - 'null'
+          example:
+            My-Next-Header:
+            - foo
+            - bar
+            X-Custom-Header-Name:
+            - somecustomvalue
+          additionalProperties:
+            items:
+              type: string
+            type: array
+            x-auditable: true
+          x-stainless-terraform-configurability: optional
+        allow_child_bypass:
+          description: Set to enable MSP children to bypass this rule. Only parent MSP accounts can set this. this rule. Settable for all types of rules.
+          type:
+          - boolean
+          - 'null'
+          example: false
+          x-auditable: true
+          x-stainless-terraform-configurability: optional
+        audit_ssh:
+          description: Define the settings for the Audit SSH action. Settable only for `l4` rules with `audit_ssh` action.
+          type:
+          - object
+          - 'null'
+          properties:
+            command_logging:
+              description: Enable SSH command logging.
+              type: boolean
+              example: false
+              x-auditable: true
+          x-stainless-terraform-configurability: optional
+        biso_admin_controls:
+          description: Configure browser isolation behavior. Settable only for `http` rules with the action set to `isolate`.
+          type: object
+          properties:
+            copy:
+              description: Configure copy behavior. If set to remote_only, users cannot copy isolated content from the remote browser to the local clipboard. If this field is absent, copying remains enabled. Applies only when version == "v2".
+              type: string
+              example: remote_only
+              enum:
+              - enabled
+              - disabled
+              - remote_only
+              x-auditable: true
+            dcp:
+              description: Set to false to enable copy-pasting. Only applies when `version == "v1"`.
+              type: boolean
+              x-auditable: true
+            dd:
+              description: Set to false to enable downloading. Only applies when `version == "v1"`.
+              type: boolean
+              x-auditable: true
+            dk:
+              description: Set to false to enable keyboard usage. Only applies when `version == "v1"`.
+              type: boolean
+              x-auditable: true
+            download:
+              description: Configure download behavior. When set to remote_only, users can view downloads but cannot save them. If this field is absent, downloading remains enabled. Applies only when version == "v2".
+              type: string
+              example: enabled
+              enum:
+              - enabled
+              - disabled
+              - remote_only
+              x-auditable: true
+            dp:
+              description: Set to false to enable printing. Only applies when `version == "v1"`.
+              type: boolean
+              example: false
+              x-auditable: true
+            du:
+              description: Set to false to enable uploading. Only applies when `version == "v1"`.
+              type: boolean
+              x-auditable: true
+            keyboard:
+              description: Configure keyboard usage behavior. If this field is absent, keyboard usage remains enabled. Applies only when version == "v2".
+              type: string
+              example: enabled
+              enum:
+              - enabled
+              - disabled
+              x-auditable: true
+            paste:
+              description: Configure paste behavior. If set to remote_only, users cannot paste content from the local clipboard into isolated pages. If this field is absent, pasting remains enabled. Applies only when version == "v2".
+              type: string
+              example: enabled
+              enum:
+              - enabled
+              - disabled
+              - remote_only
+              x-auditable: true
+            printing:
+              description: Configure print behavior. Default, Printing is enabled. Applies only when version == "v2".
+              type: string
+              example: enabled
+              enum:
+              - enabled
+              - disabled
+              x-auditable: true
+            upload:
+              description: Configure upload behavior. If this field is absent, uploading remains enabled. Applies only when version == "v2".
+              type: string
+              example: enabled
+              enum:
+              - enabled
+              - disabled
+              x-auditable: true
+            version:
+              description: Indicate which version of the browser isolation controls should apply.
+              type: string
+              default: v1
+              enum:
+              - v1
+              - v2
+              x-auditable: true
+            wm_id:
+              description: Specify the watermark ID (UUID) to apply to the isolated browser session. When present, enables watermark rendering in the isolated browser.
+              type: string
+              format: uuid
+              example: 475345dc-5299-4b6e-8f6a-3d3e4c8e9f1a
+              maxLength: 36
+              minLength: 1
+              x-auditable: true
+          x-stainless-terraform-configurability: optional
+        block_page:
+          description: Configure custom block page settings. If missing or null, use the account settings. Settable only for `http` rules with the action set to `block`.
+          type:
+          - object
+          - 'null'
+          properties:
+            include_context:
+              description: Specify whether to pass the context information as query parameters.
+              type: boolean
+              x-auditable: true
+            target_uri:
+              description: Specify the URI to which the user is redirected.
+              type: string
+              format: uri
+              x-auditable: true
+          required:
+          - target_uri
+          x-stainless-terraform-configurability: optional
+        block_page_enabled:
+          description: Enable the custom block page. Settable only for `dns` rules with action `block`.
+          type: boolean
+          example: true
+          x-auditable: true
+          x-stainless-terraform-configurability: optional
+        block_reason:
+          description: Explain why the rule blocks the request. The custom block page shows this text (if enabled). Settable only for `dns`, `l4`, and `http` rules when the action set to `block`.
+          type:
+          - string
+          - 'null'
+          example: This website is a security risk
+          x-auditable: true
+          x-stainless-terraform-configurability: optional
+        bypass_parent_rule:
+          description: Set to enable MSP accounts to bypass their parent's rules. Only MSP child accounts can set this. Settable for all types of rules.
+          type:
+          - boolean
+          - 'null'
+          example: false
+          x-auditable: true
+          x-stainless-terraform-configurability: optional
+        check_session:
+          description: Configure session check behavior. Settable only for `l4` and `http` rules with the action set to `allow`.
+          type:
+          - object
+          - 'null'
+          properties:
+            duration:
+              description: Sets the required session freshness threshold. The API returns a normalized version of this value.
+              type: string
+              example: 300s
+              x-auditable: true
+            enforce:
+              description: Enable session enforcement.
+              type: boolean
+              example: true
+              x-auditable: true
+          x-stainless-terraform-configurability: optional
+        delete_headers:
+          description: Remove headers from allowed requests by name. A maximum of 20 header operations (add + set + delete) is allowed per policy. Each header name may not exceed 256 bytes. Settable only for `http` rules with the action set to `allow`.
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+            x-auditable: true
+          example:
+          - X-Old-Header
+          - X-Remove-Me
+          x-stainless-terraform-configurability: optional
+        dns_resolvers:
+          description: Configure custom resolvers to route queries that match the resolver policy. Unused with 'resolve_dns_through_cloudflare' or 'resolve_dns_internally' settings. DNS queries get routed to the address closest to their origin. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules.
+          type:
+          - object
+          - 'null'
+          properties:
+            ipv4:
+              type: array
+              items:
+                $ref: '#/components/schemas/zero-trust-gateway_dns_resolver_settings_v4'
+            ipv6:
+              type: array
+              items:
+                $ref: '#/components/schemas/zero-trust-gateway_dns_resolver_settings_v6'
+          x-stainless-terraform-configurability: optional
+        egress:
+          description: Configure how Gateway Proxy traffic egresses. You can enable this setting for rules with Egress actions and filters, or omit it to indicate local egress via WARP IPs. Settable only for `egress` rules.
+          type:
+          - object
+          - 'null'
+          properties:
+            ipv4:
+              description: Specify the IPv4 address to use for egress.
+              type: string
+              example: 192.0.2.2
+              x-auditable: true
+            ipv4_fallback:
+              description: Specify the fallback IPv4 address to use for egress when the primary IPv4 fails. Set '0.0.0.0' to indicate local egress via WARP IPs.
+              type: string
+              example: 192.0.2.3
+              x-auditable: true
+            ipv6:
+              description: Specify the IPv6 range to use for egress.
+              type: string
+              example: 2001:DB8::/64
+              x-auditable: true
+          x-stainless-terraform-configurability: optional
+        forensic_copy:
+          description: Configure whether a copy of the HTTP request will be sent to storage when the rule matches.
+          type:
+          - object
+          - 'null'
+          properties:
+            enabled:
+              description: Enable sending the copy to storage.
+              type: boolean
+              x-auditable: true
+          x-stainless-terraform-configurability: optional
+        ignore_cname_category_matches:
+          description: Ignore category matches at CNAME domains in a response. When off, evaluate categories in this rule against all CNAME domain categories in the response. Settable only for `dns` and `dns_resolver` rules.
+          type: boolean
+          example: true
+          x-auditable: true
+          x-stainless-terraform-configurability: optional
+        insecure_disable_dnssec_validation:
+          description: Specify whether to disable DNSSEC validation (for Allow actions) [INSECURE]. Settable only for `dns` rules.
+          type: boolean
+          example: false
+          x-auditable: true
+          x-stainless-terraform-configurability: optional
+        ip_categories:
+          description: Enable IPs in DNS resolver category blocks. The system blocks only domain name categories unless you enable this setting. Settable only for `dns` and `dns_resolver` rules.
+          type: boolean
+          example: true
+          x-auditable: true
+          x-stainless-terraform-configurability: optional
+        ip_indicator_feeds:
+          description: Indicates whether to include IPs in DNS resolver indicator feed blocks. Default, indicator feeds block only domain names. Settable only for `dns` and `dns_resolver` rules.
+          type: boolean
+          example: true
+          x-auditable: true
+          x-stainless-terraform-configurability: optional
+        l4override:
+          description: Send matching traffic to the supplied destination IP address and port. Settable only for `l4` rules with the action set to `l4_override`.
+          type:
+          - object
+          - 'null'
+          properties:
+            ip:
+              description: Defines the IPv4 or IPv6 address.
+              type: string
+              example: 1.1.1.1
+              x-auditable: true
+            port:
+              description: Defines a port number to use for TCP/UDP overrides.
+              type: integer
+              x-auditable: true
+          x-stainless-terraform-configurability: optional
+        notification_settings:
+          description: Configure a notification to display on the user's device when this rule matched. Settable for all types of rules with the action set to `block`.
+          type:
+          - object
+          - 'null'
+          properties:
+            enabled:
+              description: Enable notification.
+              type: boolean
+              x-auditable: true
+            include_context:
+              description: Indicates whether to pass the context information as query parameters.
+              type: boolean
+              x-auditable: true
+            msg:
+              description: Customize the message shown in the notification.
+              type: string
+              x-auditable: true
+            support_url:
+              description: Defines an optional URL to direct users to additional information. If unset, the notification opens a block page.
+              type: string
+              x-auditable: true
+          x-stainless-terraform-configurability: optional
+        override_host:
+          description: Defines a hostname for override, for the matching DNS queries. Settable only for `dns` rules with the action set to `override`.
+          type: string
+          example: example.com
+          x-auditable: true
+          x-stainless-terraform-configurability: optional
+        override_ips:
+          description: Defines a an IP or set of IPs for overriding matched DNS queries. Settable only for `dns` rules with the action set to `override`.
+          type:
+          - array
+          - 'null'
+          items:
+            description: Defines the IPv4 or IPv6 address.
+            example: 1.1.1.1
+            type: string
+            x-auditable: true
+          example:
+          - 1.1.1.1
+          - 2.2.2.2
+          x-stainless-terraform-configurability: optional
+        payload_log:
+          description: Configure DLP payload logging. Settable only for `http` rules.
+          type:
+          - object
+          - 'null'
+          properties:
+            enabled:
+              description: Enable DLP payload logging for this rule.
+              type: boolean
+              example: true
+              x-auditable: true
+          x-stainless-terraform-configurability: optional
+        quarantine:
+          description: Configure settings that apply to quarantine rules. Settable only for `http` rules.
+          type:
+          - object
+          - 'null'
+          properties:
+            file_types:
+              description: Specify the types of files to sandbox.
+              type: array
+              items:
+                enum:
+                - exe
+                - pdf
+                - doc
+                - docm
+                - docx
+                - rtf
+                - ppt
+                - pptx
+                - xls
+                - xlsm
+                - xlsx
+                - zip
+                - rar
+                type: string
+                x-auditable: true
+          x-stainless-terraform-configurability: optional
+        redirect:
+          description: Apply settings to redirect rules. Settable only for `http` rules with the action set to `redirect`.
+          type:
+          - object
+          - 'null'
+          properties:
+            include_context:
+              description: Specify whether to pass the context information as query parameters.
+              type: boolean
+              x-auditable: true
+            preserve_path_and_query:
+              description: Specify whether to append the path and query parameters from the original request to target_uri.
+              type: boolean
+              x-auditable: true
+            target_uri:
+              description: Specify the URI to which the user is redirected.
+              type: string
+              format: uri
+              x-auditable: true
+          required:
+          - target_uri
+          x-stainless-terraform-configurability: optional
+        resolve_dns_internally:
+          description: Configure to forward the query to the internal DNS service, passing the specified 'view_id' as input. Not used when 'dns_resolvers' is specified or 'resolve_dns_through_cloudflare' is set. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules.
+          type:
+          - object
+          - 'null'
+          properties:
+            fallback:
+              description: Specify the fallback behavior to apply when the internal DNS response code differs from 'NOERROR' or when the response data contains only CNAME records for 'A' or 'AAAA' queries.
+              type: string
+              enum:
+              - none
+              - public_dns
+              x-auditable: true
+            view_id:
+              description: Specify the internal DNS view identifier to pass to the internal DNS service.
+              type: string
+              x-auditable: true
+          x-stainless-terraform-configurability: optional
+        resolve_dns_through_cloudflare:
+          description: Enable to send queries that match the policy to Cloudflare's default 1.1.1.1 DNS resolver. Cannot set when 'dns_resolvers' specified or 'resolve_dns_internally' is set. Only valid when a rule's action set to 'resolve'. Settable only for `dns_resolver` rules.
+          type:
+          - boolean
+          - 'null'
+          example: true
+          x-auditable: true
+          x-stainless-terraform-configurability: optional
+        set_headers:
+          description: Replace existing headers on allowed requests with the specified key-value pairs. If a header does not exist, it is added. Header values may contain `@{selector.name}` variable references that are interpolated at the edge. Use `@@{` to escape a literal `@{`. A maximum of 20 header operations (add + set + delete) is allowed per policy. Each header name may not exceed 256 bytes and each header value may not exceed 4 KB. Settable only for `http` rules with the action set to `allow`.
+          type:
+          - object
+          - 'null'
+          example:
+            X-User-Identity:
+            - user=@{identity.name}
+          additionalProperties:
+            items:
+              type: string
+            type: array
+            x-auditable: true
+          x-stainless-terraform-configurability: optional
+        untrusted_cert:
+          description: Configure behavior when an upstream certificate is invalid or an SSL error occurs. Settable only for `http` rules with the action set to `allow`.
+          type:
+          - object
+          - 'null'
+          properties:
+            action:
+              description: Defines the action performed when an untrusted certificate seen. The default action an error with HTTP code 526.
+              type: string
+              example: error
+              enum:
+              - pass_through
+              - block
+              - error
+              x-auditable: true
+          x-stainless-terraform-configurability: optional
+      x-stainless-terraform-configurability: computed_optional
+    zero-trust-gateway_identity:
+      description: Specify the wirefilter expression used for identity matching. The API automatically formats and sanitizes expressions before storing them. To prevent Terraform state drift, use the formatted expression returned in the API response.
+      type: string
+      example: any(identity.groups.name[*] in {"finance"})
+      default: ''
+      x-auditable: true
+      x-stainless-terraform-configurability: computed_optional
+    zero-trust-gateway_traffic:
+      description: Specify the wirefilter expression used for traffic matching. The API automatically formats and sanitizes expressions before storing them. To prevent Terraform state drift, use the formatted expression returned in the API response.
+      type: string
+      example: http.request.uri matches ".*a/partial/uri.*" and http.request.host in $01302951-49f9-47c9-a400-0297e60b6a10
+      default: ''
+      x-auditable: true
+      x-stainless-terraform-configurability: computed_optional
+    zero-trust-gateway_deleted_at:
+      description: Indicate the date of deletion, if any.
+      type:
+      - string
+      - 'null'
+      format: date-time
+      readOnly: true
+      x-stainless-terraform-configurability: computed
+    zero-trust-gateway_uuid-4:
+      description: Identify the API resource with a UUID.
+      type: string
+      format: uuid
+      example: f174e90a-fafe-4643-bbbc-4a0ed4fc8415
+      maxLength: 36
+      x-auditable: true
+    zero-trust-gateway_precedence:
+      description: Set the order of your rules. Lower values indicate higher precedence. At each processing phase, evaluate applicable rules in ascending order of this value. Refer to [Order of enforcement](http://developers.cloudflare.com/learning-paths/secure-internet-traffic/understand-policies/order-of-enforcement/#manage-precedence-with-terraform) to manage precedence via Terraform.
+      type: integer
+      x-auditable: true
+      x-stainless-terraform-configurability: computed_optional
+    zero-trust-gateway_sharable:
+      description: Indicate that this rule is sharable via the Orgs API.
+      type: boolean
+      readOnly: true
+      x-auditable: true
+      x-stainless-terraform-configurability: computed
+    zero-trust-gateway_read_only:
+      description: Indicate that this rule is shared via the Orgs API and read only.
+      type: boolean
+      readOnly: true
+      x-auditable: true
+      x-stainless-terraform-configurability: computed
+    zero-trust-gateway_source_account:
+      description: Provide the account tag of the account that created the rule.
+      type: string
+      readOnly: true
+      x-auditable: true
+      x-stainless-terraform-configurability: computed
+    zero-trust-gateway_action:
+      description: Specify the action to perform when the associated traffic, identity, and device posture expressions either absent or evaluate to `true`.
+      type: string
+      example: allow
+      enum:
+      - 'on'
+      - 'off'
+      - allow
+      - block
+      - scan
+      - noscan
+      - safesearch
+      - ytrestricted
+      - isolate
+      - noisolate
+      - override
+      - l4_override
+      - egress
+      - resolve
+      - quarantine
+      - redirect
+      x-auditable: true
+    zero-trust-gateway_api-response-collection:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/zero-trust-gateway_api-response-common'
+      - properties:
+          result_info:
+            $ref: '#/components/schemas/zero-trust-gateway_result_info'
+        type: object
+    zero-trust-gateway_device_posture:
+      description: Specify the wirefilter expression used for device posture check. The API automatically formats and sanitizes expressions before storing them. To prevent Terraform state drift, use the formatted expression returned in the API response.
+      type: string
+      example: any(device_posture.checks.passed[*] in {"1308749e-fcfb-4ebc-b051-fe022b632644"})
+      default: ''
+      x-auditable: true
+      x-stainless-terraform-configurability: computed_optional
+    zero-trust-gateway_read_only_timestamp:
+      type: string
+      format: date-time
+      example: '2014-01-01T05:20:00.12345Z'
+      readOnly: true
+  securitySchemes:
+    api_email:
+      in: header
+      name: X-Auth-Email
+      type: apiKey
+    api_key:
+      in: header
+      name: X-Auth-Key
+      type: apiKey
+    api_token:
+      scheme: bearer
+      type: http
+    user_service_key:
+      in: header
+      name: X-Auth-User-Service-Key
+      type: apiKey
+externalDocs:
+  description: Cloudflare Radar Documentation
+  url: https://developers.cloudflare.com/radar/
+x-forge-commands:
+  abuse-reports:
+    description: Submit and track abuse reports for phishing, malware, and other policy violations on Cloudflare-proxied sites
+    groups:
+      appeals:
+        description: Appeal eligibility for abuse reports
+      emails:
+        description: Emails sent for abuse reports
+      mitigations:
+        description: Mitigation actions taken in response to abuse reports
+  accounts:
+    description: Account settings, members, roles, subscriptions, and API tokens for your Cloudflare account
+    groups:
+      applications:
+        description: Applications operations
+      categories:
+        description: Categories operations
+      organizations:
+        description: Move accounts between organizations
+      profile:
+        description: View and manage the profile for a Cloudflare account
+      roles:
+        description: View the roles available for assigning to account members, each defining a set of permissions
+      subscriptions:
+        description: View and manage plan subscriptions attached to this account
+      tokens:
+        description: Create and manage scoped API tokens for programmatic access to the Cloudflare API
+  ai-gateway:
+    description: Proxy, cache, rate-limit, and observe requests to AI providers — OpenAI, Anthropic, Workers AI, and more
+    groups:
+      custom-domains:
+        description: Manage custom hostnames that route requests through an AI Gateway
+      custom-providers:
+        description: Manage account-level custom AI providers and their endpoint settings
+      datasets:
+        description: 'Deprecated: manage filtered collections of gateway logs used by evaluations'
+      dynamic-routing:
+        description: Route requests across multiple AI providers with fallback, load-balancing, and versioned deployments
+      dynamic-routing.deployments:
+        description: Deploy dynamic route versions and view deployment history
+      dynamic-routing.versions:
+        description: Create and inspect saved versions of a dynamic route
+      evaluation-types:
+        description: 'Deprecated: list the evaluator types that evaluations can use'
+      evaluations:
+        description: 'Deprecated: score the logs in a dataset with selected evaluator types'
+      gateways:
+        description: Create and configure AI Gateways for an account
+      gateways.providers:
+        description: Store and rotate upstream AI provider keys for a gateway
+      logs:
+        description: Inspect, annotate, and delete gateway request logs stored by Legacy Logs
+  ai-search:
+    description: 'Managed search-as-a-service: crawl, index, and query content with AI-powered relevance and chat completions'
+    groups:
+      items:
+        description: Content indexed by AI Search instances
+      jobs:
+        description: Indexing job lifecycle for AI Search instances
+      namespace:
+        description: Logical groupings for organizing AI Search instances
+      tokens:
+        description: Credentials used by AI Search instances
+  ai-security:
+    description: Detect prompt injection, PII, and unsafe topics in traffic to your AI applications
+    groups:
+      custom-topics:
+        description: Organization-specific topic categories used by AI Security for Apps content detection
+  analytics:
+    description: Zone-level traffic analytics — dashboard summaries, per-colo breakdowns, and Argo latency metrics
+    groups:
+      colo:
+        description: Per-data-center (colo) traffic analytics breakdown for the zone
+      dashboard:
+        description: Aggregated zone dashboard analytics — requests, bandwidth, threats, and page views
+      latency:
+        description: Argo Smart Routing latency analytics showing time-to-first-byte improvements
+  argo:
+    description: Network optimization features that speed up and improve reliability of traffic to your origins
+    groups:
+      smart-routing:
+        description: Route traffic through the fastest network paths to your origin using real-time latency data
+      tiered-caching:
+        description: Reduce origin load by having upper-tier data centers serve cache misses before reaching your origin
+  basin-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  billing:
+    description: Account billing profiles and usage data for Cloudflare subscriptions and add-on services
+    groups:
+      profiles:
+        description: Billing profile with payment method, address, and invoice preferences
+      usage:
+        description: Metered usage data for billed services — requests, bandwidth, and feature consumption
+  botnet-feed:
+    description: Botnet threat intelligence feeds — IP and ASN-level data on known command-and-control infrastructure
+    groups:
+      asn:
+        description: ASN-level botnet activity data showing networks with known C2 infrastructure
+      configs:
+        description: Botnet feed subscription configuration and notification preferences
+  builds:
+    description: Build and deploy Workers from connected repositories, then inspect build status and logs.
+    groups:
+      deploy-hooks:
+        description: Manage branch-specific HTTP hooks that start builds.
+      limits:
+        description: View build-minute availability and refresh information.
+      logs:
+        description: Retrieve build logs.
+      repos:
+        description: Manage source repository connections for Workers Builds.
+      tokens:
+        description: Manage credentials used by Workers Builds to deploy Workers.
+      triggers:
+        description: Configure how repository changes build and deploy Workers.
+      versions:
+        description: Find builds associated with Worker versions.
+      workers:
+        description: Manage repository-backed build configuration for Workers.
+  cache:
+    description: Purge cached content and configure Cache Reserve, tiered caching, and variant serving
+    groups:
+      origin-cloud-regions:
+        description: Manage Origin Cloud Regions routing and failover configurations
+      settings:
+        description: Configure Cache Reserve, tiered caching, and variant serving
+      settings.regional-tiered-cache:
+        description: Restrict tiered cache topology to data centers within a specific geographic region
+      settings.reserve:
+        description: Persistent storage tier that keeps cached assets even after eviction from edge caches
+      settings.smart-tiered-cache:
+        description: Automatically determine the best upper-tier data centers for tiered cache topology
+      settings.variants:
+        description: Serve different cached versions of an image based on the Accept header (WebP, AVIF, etc.)
+  client-side-security:
+    description: Client-Side Security — monitor JavaScript, connections, and cookies on your pages for supply-chain attacks
+    groups:
+      connections:
+        description: Third-party connections made by scripts on your pages — track data exfiltration risks
+      cookies:
+        description: Cookies set by your pages with classification and same-site attribute tracking
+      policies:
+        description: Content Security Policies that control which scripts and connections are allowed on your pages
+      scripts:
+        description: JavaScript files detected on your pages with change tracking and malicious code detection
+      settings:
+        description: Fine tune Client-Side Security behaviors
+  cloud-connector:
+    description: Route traffic from Cloudflare directly to cloud provider services (AWS, Azure, GCP) without origin servers
+    groups:
+      rules:
+        description: Routing rules that map request patterns to cloud provider endpoints
+  cloudforce-one:
+    description: Detection rule management APIs
+    groups:
+      binary-storage:
+        description: Upload and retrieve malware samples and suspicious binaries for analysis
+      requests:
+        description: Additional request operations — priority listing and asset creation
+      rules:
+        description: Rule management operations
+        groups:
+          approvals:
+            description: Approval workflow operations
+          email:
+            description: Email rule operations
+          exemptions:
+            description: Exemption rule operations
+          managed:
+            description: Managed rule operations
+          stats:
+            description: Rule statistics operations
+          tree:
+            description: Rule navigation tree operations
+      scans:
+        description: Scan URLs, IPs, and domains for threat intelligence indicators
+  containers:
+    description: Deploy and manage Containers applications on Cloudflare's global network
+    groups:
+      applications:
+        description: Manage Containers applications
+      applications.instances:
+        description: Inspect Containers instances belonging to applications
+      applications.rollouts:
+        description: Manage rollouts for scheduler-backed applications
+      applications.versions:
+        description: Inspect versions of scheduler-backed applications
+      registries:
+        description: Manage Containers image registries
+      registries.credentials:
+        description: Generate image registry credentials
+  content-scan:
+    description: Malicious uploads detection, scan uploaded content in HTTP requests for malware and malicious payloads
+    groups:
+      expressions:
+        description: Custom expressions that tell the scanner how to reach content objects it cannot parse on its own
+  custom-pages:
+    description: Manage custom error and challenge pages and their assets for accounts and zones
+    groups:
+      account-custom-pages:
+        description: Manage account-level custom pages
+      account-custom-pages.preview-tokens:
+        description: Preview tokens for account-level custom pages
+      assets:
+        description: Manage account- and zone-level custom assets
+      zone-custom-pages:
+        description: Manage zone-level custom pages
+      zone-custom-pages.preview-tokens:
+        description: Preview tokens for zone-level custom pages
+  d1:
+    description: D1 is Cloudflare's managed, serverless database with SQLite's SQL semantics, built-in disaster recovery, and Worker and HTTP API access.
+    groups:
+      time-travel:
+        description: use specific point-in-time backups of your D1 database
+        x-forge-epilogue: For more information about Time Travel, see https://developers.cloudflare.com/d1/reference/time-travel
+  diagnostics:
+    description: Network diagnostic tools — traceroutes from Cloudflare's edge and endpoint health checks
+    groups:
+      endpoint-healthchecks:
+        description: Monitor external endpoint availability with periodic HTTP/HTTPS health checks
+      traceroutes:
+        description: Run traceroutes from Cloudflare data centers to diagnose network path issues
+  email-routing:
+    description: Route incoming email to verified destination addresses or Workers with routing rules, catch-all behavior, and managed DNS records
+    groups:
+      addresses:
+        description: Verified destination email addresses that can receive forwarded mail
+      dns:
+        description: Inspect or unlock the DNS records required by Email Routing
+      rules:
+        description: Match incoming email addresses and forward messages to destination mailboxes or Workers
+      settings:
+        description: Inspect and update Email Routing settings
+  email-security:
+    description: Cloud email security — investigate threats, manage allow/block policies, and detect phishing
+    groups:
+      analytics:
+        description: Analytics and reporting — monthly report and per-day breakdowns of threat activity
+      bulk-actions:
+        description: Asynchronous jobs that move or release every message matching a search — create, monitor, and manage bulk jobs
+      investigate:
+        description: Search and investigate email messages — view detections, traces, raw content, and take remediation actions
+      phishguard:
+        description: PhishGuard user-reported phishing reports — view detected threats for a date range
+      settings:
+        description: Email security configuration — block senders, allow policies, content policies, domains, trusted domains, impersonation registry, and URL handling
+      submissions:
+        description: Reclassify submissions — track user and team reports of false positives and missed detections
+  email-sending:
+    description: Send transactional email and manage sending subdomains and their DNS configuration
+    groups:
+      limits:
+        description: Inspect account-level sending quotas and current usage
+      subdomains:
+        description: Configure sending subdomains and keep their DNS records healthy
+      suppressions:
+        description: Prevent delivery to suppressed addresses and manage the account suppression list
+  filters:
+    description: Filter expressions used by legacy firewall rules to match requests — prefer Rulesets for new configurations
+  firewall:
+    description: Legacy firewall rules, zone lockdowns, access rules, user-agent blocking, and WAF packages
+    groups:
+      access-rules:
+        description: IP-based access rules that allow, block, challenge, or whitelist traffic globally or per-zone
+      lockdowns:
+        description: Zone lockdown rules that restrict access to URLs by IP address or range
+      rules:
+        description: Legacy firewall rules with filter expressions — prefer Rulesets for new configurations
+      ua-rules:
+        description: Block or challenge requests based on the User-Agent header string
+      waf:
+        description: Legacy WAF managed rule packages, rule groups, individual rules, and override configurations
+      zone-access-rules:
+        description: Zone-scoped IP access rules for blocking or allowing traffic
+  google-tag-gateway:
+    description: Google Tag Gateway operations
+    groups:
+      config:
+        description: Google Tag Gateway config operations
+  healthchecks:
+    description: Standalone health checks that monitor origin server availability from Cloudflare's edge
+    groups:
+      previews:
+        description: Test a health check configuration before deploying it to production
+  hyperdrive:
+    description: Accelerate access to existing databases by caching queries and pooling connections at the edge
+  iam:
+    description: Identity and access management — permission groups, resource groups, user groups, and SSO connectors
+    groups:
+      permission-groups:
+        description: View the permission groups that can be assigned to API tokens and policies
+      resource-groups:
+        description: Define scopes that limit which account resources a policy or token can access
+      sso:
+        description: Configure single sign-on connectors to authenticate account members through an external identity provider
+      user-groups:
+        description: Organize account members into groups for easier permission assignment
+  images:
+    description: Store, resize, and deliver optimized images globally — variants, signing keys, and direct uploads
+    groups:
+      flows:
+        description: Zone-level transformation flows that control how images are resized and optimized on delivery
+      import:
+        description: Import images from S3
+      keys:
+        description: Manage signing keys for generating private image URLs
+      variants:
+        description: Manage named resize variants for transforming images on delivery
+  intel:
+    description: Threat intelligence lookups — IP reputation, domain info, ASN details, WHOIS, and indicator feeds
+    groups:
+      asn:
+        description: ASN intelligence — ownership, geolocation, and subnet details for autonomous systems
+      attack-surface-report:
+        description: Attack surface intelligence — exposed assets, vulnerabilities, and infrastructure mapping
+      dns:
+        description: Passive DNS data showing historical DNS resolution records for domains
+      domain-history:
+        description: Historical domain registration and categorization changes over time
+      domains:
+        description: Domain intelligence — risk scores, categories, and associated infrastructure
+      indicator-feeds:
+        description: Threat indicator feeds — subscribe to and manage curated lists of malicious IPs, domains, and URLs
+      ip-lists:
+        description: Curated IP lists used for threat detection and policy enforcement
+      ips:
+        description: IP address intelligence — geolocation, risk assessment, and hosting provider details
+      miscategorizations:
+        description: Report and track domain miscategorization corrections
+      whois:
+        description: WHOIS registration data for domains including registrant, registrar, and nameservers
+  k2:
+    description: Durable, ordered event streams that you produce records to and consume from with subscriptions
+    groups:
+      streams:
+        description: K2 streams, their retention, and the HTTP and Workers binding inputs used to produce records
+      streams.subscriptions:
+        description: Subscriptions that consume a K2 stream, with committed-position lag
+  leaked-credential-checks:
+    description: Detect compromised credentials in login requests by checking against known breach databases
+    groups:
+      detections:
+        description: Custom detection locations that tell the WAF where to find usernames and passwords in requests
+  load-balancers:
+    description: Distribute traffic across origin pools with health monitoring, geo-steering, and failover
+    groups:
+      monitor-groups:
+        description: Group monitors together for shared configuration and bulk management
+      monitor-groups.references:
+        description: List references to monitor groups used by load balancer pools
+      monitors:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.previews:
+        description: Health check configurations that probe origin servers and determine pool availability
+      monitors.references:
+        description: Health check configurations that probe origin servers and determine pool availability
+      pools:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.health:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      pools.references:
+        description: Origin server pools with weighted traffic distribution, health thresholds, and geographic preferences
+      previews:
+        description: Preview the result of a health check monitor configuration before applying it
+      regions:
+        description: Geographic regions used for regional pool steering and traffic policies
+      searches:
+        description: Search across all load balancer resources (pools, monitors, load balancers) by name or reference
+  logs:
+    description: Log control, retention, and raw log access — CMB config, ray ID lookups, and received fields
+    groups:
+      control:
+        description: Log control operations
+      received:
+        description: Received log operations
+  magic-network-monitoring:
+    description: Flow-based network traffic monitoring with configurable alerting rules and VPC flow ingestion
+    groups:
+      configs:
+        description: Account-level monitoring configuration — sampling rates, thresholds, and notification settings
+      rules:
+        description: Monitoring rules that define traffic thresholds and trigger alerts or prefix advertisements
+      vpc-flows:
+        description: Ingest VPC flow logs from cloud providers for network visibility and anomaly detection
+  magic-transit:
+    description: DDoS-protected network transit — GRE/IPsec tunnels, static routes, Magic WAN sites, connectors, and packet captures
+    groups:
+      advanced-dns-protection:
+        description: Advanced Dns Protection operations
+      advanced-tcp-protection:
+        description: Advanced Tcp Protection operations
+      apps:
+        description: Application-aware traffic policies for Magic WAN that steer traffic by app type
+      bgp-filter-profiles:
+        description: BGP filter profiles for controlling which routes are allowed or denied on Magic Transit tunnels
+      bgp-settings:
+        description: BGP settings for controlling default ASN and route redistribution on Magic Transit tunnels
+      cf-interconnects:
+        description: Cloudflare Network Interconnect (CNI) links for direct physical or virtual peering
+      gre-tunnels:
+        description: GRE tunnel endpoints that connect your network to Cloudflare for Magic Transit
+      ipsec-tunnels:
+        description: IPsec tunnel endpoints with pre-shared key management for encrypted transit
+      pcaps:
+        description: Packet capture requests for debugging traffic flowing through Magic Transit tunnels
+      routes:
+        description: Static routes that direct IP prefix traffic through specific GRE/IPsec tunnels
+      sites:
+        description: Magic WAN branch sites — base CRUD, LAN/WAN interface configuration, ACLs, connectors, app configuration, and NetFlow config
+  mcp:
+    description: Manage MCP portals and upstream MCP servers for Cloudflare Access AI controls
+    groups:
+      portals:
+        description: Manage MCP portals, attached servers, and Code Mode settings
+      servers:
+        description: Manage upstream MCP servers, credentials, capabilities, and sync state
+  network-interconnects:
+    description: Physical and virtual private interconnects between your infrastructure and Cloudflare's network
+    groups:
+      cnis:
+        description: Cloud Network Interconnect (CNI) connections — private links from cloud providers to Cloudflare
+      interconnects:
+        description: Physical cross-connect and partner interconnect sessions with LOA and status tracking
+      settings:
+        description: Account-level interconnect settings and default configurations
+      slots:
+        description: Available interconnect facility slots showing port capacity at Cloudflare data centers
+  organizations:
+    description: Multi-user organizations that group accounts, members, and shared settings under a single entity
+    groups:
+      account-organizations:
+        description: List organizations associated with a specific account
+      accounts:
+        description: Accounts operations
+      members:
+        description: Members operations
+      members-batch-create:
+        description: Members Batch Create operations
+      organization-profile:
+        description: View and update the public profile information for an organization
+      shares:
+        description: Shares operations
+  origin-post-quantum-encryption:
+    description: Enable post-quantum key exchange for connections between Cloudflare and your origin server
+  pages:
+    description: Full-stack application hosting with Git-integrated builds, preview deployments, and custom domains
+    groups:
+      projects:
+        description: Pages projects, deployments, build logs, and custom domain bindings
+  pipelines:
+    description: Ingest, transform, and route event streams into R2, analytics, or other destinations in real time
+    groups:
+      sinks:
+        description: Destinations where pipeline data is written — R2 buckets, HTTP endpoints, or other storage
+      streams:
+        description: Inbound data streams that feed events into a pipeline for processing
+  precursor:
+    description: Precursor settings for a zone
+  queues:
+    description: Reliable message queuing between Workers — produce, consume, and batch-process messages at scale
+    groups:
+      consumers:
+        description: Workers that automatically receive and process messages from a queue
+      messages:
+        description: Push messages to a queue and pull or acknowledge them from consumers
+      purge:
+        description: Remove all pending messages from a queue
+      subscriptions:
+        description: Manage queue subscriptions for event-driven message routing
+  r2:
+    description: S3-compatible object storage with zero egress fees — buckets, lifecycle rules, event notifications, and data migration
+    groups:
+      buckets:
+        description: Create and configure R2 buckets including CORS, lifecycle, custom domains, event notifications, and object locks
+      buckets.jobs:
+        description: Create and inspect background jobs for an R2 bucket
+      buckets.local-uploads:
+        description: R2 bucket local upload configuration
+      super-slurper:
+        description: Migrate data from external S3-compatible storage into R2 buckets with resumable transfer jobs
+      temporary-credentials:
+        description: Generate short-lived S3-compatible credentials scoped to specific buckets and operations
+  r2-data-catalog:
+    description: Iceberg-compatible data catalog for R2 — organize objects into tables and namespaces for SQL query engines
+    groups:
+      credentials:
+        description: Catalog access credentials for external query engines (Spark, Trino, etc.)
+      maintenance-configs:
+        description: Table maintenance settings — compaction schedules and snapshot expiration policies
+      namespaces:
+        description: Logical namespaces that group related tables within the data catalog
+      namespaces.tables:
+        description: Tables within catalog namespaces
+      namespaces.tables.maintenance-configs:
+        description: Table-level maintenance configurations and operations
+      namespaces.tables.maintenance-runs:
+        description: History of maintenance runs performed on tables
+  radar:
+    description: Internet-wide traffic intelligence — BGP, DNS, HTTP trends, attack data, and network quality insights
+    groups:
+      agent-readiness:
+        description: Agent readiness summary statistics across the Cloudflare network
+      ai:
+        description: AI inference trends and model usage statistics across the Cloudflare network
+      annotations:
+        description: Radar annotations marking significant Internet events (outages, cable cuts, etc.)
+      as112:
+        description: AS112 DNS sinkhole statistics — reverse DNS query volumes for private address space
+      attacks:
+        description: DDoS and application-layer attack trends, vectors, and target analysis
+      bgp:
+        description: BGP routing data — prefix announcements, AS-level stats, route leaks, and hijack events
+      bots:
+        description: Internet-wide bot traffic trends, categories, and distribution statistics
+      ct:
+        description: Certificate Transparency log monitoring and newly-issued certificate discovery
+      datasets:
+        description: Downloadable Radar datasets for offline analysis and research
+      dns:
+        description: Global DNS query trends — top domains, resolver stats, and DNSSEC adoption
+      email:
+        description: Email security trends — DMARC/SPF/DKIM adoption, spam, and phishing statistics
+      entities:
+        description: Look up ASNs, IPs, domains, and locations with metadata and traffic summaries
+      geolocations:
+        description: Geographic location metadata used for regional traffic analysis
+      http:
+        description: HTTP protocol trends — TLS versions, HTTP versions, browser share, and OS distribution
+      leaked-credentials:
+        description: Leaked credential detection trends and exposure statistics
+      netflows:
+        description: Network-layer traffic flow data and volumetric trend analysis
+      origins:
+        description: Cloud and hosting origin providers (e.g. Amazon, by region) and their traffic metrics
+      post-quantum:
+        description: Post-quantum encryption adoption and deployment trends across the Internet
+      quality:
+        description: Internet connection quality metrics — speed, latency, and jitter by geography and ASN
+      ranking:
+        description: Top domain rankings based on DNS query popularity across the Cloudflare network
+      robots-txt:
+        description: Robots.txt adoption and crawler directive trends across the web
+      search:
+        description: Search Radar data across IPs, ASNs, domains, and locations
+      tcp-resets-timeouts:
+        description: TCP connection reset and timeout statistics indicating network health issues
+      tlds:
+        description: Top-level domain (TLD) metadata and performance trends
+      traffic-anomalies:
+        description: Detected traffic anomalies and unusual patterns in Internet traffic flows
+      verified-bots:
+        description: Catalog of known good bots (Googlebot, Bingbot, etc.) and their traffic patterns
+  rate-limits:
+    description: Legacy per-zone rate limiting rules — prefer Advanced Rate Limiting in Rulesets for new configurations
+  realtime:
+    description: Real-time audio, video, and data services on Cloudflare's global network
+    groups:
+      kit:
+        description: SDK-backed meetings, participants, recordings, livestreams, and webhooks
+      kit.analytics:
+        description: Usage and livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams:
+        description: Livestream analytics for RealtimeKit applications
+      kit.analytics.livestreams.daily:
+        description: Daily livestream analytics for RealtimeKit applications
+      kit.analytics.usage:
+        description: Usage analytics for RealtimeKit applications
+      kit.apps:
+        description: RealtimeKit applications that group meetings, sessions, and configuration
+      kit.livestreams:
+        description: Independent and meeting-based livestreams and their sessions
+      kit.livestreams.sessions:
+        description: Sessions for RealtimeKit livestreams
+      kit.meetings:
+        description: Meetings, participants, access tokens, and meeting livestreams
+      kit.meetings.active:
+        description: Live meeting state and participant controls
+      kit.meetings.active.polls:
+        description: Polls for active meeting sessions
+      kit.meetings.livestream:
+        description: Livestream operations associated with RealtimeKit meetings
+      kit.meetings.participants:
+        description: Participants in RealtimeKit meetings
+      kit.meetings.participants.tokens:
+        description: Access tokens for RealtimeKit meeting participants
+      kit.presets:
+        description: Reusable meeting configuration for media, permissions, and interface behavior
+      kit.recordings:
+        description: Meeting and participant-track recordings and recording controls
+      kit.recordings.active:
+        description: Active recordings for RealtimeKit meetings
+      kit.recordings.tracks:
+        description: Participant-track recordings for RealtimeKit meetings
+      kit.sessions:
+        description: Historical session data, participants, chat, transcripts, and summaries
+      kit.sessions.chat:
+        description: Chat messages from historical RealtimeKit sessions
+      kit.sessions.livestreams:
+        description: Livestreams associated with historical RealtimeKit sessions
+      kit.sessions.participants:
+        description: Participants in historical RealtimeKit sessions
+      kit.sessions.peers:
+        description: Peer details from historical RealtimeKit sessions
+      kit.sessions.summaries:
+        description: Summaries of historical RealtimeKit sessions
+      kit.sessions.transcripts:
+        description: Transcripts from historical RealtimeKit sessions
+      kit.webhooks:
+        description: Webhook endpoints and supported events for RealtimeKit notifications
+      kit.webhooks.events:
+        description: Supported events for RealtimeKit webhooks
+      moq:
+        description: MoQ relays for publishing and subscribing to media streams
+      moq.relays:
+        description: Relays are isolated MoQ scopes that carry media between publishers and subscribers
+      moq.relays.tokens:
+        description: Tokens that authorize publishers and subscribers to connect to a relay
+      sfu:
+        description: SFU apps that route WebRTC media and data between participants
+      sfu.apps:
+        description: SFU application namespaces for sessions and tracks
+      turn:
+        description: TURN keys that help clients traverse NATs and firewalls
+      turn.keys:
+        description: Keys used to generate short-lived TURN credentials
+  request-tracers:
+    description: Trace how a request would be processed through Cloudflare's rules and configuration pipeline
+    groups:
+      traces:
+        description: Simulate request processing to debug rule matches, transforms, and routing decisions
+  resource-sharing:
+    description: Share Cloudflare resources (zones, accounts) across organizations with granular access controls
+    groups:
+      recipients:
+        description: Update share recipients
+      resources:
+        description: Individual resources (zones, configs) that have been shared with recipients
+  rules:
+    description: Resources used by Cloudflare rules and rulesets
+    groups:
+      lists:
+        description: Custom account-level lists of IPs, hostnames, ASNs, or redirects used in rule expressions
+  rum:
+    description: Real User Measurement (Web Analytics) — track page loads, Core Web Vitals, and visitor metrics
+    groups:
+      rules:
+        description: Rules that control which pages and paths are tracked by Web Analytics
+      site-info:
+        description: Web Analytics sites — register domains and get the JavaScript beacon snippet
+  scim:
+    description: SCIM 2.0 provisioning — manage users, groups, and identity provider sync for your account
+    groups:
+      groups:
+        description: Groups operations
+      resource-types:
+        description: Resource Types operations
+      schemas:
+        description: Schemas operations
+      service-provider-config:
+        description: Service Provider Config operations
+      users:
+        description: Users operations
+  secrets-store:
+    description: Centralized secret management — store API keys, tokens, and credentials for use across Workers and other products
+    groups:
+      quota:
+        description: Account quota limits for secrets stores, secrets count, and storage capacity
+      secrets:
+        description: Encrypted key-value secrets within a store. Pass --store-id to scope.
+      stores:
+        description: Secret stores that hold encrypted key-value secrets accessible by Workers and services
+  security-center:
+    description: Security posture dashboard — view and manage security insights, misconfigurations, and vulnerabilities
+    groups:
+      insights:
+        description: Security findings and recommendations across your account — DNS, SSL, WAF misconfigurations, etc.
+      zone-insights:
+        description: Zone-scoped security insights — counts by class, severity, type, and dismissal
+  security-txt:
+    description: Manage the /.well-known/security.txt file that tells security researchers how to report vulnerabilities
+  smart-shield:
+    description: Smart Shield settings, health checks, and cache reserve management
+    groups:
+      cache-reserve-clear:
+        description: Cache Reserve Clear operations
+      health-checks:
+        description: Health checks operations
+  spectrum:
+    description: Proxy and protect arbitrary TCP/UDP applications through Cloudflare's network with DDoS mitigation
+    groups:
+      analytics:
+        description: Real-time and historical connection analytics for Spectrum applications
+      apps:
+        description: Spectrum application configurations that map protocols and ports to origin servers
+  speed:
+    description: Observatory speed tests — run Lighthouse audits, track performance trends, and schedule recurring tests
+    groups:
+      availabilities:
+        description: Check which speed test regions and configurations are available for your zone
+      pages:
+        description: Tested pages with their performance history, trends, and individual test results
+      schedule:
+        description: Scheduled recurring speed tests that automatically run at regular intervals
+  ssl:
+    description: SSL/TLS certificate management — certificate packs, Universal SSL, verification, and TLS mode recommendations
+    groups:
+      automatic-upgrader:
+        description: SSL automatic mode enrollment — get or update automatic SSL/TLS upgrader settings
+      recommendations:
+        description: Get the recommended SSL/TLS encryption mode based on your origin server's certificate configuration
+  stream:
+    description: Video encoding, storage, and delivery — upload, live-stream, clip, caption, and embed video at scale
+    groups:
+      audio-tracks:
+        description: Add, edit, or remove additional audio tracks on a video
+      captions:
+        description: Upload, generate, or retrieve captions and subtitles for videos in multiple languages
+      clip:
+        description: Create a new video clip from an existing video by specifying start and end times
+      copy:
+        description: Import a video from a URL into Stream for processing and delivery
+      direct-upload:
+        description: Generate a tokenized URL that lets end-users upload video directly to Stream
+      downloads:
+        description: Create downloadable MP4 renditions of a video for offline viewing
+      embed:
+        description: Retrieve the HTML embed code snippet for a video
+      keys:
+        description: Signing keys used to generate short-lived signed URLs for private video playback
+      live-inputs:
+        description: Enable and disable live input streams
+      token:
+        description: Generate short-lived signed URL tokens for secure private video playback
+      typed-downloads:
+        description: Type-specific stream download creation and deletion
+      videos:
+        description: Aggregate video storage usage statistics for the account
+      watermarks:
+        description: Watermark profiles that overlay an image on every video in the account
+      webhooks:
+        description: Webhook notifications for video lifecycle events (ready, error, etc.)
+  tenants:
+    description: Multi-tenant account management — manage tenant accounts, entitlements, and memberships
+    groups:
+      account-types:
+        description: Account Types operations
+      accounts:
+        description: Accounts operations
+      entitlements:
+        description: Entitlements operations
+      memberships:
+        description: Memberships operations
+  turnstile:
+    description: CAPTCHA-free bot verification widgets that protect forms and APIs without degrading user experience
+    groups:
+      widgets:
+        description: Turnstile widget configurations — site keys, secret rotation, and challenge mode settings
+  url-scanner:
+    description: Scan URLs for phishing, malware, and other threats — submit scans and retrieve detailed results
+    groups:
+      response:
+        description: Response operations
+      responses:
+        description: Raw HTTP response data captured during URL scans
+      scan:
+        description: Scan operations
+      scans:
+        description: URL scan requests and results — submit URLs for analysis and retrieve threat verdicts
+  user:
+    description: Your Cloudflare user profile, invitations, organizations, billing, and personal API tokens
+    groups:
+      billing:
+        description: View billing history and payment profile for your user (deprecated — prefer account-level billing)
+      firewall:
+        description: Firewall operations
+      load-balancers.monitors:
+        description: Load Balancers operations
+      load-balancers.monitors.preview:
+        description: Load Balancers operations
+      load-balancers.monitors.references:
+        description: Load Balancers operations
+      load-balancers.pools:
+        description: Load Balancers operations
+      load-balancers.pools.edit.pools:
+        description: Load Balancers operations
+      load-balancers.pools.health:
+        description: Load Balancers operations
+      load-balancers.pools.preview:
+        description: Load Balancers operations
+      load-balancers.pools.references:
+        description: Load Balancers operations
+      load-balancers.preview:
+        description: Load Balancers operations
+      load-balancing-analytics.events:
+        description: Load Balancing Analytics operations
+      subscriptions:
+        description: View and manage zone-level plan subscriptions owned by your user
+      tenants:
+        description: Tenants operations
+      tokens:
+        description: Create and manage personal API tokens scoped to your user for programmatic API access
+  user.analytics:
+    description: User-level traffic analytics — aggregated totals and timeseries across all zones
+  vectorize:
+    description: Globally distributed vector database for building semantic search, recommendations, and RAG applications on Workers
+    groups:
+      deprecated-indexes:
+        description: Deprecated v1 Vectorize index operations
+      metadata-index:
+        description: Metadata indexes for filtered vector search
+  waiting-rooms:
+    description: Virtual queues that throttle traffic to your site during peak demand with customizable waiting pages
+    groups:
+      account-waiting-rooms:
+        description: Account-scoped waiting room listing
+      events:
+        description: Scheduled events that temporarily override waiting room settings for sales, launches, etc.
+      page:
+        description: Custom HTML waiting page templates and preview rendering
+      rules:
+        description: Rules that bypass or modify waiting room behavior for specific request patterns
+      settings:
+        description: Zone-level waiting room defaults and cookie configuration
+      statuses:
+        description: Real-time queue status showing active users, queued users, and estimated wait times
+  workflows:
+    description: Durable, multi-step workflows that run on Workers with automatic retries and state persistence
+    groups:
+      instances:
+        description: Workflow instance operations
+      versions:
+        description: Workflow version operations
+  zaraz:
+    description: Server-side tag manager — load third-party tools (analytics, pixels, etc.) from Cloudflare's edge without client-side JS
+    groups:
+      config:
+        description: Full Zaraz configuration including tools, triggers, and variables for the zone
+      default:
+        description: Default Zaraz configuration template used as a starting point for new zones
+      export:
+        description: Export the current Zaraz configuration as a portable JSON document
+      history:
+        description: Configuration version history — browse and restore previous Zaraz configurations
+      publish:
+        description: Publish pending Zaraz configuration changes to make them live on the zone
+      workflow:
+        description: Workflow state for Zaraz configuration changes (draft vs. published)
+  zero-trust:
+    description: Cloudflare's SASE platform — secure access, device posture, DLP, tunnels, gateway policies, and network segmentation
+    groups:
+      dex:
+        description: Digital Experience Monitoring — synthetic tests, fleet-wide device metrics, and network path diagnostics
+      dlp.custom-prompt-topics:
+        description: Data Loss Prevention - manage custom prompt topics for AI-based content detection
+      dlp.data-classes:
+        description: Data Loss Prevention - manage data classes used to classify sensitive information
+      dlp.data-tag-categories:
+        description: Data Loss Prevention - manage categories that organize data tags
+      dlp.data-tag-category-templates:
+        description: Data Loss Prevention - browse templates for creating data tag categories
+      dlp.data-tags:
+        description: Data Loss Prevention - manage tags used to classify and organize sensitive data
+      dlp.datasets:
+        description: Data Loss Prevention - manage datasets, versions, and uploads
+      dlp.document-fingerprints:
+        description: Data Loss Prevention - manage document fingerprints for detecting matching documents
+      dlp.email.account-mapping:
+        description: Data Loss Prevention - configure account mappings for outbound email scanning
+      dlp.email.rules:
+        description: Data Loss Prevention - manage outbound email scanning rules and their priorities
+      dlp.entries:
+        description: Data Loss Prevention - list and manage detection entries
+      dlp.limits:
+        description: Data Loss Prevention - view account limits and resource quotas
+      dlp.patterns:
+        description: Data Loss Prevention - validate regular expressions used for content detection
+      dlp.profiles:
+        description: Data Loss Prevention - list and retrieve profiles
+      dlp.profiles.custom:
+        description: Data Loss Prevention - manage custom profiles
+      dlp.profiles.predefined:
+        description: Data Loss Prevention - manage predefined profiles
+      dlp.sensitivity-group-templates:
+        description: Data Loss Prevention - browse templates for creating sensitivity groups
+      dlp.sensitivity-groups:
+        description: Data Loss Prevention - manage sensitivity groups and their level ordering
+      dlp.sensitivity-levels:
+        description: Data Loss Prevention - manage sensitivity levels within sensitivity groups
+      dlp.settings:
+        description: Data Loss Prevention - manage account-level settings
+      dlp.validators:
+        description: Data Loss Prevention - list and retrieve content validators
+      dlp.validators.proximity-words:
+        description: Data Loss Prevention - manage proximity-word validators
+      risk-scoring:
+        description: User Risk Scoring - retrieve and reset user risk scores
+      risk-scoring.behaviours:
+        description: User Risk Scoring - manage behaviors used to calculate user risk scores
+      risk-scoring.integrations:
+        description: User Risk Scoring - manage integrations that provide risk score signals
+      risk-scoring.integrations.references:
+        description: User Risk Scoring - retrieve integrations by external reference
+      risk-scoring.summary:
+        description: User Risk Scoring - retrieve account risk score summaries
+  zones:
+    description: Zones are domains on Cloudflare — list, create, and configure domain settings
+    groups:
+      aegis:
+        description: Aegis operations
+      fonts:
+        description: Fonts operations
+      origin-h2-max-streams:
+        description: Origin H2 Max Streams operations
+      origin-max-http-version:
+        description: Origin Max Http Version operations
+      origin-tls-compliance-modes:
+        description: Manage zone Origin TLS Compliance Modes setting
+      rum:
+        description: Rum operations
+      speed-brain:
+        description: Speed Brain operations

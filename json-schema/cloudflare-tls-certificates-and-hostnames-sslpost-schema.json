@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/cloudflare/main/json-schema/cloudflare-tls-certificates-and-hostnames-sslpost-schema.json",
+  "title": "tls-certificates-and-hostnames_sslpost",
+  "description": "SSL properties used when creating the custom hostname.",
+  "x-generated": "2026-10-03",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/cloudflare-zones-api-openapi.yml#/components/schemas/tls-certificates-and-hostnames_sslpost",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "bundle_method": {
+          "type": "string",
+          "description": "A ubiquitous bundle has the highest probability of being verified everywhere, even by clients using outdated or unusual trust stores. An optimal bundle uses the shortest chain and newest intermediates. And the force bundle verifies the chain, but does not otherwise modify it.",
+          "enum": [
+            "ubiquitous",
+            "optimal",
+            "force"
+          ],
+          "default": "ubiquitous"
+        },
+        "certificate_authority": {
+          "$ref": "#/$defs/tls-certificates-and-hostnames_certificate_authority"
+        },
+        "custom_certificate": {
+          "type": "string",
+          "description": "If a custom uploaded certificate is used."
+        },
+        "custom_key": {
+          "type": "string",
+          "description": "The key for a custom uploaded certificate."
+        },
+        "method": {
+          "description": "Domain control validation (DCV) method used for this hostname.",
+          "enum": [
+            "http",
+            "txt",
+            "email"
+          ]
+        },
+        "settings": {
+          "$ref": "#/$defs/tls-certificates-and-hostnames_sslsettings"
+        },
+        "type": {
+          "description": "Level of validation to be used for this hostname. Domain validation (dv) must be used.",
+          "enum": [
+            "dv"
+          ]
+        },
+        "wildcard": {
+          "type": "boolean",
+          "description": "Indicates whether the certificate covers a wildcard."
+        }
+      }
+    }
+  ],
+  "type": "object",
+  "$defs": {
+    "tls-certificates-and-hostnames_certificate_authority": {
+      "type": "string",
+      "description": "The Certificate Authority that will issue the certificate",
+      "enum": [
+        "digicert",
+        "google",
+        "lets_encrypt"
+      ]
+    },
+    "tls-certificates-and-hostnames_sslsettings": {
+      "type": "object",
+      "description": "SSL specific settings.",
+      "properties": {
+        "ciphers": {
+          "type": "array",
+          "description": "An allowlist of ciphers for TLS termination. These ciphers must be in the BoringSSL format.",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "early_hints": {
+          "description": "Whether or not Early Hints is enabled.",
+          "enum": [
+            "on",
+            "off"
+          ]
+        },
+        "http2": {
+          "description": "Whether or not HTTP2 is enabled.",
+          "enum": [
+            "on",
+            "off"
+          ]
+        },
+        "min_tls_version": {
+          "description": "The minimum TLS version supported.",
+          "enum": [
+            "1.0",
+            "1.1",
+            "1.2",
+            "1.3"
+          ]
+        },
+        "tls_1_3": {
+          "description": "Whether or not TLS 1.3 is enabled.",
+          "enum": [
+            "on",
+            "off"
+          ]
+        }
+      }
+    }
+  }
+}
