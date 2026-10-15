@@ -34,57 +34,6 @@ edges:
   - Verified creator
   detected_by: sweep-devtools.py
   detected: '2026-10-14'
-- partner_name: MCP Registry
-  partner: mcp
-  partner_match: register
-  type: register
-  channel: standard-directory
-  relationship: standard-participant
-  direction: partner-built
-  evidence: https://registry.modelcontextprotocol.io/v0/servers?search=com.cloudflare.mcp
-  contract_reference:
-    register: registry.modelcontextprotocol.io
-    spec_file: null
-    role: mcp-server-listing
-    registered_name: com.cloudflare.mcp/mcp
-    register_id: com.cloudflare.mcp/mcp
-    detected_by: sweep-agent-tools.py
-    detected: '2026-10-14'
-  mcp_registry:
-    servers:
-    - com.cloudflare.mcp/mcp
-    hosted_remote: 1
-    local_package: 0
-    transports:
-      sse: 15
-      streamable-http: 15
-    auth_declared: 1
-    catalog_declared: true
-    namespace_domains:
-    - cloudflare.com
-  matched_by:
-  - namespace-domain+label
-  detected_by: sweep-agent-tools.py
-  first_seen: '2026-10-14'
-- partner_name: LlamaIndex
-  partner: llamaindex
-  partner_match: framework
-  channel: partner-built
-  direction: partner-built
-  type: coverage
-  relationship: system-coverage
-  evidence: https://github.com/run-llama/llama_index/tree/main/llama-index-integrations/embeddings/llama-index-embeddings-cloudflare-workersai
-  coverage_role:
-  - embeddings
-  framework_signals:
-    packages:
-    - llama-index-embeddings-cloudflare-workersai
-    roles:
-    - embeddings
-    vendor_domain: cloudflare.com
-  matched_by: verified-domain-table
-  detected_by: sweep-rag-vector.py
-  first_seen: '2026-10-15'
 - partner_name: Amazon Web Services
   partner: amazon-web-services
   partner_match: shape-anchor
@@ -232,11 +181,159 @@ edges:
     detected: '2026-10-15'
   detected_by: sweep-model-routing.py
   first_seen: '2026-10-13'
+- partner_name: MCP Registry
+  partner: mcp
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://registry.modelcontextprotocol.io/v0/servers?search=com.cloudflare.mcp
+  contract_reference:
+    register: registry.modelcontextprotocol.io
+    spec_file: null
+    role: mcp-server-listing
+    registered_name: com.cloudflare.mcp/mcp
+    register_id: com.cloudflare.mcp/mcp
+    detected_by: sweep-agent-tools.py
+    detected: '2026-10-15'
+  mcp_registry:
+    servers:
+    - com.cloudflare.mcp/mcp
+    hosted_remote: 1
+    local_package: 0
+    transports:
+      sse: 15
+      streamable-http: 15
+    auth_declared: 1
+    catalog_declared: true
+    namespace_domains:
+    - cloudflare.com
+  matched_by:
+  - namespace-domain+label
+  detected_by: sweep-agent-tools.py
+  first_seen: '2026-10-14'
+- partner_name: LlamaIndex
+  partner: llamaindex
+  partner_match: framework
+  channel: partner-built
+  direction: partner-built
+  type: coverage
+  relationship: system-coverage
+  evidence: https://github.com/run-llama/llama_index/tree/main/llama-index-integrations/embeddings/llama-index-embeddings-cloudflare-workersai
+  coverage_role:
+  - embeddings
+  framework_signals:
+    packages:
+    - llama-index-embeddings-cloudflare-workersai
+    roles:
+    - embeddings
+    vendor_domain: cloudflare.com
+  matched_by: verified-domain-table
+  detected_by: sweep-rag-vector.py
+  first_seen: '2026-10-15'
+- partner_name: A2A protocol (own Agent Card)
+  partner: null
+  partner_match: register
+  type: register
+  direction: provider-built
+  category: A2A agent
+  evidence: https://cloudflare.com/.well-known/agent.json
+  channel: provider-built
+  relationship: compatible
+  shape: a2a
+  evidence_kind: own-wellknown
+  degree: flavored
+  report_only: true
+  a2a_card:
+    grade: flavored
+    verdict: flavored
+    protocol_version: null
+    deviations:
+    - no-protocolVersion
+    card_subject: unknown
+  contract_reference:
+    register: provider's own /.well-known/agent-card.json
+    spec_file: null
+    standard: A2A
+    role: a2a-agent-card
+    registered_name: Cloudflare Site Agent
+    organization: null
+    matched_domain: cloudflare.com
+    matched_by: own-domain
+    detected_by: sweep-ai-agents.py
+    detected: '2026-10-15'
+  detected_by: sweep-ai-agents.py
+  first_seen: '2026-10-15'
+- partner_name: CNCF (Cloud Native Landscape)
+  partner: cncf
+  partner_match: register
+  type: register
+  direction: partner-built
+  category: Cloud native landscape
+  evidence: https://github.com/cncf/landscape/blob/3a7d378b1824b82e729a453bb03fa6f1e37557e1/landscape.yml
+  channel: standard-directory
+  relationship: standard-participant
+  contract_reference:
+    register: CNCF Cloud Native Landscape (github.com/cncf/landscape landscape.yml @3a7d378b18)
+    spec_file: null
+    standard: Cloud Native (CNCF)
+    role: landscape-listed
+    registered_name: Cloudflare Workers
+    registered_names:
+    - Cloudflare Workers
+    - Cloudflare Workers (Wasm)
+    website: https://workers.cloudflare.com
+    matched_domain: cloudflare.com
+    matched_by: domain+name-among-holders
+    member_tier: null
+    joined: null
+    end_user: false
+    cncf_projects: []
+    landscape_categories:
+    - Serverless / Hosted Platform
+    - Wasm / Hosted Platforms
+    landscape_entries: 2
+    signal_note: 'participation only: a landscape listing is standard-participant evidence, not depth. Entries,
+      categories, tier and projects are CONTEXT, never read (breadth is not credit)'
+    detected_by: sweep-cloud-native.py
+    detected: '2026-10-15'
+  detected_by: sweep-cloud-native.py
+  first_seen: '2026-10-15'
+- partner_name: FinOps Foundation (FOCUS)
+  partner: finops-foundation
+  partner_match: register
+  type: register
+  direction: partner-built
+  category: FOCUS billing data
+  evidence: https://focus.finops.org/docs/implementation/data-generators/cloudflare/
+  channel: standard-directory
+  relationship: standard-participant
+  contract_reference:
+    register: FOCUS data generators (focus.finops.org/data-generators)
+    spec_file: null
+    standard: FOCUS (FinOps Open Cost and Usage Specification)
+    role: focus-data-generator
+    registered_name: Cloudflare
+    matched_domain: cloudflare.com
+    matched_by: domain+name-among-holders
+    focus_version_supported: '1.0'
+    page_domains:
+      cloudflare.com: 1
+    signal_note: 'participation only: the version is context, never read'
+    detected_by: sweep-cloud-native.py
+    detected: '2026-10-15'
+  detected_by: sweep-cloud-native.py
+  first_seen: '2026-10-15'
 checked:
+- https://a2aregistry.org/api/agents
 - https://developers.cloudflare.com/ai-gateway/usage/providers/
+- https://focus.finops.org/data-generators/
 - https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json
 - https://github.com/Portkey-AI/gateway/tree/main/src/providers
 - https://github.com/api-evangelist/cloudflare/blob/main/evidence/compatibility/cloudflare-clef-model-card.md
+- https://github.com/cncf/k8s-conformance
+- https://github.com/cncf/landscape
 - https://github.com/marketplace?type=actions
 - https://github.com/run-llama/llama_index/tree/main/llama-index-integrations
 - https://huggingface.co/Cloudflare/clef

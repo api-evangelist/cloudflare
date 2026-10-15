@@ -22,6 +22,55 @@
     detected: '2026-10-12'
   status: not-a-workflow
   arazzo: null
+- slug: cloudflare-github-marketplace-actions
+  label: GitHub Marketplace (actions)
+  partner: github-actions
+  partner_name: GitHub Marketplace (actions)
+  type: marketplace
+  marketplace: github-actions
+  channel: partner-built
+  evidence: https://github.com/marketplace/actions/deploy-to-cloudflare-workers-with-wrangler
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: cloudflare-amazon-web-services
+  label: Amazon Web Services
+  partner: amazon-web-services
+  partner_name: Amazon Web Services
+  type: contract
+  channel: provider-built
+  evidence: https://github.com/api-evangelist/cloudflare/blob/main/openapi/cloudflare-buckets-api-openapi.yml#L4
+  source: edge
+  relationship: compatible
+  status: not-a-workflow
+  arazzo: null
+- slug: cloudflare-microsoft-sentinel-own
+  label: Microsoft Sentinel (own)
+  partner: microsoft-sentinel
+  partner_name: Microsoft Sentinel (own)
+  category: Networking
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://github.com/Azure/Azure-Sentinel/tree/master/Solutions/Cloudflare
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: cloudflare-stripe-own
+  label: Stripe (own)
+  partner: stripe
+  partner_name: Stripe (own)
+  category: developer_tools
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://marketplace.stripe.com/apps/cloudflare
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
 - slug: cloudflare-openrouter
   label: OpenRouter
   partner: openrouter
@@ -82,19 +131,7 @@
     value: OpenAI-compatible
     note: 'cloudflare declares OpenAI compatibility: ''title: Cloudflare Workers AI OpenAI Compatible API'''
     detected_by: sweep-model-routing.py
-    detected: '2026-10-13'
-  status: not-a-workflow
-  arazzo: null
-- slug: cloudflare-github-marketplace-actions
-  label: GitHub Marketplace (actions)
-  partner: github-actions
-  partner_name: GitHub Marketplace (actions)
-  type: marketplace
-  marketplace: github-actions
-  channel: partner-built
-  evidence: https://github.com/marketplace/actions/deploy-to-cloudflare-workers-with-wrangler
-  source: edge
-  relationship: platform-app
+    detected: '2026-10-15'
   status: not-a-workflow
   arazzo: null
 - slug: cloudflare-mcp-registry
@@ -113,7 +150,7 @@
     registered_name: com.cloudflare.mcp/mcp
     register_id: com.cloudflare.mcp/mcp
     detected_by: sweep-agent-tools.py
-    detected: '2026-10-14'
+    detected: '2026-10-15'
   status: not-a-workflow
   arazzo: null
 - slug: cloudflare-llamaindex
@@ -127,40 +164,87 @@
   relationship: system-coverage
   status: not-a-workflow
   arazzo: null
-- slug: cloudflare-amazon-web-services
-  label: Amazon Web Services
-  partner: amazon-web-services
-  partner_name: Amazon Web Services
-  type: contract
+- slug: cloudflare-a2a-protocol-own-agent-card
+  label: A2A protocol (own Agent Card)
+  partner_name: A2A protocol (own Agent Card)
+  category: A2A agent
+  type: register
   channel: provider-built
-  evidence: https://github.com/api-evangelist/cloudflare/blob/main/openapi/cloudflare-buckets-api-openapi.yml#L4
+  evidence: https://cloudflare.com/.well-known/agent.json
   source: edge
   relationship: compatible
+  contract_reference:
+    register: provider's own /.well-known/agent-card.json
+    spec_file: null
+    standard: A2A
+    role: a2a-agent-card
+    registered_name: Cloudflare Site Agent
+    organization: null
+    matched_domain: cloudflare.com
+    matched_by: own-domain
+    detected_by: sweep-ai-agents.py
+    detected: '2026-10-15'
   status: not-a-workflow
   arazzo: null
-- slug: cloudflare-microsoft-sentinel-own
-  label: Microsoft Sentinel (own)
-  partner: microsoft-sentinel
-  partner_name: Microsoft Sentinel (own)
-  category: Networking
-  type: marketplace
-  marketplace: own
-  channel: partner-built
-  evidence: https://github.com/Azure/Azure-Sentinel/tree/master/Solutions/Cloudflare
+- slug: cloudflare-cncf-cloud-native-landscape
+  label: CNCF (Cloud Native Landscape)
+  partner: cncf
+  partner_name: CNCF (Cloud Native Landscape)
+  category: Cloud native landscape
+  type: register
+  channel: standard-directory
+  evidence: https://github.com/cncf/landscape/blob/3a7d378b1824b82e729a453bb03fa6f1e37557e1/landscape.yml
   source: edge
-  relationship: platform-app
+  relationship: standard-participant
+  contract_reference:
+    register: CNCF Cloud Native Landscape (github.com/cncf/landscape landscape.yml @3a7d378b18)
+    spec_file: null
+    standard: Cloud Native (CNCF)
+    role: landscape-listed
+    registered_name: Cloudflare Workers
+    registered_names:
+    - Cloudflare Workers
+    - Cloudflare Workers (Wasm)
+    website: https://workers.cloudflare.com
+    matched_domain: cloudflare.com
+    matched_by: domain+name-among-holders
+    member_tier: null
+    joined: null
+    end_user: false
+    cncf_projects: []
+    landscape_categories:
+    - Serverless / Hosted Platform
+    - Wasm / Hosted Platforms
+    landscape_entries: 2
+    signal_note: 'participation only: a landscape listing is standard-participant evidence, not depth. Entries,
+      categories, tier and projects are CONTEXT, never read (breadth is not credit)'
+    detected_by: sweep-cloud-native.py
+    detected: '2026-10-15'
   status: not-a-workflow
   arazzo: null
-- slug: cloudflare-stripe-own
-  label: Stripe (own)
-  partner: stripe
-  partner_name: Stripe (own)
-  category: developer_tools
-  type: marketplace
-  marketplace: own
-  channel: partner-built
-  evidence: https://marketplace.stripe.com/apps/cloudflare
+- slug: cloudflare-finops-foundation-focus
+  label: FinOps Foundation (FOCUS)
+  partner: finops-foundation
+  partner_name: FinOps Foundation (FOCUS)
+  category: FOCUS billing data
+  type: register
+  channel: standard-directory
+  evidence: https://focus.finops.org/docs/implementation/data-generators/cloudflare/
   source: edge
-  relationship: platform-app
+  relationship: standard-participant
+  contract_reference:
+    register: FOCUS data generators (focus.finops.org/data-generators)
+    spec_file: null
+    standard: FOCUS (FinOps Open Cost and Usage Specification)
+    role: focus-data-generator
+    registered_name: Cloudflare
+    matched_domain: cloudflare.com
+    matched_by: domain+name-among-holders
+    focus_version_supported: '1.0'
+    page_domains:
+      cloudflare.com: 1
+    signal_note: 'participation only: the version is context, never read'
+    detected_by: sweep-cloud-native.py
+    detected: '2026-10-15'
   status: not-a-workflow
   arazzo: null
