@@ -415,8 +415,66 @@ edges:
   detected: '2026-10-15'
   detected_by: mirror-platform-listings.py
   category: WordPress plugin
+- partner_name: ICANN (accredited registrar)
+  partner: null
+  partner_match: register
+  type: contract
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://www.icann.org/en/contracted-parties/accredited-registrars/list-of-accredited-registrars
+  category: ICANN-accredited domain registrar
+  contract_reference:
+    register: ICANN Accredited Registrars (icann.org list-of-accredited-registrars)
+    standard: ICANN Registrar Accreditation Agreement
+    spec_file: null
+    role: icann-accredited-registrar
+    registered_name: Cloudflare, Inc.
+    register_id: IANA 1910
+    matched_domain: cloudflare.com
+    matched_by: domain+name-among-holders
+    domain_source: url
+    country: United States of America
+    accreditations_in_family: 1
+    other_iana_ids: []
+    signal_note: 'participation only: an ICANN accreditation is a licence to sell names, not a conformance result
+      (no certified_products); the number of accreditations a family holds (drop-catch shells) is breadth, context
+      only, never counted'
+    detected_by: sweep-domains-dns.py
+    detected: '2026-10-18'
+  detected_by: sweep-domains-dns.py
+  first_seen: '2026-10-18'
+- partner_name: RDAP (IANA bootstrap / registrar ids)
+  partner: null
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: compatible
+  shape: rdap
+  degree: declared-unqualified
+  evidence_kind: iana-bootstrap
+  direction: partner-built
+  evidence: https://www.iana.org/assignments/registrar-ids/registrar-ids.xml
+  note: IANA lists an RDAP service run on this provider's domain; a published endpoint, not a conformance test.
+    REPORT ONLY (compatible edges are never in depth or position)
+  contract_reference:
+    register: IANA RDAP bootstrap (data.iana.org/rdap/dns.json) + IANA Registrar IDs
+    spec_file: null
+    role: rdap-registrar
+    registered_name: Cloudflare, Inc.
+    register_id: '1910'
+    matched_domain: cloudflare.com
+    matched_by: domain+name-among-holders
+    rdap_base_url: https://rdap.cloudflare.com/rdap/v1/
+    tlds: []
+    signal_note: report only; TLD and accreditation counts are context, never counted
+    detected_by: sweep-domains-dns.py
+    detected: '2026-10-18'
+  detected_by: sweep-domains-dns.py
+  first_seen: '2026-10-18'
 checked:
 - https://a2aregistry.org/api/agents
+- https://data.iana.org/rdap/dns.json
 - https://developers.cloudflare.com/ai-gateway/usage/providers/
 - https://focus.finops.org/data-generators/
 - https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json
@@ -432,6 +490,9 @@ checked:
 - https://raw.githubusercontent.com/18F/fedramp-data/4b73d9247fd6360759960e4690e3ce4ca858e0fa/data/data.json
 - https://registry.modelcontextprotocol.io/v0/servers
 - https://www.applytosupply.digitalmarketplace.service.gov.uk/g-cloud-15/suppliers
+- https://www.iana.org/assignments/registrar-ids/registrar-ids.xml
+- https://www.icann.org/en/contracted-parties/accredited-registrars/list-of-accredited-registrars
+- https://www.icann.org/resources/registries/gtlds/v2/gtlds.json
 - microsoft-sentinel/integrations/microsoft-sentinel-integration-edges.yml
 - stripe/integrations/stripe-integration-edges.yml
 - wordpress/integrations/wordpress-integration-edges.yml
