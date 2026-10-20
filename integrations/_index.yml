@@ -71,67 +71,90 @@
   relationship: platform-app
   status: not-a-workflow
   arazzo: null
-- slug: cloudflare-openrouter
-  label: OpenRouter
-  partner: openrouter
-  partner_name: OpenRouter
+- slug: cloudflare-llamaindex
+  label: LlamaIndex
+  partner: llamaindex
+  partner_name: LlamaIndex
   type: coverage
   channel: partner-built
-  evidence: https://openrouter.ai/api/v1/models
+  evidence: https://github.com/run-llama/llama_index/tree/main/llama-index-integrations/embeddings/llama-index-embeddings-cloudflare-workersai
   source: edge
   relationship: system-coverage
   status: not-a-workflow
   arazzo: null
-- slug: cloudflare-litellm
-  label: LiteLLM
-  partner: litellm
-  partner_name: LiteLLM
-  type: coverage
+- slug: cloudflare-wordpress-own
+  label: WordPress (own)
+  partner: wordpress
+  partner_name: WordPress (own)
+  category: WordPress plugin
+  type: marketplace
+  marketplace: own
   channel: partner-built
-  evidence: https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json
+  evidence: https://wordpress.org/plugins/cloudflare/
   source: edge
-  relationship: system-coverage
+  relationship: platform-app
   status: not-a-workflow
   arazzo: null
-- slug: cloudflare-portkey
-  label: Portkey
-  partner: portkey
-  partner_name: Portkey
-  type: coverage
-  channel: partner-built
-  evidence: https://github.com/Portkey-AI/gateway/tree/main/src/providers/workers-ai
+- slug: cloudflare-npm-registry
+  label: npm registry
+  partner: npm
+  partner_name: npm registry
+  category: official SDK (JavaScript/TypeScript)
+  type: register
+  channel: package-registry
+  evidence: https://www.npmjs.com/package/cloudflare
   source: edge
-  relationship: system-coverage
-  status: not-a-workflow
-  arazzo: null
-- slug: cloudflare-cloudflare-ai-gateway
-  label: Cloudflare AI Gateway
-  partner: cloudflare-ai-gateway
-  partner_name: Cloudflare AI Gateway
-  type: coverage
-  channel: partner-built
-  evidence: https://github.com/cloudflare/cloudflare-docs/blob/production/src/content/docs/ai-gateway/usage/providers/workersai.mdx
-  source: edge
-  relationship: system-coverage
-  status: not-a-workflow
-  arazzo: null
-- slug: cloudflare-openai
-  label: OpenAI
-  partner: openai
-  partner_name: OpenAI
-  type: contract
-  channel: provider-built
-  evidence: https://github.com/api-evangelist/cloudflare/blob/main/openapi/cloudflare-openai-compatible-api-openapi.yml#L3
-  source: edge
-  relationship: compatible
+  relationship: distribution-channel
   contract_reference:
-    repo: cloudflare
-    spec_file: cloudflare-openai-compatible-api-openapi.yml
-    property: description
-    value: OpenAI-compatible
-    note: 'cloudflare declares OpenAI compatibility: ''title: Cloudflare Workers AI OpenAI Compatible API'''
-    detected_by: sweep-model-routing.py
-    detected: '2026-10-15'
+    register: npm registry (public registry JSON)
+    spec_file: null
+    language: JavaScript/TypeScript
+    packages:
+    - name: cloudflare
+      version: 7.3.0
+      released: '2026-10-03'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/cloudflare
+      repo_leg: shared-github-org:cloudflare
+      publisher_leg: email:cloudflare.com
+      matched_by: domain+name-among-holders
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  status: not-a-workflow
+  arazzo: null
+- slug: cloudflare-pypi
+  label: PyPI
+  partner: pypi
+  partner_name: PyPI
+  category: official SDK (Python)
+  type: register
+  channel: package-registry
+  evidence: https://pypi.org/project/cloudflare/
+  source: edge
+  relationship: distribution-channel
+  contract_reference:
+    register: PyPI (public registry JSON)
+    spec_file: null
+    language: Python
+    packages:
+    - name: cloudflare
+      version: 5.9.0
+      released: '2026-10-03'
+      released_field: upload_time
+      lapsed: false
+      page: https://pypi.org/project/cloudflare/
+      repo_leg: shared-github-org:cloudflare
+      publisher_leg: email:cloudflare.com
+      matched_by: domain+name-among-holders
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
   status: not-a-workflow
   arazzo: null
 - slug: cloudflare-mcp-registry
@@ -150,18 +173,7 @@
     registered_name: com.cloudflare.mcp/mcp
     register_id: com.cloudflare.mcp/mcp
     detected_by: sweep-agent-tools.py
-    detected: '2026-10-15'
-  status: not-a-workflow
-  arazzo: null
-- slug: cloudflare-llamaindex
-  label: LlamaIndex
-  partner: llamaindex
-  partner_name: LlamaIndex
-  type: coverage
-  channel: partner-built
-  evidence: https://github.com/run-llama/llama_index/tree/main/llama-index-integrations/embeddings/llama-index-embeddings-cloudflare-workersai
-  source: edge
-  relationship: system-coverage
+    detected: '2026-10-19'
   status: not-a-workflow
   arazzo: null
 - slug: cloudflare-a2a-protocol-own-agent-card
@@ -183,69 +195,59 @@
     matched_domain: cloudflare.com
     matched_by: own-domain
     detected_by: sweep-ai-agents.py
-    detected: '2026-10-15'
+    detected: '2026-10-19'
   status: not-a-workflow
   arazzo: null
-- slug: cloudflare-cncf-cloud-native-landscape
-  label: CNCF (Cloud Native Landscape)
-  partner: cncf
-  partner_name: CNCF (Cloud Native Landscape)
-  category: Cloud native landscape
-  type: register
-  channel: standard-directory
-  evidence: https://github.com/cncf/landscape/blob/3a7d378b1824b82e729a453bb03fa6f1e37557e1/landscape.yml
+- slug: cloudflare-icann-accredited-registrar
+  label: ICANN (accredited registrar)
+  partner_name: ICANN (accredited registrar)
+  category: ICANN-accredited domain registrar
+  type: contract
+  channel: regulator-register
+  evidence: https://www.icann.org/en/contracted-parties/accredited-registrars/list-of-accredited-registrars
   source: edge
   relationship: standard-participant
   contract_reference:
-    register: CNCF Cloud Native Landscape (github.com/cncf/landscape landscape.yml @3a7d378b18)
+    register: ICANN Accredited Registrars (icann.org list-of-accredited-registrars)
+    standard: ICANN Registrar Accreditation Agreement
     spec_file: null
-    standard: Cloud Native (CNCF)
-    role: landscape-listed
-    registered_name: Cloudflare Workers
-    registered_names:
-    - Cloudflare Workers
-    - Cloudflare Workers (Wasm)
-    website: https://workers.cloudflare.com
+    role: icann-accredited-registrar
+    registered_name: Cloudflare, Inc.
+    register_id: IANA 1910
     matched_domain: cloudflare.com
     matched_by: domain+name-among-holders
-    member_tier: null
-    joined: null
-    end_user: false
-    cncf_projects: []
-    landscape_categories:
-    - Serverless / Hosted Platform
-    - Wasm / Hosted Platforms
-    landscape_entries: 2
-    signal_note: 'participation only: a landscape listing is standard-participant evidence, not depth. Entries,
-      categories, tier and projects are CONTEXT, never read (breadth is not credit)'
-    detected_by: sweep-cloud-native.py
-    detected: '2026-10-15'
+    domain_source: url
+    country: United States of America
+    accreditations_in_family: 1
+    other_iana_ids: []
+    signal_note: 'participation only: an ICANN accreditation is a licence to sell names, not a conformance result
+      (no certified_products); the number of accreditations a family holds (drop-catch shells) is breadth, context
+      only, never counted'
+    detected_by: sweep-domains-dns.py
+    detected: '2026-10-18'
   status: not-a-workflow
   arazzo: null
-- slug: cloudflare-finops-foundation-focus
-  label: FinOps Foundation (FOCUS)
-  partner: finops-foundation
-  partner_name: FinOps Foundation (FOCUS)
-  category: FOCUS billing data
+- slug: cloudflare-rdap-iana-bootstrap-registrar-ids
+  label: RDAP (IANA bootstrap / registrar ids)
+  partner_name: RDAP (IANA bootstrap / registrar ids)
   type: register
   channel: standard-directory
-  evidence: https://focus.finops.org/docs/implementation/data-generators/cloudflare/
+  evidence: https://www.iana.org/assignments/registrar-ids/registrar-ids.xml
   source: edge
-  relationship: standard-participant
+  relationship: compatible
   contract_reference:
-    register: FOCUS data generators (focus.finops.org/data-generators)
+    register: IANA RDAP bootstrap (data.iana.org/rdap/dns.json) + IANA Registrar IDs
     spec_file: null
-    standard: FOCUS (FinOps Open Cost and Usage Specification)
-    role: focus-data-generator
-    registered_name: Cloudflare
+    role: rdap-registrar
+    registered_name: Cloudflare, Inc.
+    register_id: '1910'
     matched_domain: cloudflare.com
     matched_by: domain+name-among-holders
-    focus_version_supported: '1.0'
-    page_domains:
-      cloudflare.com: 1
-    signal_note: 'participation only: the version is context, never read'
-    detected_by: sweep-cloud-native.py
-    detected: '2026-10-15'
+    rdap_base_url: https://rdap.cloudflare.com/rdap/v1/
+    tlds: []
+    signal_note: report only; TLD and accreditation counts are context, never counted
+    detected_by: sweep-domains-dns.py
+    detected: '2026-10-18'
   status: not-a-workflow
   arazzo: null
 - slug: cloudflare-fedramp
@@ -321,130 +323,128 @@
       latest_authorization: '2026-04-07'
   status: not-a-workflow
   arazzo: null
-- slug: cloudflare-wordpress-own
-  label: WordPress (own)
-  partner: wordpress
-  partner_name: WordPress (own)
-  category: WordPress plugin
-  type: marketplace
-  marketplace: own
+- slug: cloudflare-openrouter
+  label: OpenRouter
+  partner: openrouter
+  partner_name: OpenRouter
+  type: coverage
   channel: partner-built
-  evidence: https://wordpress.org/plugins/cloudflare/
+  evidence: https://openrouter.ai/api/v1/models
   source: edge
-  relationship: platform-app
+  relationship: system-coverage
   status: not-a-workflow
   arazzo: null
-- slug: cloudflare-icann-accredited-registrar
-  label: ICANN (accredited registrar)
-  partner_name: ICANN (accredited registrar)
-  category: ICANN-accredited domain registrar
+- slug: cloudflare-litellm
+  label: LiteLLM
+  partner: litellm
+  partner_name: LiteLLM
+  type: coverage
+  channel: partner-built
+  evidence: https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json
+  source: edge
+  relationship: system-coverage
+  status: not-a-workflow
+  arazzo: null
+- slug: cloudflare-portkey
+  label: Portkey
+  partner: portkey
+  partner_name: Portkey
+  type: coverage
+  channel: partner-built
+  evidence: https://github.com/Portkey-AI/gateway/tree/main/src/providers/workers-ai
+  source: edge
+  relationship: system-coverage
+  status: not-a-workflow
+  arazzo: null
+- slug: cloudflare-cloudflare-ai-gateway
+  label: Cloudflare AI Gateway
+  partner: cloudflare-ai-gateway
+  partner_name: Cloudflare AI Gateway
+  type: coverage
+  channel: partner-built
+  evidence: https://github.com/cloudflare/cloudflare-docs/blob/production/src/content/docs/ai-gateway/usage/providers/workersai.mdx
+  source: edge
+  relationship: system-coverage
+  status: not-a-workflow
+  arazzo: null
+- slug: cloudflare-openai
+  label: OpenAI
+  partner: openai
+  partner_name: OpenAI
   type: contract
-  channel: regulator-register
-  evidence: https://www.icann.org/en/contracted-parties/accredited-registrars/list-of-accredited-registrars
-  source: edge
-  relationship: standard-participant
-  contract_reference:
-    register: ICANN Accredited Registrars (icann.org list-of-accredited-registrars)
-    standard: ICANN Registrar Accreditation Agreement
-    spec_file: null
-    role: icann-accredited-registrar
-    registered_name: Cloudflare, Inc.
-    register_id: IANA 1910
-    matched_domain: cloudflare.com
-    matched_by: domain+name-among-holders
-    domain_source: url
-    country: United States of America
-    accreditations_in_family: 1
-    other_iana_ids: []
-    signal_note: 'participation only: an ICANN accreditation is a licence to sell names, not a conformance result
-      (no certified_products); the number of accreditations a family holds (drop-catch shells) is breadth, context
-      only, never counted'
-    detected_by: sweep-domains-dns.py
-    detected: '2026-10-18'
-  status: not-a-workflow
-  arazzo: null
-- slug: cloudflare-rdap-iana-bootstrap-registrar-ids
-  label: RDAP (IANA bootstrap / registrar ids)
-  partner_name: RDAP (IANA bootstrap / registrar ids)
-  type: register
-  channel: standard-directory
-  evidence: https://www.iana.org/assignments/registrar-ids/registrar-ids.xml
+  channel: provider-built
+  evidence: https://github.com/api-evangelist/cloudflare/blob/main/openapi/cloudflare-openai-compatible-api-openapi.yml#L3
   source: edge
   relationship: compatible
   contract_reference:
-    register: IANA RDAP bootstrap (data.iana.org/rdap/dns.json) + IANA Registrar IDs
+    repo: cloudflare
+    spec_file: cloudflare-openai-compatible-api-openapi.yml
+    property: description
+    value: OpenAI-compatible
+    note: 'cloudflare declares OpenAI compatibility: ''title: Cloudflare Workers AI OpenAI Compatible API'''
+    detected_by: sweep-model-routing.py
+    detected: '2026-10-19'
+  status: not-a-workflow
+  arazzo: null
+- slug: cloudflare-cncf-cloud-native-landscape
+  label: CNCF (Cloud Native Landscape)
+  partner: cncf
+  partner_name: CNCF (Cloud Native Landscape)
+  category: Cloud native landscape
+  type: register
+  channel: standard-directory
+  evidence: https://github.com/cncf/landscape/blob/42dd4cd91dad8ec8558ac02467a43f0805b9957a/landscape.yml
+  source: edge
+  relationship: standard-participant
+  contract_reference:
+    register: CNCF Cloud Native Landscape (github.com/cncf/landscape landscape.yml @42dd4cd91d)
     spec_file: null
-    role: rdap-registrar
-    registered_name: Cloudflare, Inc.
-    register_id: '1910'
+    standard: Cloud Native (CNCF)
+    role: landscape-listed
+    registered_name: Cloudflare Workers
+    registered_names:
+    - Cloudflare Workers
+    - Cloudflare Workers (Wasm)
+    website: https://workers.cloudflare.com
     matched_domain: cloudflare.com
     matched_by: domain+name-among-holders
-    rdap_base_url: https://rdap.cloudflare.com/rdap/v1/
-    tlds: []
-    signal_note: report only; TLD and accreditation counts are context, never counted
-    detected_by: sweep-domains-dns.py
-    detected: '2026-10-18'
+    member_tier: null
+    joined: null
+    end_user: false
+    cncf_projects: []
+    landscape_categories:
+    - Serverless / Hosted Platform
+    - Wasm / Hosted Platforms
+    landscape_entries: 2
+    signal_note: 'participation only: a landscape listing is standard-participant evidence, not depth. Entries,
+      categories, tier and projects are CONTEXT, never read (breadth is not credit)'
+    detected_by: sweep-cloud-native.py
+    detected: '2026-10-19'
   status: not-a-workflow
   arazzo: null
-- slug: cloudflare-npm-registry
-  label: npm registry
-  partner: npm
-  partner_name: npm registry
-  category: official SDK (JavaScript/TypeScript)
+- slug: cloudflare-finops-foundation-focus
+  label: FinOps Foundation (FOCUS)
+  partner: finops-foundation
+  partner_name: FinOps Foundation (FOCUS)
+  category: FOCUS billing data
   type: register
-  channel: package-registry
-  evidence: https://www.npmjs.com/package/cloudflare
+  channel: standard-directory
+  evidence: https://focus.finops.org/docs/implementation/data-generators/cloudflare/
   source: edge
-  relationship: distribution-channel
+  relationship: standard-participant
   contract_reference:
-    register: npm registry (public registry JSON)
+    register: FOCUS data generators (focus.finops.org/data-generators)
     spec_file: null
-    language: JavaScript/TypeScript
-    packages:
-    - name: cloudflare
-      version: 7.3.0
-      released: '2026-10-03'
-      released_field: modified
-      lapsed: false
-      page: https://www.npmjs.com/package/cloudflare
-      repo_leg: shared-github-org:cloudflare
-      publisher_leg: email:cloudflare.com
-      matched_by: domain+name-among-holders
-    current: true
-    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
-      24 months'
-    detected_by: sweep-official-sdks.py
-    detected: '2026-10-18'
-  status: not-a-workflow
-  arazzo: null
-- slug: cloudflare-pypi
-  label: PyPI
-  partner: pypi
-  partner_name: PyPI
-  category: official SDK (Python)
-  type: register
-  channel: package-registry
-  evidence: https://pypi.org/project/cloudflare/
-  source: edge
-  relationship: distribution-channel
-  contract_reference:
-    register: PyPI (public registry JSON)
-    spec_file: null
-    language: Python
-    packages:
-    - name: cloudflare
-      version: 5.9.0
-      released: '2026-10-03'
-      released_field: upload_time
-      lapsed: false
-      page: https://pypi.org/project/cloudflare/
-      repo_leg: shared-github-org:cloudflare
-      publisher_leg: email:cloudflare.com
-      matched_by: domain+name-among-holders
-    current: true
-    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
-      24 months'
-    detected_by: sweep-official-sdks.py
-    detected: '2026-10-18'
+    standard: FOCUS (FinOps Open Cost and Usage Specification)
+    role: focus-data-generator
+    registered_name: Cloudflare
+    matched_domain: cloudflare.com
+    matched_by: domain+name-among-holders
+    focus_version_supported: '1.0'
+    page_domains:
+      cloudflare.com: 1
+    signal_note: 'participation only: the version is context, never read'
+    detected_by: sweep-cloud-native.py
+    detected: '2026-10-19'
   status: not-a-workflow
   arazzo: null

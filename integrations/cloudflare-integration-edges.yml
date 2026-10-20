@@ -87,6 +87,297 @@ edges:
   detected: '2026-10-15'
   detected_by: mirror-platform-listings.py
   category: developer_tools
+- partner_name: LlamaIndex
+  partner: llamaindex
+  partner_match: framework
+  channel: partner-built
+  direction: partner-built
+  type: coverage
+  relationship: system-coverage
+  evidence: https://github.com/run-llama/llama_index/tree/main/llama-index-integrations/embeddings/llama-index-embeddings-cloudflare-workersai
+  coverage_role:
+  - embeddings
+  framework_signals:
+    packages:
+    - llama-index-embeddings-cloudflare-workersai
+    roles:
+    - embeddings
+    vendor_domain: cloudflare.com
+  matched_by: verified-domain-table
+  detected_by: sweep-rag-vector.py
+  first_seen: '2026-10-15'
+- partner_name: WordPress (own)
+  partner: wordpress
+  partner_match: mirror
+  mirror_match: domain+name-among-holders
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://wordpress.org/plugins/cloudflare/
+  mirror_of: wordpress/integrations/wordpress-integration-edges.yml
+  apps:
+  - Cloudflare
+  listing_count: 1
+  detected: '2026-10-15'
+  detected_by: mirror-platform-listings.py
+  category: WordPress plugin
+- partner_name: npm registry
+  partner: npm
+  partner_match: register
+  type: register
+  direction: provider-built
+  category: official SDK (JavaScript/TypeScript)
+  evidence: https://www.npmjs.com/package/cloudflare
+  channel: package-registry
+  relationship: distribution-channel
+  contract_reference:
+    register: npm registry (public registry JSON)
+    spec_file: null
+    language: JavaScript/TypeScript
+    packages:
+    - name: cloudflare
+      version: 7.3.0
+      released: '2026-10-03'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/cloudflare
+      repo_leg: shared-github-org:cloudflare
+      publisher_leg: email:cloudflare.com
+      matched_by: domain+name-among-holders
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  detected_by: sweep-official-sdks.py
+  first_seen: '2026-10-18'
+- partner_name: PyPI
+  partner: pypi
+  partner_match: register
+  type: register
+  direction: provider-built
+  category: official SDK (Python)
+  evidence: https://pypi.org/project/cloudflare/
+  channel: package-registry
+  relationship: distribution-channel
+  contract_reference:
+    register: PyPI (public registry JSON)
+    spec_file: null
+    language: Python
+    packages:
+    - name: cloudflare
+      version: 5.9.0
+      released: '2026-10-03'
+      released_field: upload_time
+      lapsed: false
+      page: https://pypi.org/project/cloudflare/
+      repo_leg: shared-github-org:cloudflare
+      publisher_leg: email:cloudflare.com
+      matched_by: domain+name-among-holders
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  detected_by: sweep-official-sdks.py
+  first_seen: '2026-10-18'
+- partner_name: MCP Registry
+  partner: mcp
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://registry.modelcontextprotocol.io/v0/servers?search=com.cloudflare.mcp
+  contract_reference:
+    register: registry.modelcontextprotocol.io
+    spec_file: null
+    role: mcp-server-listing
+    registered_name: com.cloudflare.mcp/mcp
+    register_id: com.cloudflare.mcp/mcp
+    detected_by: sweep-agent-tools.py
+    detected: '2026-10-19'
+  mcp_registry:
+    servers:
+    - com.cloudflare.mcp/mcp
+    hosted_remote: 1
+    local_package: 0
+    transports:
+      sse: 15
+      streamable-http: 15
+    auth_declared: 1
+    catalog_declared: true
+    namespace_domains:
+    - cloudflare.com
+  matched_by:
+  - namespace-domain+label
+  detected_by: sweep-agent-tools.py
+  first_seen: '2026-10-14'
+- partner_name: A2A protocol (own Agent Card)
+  partner: null
+  partner_match: register
+  type: register
+  direction: provider-built
+  category: A2A agent
+  evidence: https://cloudflare.com/.well-known/agent.json
+  channel: provider-built
+  relationship: compatible
+  shape: a2a
+  evidence_kind: own-wellknown
+  degree: flavored
+  report_only: true
+  a2a_card:
+    grade: flavored
+    verdict: flavored
+    protocol_version: null
+    deviations:
+    - no-protocolVersion
+    card_subject: unknown
+  contract_reference:
+    register: provider's own /.well-known/agent-card.json
+    spec_file: null
+    standard: A2A
+    role: a2a-agent-card
+    registered_name: Cloudflare Site Agent
+    organization: null
+    matched_domain: cloudflare.com
+    matched_by: own-domain
+    detected_by: sweep-ai-agents.py
+    detected: '2026-10-19'
+  detected_by: sweep-ai-agents.py
+  first_seen: '2026-10-15'
+- partner_name: ICANN (accredited registrar)
+  partner: null
+  partner_match: register
+  type: contract
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://www.icann.org/en/contracted-parties/accredited-registrars/list-of-accredited-registrars
+  category: ICANN-accredited domain registrar
+  contract_reference:
+    register: ICANN Accredited Registrars (icann.org list-of-accredited-registrars)
+    standard: ICANN Registrar Accreditation Agreement
+    spec_file: null
+    role: icann-accredited-registrar
+    registered_name: Cloudflare, Inc.
+    register_id: IANA 1910
+    matched_domain: cloudflare.com
+    matched_by: domain+name-among-holders
+    domain_source: url
+    country: United States of America
+    accreditations_in_family: 1
+    other_iana_ids: []
+    signal_note: 'participation only: an ICANN accreditation is a licence to sell names, not a conformance result
+      (no certified_products); the number of accreditations a family holds (drop-catch shells) is breadth, context
+      only, never counted'
+    detected_by: sweep-domains-dns.py
+    detected: '2026-10-18'
+  detected_by: sweep-domains-dns.py
+  first_seen: '2026-10-18'
+- partner_name: RDAP (IANA bootstrap / registrar ids)
+  partner: null
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: compatible
+  shape: rdap
+  degree: declared-unqualified
+  evidence_kind: iana-bootstrap
+  direction: partner-built
+  evidence: https://www.iana.org/assignments/registrar-ids/registrar-ids.xml
+  note: IANA lists an RDAP service run on this provider's domain; a published endpoint, not a conformance test.
+    REPORT ONLY (compatible edges are never in depth or position)
+  contract_reference:
+    register: IANA RDAP bootstrap (data.iana.org/rdap/dns.json) + IANA Registrar IDs
+    spec_file: null
+    role: rdap-registrar
+    registered_name: Cloudflare, Inc.
+    register_id: '1910'
+    matched_domain: cloudflare.com
+    matched_by: domain+name-among-holders
+    rdap_base_url: https://rdap.cloudflare.com/rdap/v1/
+    tlds: []
+    signal_note: report only; TLD and accreditation counts are context, never counted
+    detected_by: sweep-domains-dns.py
+    detected: '2026-10-18'
+  detected_by: sweep-domains-dns.py
+  first_seen: '2026-10-18'
+- partner_name: FedRAMP
+  partner: null
+  partner_match: register
+  type: contract
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://marketplace.fedramp.gov/products/FR2000863987
+  category: FedRAMP authorization
+  contract_reference:
+    register: FedRAMP Marketplace data (github.com/18F/fedramp-data data/data.json @4b73d9247f)
+    standard: FedRAMP
+    spec_file: null
+    role: fedramp-authorized
+    registered_name: Cloudflare
+    register_id: FR2000863987
+    matched_domain: cloudflare.com
+    matched_by: domain+name-among-holders
+    domain_source: website
+    designations:
+    - Compliant
+    packages:
+    - Cloudflare for Government
+    service_models:
+    - SaaS
+    paths:
+    - Agency
+    signal_note: certified_products = one entry per AUTHORIZED impact level, never per package; packages, service
+      models, paths and leveraging agencies are context, never counted. The register lists current designations
+      only (revoked / expired are removed), so lapsed is always false
+    detected_by: sweep-gov-cloud.py
+    detected: '2026-10-15'
+    certified_products:
+    - product: FedRAMP Moderate
+      impact_level: Moderate
+      lapsed: false
+      latest_authorization: '2023-04-27'
+  detected_by: sweep-gov-cloud.py
+  first_seen: '2026-10-15'
+- partner_name: GovRAMP
+  partner: null
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://govramp.org/program-participants
+  category: GovRAMP authorization
+  contract_reference:
+    register: GovRAMP Program Participants (govramp.org/program-participants)
+    standard: GovRAMP
+    spec_file: null
+    role: govramp-authorized
+    registered_name: Cloudflare
+    register_id: SR26002
+    matched_domain: cloudflare.com
+    matched_by: domain+name-among-holders
+    domain_source: contact-email
+    statuses:
+    - Authorized
+    offerings:
+    - Cloudflare for Government
+    signal_note: certified_products = one entry per AUTHORIZED impact level (Authorized / Provisionally Authorized),
+      never per offering; Progressing / Pending / Ready / Core are participation only
+    detected_by: sweep-gov-cloud.py
+    detected: '2026-10-15'
+    certified_products:
+    - product: GovRAMP Moderate
+      impact_level: Moderate
+      lapsed: false
+      latest_authorization: '2026-04-07'
+  detected_by: sweep-gov-cloud.py
+  first_seen: '2026-10-15'
 - partner_name: OpenRouter
   partner: openrouter
   partner_match: router
@@ -178,104 +469,20 @@ edges:
     value: OpenAI-compatible
     note: 'cloudflare declares OpenAI compatibility: ''title: Cloudflare Workers AI OpenAI Compatible API'''
     detected_by: sweep-model-routing.py
-    detected: '2026-10-15'
+    detected: '2026-10-19'
   detected_by: sweep-model-routing.py
   first_seen: '2026-10-13'
-- partner_name: MCP Registry
-  partner: mcp
-  partner_match: register
-  type: register
-  channel: standard-directory
-  relationship: standard-participant
-  direction: partner-built
-  evidence: https://registry.modelcontextprotocol.io/v0/servers?search=com.cloudflare.mcp
-  contract_reference:
-    register: registry.modelcontextprotocol.io
-    spec_file: null
-    role: mcp-server-listing
-    registered_name: com.cloudflare.mcp/mcp
-    register_id: com.cloudflare.mcp/mcp
-    detected_by: sweep-agent-tools.py
-    detected: '2026-10-15'
-  mcp_registry:
-    servers:
-    - com.cloudflare.mcp/mcp
-    hosted_remote: 1
-    local_package: 0
-    transports:
-      sse: 15
-      streamable-http: 15
-    auth_declared: 1
-    catalog_declared: true
-    namespace_domains:
-    - cloudflare.com
-  matched_by:
-  - namespace-domain+label
-  detected_by: sweep-agent-tools.py
-  first_seen: '2026-10-14'
-- partner_name: LlamaIndex
-  partner: llamaindex
-  partner_match: framework
-  channel: partner-built
-  direction: partner-built
-  type: coverage
-  relationship: system-coverage
-  evidence: https://github.com/run-llama/llama_index/tree/main/llama-index-integrations/embeddings/llama-index-embeddings-cloudflare-workersai
-  coverage_role:
-  - embeddings
-  framework_signals:
-    packages:
-    - llama-index-embeddings-cloudflare-workersai
-    roles:
-    - embeddings
-    vendor_domain: cloudflare.com
-  matched_by: verified-domain-table
-  detected_by: sweep-rag-vector.py
-  first_seen: '2026-10-15'
-- partner_name: A2A protocol (own Agent Card)
-  partner: null
-  partner_match: register
-  type: register
-  direction: provider-built
-  category: A2A agent
-  evidence: https://cloudflare.com/.well-known/agent.json
-  channel: provider-built
-  relationship: compatible
-  shape: a2a
-  evidence_kind: own-wellknown
-  degree: flavored
-  report_only: true
-  a2a_card:
-    grade: flavored
-    verdict: flavored
-    protocol_version: null
-    deviations:
-    - no-protocolVersion
-    card_subject: unknown
-  contract_reference:
-    register: provider's own /.well-known/agent-card.json
-    spec_file: null
-    standard: A2A
-    role: a2a-agent-card
-    registered_name: Cloudflare Site Agent
-    organization: null
-    matched_domain: cloudflare.com
-    matched_by: own-domain
-    detected_by: sweep-ai-agents.py
-    detected: '2026-10-15'
-  detected_by: sweep-ai-agents.py
-  first_seen: '2026-10-15'
 - partner_name: CNCF (Cloud Native Landscape)
   partner: cncf
   partner_match: register
   type: register
   direction: partner-built
   category: Cloud native landscape
-  evidence: https://github.com/cncf/landscape/blob/3a7d378b1824b82e729a453bb03fa6f1e37557e1/landscape.yml
+  evidence: https://github.com/cncf/landscape/blob/42dd4cd91dad8ec8558ac02467a43f0805b9957a/landscape.yml
   channel: standard-directory
   relationship: standard-participant
   contract_reference:
-    register: CNCF Cloud Native Landscape (github.com/cncf/landscape landscape.yml @3a7d378b18)
+    register: CNCF Cloud Native Landscape (github.com/cncf/landscape landscape.yml @42dd4cd91d)
     spec_file: null
     standard: Cloud Native (CNCF)
     role: landscape-listed
@@ -297,7 +504,7 @@ edges:
     signal_note: 'participation only: a landscape listing is standard-participant evidence, not depth. Entries,
       categories, tier and projects are CONTEXT, never read (breadth is not credit)'
     detected_by: sweep-cloud-native.py
-    detected: '2026-10-15'
+    detected: '2026-10-19'
   detected_by: sweep-cloud-native.py
   first_seen: '2026-10-15'
 - partner_name: FinOps Foundation (FOCUS)
@@ -322,216 +529,9 @@ edges:
       cloudflare.com: 1
     signal_note: 'participation only: the version is context, never read'
     detected_by: sweep-cloud-native.py
-    detected: '2026-10-15'
+    detected: '2026-10-19'
   detected_by: sweep-cloud-native.py
   first_seen: '2026-10-15'
-- partner_name: FedRAMP
-  partner: null
-  partner_match: register
-  type: contract
-  channel: regulator-register
-  relationship: standard-participant
-  direction: partner-built
-  evidence: https://marketplace.fedramp.gov/products/FR2000863987
-  category: FedRAMP authorization
-  contract_reference:
-    register: FedRAMP Marketplace data (github.com/18F/fedramp-data data/data.json @4b73d9247f)
-    standard: FedRAMP
-    spec_file: null
-    role: fedramp-authorized
-    registered_name: Cloudflare
-    register_id: FR2000863987
-    matched_domain: cloudflare.com
-    matched_by: domain+name-among-holders
-    domain_source: website
-    designations:
-    - Compliant
-    packages:
-    - Cloudflare for Government
-    service_models:
-    - SaaS
-    paths:
-    - Agency
-    signal_note: certified_products = one entry per AUTHORIZED impact level, never per package; packages, service
-      models, paths and leveraging agencies are context, never counted. The register lists current designations
-      only (revoked / expired are removed), so lapsed is always false
-    detected_by: sweep-gov-cloud.py
-    detected: '2026-10-15'
-    certified_products:
-    - product: FedRAMP Moderate
-      impact_level: Moderate
-      lapsed: false
-      latest_authorization: '2023-04-27'
-  detected_by: sweep-gov-cloud.py
-  first_seen: '2026-10-15'
-- partner_name: GovRAMP
-  partner: null
-  partner_match: register
-  type: register
-  channel: standard-directory
-  relationship: standard-participant
-  direction: partner-built
-  evidence: https://govramp.org/program-participants
-  category: GovRAMP authorization
-  contract_reference:
-    register: GovRAMP Program Participants (govramp.org/program-participants)
-    standard: GovRAMP
-    spec_file: null
-    role: govramp-authorized
-    registered_name: Cloudflare
-    register_id: SR26002
-    matched_domain: cloudflare.com
-    matched_by: domain+name-among-holders
-    domain_source: contact-email
-    statuses:
-    - Authorized
-    offerings:
-    - Cloudflare for Government
-    signal_note: certified_products = one entry per AUTHORIZED impact level (Authorized / Provisionally Authorized),
-      never per offering; Progressing / Pending / Ready / Core are participation only
-    detected_by: sweep-gov-cloud.py
-    detected: '2026-10-15'
-    certified_products:
-    - product: GovRAMP Moderate
-      impact_level: Moderate
-      lapsed: false
-      latest_authorization: '2026-04-07'
-  detected_by: sweep-gov-cloud.py
-  first_seen: '2026-10-15'
-- partner_name: WordPress (own)
-  partner: wordpress
-  partner_match: mirror
-  mirror_match: domain+name-among-holders
-  type: marketplace
-  relationship: platform-app
-  direction: third-party
-  channel: partner-built
-  marketplace: own
-  evidence: https://wordpress.org/plugins/cloudflare/
-  mirror_of: wordpress/integrations/wordpress-integration-edges.yml
-  apps:
-  - Cloudflare
-  listing_count: 1
-  detected: '2026-10-15'
-  detected_by: mirror-platform-listings.py
-  category: WordPress plugin
-- partner_name: ICANN (accredited registrar)
-  partner: null
-  partner_match: register
-  type: contract
-  channel: regulator-register
-  relationship: standard-participant
-  direction: partner-built
-  evidence: https://www.icann.org/en/contracted-parties/accredited-registrars/list-of-accredited-registrars
-  category: ICANN-accredited domain registrar
-  contract_reference:
-    register: ICANN Accredited Registrars (icann.org list-of-accredited-registrars)
-    standard: ICANN Registrar Accreditation Agreement
-    spec_file: null
-    role: icann-accredited-registrar
-    registered_name: Cloudflare, Inc.
-    register_id: IANA 1910
-    matched_domain: cloudflare.com
-    matched_by: domain+name-among-holders
-    domain_source: url
-    country: United States of America
-    accreditations_in_family: 1
-    other_iana_ids: []
-    signal_note: 'participation only: an ICANN accreditation is a licence to sell names, not a conformance result
-      (no certified_products); the number of accreditations a family holds (drop-catch shells) is breadth, context
-      only, never counted'
-    detected_by: sweep-domains-dns.py
-    detected: '2026-10-18'
-  detected_by: sweep-domains-dns.py
-  first_seen: '2026-10-18'
-- partner_name: RDAP (IANA bootstrap / registrar ids)
-  partner: null
-  partner_match: register
-  type: register
-  channel: standard-directory
-  relationship: compatible
-  shape: rdap
-  degree: declared-unqualified
-  evidence_kind: iana-bootstrap
-  direction: partner-built
-  evidence: https://www.iana.org/assignments/registrar-ids/registrar-ids.xml
-  note: IANA lists an RDAP service run on this provider's domain; a published endpoint, not a conformance test.
-    REPORT ONLY (compatible edges are never in depth or position)
-  contract_reference:
-    register: IANA RDAP bootstrap (data.iana.org/rdap/dns.json) + IANA Registrar IDs
-    spec_file: null
-    role: rdap-registrar
-    registered_name: Cloudflare, Inc.
-    register_id: '1910'
-    matched_domain: cloudflare.com
-    matched_by: domain+name-among-holders
-    rdap_base_url: https://rdap.cloudflare.com/rdap/v1/
-    tlds: []
-    signal_note: report only; TLD and accreditation counts are context, never counted
-    detected_by: sweep-domains-dns.py
-    detected: '2026-10-18'
-  detected_by: sweep-domains-dns.py
-  first_seen: '2026-10-18'
-- partner_name: npm registry
-  partner: npm
-  partner_match: register
-  type: register
-  direction: provider-built
-  category: official SDK (JavaScript/TypeScript)
-  evidence: https://www.npmjs.com/package/cloudflare
-  channel: package-registry
-  relationship: distribution-channel
-  contract_reference:
-    register: npm registry (public registry JSON)
-    spec_file: null
-    language: JavaScript/TypeScript
-    packages:
-    - name: cloudflare
-      version: 7.3.0
-      released: '2026-10-03'
-      released_field: modified
-      lapsed: false
-      page: https://www.npmjs.com/package/cloudflare
-      repo_leg: shared-github-org:cloudflare
-      publisher_leg: email:cloudflare.com
-      matched_by: domain+name-among-holders
-    current: true
-    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
-      24 months'
-    detected_by: sweep-official-sdks.py
-    detected: '2026-10-18'
-  detected_by: sweep-official-sdks.py
-  first_seen: '2026-10-18'
-- partner_name: PyPI
-  partner: pypi
-  partner_match: register
-  type: register
-  direction: provider-built
-  category: official SDK (Python)
-  evidence: https://pypi.org/project/cloudflare/
-  channel: package-registry
-  relationship: distribution-channel
-  contract_reference:
-    register: PyPI (public registry JSON)
-    spec_file: null
-    language: Python
-    packages:
-    - name: cloudflare
-      version: 5.9.0
-      released: '2026-10-03'
-      released_field: upload_time
-      lapsed: false
-      page: https://pypi.org/project/cloudflare/
-      repo_leg: shared-github-org:cloudflare
-      publisher_leg: email:cloudflare.com
-      matched_by: domain+name-among-holders
-    current: true
-    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
-      24 months'
-    detected_by: sweep-official-sdks.py
-    detected: '2026-10-18'
-  detected_by: sweep-official-sdks.py
-  first_seen: '2026-10-18'
 checked:
 - https://a2aregistry.org/api/agents
 - https://api.nuget.org/v3
