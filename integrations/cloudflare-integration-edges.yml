@@ -597,6 +597,100 @@ edges:
     detected: '2026-10-20'
   detected_by: sweep-compliance-assurance.py
   first_seen: '2026-10-20'
+- partner_name: PeeringDB (interconnection register)
+  partner: null
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://www.peeringdb.com/net/4224
+  category: network interconnection register
+  contract_reference:
+    register: PeeringDB (peeringdb.com/api net, ix, fac, org)
+    standard: null
+    spec_file: null
+    role: peeringdb-network
+    registered_name: Cloudflare
+    register_id: https://www.peeringdb.com/net/4224
+    matched_domain: cloudflare.com
+    matched_by: domain+name-among-holders
+    asns:
+    - 13335
+    - 209242
+    info_types:
+    - Content
+    ix_presence: 357
+    exchanges_operated: []
+    facilities_operated: 0
+    signal_note: 'participation only: PeeringDB is self-registered by network operators; ASNs, IX presence and facility
+      counts are context, never counted'
+    detected_by: sweep-network-edge.py
+    detected: '2026-10-20'
+  detected_by: sweep-network-edge.py
+  first_seen: '2026-10-20'
+- partner_name: MANRS (Mutually Agreed Norms for Routing Security)
+  partner: null
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://manrs.org/participant/019eccd4-bc10-7018-a0b0-cc562678c7ad
+  category: routing-security programme
+  contract_reference:
+    register: MANRS participants (manrs.org netops / cdn-cloud-providers / ixps / equipment-vendors)
+    standard: MANRS
+    spec_file: null
+    role: manrs-participant
+    registered_name: Cloudflare
+    register_id: https://manrs.org/participant/019eccd4-bc10-7018-a0b0-cc562678c7ad
+    matched_domain: cloudflare.com
+    matched_by: domain+name-among-holders
+    domain_source: peeringdb net website for AS13335
+    certified_products:
+    - product: MANRS CDN and Cloud Providers
+      program: cdn-cloud-providers
+      lapsed: false
+      approved: '2020-03-30'
+    signal_note: certified_products = one entry per MANRS programme admitted to (reviewed against the programme's
+      actions), never per ASN; ASNs are context. The tables list current participants only, so lapsed is always
+      false
+    detected_by: sweep-network-edge.py
+    detected: '2026-10-20'
+    identity_source: peeringdb net website by the participant's ASN (labelled provenance step)
+  detected_by: sweep-network-edge.py
+  first_seen: '2026-10-20'
+- partner_name: Scoop
+  partner: null
+  partner_match: null
+  type: register
+  direction: provider-built
+  category: official CLI (Scoop)
+  evidence: https://github.com/ScoopInstaller/Main/blob/master/bucket/cloudflared.json
+  channel: package-registry
+  relationship: distribution-channel
+  contract_reference:
+    register: Scoop (public package index)
+    spec_file: null
+    packages:
+    - name: cloudflared
+      kind: main
+      version: 2026.10.2
+      released: null
+      lapsed: false
+      page: https://github.com/ScoopInstaller/Main/blob/master/bucket/cloudflared.json
+      cli: 'scoop description: Command-line client to interact with Cloudflare Tunnel, Cloudflare Access, start'
+      repo_leg: domain:cloudflare.com
+      publisher_leg: artifact-shared-github-org:cloudflare
+      matched_by: domain+name-among-holders
+    current: true
+    signal_note: 'the provider''s own command-line tool on a package manager: distribution, not an integration;
+      lapsed = no release in 24 months or deprecated / disabled by the manager'
+    detected_by: sweep-official-clis.py
+    detected: '2026-10-20'
+  detected_by: sweep-official-clis.py
+  first_seen: '2026-10-20'
 checked:
 - https://a2aregistry.org/api/agents
 - https://api.nuget.org/v3
@@ -630,6 +724,15 @@ checked:
 - microsoft-sentinel/integrations/microsoft-sentinel-integration-edges.yml
 - stripe/integrations/stripe-integration-edges.yml
 - wordpress/integrations/wordpress-integration-edges.yml
+- https://manrs.org/netops/participants/
+- https://www.peeringdb.com/api/fac
+- https://www.peeringdb.com/api/ix
+- https://www.peeringdb.com/api/net
+- https://cdn.winget.microsoft.com/cache
+- https://formulae.brew.sh/api/cask.json
+- https://formulae.brew.sh/api/formula.json
+- https://github.com/ScoopInstaller/Extras
+- https://github.com/ScoopInstaller/Main
 marketplace_apps: []
 source:
 - https://github.com/marketplace?type=actions
